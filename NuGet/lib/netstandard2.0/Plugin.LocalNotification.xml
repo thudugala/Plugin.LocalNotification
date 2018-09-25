@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Plugin.LocalNotification</name>
+    </assembly>
+    <members>
+        <member name="T:Plugin.LocalNotification.ILocalNotificationService">
+            <summary>
+            Used to display platform specific local notifications.
+            </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Cancel(System.Int32)">
+            <summary>
+            Cancel a notification match with the Id
+            </summary>
+            <param name="notificationId">A unique identifier for the already displaying local notification.</param>
+        </member>
+        <member name="M:Plugin.LocalNotification.ILocalNotificationService.CancelAll">
+            <summary>
+            Cancel all notification.
+            </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Send(Plugin.LocalNotification.LocalNotification)">
+            <summary>
+            Send a local notification to the device.
+            </summary>
+            <param name="localNotification"></param>
+        </member>
+        <member name="T:Plugin.LocalNotification.LocalNotification">
+            <summary>
+            LocalNotification
+            </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.LocalNotification.#ctor">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.BadgeNumber">
+            <summary>
+            Number of the badge displays on the Home Screen.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.Description">
+            <summary>
+            Details for the notification.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.NotificationId">
+            <summary>
+            A unique identifier for the request
+            (if identifier is not unique, a new notification request object is not created).
+            You can use this identifier later to cancel a request that is still pending.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.ReturningData">
+            <summary>
+            Returning data when click on notification.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.Title">
+            <summary>
+            Title for the notification.
+            </summary>
+        </member>
+        <member name="T:Plugin.LocalNotification.LocalNotificationTappedEvent">
+            <summary>
+            Returning event when tapped on notification.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotificationTappedEvent.Data">
+            <summary>
+            Returning data when tapped on notification.
+            </summary>
+        </member>
+    </members>
+</doc>
