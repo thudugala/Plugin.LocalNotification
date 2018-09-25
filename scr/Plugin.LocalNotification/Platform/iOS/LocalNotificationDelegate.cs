@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using UserNotifications;
 using Xamarin.Forms;
@@ -12,24 +13,38 @@ namespace Plugin.LocalNotification.Platform.iOS
         public override void DidReceiveNotificationResponse(UNUserNotificationCenter center,
             UNNotificationResponse response, Action completionHandler)
         {
-            // Take action based on identifier
-            if (!response.IsDefaultAction)
+            try
             {
-                return;
-            }
+                // Take action based on identifier
+                if (!response.IsDefaultAction)
+                {
+                    return;
+                }
 
-            var identifier = response.Notification.Request.Content.UserInfo.Values.Select(v => v.ToString()).ToList();
-            var subscribeItem = new LocalNotificationTappedEvent
+                var identifier = response.Notification.Request.Content.UserInfo.Values.Select(v => v.ToString()).ToList();
+                var subscribeItem = new LocalNotificationTappedEvent
+                {
+                    Data = identifier
+                };
+                MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+            }
+            catch (Exception ex)
             {
-                Data = identifier
-            };
-            MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+                Debug.WriteLine(ex);
+            }
         }
 
         /// <inheritdoc />
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
-            completionHandler(UNNotificationPresentationOptions.Alert);
+            try
+            {
+                completionHandler(UNNotificationPresentationOptions.Alert);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
     }
 }
