@@ -17,7 +17,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Usage
 
-## Send local notification
+### Send local notification
 
 ```csharp
 var notificationService = DependencyService.Get<ILocalNotificationService>();
@@ -30,14 +30,14 @@ var notification = new Plugin.LocalNotification.LocalNotification
 notificationService.Send(notification);
 ```
 
-## Cancel a local notification
+### Cancel a local notification
 
 ```csharp
 var notificationService = DependencyService.Get<ILocalNotificationService>();
 notificationService.Cancel(100);
 ```
 
-## Receive local notification tap event
+### Receive local notification tap event
 
 ```csharp
 public partial class App : Application
@@ -54,7 +54,7 @@ public partial class App : Application
 	}
 	
 	private void OnLocalNotificationTapped(LocalNotificationTappedEvent e)
-    {
+    	{
 		// your code goes here
 	}
 }
@@ -78,7 +78,7 @@ By adding icon.png to Resources\drawable
 
 <img src="Screenshots/AndroidNotificationIcon.png" alt="Android Notification Icon" >
 
-##### Setup
+#### Setup
 
 To receive Local Notification tap event.
 Include the following code in the OnNewIntent() method of MainActivity:
@@ -96,7 +96,7 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 
 ### iOS
 
-##### Setup
+#### Setup
 
 You must get permission from the user to allow the app to show local notifications.
 Also, To receive Local Notification tap event.
