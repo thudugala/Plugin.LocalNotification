@@ -20,7 +20,7 @@
             Cancel all notification.
             </summary>
         </member>
-        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Send(Plugin.LocalNotification.LocalNotification)">
+        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
             <summary>
             Send a local notification to the device.
             </summary>
@@ -101,7 +101,7 @@
         <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.CancelAll">
             <inheritdoc />
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.Send(Plugin.LocalNotification.LocalNotification)">
+        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
             <inheritdoc />
         </member>
     </members>

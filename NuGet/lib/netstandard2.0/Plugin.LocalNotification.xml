@@ -20,7 +20,7 @@
             Cancel all notification.
             </summary>
         </member>
-        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Send(Plugin.LocalNotification.LocalNotification)">
+        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
             <summary>
             Send a local notification to the device.
             </summary>

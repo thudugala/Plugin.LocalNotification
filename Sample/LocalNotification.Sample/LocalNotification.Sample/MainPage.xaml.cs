@@ -32,7 +32,7 @@ namespace LocalNotification.Sample
             notification.ReturningData.Add(typeof(NotificationPage).FullName);
             notification.ReturningData.Add(_tapCount.ToString());
 
-            notificationService.Send(notification);
+            notificationService.Show(notification);
         }
     }
 }

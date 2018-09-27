@@ -25,7 +25,7 @@ namespace LocalNotification.Sample.iOS
         {
             global::Xamarin.Forms.Forms.Init();
 
-            LocalNotificationService.SetupLocalNotification();
+            LocalNotificationService.Init();
 
             LoadApplication(new App());
 

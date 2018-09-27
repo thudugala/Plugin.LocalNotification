@@ -20,7 +20,7 @@
             Cancel all notification.
             </summary>
         </member>
-        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Send(Plugin.LocalNotification.LocalNotification)">
+        <member name="M:Plugin.LocalNotification.ILocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
             <summary>
             Send a local notification to the device.
             </summary>
@@ -94,10 +94,10 @@
         <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.CancelAll">
             <inheritdoc />
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.Send(Plugin.LocalNotification.LocalNotification)">
+        <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
             <inheritdoc />
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.SetupLocalNotification">
+        <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.Init">
             <summary>
             Setup Local Notification
             </summary>
