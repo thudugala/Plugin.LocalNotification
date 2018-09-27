@@ -17,7 +17,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Usage
 
-### Send local notification
+### Show local notification
 
 ```csharp
 var notificationService = DependencyService.Get<ILocalNotificationService>();
@@ -27,7 +27,7 @@ var notification = new Plugin.LocalNotification.LocalNotification
     Title = "Test",
     Description = "Test Description"
 };
-notificationService.Send(notification);
+notificationService.Show(notification);
 ```
 
 ### Cancel a local notification
@@ -109,7 +109,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 	{
 		global::Xamarin.Forms.Forms.Init();
 
-		LocalNotificationService.SetupLocalNotification();
+		LocalNotificationService.Init();
 
 		LoadApplication(new App());
 		
