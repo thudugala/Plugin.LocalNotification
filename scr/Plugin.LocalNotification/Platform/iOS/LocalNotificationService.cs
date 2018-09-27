@@ -51,10 +51,17 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public void Send(LocalNotification localNotification)
+        public void Show(LocalNotification localNotification)
         {
             try
             {
+                if (localNotification is null)
+                {
+                    return;
+                }
+
+                Cancel(localNotification.NotificationId);
+
                 var userInfoDictionary = new NSMutableDictionary();
                 foreach (var data in localNotification.ReturningData)
                 {
@@ -85,7 +92,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <summary>
         /// Setup Local Notification
         /// </summary>
-        public static void SetupLocalNotification()
+        public static void Init()
         {
             try
             {

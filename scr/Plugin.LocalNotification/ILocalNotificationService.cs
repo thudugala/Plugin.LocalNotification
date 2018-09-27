@@ -20,6 +20,6 @@
         /// Send a local notification to the device.
         /// </summary>
         /// <param name="localNotification"></param>
-        void Send(LocalNotification localNotification);
+        void Show(LocalNotification localNotification);
     }
 }

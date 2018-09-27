@@ -93,10 +93,17 @@ namespace Plugin.LocalNotification.Platform.Android
         }
 
         /// <inheritdoc />
-        public void Send(LocalNotification localNotification)
+        public void Show(LocalNotification localNotification)
         {
             try
             {
+                if (localNotification is null)
+                {
+                    return;
+                }
+
+                Cancel(localNotification.NotificationId);
+
                 var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
                 notificationIntent.SetFlags(ActivityFlags.SingleTop);
 
