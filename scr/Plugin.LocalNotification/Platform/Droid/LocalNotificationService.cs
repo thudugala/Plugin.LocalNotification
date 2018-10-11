@@ -2,7 +2,10 @@
 using Android.Content;
 using Android.Support.V4.App;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+using Android.OS;
 using Plugin.LocalNotification.Platform.Droid;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LocalNotificationService))]
@@ -33,7 +36,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 
@@ -50,9 +53,11 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
+                var serializeReturningData = intent.GetStringExtra(ExtraReturnData);
+                
                 var subscribeItem = new LocalNotificationTappedEvent
                 {
-                    Data = intent.GetStringArrayListExtra(ExtraReturnData)
+                    Data = DeserializeNotification(serializeReturningData)
                 };
                 Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                 {
@@ -61,7 +66,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 
@@ -74,7 +79,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 
@@ -87,7 +92,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 
@@ -100,16 +105,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     return;
                 }
-
-                Cancel(localNotification.NotificationId);
-
-                var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
-                notificationIntent.SetFlags(ActivityFlags.SingleTop);
-
-                notificationIntent.PutStringArrayListExtra(ExtraReturnData, localNotification.ReturningData);
-
-                var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.Immutable);
-
+                
                 var builder = new NotificationCompat.Builder(Application.Context);
                 builder.SetContentTitle(localNotification.Title);
                 builder.SetContentText(localNotification.Description);
@@ -117,6 +113,26 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetNumber(localNotification.BadgeNumber);
                 builder.SetAutoCancel(true);
                 builder.SetDefaults((int) (NotificationDefaults.Sound | NotificationDefaults.Vibrate));
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    var channelId = $"{Application.Context.PackageName}.general";
+
+                    var channel = new NotificationChannel(channelId, "General", NotificationImportance.Default);
+
+                    _notificationManager.CreateNotificationChannel(channel);
+                    
+                    builder.SetChannelId(channelId);
+                }
+
+                var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+                notificationIntent.SetFlags(ActivityFlags.SingleTop);
+
+                var serializeReturningData = SerializeReturningData(localNotification.ReturningData);
+
+                notificationIntent.PutExtra(ExtraReturnData, serializeReturningData);
+
+                var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
                 builder.SetContentIntent(pendingIntent);
 
                 if (NotificationIconId != 0)
@@ -141,7 +157,29 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+        }
+
+        private string SerializeReturningData(IList<string> returningData)
+        {
+            var returningType = returningData.GetType();
+            var xmlSerializer = new XmlSerializer(returningType);
+            using (var stringWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(stringWriter, returningData);
+                return stringWriter.ToString();
+            }
+        }
+
+        private static List<string> DeserializeNotification(string notificationString)
+        {
+            var returningType = typeof(List<string>);
+            var xmlSerializer = new XmlSerializer(returningType);
+            using (var stringReader = new StringReader(notificationString))
+            {
+                var notification = (List<string>)xmlSerializer.Deserialize(stringReader);
+                return notification;
             }
         }
     }
