@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using UserNotifications;
 using Xamarin.Forms;
 
@@ -21,12 +20,16 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                var identifier = response.Notification.Request.Content.UserInfo.Values.Select(v => v.ToString()).ToList();
-                var subscribeItem = new LocalNotificationTappedEvent
+                var dictionary = response.Notification.Request.Content.UserInfo;
+
+                if (dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
                 {
-                    Data = identifier
-                };
-                MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+                    var subscribeItem = new LocalNotificationTappedEvent
+                    {
+                        Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
+                    };
+                    MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+                }
             }
             catch (Exception ex)
             {

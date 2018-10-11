@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Plugin.LocalNotification
 {
@@ -12,7 +13,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public LocalNotification()
         {
-            ReturningData = new List<string>();
+            
         }
 
         /// <summary>
@@ -33,9 +34,14 @@ namespace Plugin.LocalNotification
         public int NotificationId { get; set; }
 
         /// <summary>
-        /// Returning data when click on notification.
+        /// Time to show the notification.
         /// </summary>
-        public IList<string> ReturningData { get; }
+        public DateTime? NotifyTime { get; set; }
+
+        /// <summary>
+        /// Returning data when tapped on notification.
+        /// </summary>
+        public string ReturningData { get; set; }
 
         /// <summary>
         /// Title for the notification.

@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification;
+﻿using System.Collections.Generic;
+using Plugin.LocalNotification;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -43,15 +44,16 @@ namespace LocalNotification.Sample
 
         private void LoadPageFromNotification(LocalNotificationTappedEvent e)
         {
-            if (e.Data is null || e.Data.Count < 1)
+            if (string.IsNullOrWhiteSpace(e.Data))
             {
                 return;
             }
 
-            var pageFullName = e.Data[0];
-            if (pageFullName == typeof(NotificationPage).FullName)
+            var list = DataSerializer<List<string>>.DeserializeReturningData(e.Data);
+            
+            if (list[0] == typeof(NotificationPage).FullName)
             {
-                var tapCount = e.Data[1];
+                var tapCount = list[1];
 
                 MainPage = new NotificationPage(int.Parse(tapCount));
             }

@@ -29,8 +29,14 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount
             };
-            notification.ReturningData.Add(typeof(NotificationPage).FullName);
-            notification.ReturningData.Add(_tapCount.ToString());
+
+            var list = new List<string>
+            {
+                typeof(NotificationPage).FullName,
+                _tapCount.ToString()
+            };
+
+            notification.ReturningData = DataSerializer<List<string>>.SerializeReturningData(list);
 
             notificationService.Show(notification);
         }

@@ -2,9 +2,6 @@
 using Android.Content;
 using Android.Support.V4.App;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
 using Android.OS;
 using Plugin.LocalNotification.Platform.Droid;
 
@@ -52,12 +49,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     return;
                 }
-
-                var serializeReturningData = intent.GetStringExtra(ExtraReturnData);
                 
                 var subscribeItem = new LocalNotificationTappedEvent
                 {
-                    Data = DeserializeNotification(serializeReturningData)
+                    Data = intent.GetStringExtra(ExtraReturnData)
                 };
                 Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                 {
@@ -127,10 +122,8 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                 var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
                 notificationIntent.SetFlags(ActivityFlags.SingleTop);
-
-                var serializeReturningData = SerializeReturningData(localNotification.ReturningData);
-
-                notificationIntent.PutExtra(ExtraReturnData, serializeReturningData);
+                
+                notificationIntent.PutExtra(ExtraReturnData, localNotification.ReturningData);
 
                 var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
                 builder.SetContentIntent(pendingIntent);
@@ -158,28 +151,6 @@ namespace Plugin.LocalNotification.Platform.Droid
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
-            }
-        }
-
-        private string SerializeReturningData(IList<string> returningData)
-        {
-            var returningType = returningData.GetType();
-            var xmlSerializer = new XmlSerializer(returningType);
-            using (var stringWriter = new StringWriter())
-            {
-                xmlSerializer.Serialize(stringWriter, returningData);
-                return stringWriter.ToString();
-            }
-        }
-
-        private static List<string> DeserializeNotification(string notificationString)
-        {
-            var returningType = typeof(List<string>);
-            var xmlSerializer = new XmlSerializer(returningType);
-            using (var stringReader = new StringReader(notificationString))
-            {
-                var notification = (List<string>)xmlSerializer.Deserialize(stringReader);
-                return notification;
             }
         }
     }

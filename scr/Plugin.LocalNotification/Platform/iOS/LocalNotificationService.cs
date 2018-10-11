@@ -13,6 +13,11 @@ namespace Plugin.LocalNotification.Platform.iOS
     [Preserve]
     public class LocalNotificationService : ILocalNotificationService
     {
+        /// <summary>
+        /// Return Data Key.
+        /// </summary>
+        public static NSString ExtraReturnData = new NSString("Plugin.LocalNotification.Platform.iOS.RETURN_DATA");
+
         private readonly List<string> _notificationList;
 
         /// <inheritdoc />
@@ -59,24 +64,20 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     return;
                 }
-
-                Cancel(localNotification.NotificationId);
-
+                
                 var userInfoDictionary = new NSMutableDictionary();
-                foreach (var data in localNotification.ReturningData)
-                {
-                    userInfoDictionary.SetValueForKey(new NSString(data), new NSString(data));
-                }
-
+                userInfoDictionary.SetValueForKey(ExtraReturnData, new NSString(localNotification.ReturningData));
+                
                 var content = new UNMutableNotificationContent
                 {
                     Title = localNotification.Title,
                     UserInfo = userInfoDictionary,
                     Body = localNotification.Description,
-                    Badge = localNotification.BadgeNumber
+                    Badge = localNotification.BadgeNumber,
                 };
 
-                var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(10, false);
+                var trigger = UNCalendarNotificationTrigger.CreateTrigger(GetNSDateComponentsFromDateTime(localNotification.NotifyTime), false);
+
                 _notificationList.Add(localNotification.NotificationId.ToString());
                 var request = UNNotificationRequest.FromIdentifier(localNotification.NotificationId.ToString(), content, trigger);
                 UNUserNotificationCenter.Current.AddNotificationRequest(request, (err) =>
@@ -87,6 +88,29 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 Debug.WriteLine(ex);
             }
+        }
+
+        private NSDateComponents GetNSDateComponentsFromDateTime(DateTime? nullableDateTime)
+        {
+            if (!nullableDateTime.HasValue)
+            {
+                return new NSDateComponents
+                {
+                    Second = 10
+                };
+            }
+
+            var dateTime = nullableDateTime.Value;
+
+            return new NSDateComponents
+            {
+                Month = dateTime.Month,
+                Day = dateTime.Day,
+                Year = dateTime.Year,
+                Hour = dateTime.Hour,
+                Minute = dateTime.Minute,
+                Second = dateTime.Second
+            };
         }
 
         /// <summary>
