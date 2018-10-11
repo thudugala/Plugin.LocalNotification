@@ -128,7 +128,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     var iconId = Application.Context.ApplicationInfo.Icon;
                     if (iconId == 0)
                     {
-                        Application.Context.Resources.GetIdentifier("icon", "drawable",
+                        Application.Context.Resources.GetIdentifier("Icon", "drawable",
                             Application.Context.PackageName);
                     }
                     builder.SetSmallIcon(iconId);
