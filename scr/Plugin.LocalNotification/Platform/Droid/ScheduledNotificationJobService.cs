@@ -3,7 +3,7 @@ using Android.App.Job;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
-    [Service(Name = "Plugin.LocalNotification.Platform.Droid.ScheduledNotificationJobService", Permission = "android.permission.BIND_JOB_SERVICE")]
+    [Service(Name = "plugin.localNotification.ScheduledNotificationJobService", Permission = "android.permission.BIND_JOB_SERVICE")]
     internal class ScheduledNotificationJobService : JobService
     {
         public override bool OnStartJob(JobParameters jobParams)
