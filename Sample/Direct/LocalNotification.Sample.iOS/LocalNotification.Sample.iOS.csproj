@@ -152,7 +152,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\scr\Plugin.LocalNotification\Plugin.LocalNotification.csproj">
+    <ProjectReference Include="..\..\..\scr\Plugin.LocalNotification\Plugin.LocalNotification.csproj">
       <Project>{43815ed8-a675-4657-bf92-14817663ac04}</Project>
       <Name>Plugin.LocalNotification</Name>
     </ProjectReference>

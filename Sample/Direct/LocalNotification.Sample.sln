@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.Android", "LocalNotification.Sample\LocalNotification.Sample.Android\LocalNotification.Sample.Android.csproj", "{08F5CE7D-75F1-42E3-88E2-04E0A9185467}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.Android", "LocalNotification.Sample.Android\LocalNotification.Sample.Android.csproj", "{08F5CE7D-75F1-42E3-88E2-04E0A9185467}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.iOS", "LocalNotification.Sample\LocalNotification.Sample.iOS\LocalNotification.Sample.iOS.csproj", "{F7906D0B-9C19-4748-B162-A1434EAC6F09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.iOS", "LocalNotification.Sample.iOS\LocalNotification.Sample.iOS.csproj", "{F7906D0B-9C19-4748-B162-A1434EAC6F09}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalNotification.Sample", "LocalNotification.Sample\LocalNotification.Sample\LocalNotification.Sample.csproj", "{1CB8A3CC-A5FB-4D8D-9686-1374FAC0ABC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalNotification.Sample", "LocalNotification.Sample\LocalNotification.Sample.csproj", "{1CB8A3CC-A5FB-4D8D-9686-1374FAC0ABC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F2A7B258-0C9B-4BF3-9532-69DE70B0543F}"
 EndProject

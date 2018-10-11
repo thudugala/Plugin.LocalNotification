@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\scr\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
+    <ProjectReference Include="..\..\..\scr\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
   </ItemGroup>
 
   <ItemGroup>
