@@ -38,7 +38,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Compile Include="**/Platform/Android/**/*.cs" />
+    <Compile Include="**/Platform/Droid/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">

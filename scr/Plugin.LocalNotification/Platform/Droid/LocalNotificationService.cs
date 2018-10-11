@@ -3,14 +3,13 @@ using Android.Content;
 using Android.Support.V4.App;
 using System;
 using System.Diagnostics;
-using Android.Runtime;
-using Plugin.LocalNotification.Platform.Android;
+using Plugin.LocalNotification.Platform.Droid;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LocalNotificationService))]
-namespace Plugin.LocalNotification.Platform.Android
+namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <inheritdoc />
-    [Preserve]
+    [Android.Runtime.Preserve]
     public class LocalNotificationService : ILocalNotificationService
     {
         /// <summary>
@@ -30,7 +29,7 @@ namespace Plugin.LocalNotification.Platform.Android
         {
             try
             {
-                _notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+                _notificationManager = Application.Context.GetSystemService(Android.Content.Context.NotificationService) as NotificationManager;
             }
             catch (Exception ex)
             {
@@ -114,13 +113,26 @@ namespace Plugin.LocalNotification.Platform.Android
                 var builder = new NotificationCompat.Builder(Application.Context);
                 builder.SetContentTitle(localNotification.Title);
                 builder.SetContentText(localNotification.Description);
+                builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(localNotification.Description));
                 builder.SetNumber(localNotification.BadgeNumber);
                 builder.SetAutoCancel(true);
-                builder.SetVibrate(new long[] { 500, 500 });
+                builder.SetDefaults((int) (NotificationDefaults.Sound | NotificationDefaults.Vibrate));
                 builder.SetContentIntent(pendingIntent);
 
-                var iconId = Application.Context.Resources.GetIdentifier("icon", "drawable", Application.Context.PackageName);
-                builder.SetSmallIcon(NotificationIconId > 0 ? NotificationIconId : iconId);
+                if (NotificationIconId != 0)
+                {
+                    builder.SetSmallIcon(NotificationIconId);
+                }
+                else
+                {
+                    var iconId = Application.Context.ApplicationInfo.Icon;
+                    if (iconId == 0)
+                    {
+                        Application.Context.Resources.GetIdentifier("icon", "drawable",
+                            Application.Context.PackageName);
+                    }
+                    builder.SetSmallIcon(iconId);
+                }
 
                 var notification = builder.Build();
                 notification.Defaults = NotificationDefaults.All;
