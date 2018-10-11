@@ -104,7 +104,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 var userInfoDictionary = new NSMutableDictionary();
                 if (string.IsNullOrWhiteSpace(localNotification.ReturningData) == false)
                 {
-                    userInfoDictionary.SetValueForKey(ExtraReturnData, new NSString(localNotification.ReturningData));
+                    userInfoDictionary.SetValueForKey(new NSString(localNotification.ReturningData), ExtraReturnData);
                 }
 
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
