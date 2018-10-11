@@ -7,7 +7,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using Plugin.LocalNotification.Platform.Android;
+using Plugin.LocalNotification.Platform.Droid;
 
 namespace LocalNotification.Sample.Droid
 {
