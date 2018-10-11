@@ -130,7 +130,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             var notificationIntent = new Intent(Application.Context, typeof(ScheduledNotificationReceiver));
             notificationIntent.SetAction("LocalNotifierIntent" + localNotification.NotificationId);
 
-            var serializedNotification = DataSerializer<LocalNotification>.SerializeObject(localNotification);
+            var serializedNotification = ObjectSerializer<LocalNotification>.SerializeObject(localNotification);
             notificationIntent.PutExtra(ExtraReturnNotification, serializedNotification);
 
             var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, notificationIntent, PendingIntentFlags.CancelCurrent);

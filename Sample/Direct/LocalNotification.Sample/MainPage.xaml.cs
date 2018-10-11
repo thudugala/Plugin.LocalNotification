@@ -27,7 +27,7 @@ namespace LocalNotification.Sample
                 _tapCount.ToString()
             };
 
-            var serializeReturningData = DataSerializer<List<string>>.SerializeObject(list);
+            var serializeReturningData = ObjectSerializer<List<string>>.SerializeObject(list);
 
             var notificationService = DependencyService.Get<ILocalNotificationService>();
             var notification = new Plugin.LocalNotification.LocalNotification

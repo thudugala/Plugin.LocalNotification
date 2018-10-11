@@ -49,7 +49,7 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var list = DataSerializer<List<string>>.DeserializeObject(e.Data);
+            var list = ObjectSerializer<List<string>>.DeserializeObject(e.Data);
             if (list.Count != 2)
             {
                 return;

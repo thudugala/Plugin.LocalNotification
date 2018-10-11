@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
 
                 var serializedNotification = intent.GetStringExtra(LocalNotificationService.ExtraReturnNotification);
-                var notification = DataSerializer<LocalNotification>.DeserializeObject(serializedNotification);
+                var notification = ObjectSerializer<LocalNotification>.DeserializeObject(serializedNotification);
 
                 var notificationService = Xamarin.Forms.DependencyService.Get<ILocalNotificationService>();
                 notificationService.Show(notification);

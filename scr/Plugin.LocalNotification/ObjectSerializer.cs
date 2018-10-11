@@ -6,7 +6,7 @@ namespace Plugin.LocalNotification
     /// <summary>
     ///
     /// </summary>
-    public static class DataSerializer<T>
+    public static class ObjectSerializer<T>
     {
         /// <summary>
         /// Serialize Returning Data
