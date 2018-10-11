@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.App.Job;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
@@ -29,6 +30,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private readonly NotificationManager _notificationManager;
         private readonly AlarmManager _alarmManager;
+        private readonly JobScheduler _jobScheduler;
 
         /// <inheritdoc />
         public LocalNotificationService()
@@ -37,6 +39,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 _notificationManager = Application.Context.GetSystemService(Android.Content.Context.NotificationService) as NotificationManager;
                 _alarmManager = Application.Context.GetSystemService(Android.Content.Context.AlarmService) as AlarmManager;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    _jobScheduler = Application.Context.GetSystemService(Android.Content.Context.JobSchedulerService) as JobScheduler;
+                }
             }
             catch (Exception ex)
             {
@@ -77,6 +83,17 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    _jobScheduler.Cancel(notificationId);
+                }
+                else
+                {
+                    var notificationIntent = new Intent(Application.Context, typeof(ScheduledNotificationReceiver));
+                    var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, notificationIntent, PendingIntentFlags.CancelCurrent);
+
+                    _alarmManager.Cancel(pendingIntent);
+                }
                 _notificationManager.Cancel(notificationId);
             }
             catch (Exception ex)
@@ -90,6 +107,17 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    _jobScheduler.CancelAll();
+                }
+                else
+                {
+                    var notificationIntent = new Intent(Application.Context, typeof(ScheduledNotificationReceiver));
+                    var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, notificationIntent, PendingIntentFlags.CancelCurrent);
+
+                    _alarmManager.Cancel(pendingIntent);
+                }
                 _notificationManager.CancelAll();
             }
             catch (Exception ex)
@@ -127,15 +155,50 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             localNotification.NotifyTime = null;
 
+            var serializedNotification = ObjectSerializer<LocalNotification>.SerializeObject(localNotification);
+
+            var scheduled = false;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            {
+                var javaClass = Java.Lang.Class.FromType(typeof(ScheduledNotificationJobService));
+                var component = new ComponentName(Application.Context, javaClass);
+
+                // Bundle up parameters
+                var extras = new PersistableBundle();
+                extras.PutString(ExtraReturnNotification, serializedNotification);
+
+                triggerTime -= NotifyTimeInMilliseconds(DateTime.Now);
+
+                var builder = new JobInfo.Builder(localNotification.NotificationId, component);
+                builder.SetMinimumLatency(triggerTime); // Fire at TriggerTime
+                builder.SetOverrideDeadline(triggerTime + 5000); // Or at least 5 Seconds Later
+                builder.SetExtras(extras);
+                builder.SetPersisted(CheckBootPermission()); //Job will be recreated after Reboot if Permissions are granted
+
+                var jobInfo = builder.Build();
+                var result = _jobScheduler.Schedule(jobInfo);
+                scheduled = result == JobScheduler.ResultSuccess;
+            }
+
+            if (scheduled)
+            {
+                return;
+            }
+            // The job was not scheduled. So use the old implementation
             var notificationIntent = new Intent(Application.Context, typeof(ScheduledNotificationReceiver));
             notificationIntent.SetAction("LocalNotifierIntent" + localNotification.NotificationId);
-
-            var serializedNotification = ObjectSerializer<LocalNotification>.SerializeObject(localNotification);
             notificationIntent.PutExtra(ExtraReturnNotification, serializedNotification);
 
-            var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, notificationIntent, PendingIntentFlags.CancelCurrent);
+            var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, notificationIntent,
+                PendingIntentFlags.CancelCurrent);
 
             _alarmManager.Set(AlarmType.RtcWakeup, triggerTime, pendingIntent);
+        }
+
+        private bool CheckBootPermission()
+        {
+            return Application.Context.CheckSelfPermission("android.permission.RECEIVE_BOOT_COMPLETED") == Android.Content.PM.Permission.Granted;
         }
 
         private long NotifyTimeInMilliseconds(DateTime notifyTime)
