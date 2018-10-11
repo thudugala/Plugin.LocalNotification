@@ -22,14 +22,16 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var dictionary = response.Notification.Request.Content.UserInfo;
 
-                if (dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
+                if (!dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
                 {
-                    var subscribeItem = new LocalNotificationTappedEvent
-                    {
-                        Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
-                    };
-                    MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+                    return;
                 }
+
+                var subscribeItem = new LocalNotificationTappedEvent
+                {
+                    Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
+                };
+                MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
             }
             catch (Exception ex)
             {

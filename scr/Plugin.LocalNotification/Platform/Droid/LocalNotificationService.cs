@@ -1,9 +1,9 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Support.V4.App;
-using System;
 using Android.OS;
+using Android.Support.V4.App;
 using Plugin.LocalNotification.Platform.Droid;
+using System;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LocalNotificationService))]
 namespace Plugin.LocalNotification.Platform.Droid
@@ -15,7 +15,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         /// Return Data Key.
         /// </summary>
-        public static string ExtraReturnData = "Plugin.LocalNotification.Platform.Android.RETURN_DATA";
+        internal static string ExtraReturnData = "Plugin.LocalNotification.Platform.Android.RETURN_DATA";
+
+        /// <summary>
+        /// Return Notification Key.
+        /// </summary>
+        internal static string ExtraReturnNotification = "Plugin.LocalNotification.Platform.Android.RETURN_NOTIFICATION";
 
         /// <summary>
         /// Get or Set Resource Icon to display.
@@ -23,6 +28,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         public static int NotificationIconId { get; set; }
 
         private readonly NotificationManager _notificationManager;
+        private readonly AlarmManager _alarmManager;
 
         /// <inheritdoc />
         public LocalNotificationService()
@@ -30,6 +36,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             try
             {
                 _notificationManager = Application.Context.GetSystemService(Android.Content.Context.NotificationService) as NotificationManager;
+                _alarmManager = Application.Context.GetSystemService(Android.Content.Context.AlarmService) as AlarmManager;
             }
             catch (Exception ex)
             {
@@ -49,7 +56,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     return;
                 }
-                
+
                 var subscribeItem = new LocalNotificationTappedEvent
                 {
                     Data = intent.GetStringExtra(ExtraReturnData)
@@ -94,20 +101,64 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public void Show(LocalNotification localNotification)
         {
+            if (localNotification is null)
+            {
+                return;
+            }
+
+            if (localNotification.NotifyTime.HasValue)
+            {
+                ShowLater(localNotification);
+            }
+            else
+            {
+                ShowNow(localNotification);
+            }
+        }
+
+        private void ShowLater(LocalNotification localNotification)
+        {
+            if (localNotification.NotifyTime.HasValue == false)
+            {
+                return;
+            }
+
+            var triggerTime = NotifyTimeInMilliseconds(localNotification.NotifyTime.Value);
+
+            localNotification.NotifyTime = null;
+
+            var notificationIntent = new Intent(Application.Context, typeof(ScheduledNotificationReceiver));
+            notificationIntent.SetAction("LocalNotifierIntent" + localNotification.NotificationId);
+
+            var serializedNotification = DataSerializer<LocalNotification>.SerializeObject(localNotification);
+            notificationIntent.PutExtra(ExtraReturnNotification, serializedNotification);
+
+            var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, notificationIntent, PendingIntentFlags.CancelCurrent);
+
+            _alarmManager.Set(AlarmType.RtcWakeup, triggerTime, pendingIntent);
+        }
+
+        private long NotifyTimeInMilliseconds(DateTime notifyTime)
+        {
+            var utcTime = TimeZoneInfo.ConvertTimeToUtc(notifyTime);
+            var epochDifference = (new DateTime(1970, 1, 1) - DateTime.MinValue).TotalSeconds;
+
+            var utcAlarmTimeInMillis = utcTime.AddSeconds(-epochDifference).Ticks / 10000;
+
+            return utcAlarmTimeInMillis;
+        }
+
+        private void ShowNow(LocalNotification localNotification)
+        {
             try
             {
-                if (localNotification is null)
-                {
-                    return;
-                }
-                
                 var builder = new NotificationCompat.Builder(Application.Context);
                 builder.SetContentTitle(localNotification.Title);
                 builder.SetContentText(localNotification.Description);
                 builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(localNotification.Description));
                 builder.SetNumber(localNotification.BadgeNumber);
                 builder.SetAutoCancel(true);
-                builder.SetDefaults((int) (NotificationDefaults.Sound | NotificationDefaults.Vibrate));
+                builder.SetDefaults((int)(NotificationDefaults.Sound | NotificationDefaults.Vibrate));
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
@@ -116,13 +167,13 @@ namespace Plugin.LocalNotification.Platform.Droid
                     var channel = new NotificationChannel(channelId, "General", NotificationImportance.Default);
 
                     _notificationManager.CreateNotificationChannel(channel);
-                    
+
                     builder.SetChannelId(channelId);
                 }
 
                 var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
                 notificationIntent.SetFlags(ActivityFlags.SingleTop);
-                
+
                 notificationIntent.PutExtra(ExtraReturnData, localNotification.ReturningData);
 
                 var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);

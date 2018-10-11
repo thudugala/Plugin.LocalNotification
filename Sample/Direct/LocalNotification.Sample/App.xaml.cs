@@ -49,14 +49,18 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var list = DataSerializer<List<string>>.DeserializeReturningData(e.Data);
-            
-            if (list[0] == typeof(NotificationPage).FullName)
+            var list = DataSerializer<List<string>>.DeserializeObject(e.Data);
+            if (list.Count != 2)
             {
-                var tapCount = list[1];
-
-                MainPage = new NotificationPage(int.Parse(tapCount));
+                return;
             }
+            if (list[0] != typeof(NotificationPage).FullName)
+            {
+                return;
+            }
+            var tapCount = list[1];
+
+            MainPage = new NotificationPage(int.Parse(tapCount));
         }
     }
 }

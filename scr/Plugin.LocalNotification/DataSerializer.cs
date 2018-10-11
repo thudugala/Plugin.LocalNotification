@@ -13,7 +13,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="returningData"></param>
         /// <returns></returns>
-        public static string SerializeReturningData(T returningData)
+        public static string SerializeObject(T returningData)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
             using (var stringWriter = new StringWriter())
@@ -28,7 +28,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="returningData"></param>
         /// <returns></returns>
-        public static T DeserializeReturningData(string returningData)
+        public static T DeserializeObject(string returningData)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
             using (var stringReader = new StringReader(returningData))

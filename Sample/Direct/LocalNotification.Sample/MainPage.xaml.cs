@@ -21,23 +21,25 @@ namespace LocalNotification.Sample
         {
             _tapCount++;
 
-            var notificationService = DependencyService.Get<ILocalNotificationService>();
-            var notification = new Plugin.LocalNotification.LocalNotification
-            {
-                NotificationId = 100,
-                Title = "Test",
-                Description = $"Tap Count: {_tapCount}",
-                BadgeNumber = _tapCount
-            };
-
             var list = new List<string>
             {
                 typeof(NotificationPage).FullName,
                 _tapCount.ToString()
             };
 
-            notification.ReturningData = DataSerializer<List<string>>.SerializeReturningData(list);
+            var serializeReturningData = DataSerializer<List<string>>.SerializeObject(list);
 
+            var notificationService = DependencyService.Get<ILocalNotificationService>();
+            var notification = new Plugin.LocalNotification.LocalNotification
+            {
+                NotificationId = 100,
+                Title = "Test",
+                Description = $"Tap Count: {_tapCount}",
+                BadgeNumber = _tapCount,
+                ReturningData = serializeReturningData,
+                //NotifyTime = DateTime.Now.AddSeconds(30)
+            };
+            
             notificationService.Show(notification);
         }
     }
