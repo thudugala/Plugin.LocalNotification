@@ -26,8 +26,8 @@ var notification = new Plugin.LocalNotification.LocalNotification
     NotificationId = 100,
     Title = "Test",
     Description = "Test Description",
-	ReturningData = "Dummy data", // Returning data when tapped on notification.
-	NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification.
+    ReturningData = "Dummy data", // Returning data when tapped on notification.
+    NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification.
 };
 notificationService.Show(notification);
 ```
