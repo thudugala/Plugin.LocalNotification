@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plugin.LocalNotification
+﻿namespace Plugin.LocalNotification
 {
     /// <summary>
     /// Returning event when tapped on notification.
@@ -10,6 +8,6 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Returning data when tapped on notification.
         /// </summary>
-        public IList<string> Data { get; set; }
+        public string Data { get; internal set; }
     }
 }

@@ -3,6 +3,7 @@ using Plugin.LocalNotification.Platform.iOS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using UIKit;
 using UserNotifications;
 
@@ -10,9 +11,19 @@ using UserNotifications;
 namespace Plugin.LocalNotification.Platform.iOS
 {
     /// <inheritdoc />
-    [Preserve]
+    [Foundation.Preserve]
     public class LocalNotificationService : ILocalNotificationService
     {
+        /// <summary>
+        /// Return Data Key.
+        /// </summary>
+        internal static NSString ExtraReturnData = new NSString("Plugin.LocalNotification.Platform.iOS.RETURN_DATA");
+
+        /// <summary>
+        /// Return Notification Key
+        /// </summary>
+        internal static NSString ExtraNotificationKey = new NSString("Plugin.LocalNotification.Platform.iOS.NOTIFICATION_KEY");
+
         private readonly List<string> _notificationList;
 
         /// <inheritdoc />
@@ -29,7 +40,24 @@ namespace Plugin.LocalNotification.Platform.iOS
                 var item = notificationId.ToString();
                 var itemList = new[] { notificationId.ToString() };
                 _notificationList.Remove(item);
-                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                {
+                    UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
+                    UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+                }
+                else
+                {
+                    var notifications = UIApplication.SharedApplication.ScheduledLocalNotifications;
+
+                    var notification = notifications.Where(n => n.UserInfo.ContainsKey(ExtraNotificationKey))
+                        .FirstOrDefault(n => n.UserInfo[ExtraNotificationKey].ToString() == notificationId.ToString());
+
+                    if (notification != null)
+                    {
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -42,7 +70,20 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             try
             {
-                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(_notificationList.ToArray());
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                {
+                    UNUserNotificationCenter.Current.RemovePendingNotificationRequests(_notificationList.ToArray());
+                    UNUserNotificationCenter.Current.RemoveDeliveredNotifications(_notificationList.ToArray());
+                }
+                else
+                {
+                    var notifications = UIApplication.SharedApplication.ScheduledLocalNotifications;
+                    var notificationsToCancel = notifications.Where(n => n.UserInfo.ContainsKey(ExtraNotificationKey));
+                    foreach (var notification in notificationsToCancel)
+                    {
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -60,33 +101,80 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                Cancel(localNotification.NotificationId);
-
                 var userInfoDictionary = new NSMutableDictionary();
-                foreach (var data in localNotification.ReturningData)
+                if (string.IsNullOrWhiteSpace(localNotification.ReturningData) == false)
                 {
-                    userInfoDictionary.SetValueForKey(new NSString(data), new NSString(data));
+                    userInfoDictionary.SetValueForKey(new NSString(localNotification.ReturningData), ExtraReturnData);
                 }
 
-                var content = new UNMutableNotificationContent
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
                 {
-                    Title = localNotification.Title,
-                    UserInfo = userInfoDictionary,
-                    Body = localNotification.Description,
-                    Badge = localNotification.BadgeNumber
-                };
+                    var content = new UNMutableNotificationContent
+                    {
+                        Title = localNotification.Title,
+                        Body = localNotification.Description,
+                        Badge = localNotification.BadgeNumber,
+                        UserInfo = userInfoDictionary
+                    };
 
-                var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(10, false);
-                _notificationList.Add(localNotification.NotificationId.ToString());
-                var request = UNNotificationRequest.FromIdentifier(localNotification.NotificationId.ToString(), content, trigger);
-                UNUserNotificationCenter.Current.AddNotificationRequest(request, (err) =>
+                    var trigger =
+                        UNCalendarNotificationTrigger.CreateTrigger(
+                            GetNSDateComponentsFromDateTime(localNotification.NotifyTime), false);
+
+                    _notificationList.Add(localNotification.NotificationId.ToString());
+                    var request = UNNotificationRequest.FromIdentifier(localNotification.NotificationId.ToString(),
+                        content, trigger);
+                    UNUserNotificationCenter.Current.AddNotificationRequest(request, (err) => { });
+                }
+                else
                 {
-                });
+                    var fireDate = DateTime.Now;
+                    if (localNotification.NotifyTime.HasValue)
+                    {
+                        fireDate = localNotification.NotifyTime.Value;
+                    }
+
+                    userInfoDictionary.SetValueForKey(ExtraNotificationKey,
+                        new NSString(localNotification.NotificationId.ToString()));
+
+                    var notification = new UILocalNotification
+                    {
+                        FireDate = (NSDate)fireDate,
+                        AlertTitle = localNotification.Title,
+                        AlertBody = localNotification.Description,
+                        UserInfo = userInfoDictionary
+                    };
+
+                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
+        }
+
+        private NSDateComponents GetNSDateComponentsFromDateTime(DateTime? nullableDateTime)
+        {
+            if (!nullableDateTime.HasValue)
+            {
+                return new NSDateComponents
+                {
+                    Second = 1
+                };
+            }
+
+            var dateTime = nullableDateTime.Value;
+
+            return new NSDateComponents
+            {
+                Month = dateTime.Month,
+                Day = dateTime.Day,
+                Year = dateTime.Year,
+                Hour = dateTime.Hour,
+                Minute = dateTime.Minute,
+                Second = dateTime.Second
+            };
         }
 
         /// <summary>

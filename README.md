@@ -25,7 +25,9 @@ var notification = new Plugin.LocalNotification.LocalNotification
 {
     NotificationId = 100,
     Title = "Test",
-    Description = "Test Description"
+    Description = "Test Description",
+    ReturningData = "Dummy data", // Returning data when tapped on notification.
+    NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification.
 };
 notificationService.Show(notification);
 ```
@@ -72,11 +74,11 @@ You can set the notification Icon by setting the following property from inside 
 LocalNotificationService.NotificationIconId = Resource.Drawable.YOU_ICON_HERE
 ```
 
-or
+Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21)
 
-By adding icon.png to Resources\drawable
-
-<img src="Screenshots/AndroidNotificationIcon.png" alt="Android Notification Icon" >
+```XML
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+```
 
 #### Setup
 
