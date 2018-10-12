@@ -53,9 +53,14 @@
             You can use this identifier later to cancel a request that is still pending.
             </summary>
         </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.NotifyTime">
+            <summary>
+            Time to show the notification.
+            </summary>
+        </member>
         <member name="P:Plugin.LocalNotification.LocalNotification.ReturningData">
             <summary>
-            Returning data when click on notification.
+            Returning data when tapped on notification.
             </summary>
         </member>
         <member name="P:Plugin.LocalNotification.LocalNotification.Title">
@@ -73,6 +78,25 @@
             Returning data when tapped on notification.
             </summary>
         </member>
+        <member name="T:Plugin.LocalNotification.ObjectSerializer`1">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.ObjectSerializer`1.SerializeObject(`0)">
+            <summary>
+            Serialize Returning Data
+            </summary>
+            <param name="returningData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Plugin.LocalNotification.ObjectSerializer`1.DeserializeObject(System.String)">
+            <summary>
+            Deserialize Returning Data.
+            </summary>
+            <param name="returningData"></param>
+            <returns></returns>
+        </member>
         <member name="T:Plugin.LocalNotification.Platform.iOS.LocalNotificationDelegate">
             <inheritdoc />
         </member>
@@ -84,6 +108,16 @@
         </member>
         <member name="T:Plugin.LocalNotification.Platform.iOS.LocalNotificationService">
             <inheritdoc />
+        </member>
+        <member name="F:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.ExtraReturnData">
+            <summary>
+            Return Data Key.
+            </summary>
+        </member>
+        <member name="F:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.ExtraNotificationKey">
+            <summary>
+            Return Notification Key
+            </summary>
         </member>
         <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.#ctor">
             <inheritdoc />

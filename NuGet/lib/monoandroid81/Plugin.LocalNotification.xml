@@ -53,9 +53,14 @@
             You can use this identifier later to cancel a request that is still pending.
             </summary>
         </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.NotifyTime">
+            <summary>
+            Time to show the notification.
+            </summary>
+        </member>
         <member name="P:Plugin.LocalNotification.LocalNotification.ReturningData">
             <summary>
-            Returning data when click on notification.
+            Returning data when tapped on notification.
             </summary>
         </member>
         <member name="P:Plugin.LocalNotification.LocalNotification.Title">
@@ -73,35 +78,59 @@
             Returning data when tapped on notification.
             </summary>
         </member>
-        <member name="T:Plugin.LocalNotification.Platform.Android.LocalNotificationService">
+        <member name="T:Plugin.LocalNotification.ObjectSerializer`1">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.ObjectSerializer`1.SerializeObject(`0)">
+            <summary>
+            Serialize Returning Data
+            </summary>
+            <param name="returningData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Plugin.LocalNotification.ObjectSerializer`1.DeserializeObject(System.String)">
+            <summary>
+            Deserialize Returning Data.
+            </summary>
+            <param name="returningData"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Plugin.LocalNotification.Platform.Droid.LocalNotificationService">
             <inheritdoc />
         </member>
-        <member name="F:Plugin.LocalNotification.Platform.Android.LocalNotificationService.ExtraReturnData">
+        <member name="F:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.ExtraReturnData">
             <summary>
             Return Data Key.
             </summary>
         </member>
-        <member name="P:Plugin.LocalNotification.Platform.Android.LocalNotificationService.NotificationIconId">
+        <member name="F:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.ExtraReturnNotification">
+            <summary>
+            Return Notification Key.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.NotificationIconId">
             <summary>
             Get or Set Resource Icon to display.
             </summary>
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.#ctor">
+        <member name="M:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.#ctor">
             <inheritdoc />
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.NotifyNotificationTapped(Android.Content.Intent)">
+        <member name="M:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.NotifyNotificationTapped(Android.Content.Intent)">
             <summary>
             Notify Local Notification Tapped.
             </summary>
             <param name="intent"></param>
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.Cancel(System.Int32)">
+        <member name="M:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.Cancel(System.Int32)">
             <inheritdoc />
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.CancelAll">
+        <member name="M:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.CancelAll">
             <inheritdoc />
         </member>
-        <member name="M:Plugin.LocalNotification.Platform.Android.LocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
+        <member name="M:Plugin.LocalNotification.Platform.Droid.LocalNotificationService.Show(Plugin.LocalNotification.LocalNotification)">
             <inheritdoc />
         </member>
     </members>
