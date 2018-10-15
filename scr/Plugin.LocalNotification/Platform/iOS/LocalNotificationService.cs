@@ -156,15 +156,7 @@ namespace Plugin.LocalNotification.Platform.iOS
 
         private NSDateComponents GetNSDateComponentsFromDateTime(DateTime? nullableDateTime)
         {
-            if (!nullableDateTime.HasValue)
-            {
-                return new NSDateComponents
-                {
-                    Second = 1
-                };
-            }
-
-            var dateTime = nullableDateTime.Value;
+            var dateTime = nullableDateTime ?? DateTime.Now.AddSeconds(1);
 
             return new NSDateComponents
             {
