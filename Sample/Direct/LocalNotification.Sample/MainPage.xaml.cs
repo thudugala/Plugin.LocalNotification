@@ -37,7 +37,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                NotifyTime = DateTime.Now.AddSeconds(15)
+                //NotifyTime = DateTime.Now.AddSeconds(10)
             };
             
             notificationService.Show(notification);

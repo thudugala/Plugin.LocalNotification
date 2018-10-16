@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
 using Plugin.LocalNotification.Platform.iOS;
 using UIKit;
 
@@ -30,7 +31,11 @@ namespace LocalNotification.Sample.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            LocalNotificationService.NotifyNotificationTapped(notification);
+            //Change UIApplicationState to suit different situations
+            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+            {
+                LocalNotificationService.NotifyNotificationTapped(notification);
+            }
         }
     }
 }

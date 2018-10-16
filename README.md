@@ -120,7 +120,11 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            LocalNotificationService.NotifyNotificationTapped(notification);
+            //Change UIApplicationState to suit different situations
+            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+            {
+                LocalNotificationService.NotifyNotificationTapped(notification);
+            }
         }
 }
 ```
