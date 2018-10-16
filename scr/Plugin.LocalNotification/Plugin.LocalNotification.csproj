@@ -19,8 +19,8 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
     <Copyright>Copyright © Tharindu Thudugala</Copyright>
-    <Version>2.0.1</Version>
-    <PackageReleaseNotes>Fixed notification in iOS not poping up if NotifyTime is not set.</PackageReleaseNotes>
+    <Version>2.0.3</Version>
+    <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
