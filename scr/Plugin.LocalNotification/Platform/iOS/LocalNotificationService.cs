@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using UIKit;
 using UserNotifications;
+using Xamarin.Forms;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LocalNotificationService))]
 namespace Plugin.LocalNotification.Platform.iOS
@@ -114,7 +115,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                         Title = localNotification.Title,
                         Body = localNotification.Description,
                         Badge = localNotification.BadgeNumber,
-                        UserInfo = userInfoDictionary
+                        UserInfo = userInfoDictionary,
+                        Sound = UNNotificationSound.Default
                     };
 
                     var trigger =
@@ -128,7 +130,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
                 else
                 {
-                    var fireDate = DateTime.Now;
+                    var fireDate = DateTime.Now.AddSeconds(1);
                     if (localNotification.NotifyTime.HasValue)
                     {
                         fireDate = localNotification.NotifyTime.Value;
@@ -142,7 +144,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                         FireDate = (NSDate)fireDate,
                         AlertTitle = localNotification.Title,
                         AlertBody = localNotification.Description,
-                        UserInfo = userInfoDictionary
+                        ApplicationIconBadgeNumber = localNotification.BadgeNumber,
+                        UserInfo = userInfoDictionary,
+                        SoundName = UILocalNotification.DefaultSoundName
                     };
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
@@ -178,22 +182,28 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 var alertsAllowed = false;
 
-                UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
                 {
-                    alertsAllowed = (settings.AlertSetting == UNNotificationSetting.Enabled);
-                });
-                if (!alertsAllowed)
-                {
-                    if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                    UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
+                    {
+                        alertsAllowed = (settings.AlertSetting == UNNotificationSetting.Enabled);
+                    });
+                    if (!alertsAllowed)
                     {
                         // Ask the user for permission to get notifications on iOS 10.0+
                         UNUserNotificationCenter.Current.RequestAuthorization(
                             UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound,
                             (approved, error) => { });
                     }
-                    else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+
+                    UNUserNotificationCenter.Current.Delegate = new LocalNotificationDelegate();
+                }
+                else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+                {
+                    alertsAllowed = UIApplication.SharedApplication.CurrentUserNotificationSettings.Types !=
+                                    UIUserNotificationType.None;
+                    if (!alertsAllowed)
                     {
-                        // Ask the user for permission to get notifications on iOS 8.0+
                         var settings = UIUserNotificationSettings.GetSettingsForTypes(
                             UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
                             new NSSet());
@@ -201,11 +211,41 @@ namespace Plugin.LocalNotification.Platform.iOS
                         UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
                     }
                 }
-                UNUserNotificationCenter.Current.Delegate = new LocalNotificationDelegate();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+            }
+        }
+
+        /// <summary>
+        /// Show notification in iOS 8 , 9
+        /// </summary>
+        /// <param name="notification"></param>
+        public static void NotifyNotificationTapped(UILocalNotification notification)
+        {
+            try
+            {
+                var dictionary = notification.UserInfo;
+
+                if (!dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
+                {
+                    return;
+                }
+
+                var subscribeItem = new LocalNotificationTappedEvent
+                {
+                    Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
+                };
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    MessagingCenter.Instance.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
     }
