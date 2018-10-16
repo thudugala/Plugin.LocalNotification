@@ -221,7 +221,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(localNotification.Description));
                 builder.SetNumber(localNotification.BadgeNumber);
                 builder.SetAutoCancel(true);
-                builder.SetDefaults((int)(NotificationDefaults.Sound | NotificationDefaults.Vibrate));
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
