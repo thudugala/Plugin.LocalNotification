@@ -12,7 +12,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 |Platform|Supported|Version|Notes|
 | ------------------- | :-----------: | :------------------: | :------------------: |
-|Xamarin.iOS|Yes|iOS 7+| |
+|Xamarin.iOS|Yes|iOS 8+| |
 |Xamarin.Android|Yes|API 16+|Project should [target Android framework 8.1+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
 
 # Usage
@@ -117,6 +117,16 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 		
 		.....
 	}
+
+	// This method only requies for iOS 8 , 9
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+            //Change UIApplicationState to suit different situations
+            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+            {
+                LocalNotificationService.NotifyNotificationTapped(notification);
+            }
+        }
 }
 ```
 
