@@ -118,6 +118,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 		.....
 	}
 
+	// This method only requies for iOS 8 , 9
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
             //Change UIApplicationState to suit different situations
