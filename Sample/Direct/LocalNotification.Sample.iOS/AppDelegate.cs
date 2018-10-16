@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Foundation;
+﻿using Foundation;
 using Plugin.LocalNotification.Platform.iOS;
 using UIKit;
 
@@ -30,6 +26,11 @@ namespace LocalNotification.Sample.iOS
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
+        }
+
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+            LocalNotificationService.NotifyNotificationTapped(notification);
         }
     }
 }
