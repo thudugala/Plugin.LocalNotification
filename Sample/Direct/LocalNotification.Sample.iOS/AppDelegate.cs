@@ -29,6 +29,7 @@ namespace LocalNotification.Sample.iOS
             return base.FinishedLaunching(app, options);
         }
 
+		// This method only requires for iOS 8 , 9
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
             //Change UIApplicationState to suit different situations
