@@ -103,7 +103,12 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var userInfoDictionary = new NSMutableDictionary();
-                if (string.IsNullOrWhiteSpace(localNotification.ReturningData) == false)
+
+                if (string.IsNullOrWhiteSpace(localNotification.ReturningData))
+                {
+                    userInfoDictionary.SetValueForKey(NSString.Empty, ExtraReturnData);
+                }
+                else
                 {
                     userInfoDictionary.SetValueForKey(new NSString(localNotification.ReturningData), ExtraReturnData);
                 }
