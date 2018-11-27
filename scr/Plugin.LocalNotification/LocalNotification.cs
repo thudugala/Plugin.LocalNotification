@@ -47,5 +47,10 @@ namespace Plugin.LocalNotification
         /// Title for the notification.
         /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Android specific properties.
+        /// </summary>
+        public LocalNotificationAndroid Android { get; set; } = new LocalNotificationAndroid();
     }
 }

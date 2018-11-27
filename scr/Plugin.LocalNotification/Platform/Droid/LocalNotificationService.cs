@@ -196,12 +196,9 @@ namespace Plugin.LocalNotification.Platform.Droid
             _alarmManager.Set(AlarmType.RtcWakeup, triggerTime, pendingIntent);
         }
 
-        private bool CheckBootPermission()
-        {
-            return Application.Context.CheckSelfPermission("android.permission.RECEIVE_BOOT_COMPLETED") == Android.Content.PM.Permission.Granted;
-        }
-
-        private long NotifyTimeInMilliseconds(DateTime notifyTime)
+        private static bool CheckBootPermission() => Application.Context.CheckSelfPermission("android.permission.RECEIVE_BOOT_COMPLETED") == Android.Content.PM.Permission.Granted;
+        
+        private static long NotifyTimeInMilliseconds(DateTime notifyTime)
         {
             var utcTime = TimeZoneInfo.ConvertTimeToUtc(notifyTime);
             var epochDifference = (new DateTime(1970, 1, 1) - DateTime.MinValue).TotalSeconds;
@@ -220,7 +217,11 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetContentText(localNotification.Description);
                 builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(localNotification.Description));
                 builder.SetNumber(localNotification.BadgeNumber);
-                builder.SetAutoCancel(true);
+                builder.SetAutoCancel(localNotification.Android.AutoCancel);
+                if (localNotification.Android.TimeoutAfter.HasValue)
+                {
+                    builder.SetTimeoutAfter((long)localNotification.Android.TimeoutAfter.Value.TotalMilliseconds);
+                }
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
