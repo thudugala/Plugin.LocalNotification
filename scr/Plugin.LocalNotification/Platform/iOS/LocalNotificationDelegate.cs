@@ -22,6 +22,12 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var dictionary = response.Notification.Request.Content.UserInfo;
 
+
+                if (!dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
+                {
+                    return;
+                }
+
                 var subscribeItem = new LocalNotificationTappedEvent
                 {
                     Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
