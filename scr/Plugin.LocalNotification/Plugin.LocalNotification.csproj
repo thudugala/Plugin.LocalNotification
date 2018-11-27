@@ -7,7 +7,7 @@
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>ththlk,masonyc,TimNZ</Authors>
+    <Authors>Elvin (Tharindu) Thudugala,Yun Chen,Tim Fortune</Authors>
     <Company>Abel Software Limited</Company>
     <PackageTags>abel, xamarin forms, local notification, notification</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
@@ -19,7 +19,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
     <Copyright>Copyright © Tharindu Thudugala</Copyright>
-    <Version>2.0.3</Version>
+    <Version>2.0.4</Version>
     <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases</PackageReleaseNotes>
   </PropertyGroup>
 
