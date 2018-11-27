@@ -136,5 +136,11 @@
             Setup Local Notification
             </summary>
         </member>
+        <member name="M:Plugin.LocalNotification.Platform.iOS.LocalNotificationService.NotifyNotificationTapped(UIKit.UILocalNotification)">
+            <summary>
+            Show notification in iOS 8 , 9
+            </summary>
+            <param name="notification"></param>
+        </member>
     </members>
 </doc>
