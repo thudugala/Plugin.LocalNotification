@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Plugin.LocalNotification
 {
@@ -8,14 +7,6 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class LocalNotification
     {
-        /// <summary>
-        ///
-        /// </summary>
-        public LocalNotification()
-        {
-            
-        }
-
         /// <summary>
         /// Number of the badge displays on the Home Screen.
         /// </summary>
