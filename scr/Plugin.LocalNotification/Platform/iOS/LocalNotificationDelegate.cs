@@ -22,7 +22,6 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var dictionary = response.Notification.Request.Content.UserInfo;
 
-
                 if (!dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
                 {
                     return;
