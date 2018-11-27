@@ -13,7 +13,7 @@
     <description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</description>
     <releaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases</releaseNotes>
     <copyright>Copyright © Tharindu Thudugala</copyright>
-    <tags>abel, xamarin forms, local notification, notification</tags>
+    <tags>abel, xamarin.forms, local.notification, notification</tags>
     <repository type="git" url="https://github.com/tmt242001/Plugin.LocalNotification" />
   </metadata>
   <files>
