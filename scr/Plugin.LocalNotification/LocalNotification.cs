@@ -42,6 +42,6 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public LocalNotificationAndroid Android { get; set; } = new LocalNotificationAndroid();
+        public AndroidOptions Android { get; set; } = new AndroidOptions();
     }
 }

@@ -5,7 +5,7 @@ namespace Plugin.LocalNotification
     /// <summary>
     /// LocalNotification for Android
     /// </summary>
-    public class LocalNotificationAndroid
+    public class AndroidOptions
     {
         /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
