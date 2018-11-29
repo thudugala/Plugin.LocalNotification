@@ -8,8 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Elvin (Tharindu) Thudugala,Yun Chen,Tim Fortune</Authors>
-    <Company>Abel Software Limited</Company>
-    <PackageTags>abel, xamarin forms, local notification, notification</PackageTags>
+    <PackageTags>abel, xamarin.forms, local.notification, notification</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageProjectUrl>https://github.com/tmt242001/Plugin.LocalNotification</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tmt242001/Plugin.LocalNotification</RepositoryUrl>
@@ -20,7 +19,8 @@
     <PackageIconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
     <Copyright>Copyright © Tharindu Thudugala</Copyright>
     <Version>2.0.4</Version>
-    <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases</PackageReleaseNotes>
+    <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases </PackageReleaseNotes>
+    <owners>ththlk,masonyc,TimNZ</owners>
   </PropertyGroup>
 
   <ItemGroup>
