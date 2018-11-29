@@ -1,5 +1,7 @@
 <img src="Screenshots/icon.png" alt="icon" width="64px" >
 
+[![Build status](https://ci.appveyor.com/api/projects/status/e02wtx7qx3yf10xa?svg=true)](https://ci.appveyor.com/project/tmt242001/plugin-localnotification)
+
 # Plugin.LocalNotification
 The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.
 
