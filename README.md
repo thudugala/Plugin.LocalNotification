@@ -129,7 +129,9 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
         }
 }
 ```
+# Screen Record
 
+<img src="Screenshots/screenRecord.gif" alt="Screen Record"  width="512px" >
 
 # Limitations
 
