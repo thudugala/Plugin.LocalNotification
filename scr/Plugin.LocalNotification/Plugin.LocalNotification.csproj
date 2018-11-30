@@ -6,10 +6,12 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en</NeutralLanguage>
+    <LangVersion>latest</LangVersion>
+
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Elvin (Tharindu) Thudugala,Yun Chen,Tim Fortune</Authors>
     <PackageTags>abel, xamarin.forms, local.notification, notification</PackageTags>
-    <NeutralLanguage>en</NeutralLanguage>
     <PackageProjectUrl>https://github.com/tmt242001/Plugin.LocalNotification</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tmt242001/Plugin.LocalNotification</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -21,12 +23,20 @@
     <Version>2.0.4</Version>
     <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases </PackageReleaseNotes>
     <owners>ththlk,masonyc,TimNZ</owners>
+
+    <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- Optional: Include the PDB in the built .nupkg -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
       <Version>3.2.0.871581</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
   </ItemGroup>
 
   <ItemGroup>
