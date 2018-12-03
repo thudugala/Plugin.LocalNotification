@@ -4,6 +4,21 @@
         <name>Plugin.LocalNotification</name>
     </assembly>
     <members>
+        <member name="T:Plugin.LocalNotification.AndroidOptions">
+            <summary>
+            LocalNotification for Android
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.AndroidOptions.AutoCancel">
+            <summary>
+            Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.AndroidOptions.TimeoutAfter">
+            <summary>
+            Specifies the time at which this notification should be canceled, if it is not already canceled.
+            </summary>
+        </member>
         <member name="T:Plugin.LocalNotification.ILocalNotificationService">
             <summary>
             Used to display platform specific local notifications.
@@ -30,11 +45,6 @@
             <summary>
             LocalNotification
             </summary>
-        </member>
-        <member name="M:Plugin.LocalNotification.LocalNotification.#ctor">
-             <summary>
-            
-             </summary>
         </member>
         <member name="P:Plugin.LocalNotification.LocalNotification.BadgeNumber">
             <summary>
@@ -66,6 +76,11 @@
         <member name="P:Plugin.LocalNotification.LocalNotification.Title">
             <summary>
             Title for the notification.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.LocalNotification.Android">
+            <summary>
+            Android specific properties.
             </summary>
         </member>
         <member name="T:Plugin.LocalNotification.LocalNotificationTappedEvent">
