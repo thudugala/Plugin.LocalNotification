@@ -141,7 +141,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 # SourceLink Support
 
 In Visual Studio, confirm that SourceLink is enabled. 
-Alsco, Turn off "Just My Code" since, well, this isn't your code.
+Also, Turn off "Just My Code" since, well, this isn't your code.
 
 https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 
