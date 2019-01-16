@@ -138,6 +138,13 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 <img src="Screenshots/screenRecord.gif" alt="Screen Record"  width="512px" >
 
+# SourceLink Support
+
+In Visual Studio, confirm that SourceLink is enabled. 
+Also, Turn off "Just My Code" since, well, this isn't your code.
+
+https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
+
 # Limitations
 
 Only support iOS and Android for the moment. 
