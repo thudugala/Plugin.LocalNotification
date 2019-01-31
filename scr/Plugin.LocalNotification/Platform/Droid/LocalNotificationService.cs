@@ -200,14 +200,12 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private static bool CheckBootPermission()
         {
-            var permission = "android.permission.RECEIVE_BOOT_COMPLETED";
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-            {
-                return Application.Context.CheckSelfPermission(permission) 
-                       == Permission.Granted;
-            }
-            return PermissionChecker.CheckSelfPermission(Application.Context, permission)
-                     == PermissionChecker.PermissionGranted;
+            const string permission = "android.permission.RECEIVE_BOOT_COMPLETED";
+            return Build.VERSION.SdkInt >= BuildVersionCodes.M
+                ? Application.Context.CheckSelfPermission(permission)
+                  == Permission.Granted
+                : PermissionChecker.CheckSelfPermission(Application.Context, permission)
+                  == PermissionChecker.PermissionGranted;
         }
 
         private static long NotifyTimeInMilliseconds(DateTime notifyTime)
