@@ -5,6 +5,8 @@ using Android.OS;
 using Android.Support.V4.App;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
+using Android.Content.PM;
+using Android.Support.V4.Content;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LocalNotificationService))]
 namespace Plugin.LocalNotification.Platform.Droid
@@ -196,8 +198,18 @@ namespace Plugin.LocalNotification.Platform.Droid
             _alarmManager.Set(AlarmType.RtcWakeup, triggerTime, pendingIntent);
         }
 
-        private static bool CheckBootPermission() => Application.Context.CheckSelfPermission("android.permission.RECEIVE_BOOT_COMPLETED") == Android.Content.PM.Permission.Granted;
-        
+        private static bool CheckBootPermission()
+        {
+            var permission = "android.permission.RECEIVE_BOOT_COMPLETED";
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                return Application.Context.CheckSelfPermission(permission) 
+                       == Permission.Granted;
+            }
+            return PermissionChecker.CheckSelfPermission(Application.Context, permission)
+                     == PermissionChecker.PermissionGranted;
+        }
+
         private static long NotifyTimeInMilliseconds(DateTime notifyTime)
         {
             var utcTime = TimeZoneInfo.ConvertTimeToUtc(notifyTime);
