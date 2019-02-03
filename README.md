@@ -93,6 +93,12 @@ Include the following code in the OnNewIntent() method of MainActivity:
 ```csharp
 public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
 {
+	protected override void OnCreate(Bundle savedInstanceState)
+	{
+		.....	
+		LocalNotificationService.NotifyNotificationTapped(Intent);
+	}
+
 	protected override void OnNewIntent(Intent intent)
 	{
 		LocalNotificationService.NotifyNotificationTapped(intent);
