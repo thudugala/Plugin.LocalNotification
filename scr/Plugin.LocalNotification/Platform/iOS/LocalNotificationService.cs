@@ -159,7 +159,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private NSDateComponents GetNSDateComponentsFromDateTime(DateTime? nullableDateTime)
+        private static NSDateComponents GetNSDateComponentsFromDateTime(DateTime? nullableDateTime)
         {
             var dateTime = nullableDateTime ?? DateTime.Now.AddSeconds(1);
 
@@ -187,8 +187,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
                     {
-                        alertsAllowed = (settings.AlertSetting == UNNotificationSetting.Enabled);
+                        alertsAllowed = settings.AlertSetting == UNNotificationSetting.Enabled;
                     });
+
                     if (!alertsAllowed)
                     {
                         // Ask the user for permission to get notifications on iOS 10.0+
@@ -203,14 +204,16 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     alertsAllowed = UIApplication.SharedApplication.CurrentUserNotificationSettings.Types !=
                                     UIUserNotificationType.None;
-                    if (!alertsAllowed)
+                    if (alertsAllowed)
                     {
-                        var settings = UIUserNotificationSettings.GetSettingsForTypes(
-                            UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
-                            new NSSet());
-
-                        UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
+                        return;
                     }
+
+                    var settings = UIUserNotificationSettings.GetSettingsForTypes(
+                        UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+                        new NSSet());
+
+                    UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
                 }
             }
             catch (Exception ex)

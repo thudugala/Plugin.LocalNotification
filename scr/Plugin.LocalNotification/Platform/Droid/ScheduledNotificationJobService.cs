@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System.Threading.Tasks;
+using Android.App;
 using Android.App.Job;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -12,13 +13,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 return false;
             }
+            
+            Task.Run(() =>
+            {
+                var serializedNotification = jobParams.Extras.GetString(LocalNotificationService.ExtraReturnNotification);
+                var notification = ObjectSerializer<LocalNotification>.DeserializeObject(serializedNotification);
 
-            var serializedNotification = jobParams.Extras.GetString(LocalNotificationService.ExtraReturnNotification);
-            var notification = ObjectSerializer<LocalNotification>.DeserializeObject(serializedNotification);
-
-            var notificationService = Xamarin.Forms.DependencyService.Get<ILocalNotificationService>();
-            notificationService.Show(notification);
-
+                var notificationService = new LocalNotificationService();
+                notificationService.Show(notification);
+                JobFinished(jobParams, false);
+            });
+            
             return true;
         }
 
