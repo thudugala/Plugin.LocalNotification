@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
     <Copyright>Copyright © Tharindu Thudugala</Copyright>
-    <Version>2.0.7</Version>
+    <Version>2.0.8</Version>
     <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases </PackageReleaseNotes>
     <owners>ththlk,masonyc,TimNZ</owners>
 
@@ -28,6 +28,11 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
     <!-- Optional: Include the PDB in the built .nupkg -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
