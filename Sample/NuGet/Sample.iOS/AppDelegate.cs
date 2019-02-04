@@ -5,6 +5,8 @@ using System.Linq;
 using Foundation;
 using Plugin.LocalNotification.Platform.iOS;
 using UIKit;
+using UserNotifications;
+using Xamarin.Forms;
 
 namespace LocalNotification.Sample.iOS
 {
@@ -39,6 +41,31 @@ namespace LocalNotification.Sample.iOS
             if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
             {
                 LocalNotificationService.NotifyNotificationTapped(notification);
+            }
+        }
+        
+        public override void WillEnterForeground(UIApplication uiApplication)
+        {
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                //Remove badges on app enter foreground if user cleared the notification in the notification panel 
+                UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationList) =>
+                {
+                    if (notificationList.Any())
+                    {
+                        return;
+                    }
+
+                    var appBadges = 0;
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+                    });
+                });
+            }
+            else
+            {
+                base.WillEnterForeground(uiApplication);
             }
         }
     }
