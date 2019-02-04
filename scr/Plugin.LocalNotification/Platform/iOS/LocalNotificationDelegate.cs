@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using UIKit;
 using UserNotifications;
 using Xamarin.Forms;
 
@@ -31,7 +32,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
                 };
+                var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber - Convert.ToInt32(response.Notification.Request.Content.Badge.ToString());
                 MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
+                UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
             }
             catch (Exception ex)
             {
