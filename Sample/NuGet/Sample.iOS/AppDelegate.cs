@@ -46,18 +46,27 @@ namespace LocalNotification.Sample.iOS
         
         public override void WillEnterForeground(UIApplication uiApplication)
         {
-            //Remove badges on app enter foreground if user cleared the notification in the notification panel 
-            UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationList) => {
-                if (notificationList.Any())
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                //Remove badges on app enter foreground if user cleared the notification in the notification panel 
+                UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationList) =>
                 {
-                    return;
-                }
-                var appBadges = 0;
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+                    if (notificationList.Any())
+                    {
+                        return;
+                    }
+
+                    var appBadges = 0;
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+                    });
                 });
-            });
+            }
+            else
+            {
+                base.WillEnterForeground(uiApplication);
+            }
         }
     }
 }
