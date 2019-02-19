@@ -1,12 +1,12 @@
 ﻿using Android.App;
 using Android.App.Job;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Support.V4.Content;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
-using Android.Content.PM;
-using Android.Support.V4.Content;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LocalNotificationService))]
 namespace Plugin.LocalNotification.Platform.Droid
@@ -39,11 +39,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
-                _notificationManager = Application.Context.GetSystemService(Android.Content.Context.NotificationService) as NotificationManager;
-                _alarmManager = Application.Context.GetSystemService(Android.Content.Context.AlarmService) as AlarmManager;
+                _notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+                _alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 {
-                    _jobScheduler = Application.Context.GetSystemService(Android.Content.Context.JobSchedulerService) as JobScheduler;
+                    _jobScheduler = Application.Context.GetSystemService(Context.JobSchedulerService) as JobScheduler;
                 }
             }
             catch (Exception ex)
@@ -228,6 +228,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(localNotification.Description));
                 builder.SetNumber(localNotification.BadgeNumber);
                 builder.SetAutoCancel(localNotification.Android.AutoCancel);
+                builder.SetPriority((int)localNotification.Android.Priority);
                 if (localNotification.Android.TimeoutAfter.HasValue)
                 {
                     builder.SetTimeoutAfter((long)localNotification.Android.TimeoutAfter.Value.TotalMilliseconds);
@@ -237,7 +238,26 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     var channelId = $"{Application.Context.PackageName}.general";
 
-                    var channel = new NotificationChannel(channelId, "General", NotificationImportance.Default);
+                    var importance = NotificationImportance.Default;
+                    switch (localNotification.Android.Priority)
+                    {
+                        case NotificationPriority.Min:
+                            importance = NotificationImportance.Min;
+                            break;
+
+                        case NotificationPriority.Low:
+                            importance = NotificationImportance.Low;
+                            break;
+
+                        case NotificationPriority.High:
+                            importance = NotificationImportance.High;
+                            break;
+
+                        case NotificationPriority.Max:
+                            importance = NotificationImportance.Max;
+                            break;
+                    }
+                    var channel = new NotificationChannel(channelId, "General", importance);
 
                     _notificationManager.CreateNotificationChannel(channel);
 
