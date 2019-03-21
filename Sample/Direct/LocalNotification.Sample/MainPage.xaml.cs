@@ -15,6 +15,8 @@ namespace LocalNotification.Sample
         public MainPage()
         {
             InitializeComponent();
+            NotifyDatePicker.MinimumDate = DateTime.Today;
+            NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -27,6 +29,12 @@ namespace LocalNotification.Sample
                 _tapCount.ToString()
             };
 
+            var notifyDateTime = NotifyDatePicker.Date.Add(NotifyTimePicker.Time);
+            if (notifyDateTime <= DateTime.Now)
+            {
+                notifyDateTime = DateTime.Now.AddSeconds(10);
+            }
+
             var serializeReturningData = ObjectSerializer<List<string>>.SerializeObject(list);
 
             var notificationService = DependencyService.Get<ILocalNotificationService>();
@@ -37,7 +45,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                //NotifyTime = DateTime.Now.AddSeconds(10)
+                NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?) null // if not specified notification will show immediately. 
             };
             
             notificationService.Show(notification);
