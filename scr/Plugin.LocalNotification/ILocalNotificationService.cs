@@ -19,7 +19,18 @@
         /// <summary>
         /// Send a local notification to the device.
         /// </summary>
-        /// <param name="localNotification"></param>
-        void Show(LocalNotification localNotification);
+        /// <param name="localNotificationRequest"></param>
+        void Show(LocalNotificationRequest localNotificationRequest);
+
+        /// <summary>
+        /// fires when notification popup is tapped.
+        /// </summary>
+        event LocalNotificationTappedEventHandler NotificationTapped;
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        void OnNotificationTapped(LocalNotificationTappedEventArgs e);
     }
 }

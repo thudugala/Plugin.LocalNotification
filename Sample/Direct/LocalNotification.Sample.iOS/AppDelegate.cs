@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Foundation;
-using Plugin.LocalNotification.Platform.iOS;
+using Plugin.LocalNotification;
 using UIKit;
 using UserNotifications;
 using Xamarin.Forms;
@@ -24,47 +24,16 @@ namespace LocalNotification.Sample.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-
-            LocalNotificationService.Init();
+            CrossLocalNotificationService.Init();
 
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
         }
-
-        // This method only requires for iOS 8 , 9
-        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
-        {
-            //Change UIApplicationState to suit different situations
-            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
-            {
-                LocalNotificationService.NotifyNotificationTapped(notification);
-            }
-        }
-
+        
         public override void WillEnterForeground(UIApplication uiApplication)
         {
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                //Remove badges on app enter foreground if user cleared the notification in the notification panel 
-                UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationList) =>
-                {
-                    if (notificationList.Any())
-                    {
-                        return;
-                    }
-
-                    var appBadges = 0;
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
-                    });
-                });
-            }
-            else
-            {
-                base.WillEnterForeground(uiApplication);
-            }
+            CrossLocalNotificationService.ResetApplicationIconBadgeNumber(uiApplication);
         }
     }
 }

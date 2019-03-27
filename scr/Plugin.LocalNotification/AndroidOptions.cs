@@ -3,7 +3,7 @@
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// LocalNotification for Android
+    /// LocalNotificationRequest for Android
     /// </summary>
     public class AndroidOptions
     {

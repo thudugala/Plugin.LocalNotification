@@ -13,13 +13,11 @@ namespace LocalNotification.Sample
         {
             InitializeComponent();
 
-            // Local Notification tap event listener
-            MessagingCenter.Instance.Subscribe<LocalNotificationTappedEvent>(this,
-                typeof(LocalNotificationTappedEvent).FullName, LoadPageFromNotification);
+            
 
             GoToMainPage();
         }
-
+        
         public new static App Current => Application.Current as App;
 
         public void GoToMainPage()
@@ -39,10 +37,10 @@ namespace LocalNotification.Sample
 
         protected override void OnStart()
         {
-            // Handle when your app starts
+            CrossLocalNotificationService.Current.NotificationTapped += LoadPageFromNotification;
         }
 
-        private void LoadPageFromNotification(LocalNotificationTappedEvent e)
+        private void LoadPageFromNotification(LocalNotificationTappedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(e.Data))
             {

@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Plugin.LocalNotification;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Plugin.LocalNotification;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -37,18 +34,17 @@ namespace LocalNotification.Sample
 
             var serializeReturningData = ObjectSerializer<List<string>>.SerializeObject(list);
 
-            var notificationService = DependencyService.Get<ILocalNotificationService>();
-            var notification = new Plugin.LocalNotification.LocalNotification
+            var request = new LocalNotificationRequest
             {
                 NotificationId = 100,
                 Title = "Test",
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?) null // if not specified notification will show immediately. 
+                NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?)null // if not specified notification will show immediately.
             };
-            
-            notificationService.Show(notification);
+
+            CrossLocalNotificationService.Current.Show(request);
         }
     }
 }

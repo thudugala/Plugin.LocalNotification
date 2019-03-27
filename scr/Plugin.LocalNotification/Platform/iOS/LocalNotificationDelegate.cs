@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using UIKit;
 using UserNotifications;
-using Xamarin.Forms;
 
 namespace Plugin.LocalNotification.Platform.iOS
 {
@@ -23,18 +22,19 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var dictionary = response.Notification.Request.Content.UserInfo;
 
-                if (!dictionary.ContainsKey(LocalNotificationService.ExtraReturnData))
+                if (!dictionary.ContainsKey(CrossLocalNotificationService.ExtraReturnDataIos))
                 {
                     return;
                 }
 
-                var subscribeItem = new LocalNotificationTappedEvent
+                var subscribeItem = new LocalNotificationTappedEventArgs
                 {
-                    Data = dictionary[LocalNotificationService.ExtraReturnData].ToString()
+                    Data = dictionary[CrossLocalNotificationService.ExtraReturnDataIos].ToString()
                 };
                 var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber - Convert.ToInt32(response.Notification.Request.Content.Badge.ToString());
-                MessagingCenter.Send(subscribeItem, typeof(LocalNotificationTappedEvent).FullName);
                 UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+
+                CrossLocalNotificationService.Current.OnNotificationTapped(subscribeItem);
             }
             catch (Exception ex)
             {
