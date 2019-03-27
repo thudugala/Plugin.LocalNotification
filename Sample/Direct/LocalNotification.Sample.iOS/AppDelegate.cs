@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Foundation;
-using Plugin.LocalNotification;
 using UIKit;
 using UserNotifications;
 using Xamarin.Forms;
@@ -24,8 +23,7 @@ namespace LocalNotification.Sample.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            CrossLocalNotificationService.Init();
-
+            Plugin.LocalNotification.NotificationCenter.Init();
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
@@ -33,7 +31,7 @@ namespace LocalNotification.Sample.iOS
         
         public override void WillEnterForeground(UIApplication uiApplication)
         {
-            CrossLocalNotificationService.ResetApplicationIconBadgeNumber(uiApplication);
+            Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
         }
     }
 }

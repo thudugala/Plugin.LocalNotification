@@ -22,19 +22,19 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var dictionary = response.Notification.Request.Content.UserInfo;
 
-                if (!dictionary.ContainsKey(CrossLocalNotificationService.ExtraReturnDataIos))
+                if (!dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos))
                 {
                     return;
                 }
 
-                var subscribeItem = new LocalNotificationTappedEventArgs
+                var subscribeItem = new NotificationTappedEventArgs
                 {
-                    Data = dictionary[CrossLocalNotificationService.ExtraReturnDataIos].ToString()
+                    Data = dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
                 };
                 var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber - Convert.ToInt32(response.Notification.Request.Content.Badge.ToString());
                 UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
 
-                CrossLocalNotificationService.Current.OnNotificationTapped(subscribeItem);
+                NotificationCenter.Current.OnNotificationTapped(subscribeItem);
             }
             catch (Exception ex)
             {

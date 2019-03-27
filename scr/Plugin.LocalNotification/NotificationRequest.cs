@@ -3,9 +3,9 @@
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// LocalNotificationRequest
+    /// NotificationRequest
     /// </summary>
-    public class LocalNotificationRequest
+    public class NotificationRequest
     {
         /// <summary>
         /// Number of the badge displays on the Home Screen.

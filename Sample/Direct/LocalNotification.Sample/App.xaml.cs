@@ -13,7 +13,7 @@ namespace LocalNotification.Sample
         {
             InitializeComponent();
 
-            
+            NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
             GoToMainPage();
         }
@@ -37,10 +37,10 @@ namespace LocalNotification.Sample
 
         protected override void OnStart()
         {
-            CrossLocalNotificationService.Current.NotificationTapped += LoadPageFromNotification;
+            
         }
 
-        private void LoadPageFromNotification(LocalNotificationTappedEventArgs e)
+        private void LoadPageFromNotification(NotificationTappedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(e.Data))
             {

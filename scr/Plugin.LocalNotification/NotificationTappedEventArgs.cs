@@ -6,12 +6,12 @@ namespace Plugin.LocalNotification
     /// 
     /// </summary>
     /// <param name="e"></param>
-    public delegate void LocalNotificationTappedEventHandler(LocalNotificationTappedEventArgs e);
+    public delegate void NotificationTappedEventHandler(NotificationTappedEventArgs e);
 
     /// <summary>
     /// Returning event when tapped on notification.
     /// </summary>
-    public class LocalNotificationTappedEventArgs : EventArgs
+    public class NotificationTappedEventArgs : EventArgs
     {
         /// <summary>
         /// Returning data when tapped on notification.

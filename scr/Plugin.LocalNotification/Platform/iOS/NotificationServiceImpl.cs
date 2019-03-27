@@ -9,21 +9,21 @@ namespace Plugin.LocalNotification.Platform.iOS
 {
     /// <inheritdoc />
     [Foundation.Preserve]
-    public class LocalNotificationServiceImpl : ILocalNotificationService
+    public class NotificationServiceImpl : INotificationService
     {
         private readonly List<string> _notificationList;
 
         /// <inheritdoc />
-        public event LocalNotificationTappedEventHandler NotificationTapped;
+        public event NotificationTappedEventHandler NotificationTapped;
 
         /// <inheritdoc />
-        public void OnNotificationTapped(LocalNotificationTappedEventArgs e)
+        public void OnNotificationTapped(NotificationTappedEventArgs e)
         {
             NotificationTapped?.Invoke(e);
         }
 
         /// <inheritdoc />
-        public LocalNotificationServiceImpl()
+        public NotificationServiceImpl()
         {
             _notificationList = new List<string>();
         }
@@ -71,7 +71,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public void Show(LocalNotificationRequest localNotificationRequest)
+        public void Show(NotificationRequest notificationRequest)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                if (localNotificationRequest is null)
+                if (notificationRequest is null)
                 {
                     return;
                 }
@@ -88,25 +88,25 @@ namespace Plugin.LocalNotification.Platform.iOS
                 var userInfoDictionary = new NSMutableDictionary();
 
                 userInfoDictionary.SetValueForKey(
-                    string.IsNullOrWhiteSpace(localNotificationRequest.ReturningData)
+                    string.IsNullOrWhiteSpace(notificationRequest.ReturningData)
                         ? NSString.Empty
-                        : new NSString(localNotificationRequest.ReturningData), CrossLocalNotificationService.ExtraReturnDataIos);
+                        : new NSString(notificationRequest.ReturningData), NotificationCenter.ExtraReturnDataIos);
 
                 var content = new UNMutableNotificationContent
                 {
-                    Title = localNotificationRequest.Title,
-                    Body = localNotificationRequest.Description,
-                    Badge = localNotificationRequest.BadgeNumber,
+                    Title = notificationRequest.Title,
+                    Body = notificationRequest.Description,
+                    Badge = notificationRequest.BadgeNumber,
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default
                 };
 
                 var trigger =
                     UNCalendarNotificationTrigger.CreateTrigger(
-                        GetNsDateComponentsFromDateTime(localNotificationRequest.NotifyTime), false);
+                        GetNsDateComponentsFromDateTime(notificationRequest.NotifyTime), false);
 
-                _notificationList.Add(localNotificationRequest.NotificationId.ToString());
-                var request = UNNotificationRequest.FromIdentifier(localNotificationRequest.NotificationId.ToString(),
+                _notificationList.Add(notificationRequest.NotificationId.ToString());
+                var request = UNNotificationRequest.FromIdentifier(notificationRequest.NotificationId.ToString(),
                     content, trigger);
 
                 UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);

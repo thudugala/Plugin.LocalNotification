@@ -21,11 +21,11 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>10.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>Local Notification Sample</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.LocalNotification.Sample</string>
+	<string>com.localNotification.sample</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>CFBundleIconFiles</key>

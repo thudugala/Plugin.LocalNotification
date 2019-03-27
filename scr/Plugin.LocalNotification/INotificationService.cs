@@ -3,7 +3,7 @@
     /// <summary>
     /// Used to display platform specific local notifications.
     /// </summary>
-    public interface ILocalNotificationService
+    public interface INotificationService
     {
         /// <summary>
         /// Cancel a notification match with the Id
@@ -19,18 +19,18 @@
         /// <summary>
         /// Send a local notification to the device.
         /// </summary>
-        /// <param name="localNotificationRequest"></param>
-        void Show(LocalNotificationRequest localNotificationRequest);
+        /// <param name="notificationRequest"></param>
+        void Show(NotificationRequest notificationRequest);
 
         /// <summary>
         /// fires when notification popup is tapped.
         /// </summary>
-        event LocalNotificationTappedEventHandler NotificationTapped;
+        event NotificationTappedEventHandler NotificationTapped;
 
         /// <summary>
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
-        void OnNotificationTapped(LocalNotificationTappedEventArgs e);
+        void OnNotificationTapped(NotificationTappedEventArgs e);
     }
 }

@@ -5,14 +5,14 @@ namespace Plugin.LocalNotification
     /// <summary>
     ///
     /// </summary>
-    public static partial class CrossLocalNotificationService
+    public static partial class NotificationCenter
     {
-        private static ILocalNotificationService _current;
+        private static INotificationService _current;
 
         /// <summary>
         ///
         /// </summary>
-        public static ILocalNotificationService Current
+        public static INotificationService Current
         {
             get =>
                 _current ?? throw new ArgumentException(

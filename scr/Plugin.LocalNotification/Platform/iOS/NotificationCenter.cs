@@ -8,7 +8,7 @@ using UserNotifications;
 
 namespace Plugin.LocalNotification
 {
-    public static partial class CrossLocalNotificationService
+    public static partial class NotificationCenter
     {
         /// <summary>
         /// Return Data Key.
@@ -22,7 +22,7 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                Current = new Platform.iOS.LocalNotificationServiceImpl();
+                Current = new Platform.iOS.NotificationServiceImpl();
 
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
                 {

@@ -11,7 +11,7 @@ using Plugin.LocalNotification;
 
 namespace LocalNotification.Sample.Droid
 {
-    [Activity(Label = "LocalNotificationRequest.Sample", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "LocalNotification.Sample", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -21,15 +21,15 @@ namespace LocalNotification.Sample.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            CrossLocalNotificationService.Init();
+            NotificationCenter.Init();
             LoadApplication(new App());
 
-            CrossLocalNotificationService.NotifyNotificationTapped(this.Intent);
+            NotificationCenter.NotifyNotificationTapped(this.Intent);
         }
 
         protected override void OnNewIntent(Intent intent)
         {
-            CrossLocalNotificationService.NotifyNotificationTapped(intent);
+            NotificationCenter.NotifyNotificationTapped(intent);
             base.OnNewIntent(intent);
         }
     }

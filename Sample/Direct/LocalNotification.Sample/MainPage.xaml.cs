@@ -34,7 +34,7 @@ namespace LocalNotification.Sample
 
             var serializeReturningData = ObjectSerializer<List<string>>.SerializeObject(list);
 
-            var request = new LocalNotificationRequest
+            var request = new NotificationRequest
             {
                 NotificationId = 100,
                 Title = "Test",
@@ -44,7 +44,7 @@ namespace LocalNotification.Sample
                 NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?)null // if not specified notification will show immediately.
             };
 
-            CrossLocalNotificationService.Current.Show(request);
+            NotificationCenter.Current.Show(request);
         }
     }
 }

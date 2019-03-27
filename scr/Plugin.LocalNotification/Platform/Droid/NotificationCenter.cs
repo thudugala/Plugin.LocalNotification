@@ -3,7 +3,7 @@ using Android.Content;
 
 namespace Plugin.LocalNotification
 {
-    public static partial class CrossLocalNotificationService
+    public static partial class NotificationCenter
     {
         /// <summary>
         /// Return Data Key.
@@ -22,7 +22,7 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                Current = new Platform.Droid.LocalNotificationServiceImpl();
+                Current = new Platform.Droid.NotificationServiceImpl();
             }
             catch (Exception ex)
             {
@@ -44,7 +44,7 @@ namespace Plugin.LocalNotification
                     return;
                 }
 
-                var subscribeItem = new LocalNotificationTappedEventArgs
+                var subscribeItem = new NotificationTappedEventArgs
                 {
                     Data = intent.GetStringExtra(ExtraReturnDataAndroid)
                 };

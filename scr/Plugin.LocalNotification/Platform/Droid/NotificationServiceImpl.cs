@@ -11,7 +11,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <inheritdoc />
     [Android.Runtime.Preserve]
-    public class LocalNotificationServiceImpl : ILocalNotificationService
+    public class NotificationServiceImpl : INotificationService
     {
         /// <summary>
         /// Get or Set Resource Icon to display.
@@ -22,16 +22,16 @@ namespace Plugin.LocalNotification.Platform.Droid
         private readonly JobScheduler _jobScheduler;
 
         /// <inheritdoc />
-        public event LocalNotificationTappedEventHandler NotificationTapped;
+        public event NotificationTappedEventHandler NotificationTapped;
 
         /// <inheritdoc />
-        public void OnNotificationTapped(LocalNotificationTappedEventArgs e)
+        public void OnNotificationTapped(NotificationTappedEventArgs e)
         {
             NotificationTapped?.Invoke(e);
         }
 
         /// <inheritdoc />
-        public LocalNotificationServiceImpl()
+        public NotificationServiceImpl()
         {
             try
             {
@@ -88,51 +88,51 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public void Show(LocalNotificationRequest localNotificationRequest)
+        public void Show(NotificationRequest notificationRequest)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
                 return;
             }
 
-            if (localNotificationRequest is null)
+            if (notificationRequest is null)
             {
                 return;
             }
 
-            if (localNotificationRequest.NotifyTime.HasValue)
+            if (notificationRequest.NotifyTime.HasValue)
             {
-                ShowLater(localNotificationRequest);
+                ShowLater(notificationRequest);
             }
             else
             {
-                ShowNow(localNotificationRequest);
+                ShowNow(notificationRequest);
             }
         }
 
-        private void ShowLater(LocalNotificationRequest localNotificationRequest)
+        private void ShowLater(NotificationRequest notificationRequest)
         {
-            if (localNotificationRequest.NotifyTime.HasValue == false)
+            if (notificationRequest.NotifyTime.HasValue == false)
             {
                 return;
             }
 
-            var triggerTime = NotifyTimeInMilliseconds(localNotificationRequest.NotifyTime.Value);
+            var triggerTime = NotifyTimeInMilliseconds(notificationRequest.NotifyTime.Value);
 
-            localNotificationRequest.NotifyTime = null;
+            notificationRequest.NotifyTime = null;
 
-            var serializedNotification = ObjectSerializer<LocalNotificationRequest>.SerializeObject(localNotificationRequest);
+            var serializedNotification = ObjectSerializer<NotificationRequest>.SerializeObject(notificationRequest);
 
             var javaClass = Java.Lang.Class.FromType(typeof(ScheduledNotificationJobService));
             var component = new ComponentName(Application.Context, javaClass);
 
             // Bundle up parameters
             var extras = new PersistableBundle();
-            extras.PutString(CrossLocalNotificationService.ExtraReturnNotification, serializedNotification);
+            extras.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
 
             triggerTime -= NotifyTimeInMilliseconds(DateTime.Now);
 
-            var builder = new JobInfo.Builder(localNotificationRequest.NotificationId, component);
+            var builder = new JobInfo.Builder(notificationRequest.NotificationId, component);
             builder.SetMinimumLatency(triggerTime); // Fire at TriggerTime
             builder.SetOverrideDeadline(triggerTime + 5000); // Or at least 5 Seconds Later
             builder.SetExtras(extras);
@@ -162,28 +162,28 @@ namespace Plugin.LocalNotification.Platform.Droid
             return utcAlarmTimeInMillis;
         }
 
-        private void ShowNow(LocalNotificationRequest localNotificationRequest)
+        private void ShowNow(NotificationRequest notificationRequest)
         {
             try
             {
                 var channelId = $"{Application.Context.PackageName}.general";
 
                 var builder = new NotificationCompat.Builder(Application.Context, channelId);
-                builder.SetContentTitle(localNotificationRequest.Title);
-                builder.SetContentText(localNotificationRequest.Description);
-                builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(localNotificationRequest.Description));
-                builder.SetNumber(localNotificationRequest.BadgeNumber);
-                builder.SetAutoCancel(localNotificationRequest.Android.AutoCancel);
-                builder.SetPriority((int)localNotificationRequest.Android.Priority);
-                if (localNotificationRequest.Android.TimeoutAfter.HasValue)
+                builder.SetContentTitle(notificationRequest.Title);
+                builder.SetContentText(notificationRequest.Description);
+                builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notificationRequest.Description));
+                builder.SetNumber(notificationRequest.BadgeNumber);
+                builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
+                builder.SetPriority((int)notificationRequest.Android.Priority);
+                if (notificationRequest.Android.TimeoutAfter.HasValue)
                 {
-                    builder.SetTimeoutAfter((long)localNotificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
+                    builder.SetTimeoutAfter((long)notificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
                 }
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     var importance = NotificationImportance.Default;
-                    switch (localNotificationRequest.Android.Priority)
+                    switch (notificationRequest.Android.Priority)
                     {
                         case NotificationPriority.Min:
                             importance = NotificationImportance.Min;
@@ -211,7 +211,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
                 notificationIntent.SetFlags(ActivityFlags.SingleTop);
 
-                notificationIntent.PutExtra(CrossLocalNotificationService.ExtraReturnDataAndroid, localNotificationRequest.ReturningData);
+                notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, notificationRequest.ReturningData);
 
                 var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
                 builder.SetContentIntent(pendingIntent);
@@ -234,7 +234,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var notification = builder.Build();
                 notification.Defaults = NotificationDefaults.All;
 
-                _notificationManager.Notify(localNotificationRequest.NotificationId, notification);
+                _notificationManager.Notify(notificationRequest.NotificationId, notification);
             }
             catch (Exception ex)
             {

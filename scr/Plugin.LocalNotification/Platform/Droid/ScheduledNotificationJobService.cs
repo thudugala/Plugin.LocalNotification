@@ -4,22 +4,22 @@ using Android.App.Job;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
-    [Service(Name = "plugin.localNotificationRequest.ScheduledNotificationJobService", Permission = "android.permission.BIND_JOB_SERVICE")]
+    [Service(Name = "plugin.LocalNotification.ScheduledNotificationJobService", Permission = "android.permission.BIND_JOB_SERVICE")]
     internal class ScheduledNotificationJobService : JobService
     {
         public override bool OnStartJob(JobParameters jobParams)
         {
-            if (jobParams.Extras.ContainsKey(CrossLocalNotificationService.ExtraReturnNotification) == false)
+            if (jobParams.Extras.ContainsKey(NotificationCenter.ExtraReturnNotification) == false)
             {
                 return false;
             }
             
             Task.Run(() =>
             {
-                var serializedNotification = jobParams.Extras.GetString(CrossLocalNotificationService.ExtraReturnNotification);
-                var notification = ObjectSerializer<LocalNotificationRequest>.DeserializeObject(serializedNotification);
+                var serializedNotification = jobParams.Extras.GetString(NotificationCenter.ExtraReturnNotification);
+                var notification = ObjectSerializer<NotificationRequest>.DeserializeObject(serializedNotification);
                 
-                CrossLocalNotificationService.Current.Show(notification);
+                NotificationCenter.Current.Show(notification);
                 JobFinished(jobParams, false);
             });
             
