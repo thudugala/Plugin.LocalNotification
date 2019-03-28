@@ -22,7 +22,7 @@ The local notification plugin provides a way to show local notifications from Xa
 |Platform|Supported|Version|Notes|
 | ------------------- | :-----------: | :------------------: | :------------------: |
 |Xamarin.iOS|Yes|iOS 10+| |
-|Xamarin.Android|Yes|API 21+|Project should [target Android framework 8.1+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
+|Xamarin.Android|Yes|API 21+|Project should [target Android framework 9.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
 
 # Usage
 
