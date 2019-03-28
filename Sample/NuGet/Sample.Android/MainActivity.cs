@@ -7,7 +7,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using Plugin.LocalNotification.Platform.Droid;
+using Plugin.LocalNotification;
 
 namespace LocalNotification.Sample.Droid
 {
@@ -23,12 +23,12 @@ namespace LocalNotification.Sample.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
 
-            LocalNotificationService.NotifyNotificationTapped(Intent);
+            NotificationCenter.NotifyNotificationTapped(Intent);
         }
 
         protected override void OnNewIntent(Intent intent)
         {
-            LocalNotificationService.NotifyNotificationTapped(intent);
+            NotificationCenter.NotifyNotificationTapped(intent);
             base.OnNewIntent(intent);
         }
     }

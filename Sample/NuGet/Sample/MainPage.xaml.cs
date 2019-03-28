@@ -36,9 +36,8 @@ namespace LocalNotification.Sample
             }
 
             var serializeReturningData = ObjectSerializer<List<string>>.SerializeObject(list);
-
-            var notificationService = DependencyService.Get<ILocalNotificationService>();
-            var notification = new Plugin.LocalNotification.LocalNotification
+            
+            var notification = new NotificationRequest
             {
                 NotificationId = 100,
                 Title = "Test",
@@ -47,8 +46,8 @@ namespace LocalNotification.Sample
                 ReturningData = serializeReturningData,
                 NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?) null // if not specified notification will show immediately. 
             };
-            
-            notificationService.Show(notification);
+
+            NotificationCenter.Current.Show(notification);
         }
     }
 }
