@@ -6,6 +6,11 @@ namespace Plugin.LocalNotification
     public static partial class NotificationCenter
     {
         /// <summary>
+        /// Get or Set Resource Icon to display.
+        /// </summary>
+        public static int NotificationIconId { get; set; }
+
+        /// <summary>
         /// Return Data Key.
         /// </summary>
         internal static string ExtraReturnDataAndroid = "Plugin.LocalNotification.RETURN_DATA";

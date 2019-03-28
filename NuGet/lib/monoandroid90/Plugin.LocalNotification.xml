@@ -67,6 +67,11 @@
             Platform specific INotificationService.
             </summary>
         </member>
+        <member name="P:Plugin.LocalNotification.NotificationCenter.NotificationIconId">
+            <summary>
+            Get or Set Resource Icon to display.
+            </summary>
+        </member>
         <member name="F:Plugin.LocalNotification.NotificationCenter.ExtraReturnDataAndroid">
             <summary>
             Return Data Key.
@@ -198,11 +203,6 @@
         </member>
         <member name="T:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl">
             <inheritdoc />
-        </member>
-        <member name="P:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.NotificationIconId">
-            <summary>
-            Get or Set Resource Icon to display.
-            </summary>
         </member>
         <member name="E:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.NotificationTapped">
             <inheritdoc />

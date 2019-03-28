@@ -13,11 +13,6 @@ namespace Plugin.LocalNotification.Platform.Droid
     [Android.Runtime.Preserve]
     public class NotificationServiceImpl : INotificationService
     {
-        /// <summary>
-        /// Get or Set Resource Icon to display.
-        /// </summary>
-        public static int NotificationIconId { get; set; }
-
         private readonly NotificationManager _notificationManager;
         private readonly JobScheduler _jobScheduler;
 
@@ -216,9 +211,9 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
                 builder.SetContentIntent(pendingIntent);
 
-                if (NotificationIconId != 0)
+                if (NotificationCenter.NotificationIconId != 0)
                 {
-                    builder.SetSmallIcon(NotificationIconId);
+                    builder.SetSmallIcon(NotificationCenter.NotificationIconId);
                 }
                 else
                 {
