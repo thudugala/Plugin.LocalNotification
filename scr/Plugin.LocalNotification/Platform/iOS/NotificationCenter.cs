@@ -47,41 +47,7 @@ namespace Plugin.LocalNotification
                 Debug.WriteLine(ex);
             }
         } 
-
-        /// <summary>
-        /// Setup Local Notification
-        /// </summary>
-        public static void Init()
-        {
-            try
-            {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return;
-                }
-
-                var alertsAllowed = false;
-
-                UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
-                {
-                    alertsAllowed = settings.AlertSetting == UNNotificationSetting.Enabled;
-                });
-
-                if (!alertsAllowed)
-                {
-                    // Ask the user for permission to get notifications on iOS 10.0+
-                    UNUserNotificationCenter.Current.RequestAuthorizationAsync(
-                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound);
-                }
-
-                UNUserNotificationCenter.Current.Delegate = new LocalNotificationDelegate();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-        }
-
+        
         /// <summary>
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>

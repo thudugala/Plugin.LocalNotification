@@ -12,7 +12,7 @@ namespace LocalNotification.Sample
         public App()
         {
             InitializeComponent();
-
+            
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
             GoToMainPage();
