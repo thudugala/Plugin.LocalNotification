@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Plugin.LocalNotification</id>
+    <version>3.0.0</version>
+	<authors>Elvin (Tharindu) Thudugala,Yun Chen,Tim Fortune</authors>
+    <owners>ththlk,masonyc,TimNZ</owners>	    
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/tmt242001/Plugin.LocalNotification</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</iconUrl>
+    <description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</description>
+    <releaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases</releaseNotes>
+    <copyright>Copyright © Tharindu Thudugala</copyright>
+    <tags>abel, xamarin.forms, local.notification, notification</tags>
+	<title>Xamarin.Forms local notification</title>	
+    <repository type="git" url="https://github.com/tmt242001/Plugin.LocalNotification" commit="0978d7e0d15f81980a9ec1014ccb1fb60f45d7bb" />	
+	<dependencies>
+      <group targetFramework="MonoAndroid9.0">
+        <dependency id="Xamarin.Android.Support.v4" version="28.0.0.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="Xamarin.iOS1.0" />
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\**" target="lib" />
+  </files>
+</package>

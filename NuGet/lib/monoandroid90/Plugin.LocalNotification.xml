@@ -67,6 +67,27 @@
             
              </summary>
         </member>
+        <member name="F:Plugin.LocalNotification.NotificationCenter.ExtraReturnDataAndroid">
+            <summary>
+            Return Data Key.
+            </summary>
+        </member>
+        <member name="F:Plugin.LocalNotification.NotificationCenter.ExtraReturnNotification">
+            <summary>
+            Return Notification Key.
+            </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.NotificationCenter.Init">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Plugin.LocalNotification.NotificationCenter.NotifyNotificationTapped(Android.Content.Intent)">
+            <summary>
+            Notify Local Notification Tapped.
+            </summary>
+            <param name="intent"></param>
+        </member>
         <member name="T:Plugin.LocalNotification.NotificationPriority">
             <summary>
             Set the relative priority for this notification.
@@ -179,6 +200,32 @@
             </summary>
             <param name="returningData"></param>
             <returns></returns>
+        </member>
+        <member name="T:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl">
+            <inheritdoc />
+        </member>
+        <member name="P:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.NotificationIconId">
+            <summary>
+            Get or Set Resource Icon to display.
+            </summary>
+        </member>
+        <member name="E:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.NotificationTapped">
+            <inheritdoc />
+        </member>
+        <member name="M:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.OnNotificationTapped(Plugin.LocalNotification.NotificationTappedEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.Cancel(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.CancelAll">
+            <inheritdoc />
+        </member>
+        <member name="M:Plugin.LocalNotification.Platform.Droid.NotificationServiceImpl.Show(Plugin.LocalNotification.NotificationRequest)">
+            <inheritdoc />
         </member>
     </members>
 </doc>
