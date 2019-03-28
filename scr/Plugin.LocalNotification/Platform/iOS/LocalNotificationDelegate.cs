@@ -31,10 +31,15 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     Data = dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
                 };
-                var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber - Convert.ToInt32(response.Notification.Request.Content.Badge.ToString());
-                UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
 
-                NotificationCenter.Current.OnNotificationTapped(subscribeItem);
+                UIApplication.SharedApplication.InvokeOnMainThread(() =>
+                {
+                    var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
+                                    Convert.ToInt32(response.Notification.Request.Content.Badge.ToString());
+                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+
+                    NotificationCenter.Current.OnNotificationTapped(subscribeItem);
+                });
             }
             catch (Exception ex)
             {

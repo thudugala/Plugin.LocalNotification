@@ -57,6 +57,7 @@ namespace Plugin.LocalNotification
         /// <param name="uiApplication"></param>
         public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
         {
+
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return;
@@ -69,7 +70,11 @@ namespace Plugin.LocalNotification
                 {
                     return;
                 }
-                uiApplication.ApplicationIconBadgeNumber = 0;
+
+                uiApplication.InvokeOnMainThread(() =>
+                {
+                    uiApplication.ApplicationIconBadgeNumber = 0;
+                });
             });
         }
     }
