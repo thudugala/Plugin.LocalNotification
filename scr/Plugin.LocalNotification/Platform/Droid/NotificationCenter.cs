@@ -1,5 +1,5 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
+using System;
 
 namespace Plugin.LocalNotification
 {
@@ -14,11 +14,8 @@ namespace Plugin.LocalNotification
         /// Return Notification Key.
         /// </summary>
         internal static string ExtraReturnNotification = "Plugin.LocalNotification.RETURN_NOTIFICATION";
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void Init()
+
+        static NotificationCenter()
         {
             try
             {
@@ -29,7 +26,6 @@ namespace Plugin.LocalNotification
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
-
 
         /// <summary>
         /// Notify Local Notification Tapped.

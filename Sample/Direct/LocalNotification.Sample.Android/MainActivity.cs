@@ -21,7 +21,6 @@ namespace LocalNotification.Sample.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            NotificationCenter.Init();
             LoadApplication(new App());
 
             NotificationCenter.NotifyNotificationTapped(this.Intent);
