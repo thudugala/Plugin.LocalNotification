@@ -14,7 +14,7 @@
     <copyright>Copyright © Tharindu Thudugala</copyright>
     <tags>abel, xamarin.forms, local.notification, notification</tags>
 	<title>Xamarin.Forms local notification</title>	
-    <repository type="git" url="https://github.com/tmt242001/Plugin.LocalNotification" commit="0978d7e0d15f81980a9ec1014ccb1fb60f45d7bb" />	
+    <repository type="git" url="https://github.com/tmt242001/Plugin.LocalNotification" commit="4c6203688441026ec57be752a105b9a22709f824" />	
 	<dependencies>
       <group targetFramework="MonoAndroid9.0">
         <dependency id="Xamarin.Android.Support.v4" version="28.0.0.1" exclude="Build,Analyzers" />

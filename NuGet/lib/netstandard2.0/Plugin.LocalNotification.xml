@@ -58,14 +58,14 @@
             <param name="e"></param>
         </member>
         <member name="T:Plugin.LocalNotification.NotificationCenter">
-             <summary>
-            
-             </summary>
+            <summary>
+            Cross platform INotificationService Resolver.
+            </summary>
         </member>
         <member name="P:Plugin.LocalNotification.NotificationCenter.Current">
-             <summary>
-            
-             </summary>
+            <summary>
+            Platform specific INotificationService.
+            </summary>
         </member>
         <member name="T:Plugin.LocalNotification.NotificationPriority">
             <summary>

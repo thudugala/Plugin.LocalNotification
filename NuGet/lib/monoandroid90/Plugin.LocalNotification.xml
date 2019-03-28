@@ -58,14 +58,14 @@
             <param name="e"></param>
         </member>
         <member name="T:Plugin.LocalNotification.NotificationCenter">
-             <summary>
-            
-             </summary>
+            <summary>
+            Cross platform INotificationService Resolver.
+            </summary>
         </member>
         <member name="P:Plugin.LocalNotification.NotificationCenter.Current">
-             <summary>
-            
-             </summary>
+            <summary>
+            Platform specific INotificationService.
+            </summary>
         </member>
         <member name="F:Plugin.LocalNotification.NotificationCenter.ExtraReturnDataAndroid">
             <summary>
@@ -75,11 +75,6 @@
         <member name="F:Plugin.LocalNotification.NotificationCenter.ExtraReturnNotification">
             <summary>
             Return Notification Key.
-            </summary>
-        </member>
-        <member name="M:Plugin.LocalNotification.NotificationCenter.Init">
-            <summary>
-            
             </summary>
         </member>
         <member name="M:Plugin.LocalNotification.NotificationCenter.NotifyNotificationTapped(Android.Content.Intent)">
