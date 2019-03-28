@@ -4,6 +4,10 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.svg?label=NuGet)](https://www.nuget.org/packages/Plugin.LocalNotification/)
 
+# 2.0.7 Documentation
+
+- Please go to [2.0.7 Documentation](https://github.com/tmt242001/Plugin.LocalNotification/wiki/Usage-2.0.7), if you are referencing a version below 3.0.0. 
+- Version 3.* has breaking changes if upgrading from version 2.*
 
 # Plugin.LocalNotification
 The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.
@@ -17,31 +21,29 @@ The local notification plugin provides a way to show local notifications from Xa
 
 |Platform|Supported|Version|Notes|
 | ------------------- | :-----------: | :------------------: | :------------------: |
-|Xamarin.iOS|Yes|iOS 8+| |
-|Xamarin.Android|Yes|API 16+|Project should [target Android framework 8.1+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
+|Xamarin.iOS|Yes|iOS 10+| |
+|Xamarin.Android|Yes|API 21+|Project should [target Android framework 8.1+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
 
 # Usage
 
 ### Show local notification
 
 ```csharp
-var notificationService = DependencyService.Get<ILocalNotificationService>();
 var notification = new Plugin.LocalNotification.LocalNotification
 {
     NotificationId = 100,
     Title = "Test",
     Description = "Test Description",
     ReturningData = "Dummy data", // Returning data when tapped on notification.
-    NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification.
+    NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
 };
-notificationService.Show(notification);
+NotificationCenter.Current.Show(notification);
 ```
 
 ### Cancel a local notification
 
 ```csharp
-var notificationService = DependencyService.Get<ILocalNotificationService>();
-notificationService.Cancel(100);
+NotificationCenter.Current.Cancel(100);
 ```
 
 ### Receive local notification tap event
@@ -54,8 +56,7 @@ public partial class App : Application
 		InitializeComponent();
 
 		// Local Notification tap event listener
-		MessagingCenter.Instance.Subscribe<LocalNotificationTappedEvent>(this,
-			typeof(LocalNotificationTappedEvent).FullName, OnLocalNotificationTapped);
+		NotificationCenter.Current.NotificationTapped += OnLocalNotificationTapped;
 
 		MainPage = new MainPage();
 	}
@@ -76,7 +77,7 @@ Notification Icon must be set for notification to appear.
 You can set the notification Icon by setting the following property from inside your Android project:
 
 ```csharp
-LocalNotificationService.NotificationIconId = Resource.Drawable.YOU_ICON_HERE
+NotificationCenter.NotificationIconId = Resource.Drawable.YOU_ICON_HERE
 ```
 
 Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21)
@@ -96,12 +97,12 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
 		.....	
-		LocalNotificationService.NotifyNotificationTapped(Intent);
+		NotificationCenter.NotifyNotificationTapped(Intent);
 	}
 
 	protected override void OnNewIntent(Intent intent)
 	{
-		LocalNotificationService.NotifyNotificationTapped(intent);
+		NotificationCenter.NotifyNotificationTapped(intent);
 		base.OnNewIntent(intent);
 	}
 }
@@ -118,25 +119,9 @@ Include the following code in the FinishedLaunching() method of AppDelegate:
 ```csharp
 public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
 {        
-	public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-	{
-		global::Xamarin.Forms.Forms.Init();
-
-		LocalNotificationService.Init();
-
-		LoadApplication(new App());
-		
-		.....
-	}
-
-	// This method only requires for iOS 8 , 9
-        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+	public override void WillEnterForeground(UIApplication uiApplication)
         {
-            //Change UIApplicationState to suit different situations
-            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
-            {
-                LocalNotificationService.NotifyNotificationTapped(notification);
-            }
+            Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
         }
 }
 ```
