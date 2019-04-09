@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://github.com/tmt242001/Plugin.LocalNotification</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tmt242001/Plugin.LocalNotification</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseUrl>https://github.com/tmt242001/Plugin.LocalNotification/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>    
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
@@ -34,7 +34,12 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <!-- Optional: Include the PDB in the built .nupkg -->
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>    
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
