@@ -29,7 +29,7 @@ The local notification plugin provides a way to show local notifications from Xa
 ### Show local notification
 
 ```csharp
-var notification = new Plugin.LocalNotification.LocalNotification
+var notification = new NotificationRequest
 {
     NotificationId = 100,
     Title = "Test",
