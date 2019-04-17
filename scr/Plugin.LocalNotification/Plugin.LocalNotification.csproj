@@ -10,18 +10,18 @@
     <LangVersion>latest</LangVersion>
 
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>Elvin (Tharindu) Thudugala,Yun Chen,Tim Fortune</Authors>
-    <PackageTags>abel, xamarin.forms, local.notification, notification</PackageTags>
-    <PackageProjectUrl>https://github.com/tmt242001/Plugin.LocalNotification</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tmt242001/Plugin.LocalNotification</RepositoryUrl>
+    <Authors>Elvin (Tharindu) Thudugala,Yun Chen</Authors>
+    <PackageTags>android, ios, xamarin, xamarin.forms, local, notification, local.notification</PackageTags>
+    <PackageProjectUrl>https://github.com/thudugala/Plugin.LocalNotification</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thudugala/Plugin.LocalNotification</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>    
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</Description>
-    <PackageIconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
-    <Copyright>Copyright © Tharindu Thudugala</Copyright>
+    <Description>The local notification plugin provides a way to show local notifications from Xamarin apps.</Description>
+    <PackageIconUrl>https://raw.githubusercontent.com/thudugala/Plugin.LocalNotification/master/Screenshots/icon.png</PackageIconUrl>
+    <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
     <Version>3.0.0</Version>
-    <PackageReleaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases </PackageReleaseNotes>
+    <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
     <owners>ththlk,masonyc,TimNZ</owners>
 
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
@@ -32,14 +32,10 @@
     <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Company />
 
     <!-- Optional: Include the PDB in the built .nupkg -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>    
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
