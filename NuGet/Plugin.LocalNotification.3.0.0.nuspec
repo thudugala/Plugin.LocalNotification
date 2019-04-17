@@ -7,14 +7,14 @@
     <owners>ththlk,masonyc,TimNZ</owners>	    
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="expression">MIT</license>
-    <projectUrl>https://github.com/tmt242001/Plugin.LocalNotification</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/tmt242001/Plugin.LocalNotification/master/Screenshots/icon.png</iconUrl>
+    <projectUrl>https://github.com/thudugala/Plugin.LocalNotification</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/thudugala/Plugin.LocalNotification/master/Screenshots/icon.png</iconUrl>
     <description>The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.</description>
-    <releaseNotes>Check: https://github.com/tmt242001/Plugin.LocalNotification/releases</releaseNotes>
-    <copyright>Copyright © Tharindu Thudugala</copyright>
+    <releaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases</releaseNotes>
+    <copyright>Copyright © Elvin (Tharindu) Thudugala</copyright>
     <tags>abel, xamarin.forms, local.notification, notification</tags>
 	<title>Xamarin.Forms local notification</title>	
-    <repository type="git" url="https://github.com/tmt242001/Plugin.LocalNotification" commit="68ab3da358cd20fbf111d7864670903ef6e91b5c" />	
+    <repository type="git" url="https://github.com/thudugala/Plugin.LocalNotification" commit="68ab3da358cd20fbf111d7864670903ef6e91b5c" />	
 	<dependencies>
       <group targetFramework="MonoAndroid9.0">
         <dependency id="Xamarin.Android.Support.v4" version="28.0.0.1" exclude="Build,Analyzers" />
