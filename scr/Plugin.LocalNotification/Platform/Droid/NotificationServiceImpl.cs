@@ -170,6 +170,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetNumber(notificationRequest.BadgeNumber);
                 builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
                 builder.SetPriority((int)notificationRequest.Android.Priority);
+
+                if( notificationRequest.Android.Color.HasValue)
+                {
+                    builder.SetColor(notificationRequest.Android.Color.Value);
+                }
+
                 if (notificationRequest.Android.TimeoutAfter.HasValue)
                 {
                     builder.SetTimeoutAfter((long)notificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
@@ -227,6 +233,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
 
                 var notification = builder.Build();
+
+                if( notificationRequest.Android.LedColor.HasValue )
+                {
+                    notification.LedARGB = notificationRequest.Android.LedColor.Value;
+                }
+
                 notification.Defaults = NotificationDefaults.All;
 
                 _notificationManager.Notify(notificationRequest.NotificationId, notification);

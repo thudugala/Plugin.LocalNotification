@@ -13,6 +13,16 @@ namespace Plugin.LocalNotification
         public bool AutoCancel { get; set; } = true;
 
         /// <summary>
+        /// If set, the notification icon and application name will have the provided ARGB color.
+        /// </summary>
+        public int? Color { get; set; }
+
+        /// <summary>
+        /// If set, the LED will have the provided ARGB color.
+        /// </summary>
+        public int? LedColor { get; set; }
+
+        /// <summary>
         /// Set the relative priority for this notification.
         /// </summary>
         public NotificationPriority Priority { get; set; } = NotificationPriority.Default;
