@@ -233,6 +233,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
 
                 var notification = builder.Build();
+
+                if( notificationRequest.Android.LedColor.HasValue )
+                {
+                    notification.LedARGB = notificationRequest.Android.LedColor.Value;
+                }
+
                 notification.Defaults = NotificationDefaults.All;
 
                 _notificationManager.Notify(notificationRequest.NotificationId, notification);
