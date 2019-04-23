@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Android.App;
+﻿using Android.App;
 using Android.App.Job;
+using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -20,10 +20,10 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                 var serializedNotification = jobParams.Extras.GetString(NotificationCenter.ExtraReturnNotification);
                 var notification = ObjectSerializer<NotificationRequest>.DeserializeObject(serializedNotification);
-                
+
                 NotificationCenter.Current.Show(notification);
             });
-            
+
             return true;
         }
 

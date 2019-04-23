@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Foundation;
+using Plugin.LocalNotification.Platform.iOS;
+using System;
 using System.Diagnostics;
 using System.Linq;
-using Foundation;
-using Plugin.LocalNotification.Platform.iOS;
 using UIKit;
 using UserNotifications;
 
@@ -46,15 +46,14 @@ namespace Plugin.LocalNotification
             {
                 Debug.WriteLine(ex);
             }
-        } 
-        
+        }
+
         /// <summary>
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
         /// <param name="uiApplication"></param>
         public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
         {
-
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return;

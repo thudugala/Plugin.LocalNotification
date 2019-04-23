@@ -3,7 +3,7 @@
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="e"></param>
     public delegate void NotificationTappedEventHandler(NotificationTappedEventArgs e);
