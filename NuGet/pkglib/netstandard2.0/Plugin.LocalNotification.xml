@@ -14,6 +14,16 @@
             Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
             </summary>
         </member>
+        <member name="P:Plugin.LocalNotification.AndroidOptions.Color">
+            <summary>
+            If set, the notification icon and application name will have the provided ARGB color.
+            </summary>
+        </member>
+        <member name="P:Plugin.LocalNotification.AndroidOptions.LedColor">
+            <summary>
+            If set, the LED will have the provided ARGB color.
+            </summary>
+        </member>
         <member name="P:Plugin.LocalNotification.AndroidOptions.Priority">
             <summary>
             Set the relative priority for this notification.
@@ -146,10 +156,10 @@
             </summary>
         </member>
         <member name="T:Plugin.LocalNotification.NotificationTappedEventHandler">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="e"></param>
+             </summary>
+             <param name="e"></param>
         </member>
         <member name="T:Plugin.LocalNotification.NotificationTappedEventArgs">
             <summary>
