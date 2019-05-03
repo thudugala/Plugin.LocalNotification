@@ -1,14 +1,15 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/1.6.68">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.24">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;MonoAndroid90;Xamarin.iOS10</TargetFrameworks>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>latest</LangVersion>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Elvin (Tharindu) Thudugala,Yun Chen</Authors>
     <PackageTags>android, ios, xamarin, xamarin.forms, local, notification, local.notification</PackageTags>
