@@ -73,11 +73,11 @@ public partial class App : Application
 ### Android
 
 Notification Icon must be set for notification to appear. 
+Only need to set it manually, if you do not have a image called "Icon.png"
 
 You can set the notification Icon by setting the following property from inside your Android project:
-
 ```csharp
-NotificationCenter.NotificationIconId = Resource.Drawable.YOU_ICON_HERE
+NotificationCenter.NotificationIconId = Resource.Drawable.YOUR_ICON_HERE;
 ```
 
 Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21)
@@ -96,6 +96,12 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 {
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
+	        .....
+	        // Only need to be set manually, if you do not have a image called "Icon.png".
+                // Notification Icon must be set for notification to appear.
+                //NotificationCenter.NotificationIconId = Resource.Drawable.YOUR_ICON_HERE;		
+		.....		
+		LoadApplication(new App());
 		.....	
 		NotificationCenter.NotifyNotificationTapped(Intent);
 	}
