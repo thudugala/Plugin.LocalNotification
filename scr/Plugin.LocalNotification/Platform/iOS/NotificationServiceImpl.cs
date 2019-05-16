@@ -100,6 +100,10 @@ namespace Plugin.LocalNotification.Platform.iOS
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default
                 };
+                if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
+                {
+                    content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
+                }
 
                 var trigger =
                     UNCalendarNotificationTrigger.CreateTrigger(

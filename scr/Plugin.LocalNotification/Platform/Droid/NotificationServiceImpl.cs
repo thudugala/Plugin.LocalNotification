@@ -168,6 +168,18 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetContentText(notificationRequest.Description);
                 builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notificationRequest.Description));
                 builder.SetNumber(notificationRequest.BadgeNumber);
+
+                if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
+                {
+                    if (notificationRequest.Sound.Contains("://") == false)
+                    {
+                        notificationRequest.Sound = $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{notificationRequest.Sound}";
+                    }
+
+                    var uri = Android.Net.Uri.Parse(notificationRequest.Sound);
+                    builder.SetSound(uri);
+                }
+
                 builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
                 builder.SetPriority((int)notificationRequest.Android.Priority);
                 if (notificationRequest.Android.Color.HasValue)

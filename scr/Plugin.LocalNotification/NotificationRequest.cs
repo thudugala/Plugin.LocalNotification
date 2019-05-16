@@ -8,6 +8,11 @@ namespace Plugin.LocalNotification
     public class NotificationRequest
     {
         /// <summary>
+        /// Android specific properties.
+        /// </summary>
+        public AndroidOptions Android { get; set; } = new AndroidOptions();
+
+        /// <summary>
         /// Number of the badge displays on the Home Screen.
         /// </summary>
         public int BadgeNumber { get; set; }
@@ -35,13 +40,13 @@ namespace Plugin.LocalNotification
         public string ReturningData { get; set; }
 
         /// <summary>
+        /// Sound file name for the notification.
+        /// </summary>
+        public string Sound { get; set; }
+
+        /// <summary>
         /// Title for the notification.
         /// </summary>
         public string Title { get; set; }
-
-        /// <summary>
-        /// Android specific properties.
-        /// </summary>
-        public AndroidOptions Android { get; set; } = new AndroidOptions();
     }
 }
