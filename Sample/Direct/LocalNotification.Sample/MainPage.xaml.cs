@@ -41,7 +41,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                Sound = "good_things_happen", // if not specified, default sound will be played.
+                Sound = Device.RuntimePlatform == Device.Android ?  "good_things_happen" : "good_things_happen.aiff", // if not specified, default sound will be played.
                 NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?)null // if not specified, notification will show immediately.
             };
 
