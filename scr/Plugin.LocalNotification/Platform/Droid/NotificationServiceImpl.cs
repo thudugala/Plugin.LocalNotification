@@ -175,7 +175,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                     {
                         notificationRequest.Sound = $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{notificationRequest.Sound}";
                     }
-
                     var uri = Android.Net.Uri.Parse(notificationRequest.Sound);
                     builder.SetSound(uri);
                 }
@@ -213,7 +212,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                             break;
                     }
                     var channel = new NotificationChannel(channelId, "General", importance);
-
                     _notificationManager.CreateNotificationChannel(channel);
 
                     builder.SetChannelId(channelId);
@@ -236,8 +234,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     var iconId = Application.Context.ApplicationInfo.Icon;
                     if (iconId == 0)
                     {
-                        Application.Context.Resources.GetIdentifier("Icon", "drawable",
-                            Application.Context.PackageName);
+                        iconId = Application.Context.Resources.GetIdentifier("icon", "drawable", Application.Context.PackageName);
                     }
                     builder.SetSmallIcon(iconId);
                 }
@@ -247,8 +244,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     notification.LedARGB = notificationRequest.Android.LedColor.Value;
                 }
-                notification.Defaults = NotificationDefaults.All;
-
+                if (string.IsNullOrWhiteSpace(notificationRequest.Sound))
+                {
+                    notification.Defaults = NotificationDefaults.All;
+                }
                 _notificationManager.Notify(notificationRequest.NotificationId, notification);
             }
             catch (Exception ex)
