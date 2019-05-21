@@ -150,6 +150,6 @@ Only support iOS and Android for the moment.
 
 Contributions are welcome.  Feel free to file issues and pull requests on the repo and they'll be reviewed as time permits.
 
-## Icon
+## Icon and Sound
 
-Thank you for the Icon by DinosoftLabs (https://www.iconfinder.com/dinosoftlabs)
+Thank you for the Icon by [DinosoftLabs](https://www.iconfinder.com/dinosoftlabs) and sound file by [Notification sounds](https://notificationsounds.com/notification-sounds/good-things-happen-547)
