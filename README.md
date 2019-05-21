@@ -135,6 +135,10 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 <img src="Screenshots/screenRecord.gif" alt="Screen Record"  width="512px" >
 
+# Custom Sound
+
+[Notification with a Sound-File](../../wiki/Notification-with-a-Sound-File)
+
 # SourceLink Support
 
 In Visual Studio, confirm that SourceLink is enabled. 
