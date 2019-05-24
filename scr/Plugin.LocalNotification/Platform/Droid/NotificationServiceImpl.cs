@@ -161,7 +161,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
-                var channelId = $"{Application.Context.PackageName}.general";
+                var channelId = $"{Application.Context.PackageName}.{notificationRequest.Android.ChannelName}";
 
                 var builder = new NotificationCompat.Builder(Application.Context, channelId);
                 builder.SetContentTitle(notificationRequest.Title);
@@ -211,7 +211,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                             importance = NotificationImportance.Max;
                             break;
                     }
-                    var channel = new NotificationChannel(channelId, "General", importance);
+                    var channel = new NotificationChannel(channelId, notificationRequest.Android.ChannelName, importance)
+                    {
+                        Description = notificationRequest.Android.ChannelDescription
+                    };
                     _notificationManager.CreateNotificationChannel(channel);
 
                     builder.SetChannelId(channelId);

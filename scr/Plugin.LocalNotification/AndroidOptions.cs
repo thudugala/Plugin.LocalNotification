@@ -31,5 +31,15 @@ namespace Plugin.LocalNotification
         /// Specifies the time at which this notification should be canceled, if it is not already canceled.
         /// </summary>
         public TimeSpan? TimeoutAfter { get; set; }
+
+        /// <summary>
+        /// The channel name, default is General
+        /// </summary>
+        public string ChannelName { get; set; } = "General";
+
+        /// <summary>
+        /// The channel description
+        /// </summary>
+        public string ChannelDescription { get; set; }
     }
 }
