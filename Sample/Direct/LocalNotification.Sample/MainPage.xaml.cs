@@ -25,13 +25,7 @@ namespace LocalNotification.Sample
                 typeof(NotificationPage).FullName,
                 _tapCount.ToString()
             };
-
-            var notifyDateTime = NotifyDatePicker.Date.Add(NotifyTimePicker.Time);
-            if (notifyDateTime <= DateTime.Now)
-            {
-                notifyDateTime = DateTime.Now.AddSeconds(10);
-            }
-
+            
             var serializeReturningData = ObjectSerializer<List<string>>.SerializeObject(list);
 
             var request = new NotificationRequest
@@ -40,10 +34,27 @@ namespace LocalNotification.Sample
                 Title = "Test",
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
-                ReturningData = serializeReturningData,
-                Sound = Device.RuntimePlatform == Device.Android ?  "good_things_happen" : "good_things_happen.aiff", // if not specified, default sound will be played.
-                NotifyTime = UseNotifyTimeSwitch.IsToggled ? notifyDateTime : (DateTime?)null // if not specified, notification will show immediately.
+                ReturningData = serializeReturningData
             };
+
+            // if not specified, default sound will be played.
+            if (CustomSoundSwitch.IsToggled)
+            {
+                request.Sound = Device.RuntimePlatform == Device.Android
+                    ? "good_things_happen"
+                    : "good_things_happen.aiff";
+            }
+
+            // if not specified, notification will show immediately.
+            if (UseNotifyTimeSwitch.IsToggled)
+            {
+                var notifyDateTime = NotifyDatePicker.Date.Add(NotifyTimePicker.Time);
+                if (notifyDateTime <= DateTime.Now)
+                {
+                    notifyDateTime = DateTime.Now.AddSeconds(10);
+                }
+                request.NotifyTime = notifyDateTime;
+            }
 
             NotificationCenter.Current.Show(request);
         }

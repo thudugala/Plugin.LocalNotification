@@ -12,6 +12,10 @@
             <TimePicker x:Name="NotifyTimePicker" Format="t"/>
             <Switch x:Name="UseNotifyTimeSwitch" IsToggled="false" />
         </StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+            <Label Text="Use Custom Sound" />
+            <Switch x:Name="CustomSoundSwitch" IsToggled="false" />
+        </StackLayout>
 
         <!-- Place new controls here -->
         <Button Text="Send Local Notification" Clicked="Button_Clicked" 
