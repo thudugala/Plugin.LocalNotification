@@ -192,30 +192,38 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    var importance = NotificationImportance.Default;
-                    switch (notificationRequest.Android.Priority)
+                    var channel = _notificationManager.GetNotificationChannel(channelId);
+                    if (channel is null)
                     {
-                        case NotificationPriority.Min:
-                            importance = NotificationImportance.Min;
-                            break;
+                        var importance = NotificationImportance.Default;
+                        switch (notificationRequest.Android.Priority)
+                        {
+                            case NotificationPriority.Min:
+                                importance = NotificationImportance.Min;
+                                break;
 
-                        case NotificationPriority.Low:
-                            importance = NotificationImportance.Low;
-                            break;
+                            case NotificationPriority.Low:
+                                importance = NotificationImportance.Low;
+                                break;
 
-                        case NotificationPriority.High:
-                            importance = NotificationImportance.High;
-                            break;
+                            case NotificationPriority.High:
+                                importance = NotificationImportance.High;
+                                break;
 
-                        case NotificationPriority.Max:
-                            importance = NotificationImportance.Max;
-                            break;
+                            case NotificationPriority.Max:
+                                importance = NotificationImportance.Max;
+                                break;
+                        }
+
+                        // you can't change the importance or other notification behaviors after this.
+                        // once you create the channel, you cannot change these settings and
+                        // the user has final control of whether these behaviors are active.
+                        channel = new NotificationChannel(channelId, notificationRequest.Android.ChannelName, importance)
+                        {
+                            Description = notificationRequest.Android.ChannelDescription
+                        };
+                        _notificationManager.CreateNotificationChannel(channel);
                     }
-                    var channel = new NotificationChannel(channelId, notificationRequest.Android.ChannelName, importance)
-                    {
-                        Description = notificationRequest.Android.ChannelDescription
-                    };
-                    _notificationManager.CreateNotificationChannel(channel);
 
                     builder.SetChannelId(channelId);
                 }

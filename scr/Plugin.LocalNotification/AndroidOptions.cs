@@ -24,6 +24,7 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Set the relative priority for this notification.
+        /// Once you create the channel, you cannot change it.
         /// </summary>
         public NotificationPriority Priority { get; set; } = NotificationPriority.Default;
 
@@ -33,12 +34,14 @@ namespace Plugin.LocalNotification
         public TimeSpan? TimeoutAfter { get; set; }
 
         /// <summary>
-        /// The channel name, default is General
+        /// The channel name, default is General.
+        /// Once you create the channel, you cannot change it.
         /// </summary>
         public string ChannelName { get; set; } = "General";
 
         /// <summary>
-        /// The channel description
+        /// The channel description.
+        /// Once you create the channel, you cannot change it.
         /// </summary>
         public string ChannelDescription { get; set; }
     }
