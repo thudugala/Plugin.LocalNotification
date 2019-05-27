@@ -25,7 +25,7 @@ namespace LocalNotification.Sample.Droid
 
             NotificationCenter.Init(this.Intent, new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequest
             {
-                Sound = "good_things_happen"
+                Sound = Resource.Raw.good_things_happen.ToString()
             });
         }
 
