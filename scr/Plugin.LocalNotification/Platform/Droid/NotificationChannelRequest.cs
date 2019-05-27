@@ -15,6 +15,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         /// <summary>
         /// Sets or gets, the user visible name of this channel, default is General.
+        /// Also, NotificationRequest.Android.ChannelName must be set to the same name to target this channel.
         /// </summary>
         public string Name { get; set; } = "General";
 

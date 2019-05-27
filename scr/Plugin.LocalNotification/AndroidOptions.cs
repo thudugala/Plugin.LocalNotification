@@ -14,6 +14,7 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Sets or gets, the user visible name of this channel, default is General.
+        /// Use this to target the Notification Channel.
         /// </summary>
         public string ChannelName { get; set; } = "General";
 

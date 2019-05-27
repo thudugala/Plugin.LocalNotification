@@ -58,7 +58,7 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// Create Notification Channel when API is equal or above 26.
+        /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="request"></param>
         public static void CreateNotificationChannel(NotificationChannelRequest request = null)
