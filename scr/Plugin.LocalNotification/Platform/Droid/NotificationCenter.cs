@@ -10,11 +10,6 @@ namespace Plugin.LocalNotification
     public static partial class NotificationCenter
     {
         /// <summary>
-        /// Get or Set Notification Channel Id
-        /// </summary>
-        internal static string NotificationChannelId { get; private set; } = $"{Application.Context.PackageName}.General";
-
-        /// <summary>
         /// Return Data Key.
         /// </summary>
         internal static string ExtraReturnDataAndroid = "Plugin.LocalNotification.RETURN_DATA";
@@ -34,21 +29,6 @@ namespace Plugin.LocalNotification
             {
                 System.Diagnostics.Debug.WriteLine(ex);
             }
-        }
-
-        /// <summary>
-        /// Create Notification Channel and Process Notify Notification Tapped.
-        /// </summary>
-        /// <param name="intent"></param>
-        /// <param name="request"></param>
-        public static void Init(Intent intent, NotificationChannelRequest request = null)
-        {
-            if (request is null)
-            {
-                request = new NotificationChannelRequest();
-            }
-            CreateNotificationChannel(request);
-            NotifyNotificationTapped(intent);
         }
 
         /// <summary>
@@ -77,7 +57,11 @@ namespace Plugin.LocalNotification
             }
         }
 
-        private static void CreateNotificationChannel(NotificationChannelRequest request)
+        /// <summary>
+        /// Create Notification Channel when API is equal or above 26.
+        /// </summary>
+        /// <param name="request"></param>
+        public static void CreateNotificationChannel(NotificationChannelRequest request = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -90,17 +74,22 @@ namespace Plugin.LocalNotification
                 return;
             }
 
+            if (request is null)
+            {
+                request = new NotificationChannelRequest();
+            }
+
             if (string.IsNullOrWhiteSpace(request.Name))
             {
                 request.Name = "General";
             }
 
-            NotificationChannelId = $"{Application.Context.PackageName}.{request.Name}";
+            var channelId = GetChannelId(request.Name);
 
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            var channel = new NotificationChannel(NotificationChannelId, request.Name, request.Importance)
+            var channel = new NotificationChannel(channelId, request.Name, request.Importance)
             {
                 Description = request.Description,
                 Group = request.Group,
@@ -137,6 +126,11 @@ namespace Plugin.LocalNotification
                     $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
             }
             return Android.Net.Uri.Parse(soundFileName);
+        }
+
+        internal static string GetChannelId(string channelName)
+        {
+            return $"{Application.Context.PackageName}.{channelName}";
         }
     }
 }

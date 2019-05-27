@@ -41,6 +41,8 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Sound file name for the notification.
+        /// In Android, Only used if Android Api below 26.
+        /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
         /// </summary>
         public string Sound { get; set; }
 

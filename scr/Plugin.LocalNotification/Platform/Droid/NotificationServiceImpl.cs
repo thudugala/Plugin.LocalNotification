@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Media;
 using Android.OS;
 using Android.Support.V4.App;
 using AndroidX.Work;
@@ -147,55 +146,61 @@ namespace Plugin.LocalNotification.Platform.Droid
             return utcAlarmTimeInMillis;
         }
 
-        private void ShowNow(NotificationRequest notificationRequest)
+        private void ShowNow(NotificationRequest request)
         {
-            Cancel(notificationRequest.NotificationId);
+            Cancel(request.NotificationId);
 
-            var builder = new NotificationCompat.Builder(Application.Context, NotificationCenter.NotificationChannelId);
-            builder.SetContentTitle(notificationRequest.Title);
-            builder.SetContentText(notificationRequest.Description);
-            builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notificationRequest.Description));
-            builder.SetNumber(notificationRequest.BadgeNumber);
-            builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
+            if (string.IsNullOrWhiteSpace(request.Android.ChannelName))
+            {
+                request.Android.ChannelName = "General";
+            }
+            var channelId = NotificationCenter.GetChannelId(request.Android.ChannelName);
+
+            var builder = new NotificationCompat.Builder(Application.Context, channelId);
+            builder.SetContentTitle(request.Title);
+            builder.SetContentText(request.Description);
+            builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(request.Description));
+            builder.SetNumber(request.BadgeNumber);
+            builder.SetAutoCancel(request.Android.AutoCancel);
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                builder.SetPriority((int) notificationRequest.Android.Priority);
+                builder.SetPriority((int)request.Android.Priority);
 
-                var soundUri = NotificationCenter.GetSoundUri(notificationRequest.Sound);
+                var soundUri = NotificationCenter.GetSoundUri(request.Sound);
                 if (soundUri != null)
                 {
                     builder.SetSound(soundUri);
                 }
             }
-            
-            if (notificationRequest.Android.Color.HasValue)
+
+            if (request.Android.Color.HasValue)
             {
-                builder.SetColor(notificationRequest.Android.Color.Value);
+                builder.SetColor(request.Android.Color.Value);
             }
-            builder.SetSmallIcon(GetIcon(notificationRequest.Android.IconName));
-            if (notificationRequest.Android.TimeoutAfter.HasValue)
+            builder.SetSmallIcon(GetIcon(request.Android.IconName));
+            if (request.Android.TimeoutAfter.HasValue)
             {
-                builder.SetTimeoutAfter((long)notificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
+                builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
-            
+
             var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, notificationRequest.ReturningData);
+            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
             var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
             builder.SetContentIntent(pendingIntent);
 
             var notification = builder.Build();
-            if (notificationRequest.Android.LedColor.HasValue)
+            if (request.Android.LedColor.HasValue)
             {
-                notification.LedARGB = notificationRequest.Android.LedColor.Value;
+                notification.LedARGB = request.Android.LedColor.Value;
             }
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O && 
-                string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
+                string.IsNullOrWhiteSpace(request.Sound) == false)
             {
                 notification.Defaults = NotificationDefaults.All;
             }
-            _notificationManager.Notify(notificationRequest.NotificationId, notification);
+            _notificationManager.Notify(request.NotificationId, notification);
         }
 
         private int GetIcon(string iconName)

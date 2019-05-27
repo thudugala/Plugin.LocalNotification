@@ -16,6 +16,8 @@
             <Label Text="Use Custom Sound" />
             <Switch x:Name="CustomSoundSwitch" IsToggled="false" />
         </StackLayout>
+        <Label Text="In Android >= 26, Use NotificationChannel to set Sound"
+               HorizontalOptions="Center" />
 
         <!-- Place new controls here -->
         <Button Text="Send Local Notification" Clicked="Button_Clicked" 
