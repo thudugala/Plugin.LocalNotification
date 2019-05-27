@@ -8,6 +8,12 @@ namespace Plugin.LocalNotification
     public class AndroidOptions
     {
         /// <summary>
+        /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
+        /// if not set, application Icon will we used.
+        /// </summary>
+        public string IconName { get; set; }
+
+        /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
         /// </summary>
         public bool AutoCancel { get; set; } = true;
@@ -24,7 +30,6 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Set the relative priority for this notification.
-        /// Once you create the channel, you cannot change it.
         /// </summary>
         public NotificationPriority Priority { get; set; } = NotificationPriority.Default;
 
@@ -32,17 +37,5 @@ namespace Plugin.LocalNotification
         /// Specifies the time at which this notification should be canceled, if it is not already canceled.
         /// </summary>
         public TimeSpan? TimeoutAfter { get; set; }
-
-        /// <summary>
-        /// The channel name, default is General.
-        /// Once you create the channel, you cannot change it.
-        /// </summary>
-        public string ChannelName { get; set; } = "General";
-
-        /// <summary>
-        /// The channel description.
-        /// Once you create the channel, you cannot change it.
-        /// </summary>
-        public string ChannelDescription { get; set; }
     }
 }

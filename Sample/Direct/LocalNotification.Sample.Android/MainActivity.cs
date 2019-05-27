@@ -23,7 +23,7 @@ namespace LocalNotification.Sample.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
 
-            NotificationCenter.NotifyNotificationTapped(this.Intent);
+            NotificationCenter.Init(this.Intent);
         }
 
         protected override void OnNewIntent(Intent intent)

@@ -3,7 +3,7 @@
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// NotificationRequest
+    /// Notification Request
     /// </summary>
     public class NotificationRequest
     {

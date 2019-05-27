@@ -82,23 +82,30 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public void Show(NotificationRequest notificationRequest)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
+            try
             {
-                return;
-            }
+                if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
+                {
+                    return;
+                }
 
-            if (notificationRequest is null)
-            {
-                return;
-            }
+                if (notificationRequest is null)
+                {
+                    return;
+                }
 
-            if (notificationRequest.NotifyTime.HasValue)
-            {
-                ShowLater(notificationRequest);
+                if (notificationRequest.NotifyTime.HasValue)
+                {
+                    ShowLater(notificationRequest);
+                }
+                else
+                {
+                    ShowNow(notificationRequest);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ShowNow(notificationRequest);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 
@@ -108,6 +115,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 return;
             }
+
+            Cancel(notificationRequest.NotificationId);
 
             var triggerTime = NotifyTimeInMilliseconds(notificationRequest.NotifyTime.Value);
             notificationRequest.NotifyTime = null;
@@ -139,112 +148,64 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private void ShowNow(NotificationRequest notificationRequest)
         {
-            try
+            var builder = new NotificationCompat.Builder(Application.Context, NotificationCenter.NotificationChannelId);
+            builder.SetContentTitle(notificationRequest.Title);
+            builder.SetContentText(notificationRequest.Description);
+            builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notificationRequest.Description));
+            builder.SetNumber(notificationRequest.BadgeNumber);
+            builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
+            builder.SetPriority((int)notificationRequest.Android.Priority);
+            if (notificationRequest.Android.Color.HasValue)
             {
-                var channelId = $"{Application.Context.PackageName}.{notificationRequest.Android.ChannelName}";
-
-                var builder = new NotificationCompat.Builder(Application.Context, channelId);
-                builder.SetContentTitle(notificationRequest.Title);
-                builder.SetContentText(notificationRequest.Description);
-                builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notificationRequest.Description));
-                builder.SetNumber(notificationRequest.BadgeNumber);
-
-                if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
-                {
-                    if (notificationRequest.Sound.Contains("://") == false)
-                    {
-                        notificationRequest.Sound = $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{notificationRequest.Sound}";
-                    }
-                    var uri = Android.Net.Uri.Parse(notificationRequest.Sound);
-                    builder.SetSound(uri);
-                }
-
-                builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
-                builder.SetPriority((int)notificationRequest.Android.Priority);
-                if (notificationRequest.Android.Color.HasValue)
-                {
-                    builder.SetColor(notificationRequest.Android.Color.Value);
-                }
-                if (notificationRequest.Android.TimeoutAfter.HasValue)
-                {
-                    builder.SetTimeoutAfter((long)notificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
-                }
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    var channel = _notificationManager.GetNotificationChannel(channelId);
-                    if (channel is null)
-                    {
-                        var importance = NotificationImportance.Default;
-                        switch (notificationRequest.Android.Priority)
-                        {
-                            case NotificationPriority.Min:
-                                importance = NotificationImportance.Min;
-                                break;
-
-                            case NotificationPriority.Low:
-                                importance = NotificationImportance.Low;
-                                break;
-
-                            case NotificationPriority.High:
-                                importance = NotificationImportance.High;
-                                break;
-
-                            case NotificationPriority.Max:
-                                importance = NotificationImportance.Max;
-                                break;
-                        }
-
-                        // you can't change the importance or other notification behaviors after this.
-                        // once you create the channel, you cannot change these settings and
-                        // the user has final control of whether these behaviors are active.
-                        channel = new NotificationChannel(channelId, notificationRequest.Android.ChannelName, importance)
-                        {
-                            Description = notificationRequest.Android.ChannelDescription
-                        };
-                        _notificationManager.CreateNotificationChannel(channel);
-                    }
-
-                    builder.SetChannelId(channelId);
-                }
-
-                var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
-                notificationIntent.SetFlags(ActivityFlags.SingleTop);
-
-                notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, notificationRequest.ReturningData);
-
-                var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
-                builder.SetContentIntent(pendingIntent);
-
-                if (NotificationCenter.NotificationIconId != 0)
-                {
-                    builder.SetSmallIcon(NotificationCenter.NotificationIconId);
-                }
-                else
-                {
-                    var iconId = Application.Context.ApplicationInfo.Icon;
-                    if (iconId == 0)
-                    {
-                        iconId = Application.Context.Resources.GetIdentifier("icon", "drawable", Application.Context.PackageName);
-                    }
-                    builder.SetSmallIcon(iconId);
-                }
-
-                var notification = builder.Build();
-                if (notificationRequest.Android.LedColor.HasValue)
-                {
-                    notification.LedARGB = notificationRequest.Android.LedColor.Value;
-                }
-                if (string.IsNullOrWhiteSpace(notificationRequest.Sound))
-                {
-                    notification.Defaults = NotificationDefaults.All;
-                }
-                _notificationManager.Notify(notificationRequest.NotificationId, notification);
+                builder.SetColor(notificationRequest.Android.Color.Value);
             }
-            catch (Exception ex)
+            builder.SetSmallIcon(GetIcon(notificationRequest.Android.IconName));
+            if (notificationRequest.Android.TimeoutAfter.HasValue)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                builder.SetTimeoutAfter((long)notificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
+            var soundUri = NotificationCenter.GetSoundUri(notificationRequest.Sound);
+            if (soundUri != null)
+            {
+                builder.SetSound(soundUri);
+            }
+
+            var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+            notificationIntent.SetFlags(ActivityFlags.SingleTop);
+            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, notificationRequest.ReturningData);
+            var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
+            builder.SetContentIntent(pendingIntent);
+
+            var notification = builder.Build();
+            if (notificationRequest.Android.LedColor.HasValue)
+            {
+                notification.LedARGB = notificationRequest.Android.LedColor.Value;
+            }
+            if (string.IsNullOrWhiteSpace(notificationRequest.Sound))
+            {
+                notification.Defaults = NotificationDefaults.All;
+            }
+            _notificationManager.Notify(notificationRequest.NotificationId, notification);
+        }
+
+        private int GetIcon(string iconName)
+        {
+            var iconId = 0;
+            if (string.IsNullOrWhiteSpace(iconName) == false)
+            {
+                iconId = Application.Context.Resources.GetIdentifier(iconName, "drawable", Application.Context.PackageName);
+            }
+            if (iconId == 0)
+            {
+                iconId = Application.Context.ApplicationInfo.Icon;
+                if (iconId == 0)
+                {
+                    iconId = Application.Context.Resources.GetIdentifier("icon", "drawable",
+                        Application.Context.PackageName);
+                }
+            }
+
+            return iconId;
         }
     }
 }
