@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Support.V4.App;
 using AndroidX.Work;
@@ -156,7 +157,18 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notificationRequest.Description));
             builder.SetNumber(notificationRequest.BadgeNumber);
             builder.SetAutoCancel(notificationRequest.Android.AutoCancel);
-            builder.SetPriority((int)notificationRequest.Android.Priority);
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                builder.SetPriority((int) notificationRequest.Android.Priority);
+
+                var soundUri = NotificationCenter.GetSoundUri(notificationRequest.Sound);
+                if (soundUri != null)
+                {
+                    builder.SetSound(soundUri);
+                }
+            }
+            
             if (notificationRequest.Android.Color.HasValue)
             {
                 builder.SetColor(notificationRequest.Android.Color.Value);
@@ -166,12 +178,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 builder.SetTimeoutAfter((long)notificationRequest.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
-            var soundUri = NotificationCenter.GetSoundUri(notificationRequest.Sound);
-            if (soundUri != null)
-            {
-                builder.SetSound(soundUri);
-            }
-
+            
             var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, notificationRequest.ReturningData);
@@ -183,7 +190,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 notification.LedARGB = notificationRequest.Android.LedColor.Value;
             }
-            if (string.IsNullOrWhiteSpace(notificationRequest.Sound))
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O && 
+                string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
             {
                 notification.Defaults = NotificationDefaults.All;
             }

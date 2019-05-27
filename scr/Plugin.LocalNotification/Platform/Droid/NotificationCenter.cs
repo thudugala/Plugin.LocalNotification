@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
@@ -106,6 +107,16 @@ namespace Plugin.LocalNotification
                 LightColor = request.LightColor,
                 LockscreenVisibility = request.LockscreenVisibility,
             };
+            var soundUri = GetSoundUri(request.Sound);
+            if (soundUri != null)
+            {
+                var audioAttributes = new AudioAttributes.Builder()
+                    .SetUsage(AudioUsageKind.Notification)
+                    .SetContentType(AudioContentType.Music)
+                    .Build();
+                channel.SetSound(soundUri, audioAttributes);
+            }
+
             channel.SetShowBadge(true);
             channel.EnableLights(true);
             channel.EnableVibration(true);

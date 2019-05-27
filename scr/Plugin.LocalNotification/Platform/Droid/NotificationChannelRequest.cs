@@ -34,6 +34,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public Color LightColor { get; set; }
 
+
+        /// <summary>
+        /// Sound file name for the notification.
+        /// </summary>
+        public string Sound { get; set; }
+
         /// <summary>
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form. 
         /// </summary>
