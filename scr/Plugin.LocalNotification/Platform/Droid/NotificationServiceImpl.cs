@@ -148,6 +148,8 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private void ShowNow(NotificationRequest notificationRequest)
         {
+            Cancel(notificationRequest.NotificationId);
+
             var builder = new NotificationCompat.Builder(Application.Context, NotificationCenter.NotificationChannelId);
             builder.SetContentTitle(notificationRequest.Title);
             builder.SetContentText(notificationRequest.Description);
