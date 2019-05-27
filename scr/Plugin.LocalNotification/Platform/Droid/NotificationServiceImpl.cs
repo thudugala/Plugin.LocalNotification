@@ -1,10 +1,9 @@
 ﻿using Android.App;
-using Android.App.Job;
 using Android.Content;
-using Android.Content.PM;
 using Android.OS;
 using Android.Support.V4.App;
-using Android.Support.V4.Content;
+using AndroidX.Work;
+using Java.Util.Concurrent;
 using System;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -14,7 +13,6 @@ namespace Plugin.LocalNotification.Platform.Droid
     public class NotificationServiceImpl : INotificationService
     {
         private readonly NotificationManager _notificationManager;
-        private readonly JobScheduler _jobScheduler;
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -30,13 +28,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
                     return;
                 }
 
                 _notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-                _jobScheduler = Application.Context.GetSystemService(Context.JobSchedulerService) as JobScheduler;
             }
             catch (Exception ex)
             {
@@ -49,12 +46,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
                     return;
                 }
 
-                _jobScheduler.Cancel(notificationId);
+                WorkManager.Instance.CancelAllWorkByTag(notificationId.ToString());
                 _notificationManager.Cancel(notificationId);
             }
             catch (Exception ex)
@@ -68,12 +65,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             try
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
                     return;
                 }
 
-                _jobScheduler.CancelAll();
+                WorkManager.Instance.CancelAllWork();
                 _notificationManager.CancelAll();
             }
             catch (Exception ex)
@@ -85,7 +82,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public void Show(NotificationRequest notificationRequest)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
             {
                 return;
             }
@@ -113,38 +110,21 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             var triggerTime = NotifyTimeInMilliseconds(notificationRequest.NotifyTime.Value);
-
             notificationRequest.NotifyTime = null;
+            triggerTime -= NotifyTimeInMilliseconds(DateTime.Now);
 
             var serializedNotification = ObjectSerializer<NotificationRequest>.SerializeObject(notificationRequest);
 
-            var javaClass = Java.Lang.Class.FromType(typeof(ScheduledNotificationJobService));
-            var component = new ComponentName(Application.Context, javaClass);
+            var dataBuilder = new Data.Builder();
+            dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
 
-            // Bundle up parameters
-            var extras = new PersistableBundle();
-            extras.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
+            var reqbuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
+            reqbuilder.AddTag(notificationRequest.NotificationId.ToString());
+            reqbuilder.SetInputData(dataBuilder.Build());
+            reqbuilder.SetInitialDelay(triggerTime, TimeUnit.Milliseconds);
 
-            triggerTime -= NotifyTimeInMilliseconds(DateTime.Now);
-
-            var builder = new JobInfo.Builder(notificationRequest.NotificationId, component);
-            builder.SetMinimumLatency(triggerTime); // Fire at TriggerTime
-            builder.SetOverrideDeadline(triggerTime + 5000); // Or at least 5 Seconds Later
-            builder.SetExtras(extras);
-            builder.SetPersisted(CheckBootPermission()); //Job will be recreated after Reboot if Permissions are granted
-
-            var jobInfo = builder.Build();
-            _jobScheduler.Schedule(jobInfo);
-        }
-
-        private static bool CheckBootPermission()
-        {
-            const string permission = "android.permission.RECEIVE_BOOT_COMPLETED";
-            return Build.VERSION.SdkInt >= BuildVersionCodes.M
-                ? Application.Context.CheckSelfPermission(permission)
-                  == Permission.Granted
-                : PermissionChecker.CheckSelfPermission(Application.Context, permission)
-                  == PermissionChecker.PermissionGranted;
+            var workRequest = reqbuilder.Build();
+            WorkManager.Instance.Enqueue(workRequest);
         }
 
         private static long NotifyTimeInMilliseconds(DateTime notifyTime)
