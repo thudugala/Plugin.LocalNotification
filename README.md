@@ -4,9 +4,15 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.svg?label=NuGet)](https://www.nuget.org/packages/Plugin.LocalNotification/)
 
+
+# 3.0.2 Documentation
+
+- Please go to [3.0.2 Documentation](../../wiki/Usage-3.0.2), if you are referencing a version below 4.0.0. 
+- Version 4.* has setup differences in Android if upgrading from version 3.*
+
 # 2.0.7 Documentation
 
-- Please go to [2.0.7 Documentation](https://github.com/tmt242001/Plugin.LocalNotification/wiki/Usage-2.0.7), if you are referencing a version below 3.0.0. 
+- Please go to [2.0.7 Documentation](../../wiki/Usage-2.0.7), if you are referencing a version below 3.0.0. 
 - Version 3.* has breaking changes if upgrading from version 2.*
 
 # Plugin.LocalNotification
@@ -22,7 +28,7 @@ The local notification plugin provides a way to show local notifications from Xa
 |Platform|Supported|Version|Notes|
 | ------------------- | :-----------: | :------------------: | :------------------: |
 |Xamarin.iOS|Yes|iOS 10+| |
-|Xamarin.Android|Yes|API 21+|Project should [target Android framework 9.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
+|Xamarin.Android|Yes|API 14+|Project should [target Android framework 9.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
 
 # Usage
 
@@ -38,12 +44,6 @@ var notification = new NotificationRequest
     NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
 };
 NotificationCenter.Current.Show(notification);
-```
-
-### Cancel a local notification
-
-```csharp
-NotificationCenter.Current.Cancel(100);
 ```
 
 ### Receive local notification tap event
@@ -72,14 +72,6 @@ public partial class App : Application
 
 ### Android
 
-Notification Icon must be set for notification to appear. 
-Only need to set it manually, if you do not have a image called "Icon.png"
-
-You can set the notification Icon by setting the following property from inside your Android project:
-```csharp
-NotificationCenter.NotificationIconId = Resource.Drawable.YOUR_ICON_HERE;
-```
-
 Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21)
 
 ```XML
@@ -97,9 +89,9 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
 	        .....
-	        // Only need to be set manually, if you do not have a image called "Icon.png".
-                // Notification Icon must be set for notification to appear.
-                //NotificationCenter.NotificationIconId = Resource.Drawable.YOUR_ICON_HERE;		
+	        // Must create a Notification Channel when API >= 26
+                // you can created multiple Notification Channels with different names.
+                NotificationCenter.CreateNotificationChannel();		
 		.....		
 		LoadApplication(new App());
 		.....	
@@ -134,6 +126,10 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 # Screen Record
 
 <img src="Screenshots/screenRecord.gif" alt="Screen Record"  width="512px" >
+
+# Notification Channels
+
+[Setting up Notification Channels](../../wiki/%5BAndroid--=-26%5D-Notification-Channel)
 
 # Custom Sound
 
