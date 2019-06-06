@@ -19,6 +19,11 @@ namespace Plugin.LocalNotification
         /// </summary>
         internal static string ExtraReturnNotification = "Plugin.LocalNotification.RETURN_NOTIFICATION";
 
+        /// <summary>
+        /// Default Channel Id.
+        /// </summary>
+        internal static string DefaultChannelId => "Plugin.LocalNotification.GENERAL";
+
         static NotificationCenter()
         {
             try
@@ -86,7 +91,7 @@ namespace Plugin.LocalNotification
 
             if (string.IsNullOrWhiteSpace(request.Id))
             {
-                request.Id = NotificationChannel.DefaultChannelId;
+                request.Id = DefaultChannelId;
             }
 
             // you can't change the importance or other notification behaviors after this.

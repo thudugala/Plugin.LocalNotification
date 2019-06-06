@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification
         /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
         /// Use this to target the Notification Channel.
         /// </summary>
-        public string ChannelId { get; set; }
+        public string ChannelId { get; set; } = "Plugin.LocalNotification.GENERAL";
 
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
