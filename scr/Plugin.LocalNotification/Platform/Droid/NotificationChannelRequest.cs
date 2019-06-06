@@ -14,8 +14,13 @@ namespace Plugin.LocalNotification.Platform.Droid
         public NotificationImportance Importance { get; set; } = NotificationImportance.Default;
 
         /// <summary>
+        /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
+        /// Also, NotificationRequest.Android.ChannelId must be set to the same Id to target this channel.
+        /// </summary>
+        public string Id { get; set; } = NotificationChannel.DefaultChannelId;
+
+        /// <summary>
         /// Sets or gets, the user visible name of this channel, default is General.
-        /// Also, NotificationRequest.Android.ChannelName must be set to the same name to target this channel.
         /// </summary>
         public string Name { get; set; } = "General";
 

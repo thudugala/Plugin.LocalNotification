@@ -13,10 +13,10 @@ namespace Plugin.LocalNotification
         public bool AutoCancel { get; set; } = true;
 
         /// <summary>
-        /// Sets or gets, the user visible name of this channel, default is General.
+        /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
         /// Use this to target the Notification Channel.
         /// </summary>
-        public string ChannelName { get; set; } = "General";
+        public string ChannelId { get; set; }
 
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.

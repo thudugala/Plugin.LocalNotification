@@ -150,13 +150,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             Cancel(request.NotificationId);
 
-            if (string.IsNullOrWhiteSpace(request.Android.ChannelName))
+            if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
-                request.Android.ChannelName = "General";
+                request.Android.ChannelId = NotificationChannel.DefaultChannelId; 
             }
-            var channelId = NotificationCenter.GetChannelId(request.Android.ChannelName);
 
-            var builder = new NotificationCompat.Builder(Application.Context, channelId);
+            var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
             builder.SetContentTitle(request.Title);
             builder.SetContentText(request.Description);
             builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(request.Description));

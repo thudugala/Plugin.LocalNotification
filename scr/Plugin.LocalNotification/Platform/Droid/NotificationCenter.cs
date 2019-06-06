@@ -84,12 +84,15 @@ namespace Plugin.LocalNotification
                 request.Name = "General";
             }
 
-            var channelId = GetChannelId(request.Name);
+            if (string.IsNullOrWhiteSpace(request.Id))
+            {
+                request.Id = NotificationChannel.DefaultChannelId;
+            }
 
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            var channel = new NotificationChannel(channelId, request.Name, request.Importance)
+            var channel = new NotificationChannel(request.Id, request.Name, request.Importance)
             {
                 Description = request.Description,
                 Group = request.Group,
@@ -126,11 +129,6 @@ namespace Plugin.LocalNotification
                     $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
             }
             return Android.Net.Uri.Parse(soundFileName);
-        }
-
-        internal static string GetChannelId(string channelName)
-        {
-            return $"{Application.Context.PackageName}.{channelName}";
         }
     }
 }
