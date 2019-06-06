@@ -23,9 +23,9 @@ namespace LocalNotification.Sample.Droid
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            // Must create a Notification Channel when API >= 26
-            // you can created multiple Notification Channels with different names.
-            NotificationCenter.CreateNotificationChannel();
+            // Only need to be set this manually, if you do not have a image called "Icon.png".
+            // Notification Icon must be set for notification to appear.
+            // NotificationCenter.NotificationIconId = Resource.Drawable.YOUR_ICON_HERE;
 
             LoadApplication(new App());
             

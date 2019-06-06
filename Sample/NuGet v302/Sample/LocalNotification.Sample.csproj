@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Plugin.LocalNotification" Version="4.0.0" />
+    <PackageReference Include="Plugin.LocalNotification" Version="3.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="3.6.0.264807" />
   </ItemGroup>
 

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>CFBundleDisplayName</key>
+	<string>Local Notification Sample</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.LocalNotification.Sample</string>
+	<key>CFBundleVersion</key>
+	<string>3.0.0</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>Icon-App-20x20@1x</string>
+		<string>Icon-App-20x20@2x</string>
+		<string>Icon-App-20x20@3x</string>
+		<string>Icon-App-29x29@1x</string>
+		<string>Icon-App-29x29@2x</string>
+		<string>Icon-App-29x29@3xx</string>
+		<string>Icon-App-40x40@1x</string>
+		<string>Icon-App-40x40@2x</string>
+		<string>Icon-App-40x40@3x</string>
+		<string>Icon-App-57x57@1x</string>
+		<string>Icon-App-57x57@2x</string>
+		<string>Icon-App-60x60@1x</string>
+		<string>Icon-App-60x60@2x</string>
+		<string>Icon-App-60x60@3x</string>
+		<string>Icon-App-72x72@1x</string>
+		<string>Icon-App-72x72@2x</string>
+		<string>Icon-App-76x76@1x</string>
+		<string>Icon-App-76x76@2x</string>
+		<string>Icon-App-76x76@3x</string>
+		<string>Icon-App-83.5x83.5@2x</string>
+		<string>Icon-Small-50x50@1x</string>
+		<string>Icon-Small-50x50@2x</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>CFBundleName</key>
+	<string>LocalNotification.Sample</string>
+</dict>
+</plist>
