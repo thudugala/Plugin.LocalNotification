@@ -9,6 +9,7 @@ namespace Plugin.LocalNotification
     {
         /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
+        /// Default is true
         /// </summary>
         public bool AutoCancel { get; set; } = true;
 
@@ -33,6 +34,15 @@ namespace Plugin.LocalNotification
         /// If set, the LED will have the provided ARGB color.
         /// </summary>
         public int? LedColor { get; set; }
+
+        /// <summary>
+        /// Set whether this is an ongoing notification.
+        /// Ongoing notifications differ from regular notifications in the following ways,
+        /// Ongoing notifications are sorted above the regular notifications in the notification panel.
+        /// Ongoing notifications do not have an 'X' close button, and are not affected by the "Clear all" button.
+        /// Default is false
+        /// </summary>
+        public bool Ongoing { get; set; } = false;
 
         /// <summary>
         /// Set the relative priority for this notification.

@@ -161,6 +161,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(request.Description));
             builder.SetNumber(request.BadgeNumber);
             builder.SetAutoCancel(request.Android.AutoCancel);
+            builder.SetOngoing(request.Android.Ongoing);
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
