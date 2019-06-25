@@ -72,7 +72,7 @@ public partial class App : Application
 
 ### Android
 
-Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21)
+Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21). You only need to do this if you plugin verion is below 4.0.3
 
 ```XML
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
