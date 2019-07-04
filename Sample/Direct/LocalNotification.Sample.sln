@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalNotification.Sample", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F2A7B258-0C9B-4BF3-9532-69DE70B0543F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.LocalNotification", "..\..\scr\Plugin.LocalNotification\Plugin.LocalNotification.csproj", "{43815ED8-A675-4657-BF92-14817663AC04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.LocalNotification", "..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj", "{43815ED8-A675-4657-BF92-14817663AC04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

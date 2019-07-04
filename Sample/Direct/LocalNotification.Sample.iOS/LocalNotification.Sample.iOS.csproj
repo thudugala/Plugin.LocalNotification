@@ -157,7 +157,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\scr\Plugin.LocalNotification\Plugin.LocalNotification.csproj">
+    <ProjectReference Include="..\..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj">
       <Project>{43815ed8-a675-4657-bf92-14817663ac04}</Project>
       <Name>Plugin.LocalNotification</Name>
     </ProjectReference>
@@ -168,74 +168,28 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Icon-App-20x20%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-20x20%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-20x20%403x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-29x29%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-29x29%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-29x29%403x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-40x40%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-40x40%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-40x40%403x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-57x57%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-57x57%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-60x60%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-60x60%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-60x60%403x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-72x72%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-72x72%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-76x76%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-76x76%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-76x76%403x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-App-83.5x83.5%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-Small-50x50%401x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Icon-Small-50x50%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\ItunesArtwork%402x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\good_things_happen.aiff" />
-  </ItemGroup>
+	<BundleResource Include="Resources\Icon-App-20x20%402x.png" />
+	<BundleResource Include="Resources\Icon-App-20x20%403x.png" />
+	<BundleResource Include="Resources\Icon-App-29x29%401x.png" />
+	<BundleResource Include="Resources\Icon-App-29x29%402x.png" />
+	<BundleResource Include="Resources\Icon-App-29x29%403x.png" />
+	<BundleResource Include="Resources\Icon-App-40x40%401x.png" />
+	<BundleResource Include="Resources\Icon-App-40x40%402x.png" />
+	<BundleResource Include="Resources\Icon-App-40x40%403x.png" />
+	<BundleResource Include="Resources\Icon-App-57x57%401x.png" />
+	<BundleResource Include="Resources\Icon-App-57x57%402x.png" />
+	<BundleResource Include="Resources\Icon-App-60x60%401x.png" />
+	<BundleResource Include="Resources\Icon-App-60x60%402x.png" />
+	<BundleResource Include="Resources\Icon-App-60x60%403x.png" />
+	<BundleResource Include="Resources\Icon-App-72x72%401x.png" />
+	<BundleResource Include="Resources\Icon-App-72x72%402x.png" />
+	<BundleResource Include="Resources\Icon-App-76x76%401x.png" />
+	<BundleResource Include="Resources\Icon-App-76x76%402x.png" />
+	<BundleResource Include="Resources\Icon-App-76x76%403x.png" />
+	<BundleResource Include="Resources\Icon-App-83.5x83.5%402x.png" />
+	<BundleResource Include="Resources\Icon-Small-50x50%401x.png" />
+	<BundleResource Include="Resources\Icon-Small-50x50%402x.png" />
+	<BundleResource Include="Resources\ItunesArtwork%402x.png" />
+	<BundleResource Include="Resources\good_things_happen.aiff" />
+  </ItemGroup>    
 </Project>
