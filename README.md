@@ -72,7 +72,11 @@ public partial class App : Application
 
 ### Android
 
-Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21). You only need to do this if you plugin verion is below 4.0.3
+Project should [target Android framework 9.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
+
+![image](https://user-images.githubusercontent.com/4112014/57818332-81bf9080-77d7-11e9-979d-8c7baa0407b9.png)
+
+Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21). **You only need to do this if you plugin verion is below 4.0.3**
 
 ```XML
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
