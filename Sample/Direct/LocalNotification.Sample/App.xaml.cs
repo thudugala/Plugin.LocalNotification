@@ -12,12 +12,12 @@ namespace LocalNotification.Sample
         public App()
         {
             InitializeComponent();
-            
+
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
             GoToMainPage();
         }
-        
+
         public new static App Current => Application.Current as App;
 
         public void GoToMainPage()
@@ -37,7 +37,6 @@ namespace LocalNotification.Sample
 
         protected override void OnStart()
         {
-            
         }
 
         private void LoadPageFromNotification(NotificationTappedEventArgs e)
@@ -47,7 +46,8 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var list = ObjectSerializer<List<string>>.DeserializeObject(e.Data);
+            var serializer = new ObjectSerializer<List<string>>();
+            var list = serializer.DeserializeObject(e.Data);
             if (list.Count != 2)
             {
                 return;
