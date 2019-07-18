@@ -5,6 +5,7 @@ using Android.Support.V4.App;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
+using System.Globalization;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -51,7 +52,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                WorkManager.Instance.CancelAllWorkByTag(notificationId.ToString());
+                WorkManager.Instance.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
                 _notificationManager.Cancel(notificationId);
             }
             catch (Exception ex)
@@ -122,18 +123,22 @@ namespace Plugin.LocalNotification.Platform.Droid
             notificationRequest.NotifyTime = null;
             triggerTime -= NotifyTimeInMilliseconds(DateTime.Now);
 
-            var serializedNotification = ObjectSerializer<NotificationRequest>.SerializeObject(notificationRequest);
+            var serializer = new ObjectSerializer<NotificationRequest>();
 
-            var dataBuilder = new Data.Builder();
-            dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
+            var serializedNotification = serializer.SerializeObject(notificationRequest);
 
-            var reqbuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
-            reqbuilder.AddTag(notificationRequest.NotificationId.ToString());
-            reqbuilder.SetInputData(dataBuilder.Build());
-            reqbuilder.SetInitialDelay(triggerTime, TimeUnit.Milliseconds);
+            using (var dataBuilder = new Data.Builder())
+            {
+                dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
 
-            var workRequest = reqbuilder.Build();
-            WorkManager.Instance.Enqueue(workRequest);
+                var reqbuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
+                reqbuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
+                reqbuilder.SetInputData(dataBuilder.Build());
+                reqbuilder.SetInitialDelay(triggerTime, TimeUnit.Milliseconds);
+
+                var workRequest = reqbuilder.Build();
+                WorkManager.Instance.Enqueue(workRequest);
+            }
         }
 
         private static long NotifyTimeInMilliseconds(DateTime notifyTime)
@@ -152,58 +157,69 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
-                request.Android.ChannelId = NotificationCenter.DefaultChannelId; 
+                request.Android.ChannelId = NotificationCenter.DefaultChannelId;
             }
 
-            var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
-            builder.SetContentTitle(request.Title);
-            builder.SetContentText(request.Description);
-            builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(request.Description));
-            builder.SetNumber(request.BadgeNumber);
-            builder.SetAutoCancel(request.Android.AutoCancel);
-            builder.SetOngoing(request.Android.Ongoing);
-
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            using (var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId))
             {
-                builder.SetPriority((int)request.Android.Priority);
-
-                var soundUri = NotificationCenter.GetSoundUri(request.Sound);
-                if (soundUri != null)
+                builder.SetContentTitle(request.Title);
+                builder.SetContentText(request.Description);
+                using (var bigTextStyle = new NotificationCompat.BigTextStyle())
                 {
-                    builder.SetSound(soundUri);
+                    var bigText = bigTextStyle.BigText(request.Description);
+                    builder.SetStyle(bigText);
                 }
-            }
+                builder.SetNumber(request.BadgeNumber);
+                builder.SetAutoCancel(request.Android.AutoCancel);
+                builder.SetOngoing(request.Android.Ongoing);
 
-            if (request.Android.Color.HasValue)
-            {
-                builder.SetColor(request.Android.Color.Value);
-            }
-            builder.SetSmallIcon(GetIcon(request.Android.IconName));
-            if (request.Android.TimeoutAfter.HasValue)
-            {
-                builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
-            }
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                {
+                    builder.SetPriority((int)request.Android.Priority);
 
-            var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
-            notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
-            var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
-            builder.SetContentIntent(pendingIntent);
+                    var soundUri = NotificationCenter.GetSoundUri(request.Sound);
+                    if (soundUri != null)
+                    {
+                        builder.SetSound(soundUri);
+                    }
+                }
 
-            var notification = builder.Build();
-            if (request.Android.LedColor.HasValue)
-            {
-                notification.LedARGB = request.Android.LedColor.Value;
+                if (request.Android.Color.HasValue)
+                {
+                    builder.SetColor(request.Android.Color.Value);
+                }
+
+                builder.SetSmallIcon(GetIcon(request.Android.IconName));
+                if (request.Android.TimeoutAfter.HasValue)
+                {
+                    builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
+                }
+
+                var notificationIntent =
+                    Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+                notificationIntent.SetFlags(ActivityFlags.SingleTop);
+                notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
+                var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent,
+                    PendingIntentFlags.UpdateCurrent);
+                builder.SetContentIntent(pendingIntent);
+
+                var notification = builder.Build();
+                if (request.Android.LedColor.HasValue)
+                {
+                    notification.LedARGB = request.Android.LedColor.Value;
+                }
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
+                    string.IsNullOrWhiteSpace(request.Sound) == false)
+                {
+                    notification.Defaults = NotificationDefaults.All;
+                }
+
+                _notificationManager.Notify(request.NotificationId, notification);
             }
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
-                string.IsNullOrWhiteSpace(request.Sound) == false)
-            {
-                notification.Defaults = NotificationDefaults.All;
-            }
-            _notificationManager.Notify(request.NotificationId, notification);
         }
 
-        private int GetIcon(string iconName)
+        private static int GetIcon(string iconName)
         {
             var iconId = 0;
             if (string.IsNullOrWhiteSpace(iconName) == false)

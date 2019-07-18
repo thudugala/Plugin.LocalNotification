@@ -44,6 +44,11 @@ namespace Plugin.LocalNotification
         {
             try
             {
+                if (intent is null)
+                {
+                    return;
+                }
+
                 if (intent.HasExtra(ExtraReturnDataAndroid) == false)
                 {
                     return;
@@ -97,28 +102,33 @@ namespace Plugin.LocalNotification
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            var channel = new NotificationChannel(request.Id, request.Name, request.Importance)
+            using (var channel = new NotificationChannel(request.Id, request.Name, request.Importance)
             {
                 Description = request.Description,
                 Group = request.Group,
                 LightColor = request.LightColor,
                 LockscreenVisibility = request.LockscreenVisibility,
-            };
-            var soundUri = GetSoundUri(request.Sound);
-            if (soundUri != null)
+            })
             {
-                var audioAttributes = new AudioAttributes.Builder()
-                    .SetUsage(AudioUsageKind.Notification)
-                    .SetContentType(AudioContentType.Music)
-                    .Build();
-                channel.SetSound(soundUri, audioAttributes);
+                var soundUri = GetSoundUri(request.Sound);
+                if (soundUri != null)
+                {
+                    using (var audioAttributesBuilder = new AudioAttributes.Builder())
+                    {
+                        var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
+                            .SetContentType(AudioContentType.Music)
+                            .Build();
+
+                        channel.SetSound(soundUri, audioAttributes);
+                    }
+                }
+
+                channel.SetShowBadge(true);
+                channel.EnableLights(true);
+                channel.EnableVibration(true);
+
+                notificationManager.CreateNotificationChannel(channel);
             }
-
-            channel.SetShowBadge(true);
-            channel.EnableLights(true);
-            channel.EnableVibration(true);
-
-            notificationManager.CreateNotificationChannel(channel);
         }
 
         internal static Android.Net.Uri GetSoundUri(string soundFileName)
@@ -128,7 +138,7 @@ namespace Plugin.LocalNotification
                 return null;
             }
 
-            if (soundFileName.Contains("://") == false)
+            if (soundFileName.Contains("://", StringComparison.InvariantCulture) == false)
             {
                 soundFileName =
                     $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";

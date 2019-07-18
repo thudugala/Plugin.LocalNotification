@@ -9,7 +9,7 @@ namespace Plugin.LocalNotification.Platform.Droid
     public class NotificationChannelRequest
     {
         /// <summary>
-        /// Sets or gets, the level of interruption of this notification channel. 
+        /// Sets or gets, the level of interruption of this notification channel.
         /// </summary>
         public NotificationImportance Importance { get; set; } = NotificationImportance.Default;
 
@@ -25,7 +25,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         public string Name { get; set; } = "General";
 
         /// <summary>
-        /// Sets or gets, the user visible description of this channel. 
+        /// Sets or gets, the user visible description of this channel.
         /// </summary>
         public string Description { get; set; }
 
@@ -40,14 +40,13 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public Color LightColor { get; set; }
 
-
         /// <summary>
         /// Sound file name for the notification.
         /// </summary>
         public string Sound { get; set; }
 
         /// <summary>
-        /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form. 
+        /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.
         /// </summary>
         public NotificationVisibility LockscreenVisibility { get; set; } = NotificationVisibility.Secret;
     }

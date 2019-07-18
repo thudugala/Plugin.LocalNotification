@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using UIKit;
 using UserNotifications;
 
@@ -38,8 +39,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                var item = notificationId.ToString();
-                var itemList = new[] { notificationId.ToString() };
+                var item = notificationId.ToString(CultureInfo.CurrentCulture);
+                var itemList = new[] { notificationId.ToString(CultureInfo.CurrentCulture) };
                 _notificationList.Remove(item);
 
                 UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
@@ -87,33 +88,41 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var userInfoDictionary = new NSMutableDictionary();
 
-                userInfoDictionary.SetValueForKey(
-                    string.IsNullOrWhiteSpace(notificationRequest.ReturningData)
-                        ? NSString.Empty
-                        : new NSString(notificationRequest.ReturningData), NotificationCenter.ExtraReturnDataIos);
+                using (var returningData = new NSString(notificationRequest.ReturningData))
+                {
+                    userInfoDictionary.SetValueForKey(
+                        string.IsNullOrWhiteSpace(notificationRequest.ReturningData)
+                            ? NSString.Empty
+                            : returningData, NotificationCenter.ExtraReturnDataIos);
+                }
 
-                var content = new UNMutableNotificationContent
+                using (var content = new UNMutableNotificationContent
                 {
                     Title = notificationRequest.Title,
                     Body = notificationRequest.Description,
                     Badge = notificationRequest.BadgeNumber,
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default
-                };
-                if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
+                })
                 {
-                    content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
+                    if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
+                    {
+                        content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
+                    }
+
+                    using (var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest.NotifyTime))
+                    {
+                        using (var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, false))
+                        {
+                            var notificationId = notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
+
+                            _notificationList.Add(notificationId);
+                            var request = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
+
+                            UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
+                        }
+                    }
                 }
-
-                var trigger =
-                    UNCalendarNotificationTrigger.CreateTrigger(
-                        GetNsDateComponentsFromDateTime(notificationRequest.NotifyTime), false);
-
-                _notificationList.Add(notificationRequest.NotificationId.ToString());
-                var request = UNNotificationRequest.FromIdentifier(notificationRequest.NotificationId.ToString(),
-                    content, trigger);
-
-                UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
             }
             catch (Exception ex)
             {

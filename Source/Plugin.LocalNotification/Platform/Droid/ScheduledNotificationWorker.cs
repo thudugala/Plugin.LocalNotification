@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
+#pragma warning disable CA1812
     internal class ScheduledNotificationWorker : Worker
+#pragma warning restore CA1812
     {
         public ScheduledNotificationWorker(Context context, WorkerParameters workerParameters) : base(context, workerParameters)
         {
@@ -21,7 +23,8 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             Task.Run(() =>
             {
-                var notification = ObjectSerializer<NotificationRequest>.DeserializeObject(serializedNotification);
+                var serializer = new ObjectSerializer<NotificationRequest>();
+                var notification = serializer.DeserializeObject(serializedNotification);
 
                 NotificationCenter.Current.Show(notification);
             });

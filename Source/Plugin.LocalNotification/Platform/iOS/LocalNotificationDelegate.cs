@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using UIKit;
 using UserNotifications;
 
@@ -14,6 +15,11 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             try
             {
+                if (response is null)
+                {
+                    return;
+                }
+
                 // Take action based on identifier
                 if (!response.IsDefaultAction)
                 {
@@ -35,7 +41,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
                     var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
-                                    Convert.ToInt32(response.Notification.Request.Content.Badge.ToString());
+                                    Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
                     UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
 
                     NotificationCenter.Current.OnNotificationTapped(subscribeItem);
@@ -52,6 +58,11 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             try
             {
+                if (completionHandler is null)
+                {
+                    return;
+                }
+
                 completionHandler(UNNotificationPresentationOptions.Alert);
             }
             catch (Exception ex)

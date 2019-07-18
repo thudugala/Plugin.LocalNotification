@@ -5,7 +5,10 @@ namespace Plugin.LocalNotification
     /// <summary>
     /// Cross platform INotificationService Resolver.
     /// </summary>
+#pragma warning disable CA1724
+
     public static partial class NotificationCenter
+#pragma warning restore CA1724
     {
         private static INotificationService _current;
 
@@ -15,8 +18,7 @@ namespace Plugin.LocalNotification
         public static INotificationService Current
         {
             get =>
-                _current ?? throw new ArgumentException(
-                    "[Plugin.LocalNotification] No platform plugin found.  Did you install the nuget package in your app project as well?");
+                _current ?? throw new InvalidOperationException(Properties.Resources.PluginNotFound);
             set => _current = value;
         }
     }
