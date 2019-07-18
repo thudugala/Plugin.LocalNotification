@@ -24,10 +24,13 @@ namespace LocalNotification.Sample.Droid
 
             // Must create a Notification Channel when API >= 26
             // you can created multiple Notification Channels with different names.
-            NotificationCenter.CreateNotificationChannel();
+            NotificationCenter.CreateNotificationChannel(new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequest
+            {
+                Sound = Resource.Raw.good_things_happen.ToString()
+            });
 
             LoadApplication(new App());
-            
+
             NotificationCenter.NotifyNotificationTapped(Intent);
         }
 

@@ -210,7 +210,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
 
                 if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
-                    string.IsNullOrWhiteSpace(request.Sound) == false)
+                    string.IsNullOrWhiteSpace(request.Sound))
                 {
                     notification.Defaults = NotificationDefaults.All;
                 }
