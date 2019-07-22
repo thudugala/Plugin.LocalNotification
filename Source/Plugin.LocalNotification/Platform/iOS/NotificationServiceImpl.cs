@@ -9,7 +9,6 @@ using UserNotifications;
 namespace Plugin.LocalNotification.Platform.iOS
 {
     /// <inheritdoc />
-    [Foundation.Preserve]
     public class NotificationServiceImpl : INotificationService
     {
         private readonly List<string> _notificationList;

@@ -10,7 +10,6 @@ using System.Globalization;
 namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <inheritdoc />
-    [Android.Runtime.Preserve]
     public class NotificationServiceImpl : INotificationService
     {
         private readonly NotificationManager _notificationManager;

@@ -10,7 +10,7 @@
     <RootNamespace>LocalNotification.Sample.Droid</RootNamespace>
     <AssemblyName>LocalNotification.Sample.Android</AssemblyName>
     <AndroidApplication>True</AndroidApplication>
-    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
@@ -56,6 +56,7 @@
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidLinkMode>Full</AndroidLinkMode>    
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />

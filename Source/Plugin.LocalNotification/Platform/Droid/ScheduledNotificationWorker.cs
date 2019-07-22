@@ -1,10 +1,12 @@
 ﻿using Android.Content;
+using Android.Runtime;
 using AndroidX.Work;
 using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
 #pragma warning disable CA1812
+    [Preserve(AllMembers = true)]
     internal class ScheduledNotificationWorker : Worker
 #pragma warning restore CA1812
     {
