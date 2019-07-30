@@ -15,14 +15,7 @@ namespace LocalNotification.Sample
 
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
-            GoToMainPage();
-        }
-
-        public new static App Current => Application.Current as App;
-
-        public void GoToMainPage()
-        {
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new MainPage());
         }
 
         protected override void OnResume()
@@ -58,7 +51,7 @@ namespace LocalNotification.Sample
             }
             var tapCount = list[1];
 
-            MainPage = new NotificationPage(int.Parse(tapCount));
+            ((NavigationPage)MainPage).Navigation.PushAsync(new NotificationPage(int.Parse(tapCount)));
         }
     }
 }

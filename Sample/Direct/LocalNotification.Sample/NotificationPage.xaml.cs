@@ -9,20 +9,14 @@ using Xamarin.Forms.Xaml;
 
 namespace LocalNotification.Sample
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class NotificationPage : ContentPage
-	{
-	    public NotificationPage (int tabCount)
-	    {
-            InitializeComponent ();
-
-	        TapCountLabel.Text = $"Tap Count {tabCount}";
-        }
-
-        private void Button_Clicked(object sender, EventArgs e)
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class NotificationPage : ContentPage
+    {
+        public NotificationPage(int tabCount)
         {
-            NotificationCenter.Current.Cancel(100);
-            App.Current.GoToMainPage();
+            InitializeComponent();
+
+            TapCountLabel.Text = $"Tap Count {tabCount}";
         }
     }
 }
