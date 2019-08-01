@@ -35,7 +35,7 @@ namespace LocalNotification.Sample
                 Title = "Test",
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
-                ReturningData = serializeReturningData,
+                //ReturningData = serializeReturningData,
                 //Android =
                 //{
                 //    AutoCancel = false,

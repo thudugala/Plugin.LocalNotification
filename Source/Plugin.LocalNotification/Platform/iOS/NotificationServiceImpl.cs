@@ -87,12 +87,15 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 var userInfoDictionary = new NSMutableDictionary();
 
-                using (var returningData = new NSString(notificationRequest.ReturningData))
+                if (string.IsNullOrWhiteSpace(notificationRequest.ReturningData) == false)
                 {
-                    userInfoDictionary.SetValueForKey(
-                        string.IsNullOrWhiteSpace(notificationRequest.ReturningData)
-                            ? NSString.Empty
-                            : returningData, NotificationCenter.ExtraReturnDataIos);
+                    using (var returningData = new NSString(notificationRequest.ReturningData))
+                    {
+                        userInfoDictionary.SetValueForKey(
+                            string.IsNullOrWhiteSpace(notificationRequest.ReturningData)
+                                ? NSString.Empty
+                                : returningData, NotificationCenter.ExtraReturnDataIos);
+                    }
                 }
 
                 using (var content = new UNMutableNotificationContent
@@ -113,7 +116,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                     {
                         using (var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, false))
                         {
-                            var notificationId = notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
+                            var notificationId =
+                                notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
 
                             _notificationList.Add(notificationId);
                             var request = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
