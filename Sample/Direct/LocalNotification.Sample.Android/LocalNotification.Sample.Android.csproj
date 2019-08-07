@@ -142,10 +142,5 @@
       <Name>LocalNotification.Sample</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <Target Name="FixGuava" AfterTargets="_AddAndroidCustomMetaData">
-    <ItemGroup>
-      <_MonoAndroidReferencePath Include="@(_ReferencePath);@(_ReferenceDependencyPaths)" Condition=" '%(Filename)' == 'Xamarin.Google.Guava.ListenableFuture' " />
-    </ItemGroup>
-  </Target>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" /> 
 </Project>

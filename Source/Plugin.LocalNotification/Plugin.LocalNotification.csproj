@@ -24,16 +24,15 @@
     <Version>4.0.5</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
+    <!--Android DesignTimeBuild error workaround-->
+    <DesignTimeBuild>false</DesignTimeBuild>
+
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <CodeAnalysisRuleSet>Plugin.LocalNotification.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <PropertyGroup Label="Android DesignTimeBuild error workaround">
-    <DesignTimeBuild>false</DesignTimeBuild>
   </PropertyGroup>
 
   <ItemGroup>
