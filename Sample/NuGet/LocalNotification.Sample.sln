@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.452
+VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.Android", "Sample.Android\LocalNotification.Sample.Android.csproj", "{08F5CE7D-75F1-42E3-88E2-04E0A9185467}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.Android", "LocalNotification.Sample.Android\LocalNotification.Sample.Android.csproj", "{08F5CE7D-75F1-42E3-88E2-04E0A9185467}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.iOS", "Sample.iOS\LocalNotification.Sample.iOS.csproj", "{F7906D0B-9C19-4748-B162-A1434EAC6F09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample.iOS", "LocalNotification.Sample.iOS\LocalNotification.Sample.iOS.csproj", "{F7906D0B-9C19-4748-B162-A1434EAC6F09}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalNotification.Sample", "Sample\LocalNotification.Sample.csproj", "{1CB8A3CC-A5FB-4D8D-9686-1374FAC0ABC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalNotification.Sample", "LocalNotification.Sample\LocalNotification.Sample.csproj", "{1CB8A3CC-A5FB-4D8D-9686-1374FAC0ABC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

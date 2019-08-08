@@ -13,17 +13,9 @@ namespace LocalNotification.Sample
         {
             InitializeComponent();
 
-            // Local Notification tap event listener
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
-            GoToMainPage();
-        }
-
-        public new static App Current => Application.Current as App;
-
-        public void GoToMainPage()
-        {
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new MainPage());
         }
 
         protected override void OnResume()
@@ -38,7 +30,6 @@ namespace LocalNotification.Sample
 
         protected override void OnStart()
         {
-            // Handle when your app starts
         }
 
         private void LoadPageFromNotification(NotificationTappedEventArgs e)
@@ -48,7 +39,8 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var list = ObjectSerializer<List<string>>.DeserializeObject(e.Data);
+            var serializer = new ObjectSerializer<List<string>>();
+            var list = serializer.DeserializeObject(e.Data);
             if (list.Count != 2)
             {
                 return;
@@ -59,7 +51,7 @@ namespace LocalNotification.Sample
             }
             var tapCount = list[1];
 
-            MainPage = new NotificationPage(int.Parse(tapCount));
+            ((NavigationPage)MainPage).Navigation.PushAsync(new NotificationPage(int.Parse(tapCount)));
         }
     }
 }
