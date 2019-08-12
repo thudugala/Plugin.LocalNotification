@@ -156,4 +156,5 @@ Contributions are welcome.  Feel free to file issues and pull requests on the re
 
 ## Icon and Sound
 
-Thank you for the Icon by [DinosoftLabs](https://www.iconfinder.com/dinosoftlabs) and sound file by [Notification sounds](https://notificationsounds.com/notification-sounds/good-things-happen-547)
+- Thank you for the Icons by [DinosoftLabs](https://www.iconfinder.com/dinosoftlabs) and [Iconic Hub](https://www.iconfinder.com/iconic_hub) 
+- Thank you for the sound file by [Notification sounds](https://notificationsounds.com/notification-sounds/good-things-happen-547)
