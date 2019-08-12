@@ -19,7 +19,6 @@
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <UseShortFileNames>True</UseShortFileNames>
-    <IntermediateOutputPath>C:\temp\LocalNotification</IntermediateOutputPath>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -60,7 +59,7 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidLinkMode>Full</AndroidLinkMode>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidUseAapt2>false</AndroidUseAapt2>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
