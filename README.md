@@ -133,7 +133,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 # Notification Channels
 
-[Setting up Notification Channels](../../wiki/%5BAndroid--=-26%5D-Notification-Channel)
+[Setting up Notification Channels](../../wiki/%5BAndroid---=-26%5D-Notification-Channel)
 
 # Custom Sound
 
