@@ -36,11 +36,12 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                //Android =
-                //{
-                //    AutoCancel = false,
-                //    Ongoing = true
-                //},
+                Android =
+                {
+                    IconName = "my_icon",
+                    //AutoCancel = false,
+                    //Ongoing = true
+                },
             };
 
             // if not specified, default sound will be played.
