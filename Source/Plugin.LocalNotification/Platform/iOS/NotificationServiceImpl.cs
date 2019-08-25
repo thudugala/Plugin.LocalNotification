@@ -11,8 +11,6 @@ namespace Plugin.LocalNotification.Platform.iOS
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        private readonly List<string> _notificationList;
-
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
 
@@ -20,12 +18,6 @@ namespace Plugin.LocalNotification.Platform.iOS
         public void OnNotificationTapped(NotificationTappedEventArgs e)
         {
             NotificationTapped?.Invoke(e);
-        }
-
-        /// <inheritdoc />
-        public NotificationServiceImpl()
-        {
-            _notificationList = new List<string>();
         }
 
         /// <inheritdoc />
@@ -38,9 +30,10 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                var item = notificationId.ToString(CultureInfo.CurrentCulture);
-                var itemList = new[] { notificationId.ToString(CultureInfo.CurrentCulture) };
-                _notificationList.Remove(item);
+                var itemList = new[]
+                {
+                    notificationId.ToString(CultureInfo.CurrentCulture)
+                };
 
                 UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
                 UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
@@ -61,8 +54,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                UNUserNotificationCenter.Current.RemovePendingNotificationRequests(_notificationList.ToArray());
-                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(_notificationList.ToArray());
+                UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
+                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
             }
             catch (Exception ex)
             {
@@ -71,7 +64,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public void Show(NotificationRequest notificationRequest)
+        public async void Show(NotificationRequest notificationRequest)
         {
             try
             {
@@ -119,10 +112,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                             var notificationId =
                                 notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
 
-                            _notificationList.Add(notificationId);
                             var request = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
 
-                            UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
+                            await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request).ConfigureAwait(false);
                         }
                     }
                 }
