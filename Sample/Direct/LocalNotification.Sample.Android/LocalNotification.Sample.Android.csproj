@@ -83,7 +83,7 @@
       <Version>1.0.0-preview02</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Migration">
-      <Version>1.0.0-preview02</Version>
+      <Version>1.0.0-preview03</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.VectorDrawable.Animated">
       <Version>1.0.0-preview02</Version>
@@ -91,7 +91,7 @@
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
       <Version>2.0.1-preview02</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.1.0.618606" />
+    <PackageReference Include="Xamarin.Forms" Version="4.2.0.709249" />
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.v4" Version="28.0.0.1" />
