@@ -118,12 +118,10 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             Cancel(notificationRequest.NotificationId);
 
-            var triggerTime = NotifyTimeInMilliseconds(notificationRequest.NotifyTime.Value);
+            var notifyTime = notificationRequest.NotifyTime.Value;
+
             notificationRequest.NotifyTime = null;
-            triggerTime -= NotifyTimeInMilliseconds(DateTime.Now);
-
             var serializer = new ObjectSerializer<NotificationRequest>();
-
             var serializedNotification = serializer.SerializeObject(notificationRequest);
 
             using (var dataBuilder = new Data.Builder())
@@ -133,21 +131,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var reqbuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
                 reqbuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
                 reqbuilder.SetInputData(dataBuilder.Build());
-                reqbuilder.SetInitialDelay(triggerTime, TimeUnit.Milliseconds);
+                var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
+                reqbuilder.SetInitialDelay(diff, TimeUnit.Milliseconds);
 
                 var workRequest = reqbuilder.Build();
                 WorkManager.Instance.Enqueue(workRequest);
             }
-        }
-
-        private static long NotifyTimeInMilliseconds(DateTime notifyTime)
-        {
-            var utcTime = TimeZoneInfo.ConvertTimeToUtc(notifyTime);
-            var epochDifference = (new DateTime(1970, 1, 1) - DateTime.MinValue).TotalSeconds;
-
-            var utcAlarmTimeInMillis = utcTime.AddSeconds(-epochDifference).Ticks / 10000;
-
-            return utcAlarmTimeInMillis;
         }
 
         private void ShowNow(NotificationRequest request)
