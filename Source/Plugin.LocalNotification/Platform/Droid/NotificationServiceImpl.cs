@@ -128,13 +128,13 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
 
-                var reqbuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
-                reqbuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
-                reqbuilder.SetInputData(dataBuilder.Build());
+                var requestBuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
+                requestBuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
+                requestBuilder.SetInputData(dataBuilder.Build());
                 var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
-                reqbuilder.SetInitialDelay(diff, TimeUnit.Milliseconds);
+                requestBuilder.SetInitialDelay(diff, TimeUnit.Milliseconds);
 
-                var workRequest = reqbuilder.Build();
+                var workRequest = requestBuilder.Build();
                 WorkManager.Instance.Enqueue(workRequest);
             }
         }
@@ -214,14 +214,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 iconId = Application.Context.Resources.GetIdentifier(iconName, "drawable", Application.Context.PackageName);
             }
+
+            if (iconId != 0)
+            {
+                return iconId;
+            }
+
+            iconId = Application.Context.ApplicationInfo.Icon;
             if (iconId == 0)
             {
-                iconId = Application.Context.ApplicationInfo.Icon;
-                if (iconId == 0)
-                {
-                    iconId = Application.Context.Resources.GetIdentifier("icon", "drawable",
-                        Application.Context.PackageName);
-                }
+                iconId = Application.Context.Resources.GetIdentifier("icon", "drawable",
+                    Application.Context.PackageName);
             }
 
             return iconId;
