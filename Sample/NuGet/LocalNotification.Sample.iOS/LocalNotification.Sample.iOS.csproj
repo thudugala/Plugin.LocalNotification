@@ -154,9 +154,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Plugin.LocalNotification">
-      <Version>4.0.5</Version>
+      <Version>4.0.6</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.1.0.673156" />
+    <PackageReference Include="Xamarin.Forms" Version="4.2.0.778463" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

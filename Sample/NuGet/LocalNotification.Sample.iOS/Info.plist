@@ -10,6 +10,7 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
@@ -27,7 +28,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.localNotification.sample</string>
 	<key>CFBundleVersion</key>
-	<string>3.0</string>
+	<string>4.0</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon-App-20x20@1x</string>
