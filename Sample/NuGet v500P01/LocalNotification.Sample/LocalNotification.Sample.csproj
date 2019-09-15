@@ -2,14 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>3.0.0</Version>
+    <Version>5.0.0-preview01</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Plugin.LocalNotification" Version="5.0.0-preview01" />
     <PackageReference Include="Xamarin.Forms" Version="4.2.0.778463" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
-  </ItemGroup>
 </Project>
