@@ -42,6 +42,7 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidUseAapt2>false</AndroidUseAapt2>
+    <AndroidDexTool>d8</AndroidDexTool>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,7 +86,7 @@
       <Version>1.0.0-preview02</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Migration">
-      <Version>1.0.0-preview03</Version>
+      <Version>1.0.0-preview04</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.VectorDrawable.Animated">
       <Version>1.0.0-preview02</Version>
@@ -93,7 +94,7 @@
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
       <Version>2.0.1-preview02</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.2.0.778463" />
+    <PackageReference Include="Xamarin.Forms" Version="4.2.0.815419" />
     <PackageReference Include="Xamarin.Google.Android.Material">
       <Version>1.0.0-preview02</Version>
     </PackageReference>
