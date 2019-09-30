@@ -148,7 +148,7 @@ https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 
 # Limitations
 
-Only support iOS and Android for the moment. 
+Only support <b>iOS</b> and <b>Android</b> for the moment. 
 
 # Contributing
 
