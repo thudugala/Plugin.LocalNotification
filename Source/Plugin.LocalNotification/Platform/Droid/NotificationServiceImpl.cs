@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using AndroidX.Core.App;
+using Android.Support.V4.App;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
@@ -111,7 +111,8 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private void ShowLater(NotificationRequest notificationRequest)
         {
-            if (notificationRequest.NotifyTime.HasValue == false)
+            if (notificationRequest.NotifyTime.HasValue == false ||
+                notificationRequest.NotifyTime.Value <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
             {
                 return;
             }
@@ -119,8 +120,6 @@ namespace Plugin.LocalNotification.Platform.Droid
             Cancel(notificationRequest.NotificationId);
 
             var notifyTime = notificationRequest.NotifyTime.Value;
-
-            notificationRequest.NotifyTime = null;
             var serializer = new ObjectSerializer<NotificationRequest>();
             var serializedNotification = serializer.SerializeObject(notificationRequest);
 

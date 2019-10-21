@@ -45,10 +45,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public string Sound { get; set; }
 
+#pragma warning disable CA1819 // Properties should not return arrays
         /// <summary>
         /// Only modifiable before the channel is submitted.
         /// </summary>
         public long[] VibrationPattern { get; set; }
+#pragma warning restore CA1819 // Properties should not return arrays
 
         /// <summary>
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.

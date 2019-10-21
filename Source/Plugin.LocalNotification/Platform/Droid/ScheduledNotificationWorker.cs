@@ -27,6 +27,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 var serializer = new ObjectSerializer<NotificationRequest>();
                 var notification = serializer.DeserializeObject(serializedNotification);
+                notification.NotifyTime = null;
 
                 NotificationCenter.Current.Show(notification);
             });
