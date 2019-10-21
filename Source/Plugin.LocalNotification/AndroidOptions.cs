@@ -52,8 +52,32 @@ namespace Plugin.LocalNotification
         public NotificationPriority Priority { get; set; } = NotificationPriority.Default;
 
         /// <summary>
+        /// Set whether this progress bar is in indeterminate mode
+        /// </summary>
+        public bool? ProgressBarIndeterminate { get; set; }
+
+        /// <summary>
+        /// Set Upper limit of this progress bar's range
+        /// </summary>
+        public int? ProgressBarMax { get; set; }
+
+        /// <summary>
+        /// Set progress bar's current level of progress
+        /// </summary>
+        public int? ProgressBarProgress { get; set; }
+
+        /// <summary>
         /// Specifies the time at which this notification should be canceled, if it is not already canceled.
         /// </summary>
         public TimeSpan? TimeoutAfter { get; set; }
+
+        /// <summary>
+        /// Vibrate with a given pattern.
+        /// Pass in an array of ints that are the durations for which to turn on or off the vibrator in milliseconds.
+        /// The first value indicates the number of milliseconds to wait before turning the vibrator on.
+        /// The next value indicates the number of milliseconds for which to keep the vibrator on before turning it off.
+        /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
+        /// </summary>
+        public long[] VibrationPattern { get; set; }
     }
 }

@@ -123,10 +123,15 @@ namespace Plugin.LocalNotification
                     }
                 }
 
+                if (request.VibrationPattern != null)
+                {
+                    channel.SetVibrationPattern(request.VibrationPattern);
+                }
+
                 channel.SetShowBadge(true);
                 channel.EnableLights(true);
                 channel.EnableVibration(true);
-
+                
                 notificationManager.CreateNotificationChannel(channel);
             }
         }

@@ -172,6 +172,20 @@ namespace Plugin.LocalNotification.Platform.Droid
                     }
                 }
 
+                if (request.Android.VibrationPattern != null)
+                {
+                    builder.SetVibrate(request.Android.VibrationPattern);
+                }
+
+                if (request.Android.ProgressBarMax.HasValue && 
+                    request.Android.ProgressBarProgress.HasValue &&
+                    request.Android.ProgressBarIndeterminate.HasValue)
+                {
+                    builder.SetProgress(request.Android.ProgressBarMax.Value,
+                        request.Android.ProgressBarProgress.Value,
+                        request.Android.ProgressBarIndeterminate.Value);
+                }
+
                 if (request.Android.Color.HasValue)
                 {
                     builder.SetColor(request.Android.Color.Value);

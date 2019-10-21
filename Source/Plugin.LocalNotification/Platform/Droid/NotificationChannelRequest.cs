@@ -46,6 +46,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         public string Sound { get; set; }
 
         /// <summary>
+        /// Only modifiable before the channel is submitted.
+        /// </summary>
+        public long[] VibrationPattern { get; set; }
+
+        /// <summary>
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.
         /// </summary>
         public NotificationVisibility LockscreenVisibility { get; set; } = NotificationVisibility.Secret;
