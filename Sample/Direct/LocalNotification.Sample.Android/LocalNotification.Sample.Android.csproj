@@ -62,7 +62,8 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidLinkMode>Full</AndroidLinkMode>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidUseAapt2>false</AndroidUseAapt2>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -95,7 +96,7 @@
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
       <Version>2.0.1-preview02</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.2.0.848062" />
+    <PackageReference Include="Xamarin.Forms" Version="4.3.0.947036" />
     <PackageReference Include="Xamarin.Google.Android.Material">
       <Version>1.0.0-preview02</Version>
     </PackageReference>
