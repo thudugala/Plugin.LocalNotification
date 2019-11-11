@@ -73,6 +73,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
+                AskPermission();
+
                 if (notificationRequest is null)
                 {
                     return;
@@ -138,6 +140,23 @@ namespace Plugin.LocalNotification.Platform.iOS
                 Minute = dateTime.Minute,
                 Second = dateTime.Second
             };
+        }
+
+        private void AskPermission()
+        {
+            var alertsAllowed = false;
+
+            UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
+            {
+                alertsAllowed = settings.AlertSetting == UNNotificationSetting.Enabled;
+            });
+
+            if (!alertsAllowed)
+            {
+                // Ask the user for permission to get notifications on iOS 10.0+
+                UNUserNotificationCenter.Current.RequestAuthorizationAsync(
+                    UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound);
+            }
         }
     }
 }
