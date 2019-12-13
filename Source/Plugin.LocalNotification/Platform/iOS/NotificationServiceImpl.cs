@@ -78,6 +78,12 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
+                var allowed = await NotificationCenter.AskPermissionAsync().ConfigureAwait(false);
+                if (allowed == false)
+                {
+                    return;
+                }
+
                 var userInfoDictionary = new NSMutableDictionary();
 
                 if (string.IsNullOrWhiteSpace(notificationRequest.ReturningData) == false)

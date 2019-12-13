@@ -3,6 +3,7 @@ using Plugin.LocalNotification.Platform.iOS;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
 
@@ -15,36 +16,73 @@ namespace Plugin.LocalNotification
         /// </summary>
         internal static NSString ExtraReturnDataIos = new NSString("Plugin.LocalNotification.RETURN_DATA");
 
+        private static bool? _alertsAllowed;
+
         static NotificationCenter()
         {
             try
             {
                 Current = new Platform.iOS.NotificationServiceImpl();
 
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return;
-                }
-
-                var alertsAllowed = false;
-
-                UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
-                {
-                    alertsAllowed = settings.AlertSetting == UNNotificationSetting.Enabled;
-                });
-
-                if (!alertsAllowed)
-                {
-                    // Ask the user for permission to get notifications on iOS 10.0+
-                    UNUserNotificationCenter.Current.RequestAuthorizationAsync(
-                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound);
-                }
-
                 UNUserNotificationCenter.Current.Delegate = new LocalNotificationDelegate();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+            }
+        }
+
+        /// <summary>
+        /// Ask the user for permission to show notifications on iOS 10.0+.
+        /// Returns true if Allowed.
+        /// </summary>
+        public static async void AskPermission()
+        {
+            await AskPermissionAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Ask the user for permission to show notifications on iOS 10.0+.
+        /// Returns true if Allowed.
+        /// </summary>
+        public static async Task<bool> AskPermissionAsync()
+        {
+            try
+            {
+                if (_alertsAllowed.HasValue)
+                {
+                    return _alertsAllowed.Value;
+                }
+
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    _alertsAllowed = true;
+                    return true;
+                }
+
+                var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+                var allowed = settings.AlertSetting == UNNotificationSetting.Enabled;
+
+                if (allowed)
+                {
+                    _alertsAllowed = true;
+                    return true;
+                }
+
+                // Ask the user for permission to show notifications on iOS 10.0+
+                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
+                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound)
+                    .ConfigureAwait(false);
+
+                _alertsAllowed = alertsAllowed;
+                Debug.WriteLine(error?.LocalizedDescription);
+
+                return _alertsAllowed.Value;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return false;
             }
         }
 
