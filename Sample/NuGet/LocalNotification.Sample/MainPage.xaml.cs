@@ -36,6 +36,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
+                Repeats = RepeatSwitch.IsToggled,
                 Android =
                 {
                     IconName = "my_icon",
