@@ -35,6 +35,11 @@ namespace Plugin.LocalNotification
         public DateTime? NotifyTime { get; set; }
 
         /// <summary>
+        /// If true, will repeat again at the time specifies in NotifyTime.
+        /// </summary>
+        public bool Repeats { get; set; } = false;
+
+        /// <summary>
         /// Returning data when tapped on notification.
         /// </summary>
         public string ReturningData { get; set; }

@@ -96,7 +96,7 @@
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
       <Version>2.0.1-preview02</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.3.0.947036" />
+    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991265" />
     <PackageReference Include="Xamarin.Google.Android.Material">
       <Version>1.0.0-preview02</Version>
     </PackageReference>

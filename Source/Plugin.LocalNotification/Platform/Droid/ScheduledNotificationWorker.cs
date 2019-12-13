@@ -27,8 +27,14 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 var serializer = new ObjectSerializer<NotificationRequest>();
                 var notification = serializer.DeserializeObject(serializedNotification);
-                notification.NotifyTime = null;
 
+                if (notification.NotifyTime.HasValue && notification.Repeats)
+                {
+                    // To be consistent with iOS, Schedule notification next daty same time.
+                    notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                    NotificationCenter.Current.Show(notification);
+                }
+                notification.NotifyTime = null;
                 NotificationCenter.Current.Show(notification);
             });
 

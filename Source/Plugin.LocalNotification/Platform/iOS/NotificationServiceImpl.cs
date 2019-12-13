@@ -107,7 +107,7 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                     using (var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest.NotifyTime))
                     {
-                        using (var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, false))
+                        using (var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, notificationRequest.Repeats))
                         {
                             var notificationId =
                                 notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
