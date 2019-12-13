@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Runtime;
 using AndroidX.Work;
+using System;
 using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -34,6 +35,13 @@ namespace Plugin.LocalNotification.Platform.Droid
                     notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
                     NotificationCenter.Current.Show(notification);
                 }
+
+                // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
+                if (notification.NotifyTime.Value <= DateTime.Now) 
+                {
+                    return;
+                }
+
                 notification.NotifyTime = null;
                 NotificationCenter.Current.Show(notification);
             });
