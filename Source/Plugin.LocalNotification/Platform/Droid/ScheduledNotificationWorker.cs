@@ -29,15 +29,33 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var serializer = new ObjectSerializer<NotificationRequest>();
                 var notification = serializer.DeserializeObject(serializedNotification);
 
-                if (notification.NotifyTime.HasValue && notification.Repeats)
+                if (notification.NotifyTime.HasValue && notification.Repeats != NotificationRepeat.No)
                 {
-                    // To be consistent with iOS, Schedule notification next daty same time.
-                    notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                    switch (notification.Repeats)
+                    {
+                        case NotificationRepeat.Daily:
+                            // To be consistent with iOS, Schedule notification next day same time.
+                            notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                            while (notification.NotifyTime <= DateTime.Now)
+                            {
+                                notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                            }
+                            break;
+
+                        case NotificationRepeat.Weekly:
+                            // To be consistent with iOS, Schedule notification next week same day same time.
+                            notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
+                            while (notification.NotifyTime <= DateTime.Now)
+                            {
+                                notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
+                            }
+                            break;
+                    }
                     NotificationCenter.Current.Show(notification);
                 }
 
                 // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
-                if (notification.NotifyTime.Value <= DateTime.Now) 
+                if (notification.NotifyTime.Value <= DateTime.Now)
                 {
                     return;
                 }

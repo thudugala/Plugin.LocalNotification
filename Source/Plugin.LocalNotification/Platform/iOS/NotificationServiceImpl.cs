@@ -1,6 +1,5 @@
 ﻿using Foundation;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using UIKit;
@@ -111,16 +110,18 @@ namespace Plugin.LocalNotification.Platform.iOS
                         content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
                     }
 
-                    using (var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest.NotifyTime))
+                    var repeats = notificationRequest.Repeats != NotificationRepeat.No;
+                    using (var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest))
                     {
-                        using (var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, notificationRequest.Repeats))
+                        using (var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats))
                         {
                             var notificationId =
                                 notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
 
                             var request = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
 
-                            await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request).ConfigureAwait(false);
+                            await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request)
+                                .ConfigureAwait(false);
                         }
                     }
                 }
@@ -131,19 +132,43 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private static NSDateComponents GetNsDateComponentsFromDateTime(DateTime? nullableDateTime)
+        private static NSDateComponents GetNsDateComponentsFromDateTime(NotificationRequest notificationRequest)
         {
-            var dateTime = nullableDateTime ?? DateTime.Now.AddSeconds(1);
+            var dateTime = notificationRequest.NotifyTime ?? DateTime.Now.AddSeconds(1);
 
-            return new NSDateComponents
+            switch (notificationRequest.Repeats)
             {
-                Month = dateTime.Month,
-                Day = dateTime.Day,
-                Year = dateTime.Year,
-                Hour = dateTime.Hour,
-                Minute = dateTime.Minute,
-                Second = dateTime.Second
-            };
+                case NotificationRepeat.Daily:
+                    return new NSDateComponents
+                    {
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
+                    };
+
+                case NotificationRepeat.Weekly:
+                    return new NSDateComponents
+                    {
+                        // iOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
+                        // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
+                        // .Net: The returned value is an integer between 0 and 6,
+                        // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
+                        Weekday = (int)dateTime.DayOfWeek + 1,
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
+                    };
+
+                case NotificationRepeat.No:
+                default:
+                    return new NSDateComponents
+                    {
+                        Day = dateTime.Day,
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
+                    };
+            }
         }
     }
 }
