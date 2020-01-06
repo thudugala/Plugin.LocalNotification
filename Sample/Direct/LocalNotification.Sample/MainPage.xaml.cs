@@ -37,11 +37,12 @@ namespace LocalNotification.Sample
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
                 Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
-                //Android =
-                //{
-                //    AutoCancel = false,
-                //    Ongoing = true
-                //},
+                Android =
+                {
+                    IconName = "icon1",
+                    AutoCancel = false,
+                    Ongoing = true
+                },
             };
 
             // if not specified, default sound will be played.

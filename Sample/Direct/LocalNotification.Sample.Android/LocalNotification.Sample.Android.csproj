@@ -131,7 +131,9 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
     <AndroidResource Include="Resources\raw\good_things_happen.mp3" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\i2.png" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj">
       <Project>{43815ed8-a675-4657-bf92-14817663ac04}</Project>
@@ -141,6 +143,12 @@
       <Project>{DFF878F7-002D-481C-9311-C49B8D150775}</Project>
       <Name>LocalNotification.Sample</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\i3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
