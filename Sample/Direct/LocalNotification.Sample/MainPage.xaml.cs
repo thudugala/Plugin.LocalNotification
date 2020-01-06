@@ -36,8 +36,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                NotifyTime = DateTime.Now.AddSeconds(10),
-                Repeats = RepeatSwitch.IsToggled,
+                Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
                 //Android =
                 //{
                 //    AutoCancel = false,

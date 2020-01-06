@@ -11,7 +11,8 @@ namespace Plugin.LocalNotification.Platform.Droid
     internal class ScheduledNotificationWorker : Worker
 #pragma warning restore CA1812
     {
-        public ScheduledNotificationWorker(Context context, WorkerParameters workerParameters) : base(context, workerParameters)
+        public ScheduledNotificationWorker(Context context, WorkerParameters workerParameters) : base(context,
+            workerParameters)
         {
         }
 
@@ -26,42 +27,53 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             Task.Run(() =>
             {
-                var serializer = new ObjectSerializer<NotificationRequest>();
-                var notification = serializer.DeserializeObject(serializedNotification);
-
-                if (notification.NotifyTime.HasValue && notification.Repeats != NotificationRepeat.No)
+                try
                 {
-                    switch (notification.Repeats)
-                    {
-                        case NotificationRepeat.Daily:
-                            // To be consistent with iOS, Schedule notification next day same time.
-                            notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
-                            while (notification.NotifyTime <= DateTime.Now)
-                            {
-                                notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
-                            }
-                            break;
+                    var serializer = new ObjectSerializer<NotificationRequest>();
+                    var notification = serializer.DeserializeObject(serializedNotification);
 
-                        case NotificationRepeat.Weekly:
-                            // To be consistent with iOS, Schedule notification next week same day same time.
-                            notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
-                            while (notification.NotifyTime <= DateTime.Now)
-                            {
+                    if (notification.NotifyTime.HasValue && notification.Repeats != NotificationRepeat.No)
+                    {
+                        switch (notification.Repeats)
+                        {
+                            case NotificationRepeat.Daily:
+                                // To be consistent with iOS, Schedule notification next day same time.
+                                notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                                while (notification.NotifyTime <= DateTime.Now)
+                                {
+                                    notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                                }
+
+                                break;
+
+                            case NotificationRepeat.Weekly:
+                                // To be consistent with iOS, Schedule notification next week same day same time.
                                 notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
-                            }
-                            break;
+                                while (notification.NotifyTime <= DateTime.Now)
+                                {
+                                    notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
+                                }
+
+                                break;
+                        }
+
+                        NotificationCenter.Current.Show(notification);
                     }
+
+                    // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
+                    if (notification.NotifyTime.Value <= DateTime.Now.AddMinutes(-1))
+                    {
+                        System.Diagnostics.Debug.WriteLine("NotifyTime is earlier than DateTime.Now, notification ignored");
+                        return;
+                    }
+
+                    notification.NotifyTime = null;
                     NotificationCenter.Current.Show(notification);
                 }
-
-                // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
-                if (notification.NotifyTime.Value <= DateTime.Now)
+                catch (Exception ex)
                 {
-                    return;
+                    System.Diagnostics.Debug.WriteLine(ex);
                 }
-
-                notification.NotifyTime = null;
-                NotificationCenter.Current.Show(notification);
             });
 
             return Result.InvokeSuccess();
