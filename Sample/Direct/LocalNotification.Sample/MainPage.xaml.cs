@@ -34,14 +34,14 @@ namespace LocalNotification.Sample
                 NotificationId = 100,
                 Title = "Test",
                 Description = $"Tap Count: {_tapCount}",
-                BadgeNumber = _tapCount,
-                ReturningData = serializeReturningData,
-                Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
+                //BadgeNumber = _tapCount,
+                //ReturningData = serializeReturningData,
+                //Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
                 Android =
                 {
                     IconName = "icon1",
-                    AutoCancel = false,
-                    Ongoing = true
+                    //AutoCancel = false,
+                    //Ongoing = true
                 },
             };
 
