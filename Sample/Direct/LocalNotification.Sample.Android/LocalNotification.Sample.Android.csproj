@@ -16,7 +16,7 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <UseShortFileNames>True</UseShortFileNames>
     <IntermediateOutputPath>C:\temp\LocalNotification</IntermediateOutputPath>
@@ -61,9 +61,10 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidLinkMode>Full</AndroidLinkMode>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidUseAapt2>false</AndroidUseAapt2>
-    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -75,31 +76,7 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.AndroidX.Browser">
-      <Version>1.0.0-preview02</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4">
-      <Version>1.0.0-preview02</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions">
-      <Version>2.0.0-preview02</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.MediaRouter">
-      <Version>1.0.0-preview02</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Migration">
-      <Version>1.0.0-preview03</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.VectorDrawable.Animated">
-      <Version>1.0.0-preview02</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
-      <Version>2.0.1-preview02</Version>
-    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="4.4.0.991265" />
-    <PackageReference Include="Xamarin.Google.Android.Material">
-      <Version>1.0.0-preview02</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
