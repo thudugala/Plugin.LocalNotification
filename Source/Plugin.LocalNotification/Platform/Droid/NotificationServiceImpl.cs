@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Util;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
@@ -23,7 +24,9 @@ namespace Plugin.LocalNotification.Platform.Droid
             NotificationTapped?.Invoke(e);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// 
+        /// </summary>
         public NotificationServiceImpl()
         {
             try
@@ -120,9 +123,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             Cancel(notificationRequest.NotificationId);
 
             var notifyTime = notificationRequest.NotifyTime.Value;
-            var serializer = new ObjectSerializer<NotificationRequest>();
-            var serializedNotification = serializer.SerializeObject(notificationRequest);
-
+            var serializedNotification = ObjectSerializer.SerializeObject(notificationRequest);
+            Log.Info(Application.Context.PackageName, $"NotificationServiceImpl.ShowLater: SerializedNotification [{serializedNotification}]");
             using (var dataBuilder = new Data.Builder())
             {
                 dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
@@ -196,12 +198,11 @@ namespace Plugin.LocalNotification.Platform.Droid
                     builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
                 }
 
-                var notificationIntent =
-                    Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+                var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
                 notificationIntent.SetFlags(ActivityFlags.SingleTop);
                 notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
-                var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent,
-                    PendingIntentFlags.UpdateCurrent);
+                var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
+                    PendingIntentFlags.CancelCurrent);
                 builder.SetContentIntent(pendingIntent);
 
                 var notification = builder.Build();
@@ -215,7 +216,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     notification.Defaults = NotificationDefaults.All;
                 }
-
                 _notificationManager.Notify(request.NotificationId, notification);
             }
         }

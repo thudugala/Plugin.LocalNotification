@@ -1,5 +1,7 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Runtime;
+using Android.Util;
 using AndroidX.Work;
 using System;
 using System.Threading.Tasks;
@@ -29,8 +31,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 try
                 {
-                    var serializer = new ObjectSerializer<NotificationRequest>();
-                    var notification = serializer.DeserializeObject(serializedNotification);
+                    Log.Info(Application.Context.PackageName, $"ScheduledNotificationWorker.DoWork: SerializedNotification [{serializedNotification}]");
+                    var notification = ObjectSerializer.DeserializeObject<NotificationRequest>(serializedNotification);
 
                     if (notification.NotifyTime.HasValue && notification.Repeats != NotificationRepeat.No)
                     {

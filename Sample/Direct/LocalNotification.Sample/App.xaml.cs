@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Plugin.LocalNotification;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -38,10 +39,9 @@ namespace LocalNotification.Sample
             {
                 return;
             }
-
-            var serializer = new ObjectSerializer<List<string>>();
-            var list = serializer.DeserializeObject(e.Data);
-            if (list.Count != 2)
+            
+            var list = ObjectSerializer.DeserializeObject<List<string>>(e.Data);
+            if (list.Count != 4)
             {
                 return;
             }
@@ -49,9 +49,11 @@ namespace LocalNotification.Sample
             {
                 return;
             }
-            var tapCount = list[1];
+            var id = list[1];
+            var message = list[2];
+            var tapCount = list[3];
 
-            ((NavigationPage)MainPage).Navigation.PushAsync(new NotificationPage(int.Parse(tapCount)));
+            ((NavigationPage)MainPage).Navigation.PushAsync(new NotificationPage(int.Parse(id), message, int.Parse(tapCount)));
         }
     }
 }

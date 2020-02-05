@@ -53,7 +53,7 @@ namespace Plugin.LocalNotification
                 {
                     return;
                 }
-
+                
                 var subscribeItem = new NotificationTappedEventArgs
                 {
                     Data = intent.GetStringExtra(ExtraReturnDataAndroid)

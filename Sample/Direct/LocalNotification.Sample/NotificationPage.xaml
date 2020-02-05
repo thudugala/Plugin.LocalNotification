@@ -12,6 +12,16 @@
                 VerticalOptions="CenterAndExpand" />
 
             <Label
+                x:Name="IdLabel"
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="CenterAndExpand" />
+
+            <Label
+                x:Name="MessageLabel"
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="CenterAndExpand" />
+
+            <Label
                 x:Name="TapCountLabel"
                 HorizontalOptions="CenterAndExpand"
                 VerticalOptions="CenterAndExpand" />

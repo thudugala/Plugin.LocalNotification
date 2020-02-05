@@ -7,14 +7,14 @@ namespace Plugin.LocalNotification
     /// <summary>
     ///
     /// </summary>
-    public class ObjectSerializer<T>
+    public static class ObjectSerializer
     {
         /// <summary>
         /// Deserialize Returning Data.
         /// </summary>
         /// <param name="returningData"></param>
         /// <returns></returns>
-        public T DeserializeObject(string returningData)
+        public static T DeserializeObject<T>(string returningData)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
             using (var stringReader = new StringReader(returningData))
@@ -36,7 +36,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="returningData"></param>
         /// <returns></returns>
-        public string SerializeObject(T returningData)
+        public static string SerializeObject<T>(T returningData)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
             using (var stringWriter = new StringWriter())
