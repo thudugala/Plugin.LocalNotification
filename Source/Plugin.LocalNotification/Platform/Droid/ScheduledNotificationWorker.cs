@@ -63,7 +63,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     }
 
                     // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
-                    if (notification.NotifyTime.Value <= DateTime.Now.AddMinutes(-1))
+                    if (notification.NotifyTime != null && notification.NotifyTime.Value <= DateTime.Now.AddMinutes(-1))
                     {
                         System.Diagnostics.Debug.WriteLine("NotifyTime is earlier than DateTime.Now, notification ignored");
                         return;

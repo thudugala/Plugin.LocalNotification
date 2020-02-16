@@ -1,12 +1,12 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Util;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
 using System.Globalization;
+using AndroidX.Core.App;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -14,6 +14,7 @@ namespace Plugin.LocalNotification.Platform.Droid
     public class NotificationServiceImpl : INotificationService
     {
         private readonly NotificationManager _notificationManager;
+        private readonly WorkManager _workManager;
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -25,7 +26,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public NotificationServiceImpl()
         {
@@ -37,6 +38,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
 
                 _notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+                _workManager = WorkManager.GetInstance(Application.Context);
             }
             catch (Exception ex)
             {
@@ -54,7 +56,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                WorkManager.Instance.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
+                _workManager.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
                 _notificationManager.Cancel(notificationId);
             }
             catch (Exception ex)
@@ -73,7 +75,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                WorkManager.Instance.CancelAllWork();
+                _workManager.CancelAllWork();
                 _notificationManager.CancelAll();
             }
             catch (Exception ex)
@@ -125,19 +127,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             var notifyTime = notificationRequest.NotifyTime.Value;
             var serializedNotification = ObjectSerializer.SerializeObject(notificationRequest);
             Log.Info(Application.Context.PackageName, $"NotificationServiceImpl.ShowLater: SerializedNotification [{serializedNotification}]");
-            using (var dataBuilder = new Data.Builder())
-            {
-                dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
+            using var dataBuilder = new Data.Builder();
+            dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
 
-                var requestBuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
-                requestBuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
-                requestBuilder.SetInputData(dataBuilder.Build());
-                var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
-                requestBuilder.SetInitialDelay(diff, TimeUnit.Milliseconds);
+            var requestBuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
+            requestBuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
+            requestBuilder.SetInputData(dataBuilder.Build());
+            var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
+            requestBuilder.SetInitialDelay(diff, TimeUnit.Milliseconds);
 
-                var workRequest = requestBuilder.Build();
-                WorkManager.Instance.Enqueue(workRequest);
-            }
+            var workRequest = requestBuilder.Build();
+            _workManager.Enqueue(workRequest);
         }
 
         private void ShowNow(NotificationRequest request)
@@ -149,75 +149,73 @@ namespace Plugin.LocalNotification.Platform.Droid
                 request.Android.ChannelId = NotificationCenter.DefaultChannelId;
             }
 
-            using (var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId))
+            using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
+            builder.SetContentTitle(request.Title);
+            builder.SetContentText(request.Description);
+            using (var bigTextStyle = new NotificationCompat.BigTextStyle())
             {
-                builder.SetContentTitle(request.Title);
-                builder.SetContentText(request.Description);
-                using (var bigTextStyle = new NotificationCompat.BigTextStyle())
-                {
-                    var bigText = bigTextStyle.BigText(request.Description);
-                    builder.SetStyle(bigText);
-                }
-                builder.SetNumber(request.BadgeNumber);
-                builder.SetAutoCancel(request.Android.AutoCancel);
-                builder.SetOngoing(request.Android.Ongoing);
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-                {
-                    builder.SetPriority((int)request.Android.Priority);
-
-                    var soundUri = NotificationCenter.GetSoundUri(request.Sound);
-                    if (soundUri != null)
-                    {
-                        builder.SetSound(soundUri);
-                    }
-                }
-
-                if (request.Android.VibrationPattern != null)
-                {
-                    builder.SetVibrate(request.Android.VibrationPattern);
-                }
-
-                if (request.Android.ProgressBarMax.HasValue && 
-                    request.Android.ProgressBarProgress.HasValue &&
-                    request.Android.ProgressBarIndeterminate.HasValue)
-                {
-                    builder.SetProgress(request.Android.ProgressBarMax.Value,
-                        request.Android.ProgressBarProgress.Value,
-                        request.Android.ProgressBarIndeterminate.Value);
-                }
-
-                if (request.Android.Color.HasValue)
-                {
-                    builder.SetColor(request.Android.Color.Value);
-                }
-
-                builder.SetSmallIcon(GetIcon(request.Android.IconName));
-                if (request.Android.TimeoutAfter.HasValue)
-                {
-                    builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
-                }
-
-                var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
-                notificationIntent.SetFlags(ActivityFlags.SingleTop);
-                notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
-                var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
-                    PendingIntentFlags.CancelCurrent);
-                builder.SetContentIntent(pendingIntent);
-
-                var notification = builder.Build();
-                if (request.Android.LedColor.HasValue)
-                {
-                    notification.LedARGB = request.Android.LedColor.Value;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
-                    string.IsNullOrWhiteSpace(request.Sound))
-                {
-                    notification.Defaults = NotificationDefaults.All;
-                }
-                _notificationManager.Notify(request.NotificationId, notification);
+                var bigText = bigTextStyle.BigText(request.Description);
+                builder.SetStyle(bigText);
             }
+            builder.SetNumber(request.BadgeNumber);
+            builder.SetAutoCancel(request.Android.AutoCancel);
+            builder.SetOngoing(request.Android.Ongoing);
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                builder.SetPriority((int)request.Android.Priority);
+
+                var soundUri = NotificationCenter.GetSoundUri(request.Sound);
+                if (soundUri != null)
+                {
+                    builder.SetSound(soundUri);
+                }
+            }
+
+            if (request.Android.VibrationPattern != null)
+            {
+                builder.SetVibrate(request.Android.VibrationPattern);
+            }
+
+            if (request.Android.ProgressBarMax.HasValue &&
+                request.Android.ProgressBarProgress.HasValue &&
+                request.Android.ProgressBarIndeterminate.HasValue)
+            {
+                builder.SetProgress(request.Android.ProgressBarMax.Value,
+                    request.Android.ProgressBarProgress.Value,
+                    request.Android.ProgressBarIndeterminate.Value);
+            }
+
+            if (request.Android.Color.HasValue)
+            {
+                builder.SetColor(request.Android.Color.Value);
+            }
+
+            builder.SetSmallIcon(GetIcon(request.Android.IconName));
+            if (request.Android.TimeoutAfter.HasValue)
+            {
+                builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
+            }
+
+            var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+            notificationIntent.SetFlags(ActivityFlags.SingleTop);
+            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
+            var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
+                PendingIntentFlags.CancelCurrent);
+            builder.SetContentIntent(pendingIntent);
+
+            var notification = builder.Build();
+            if (request.Android.LedColor.HasValue)
+            {
+                notification.LedARGB = request.Android.LedColor.Value;
+            }
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
+                string.IsNullOrWhiteSpace(request.Sound))
+            {
+                notification.Defaults = NotificationDefaults.All;
+            }
+            _notificationManager.Notify(request.NotificationId, notification);
         }
 
         private static int GetIcon(string iconName)

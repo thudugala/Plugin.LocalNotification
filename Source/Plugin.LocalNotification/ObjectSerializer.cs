@@ -17,18 +17,14 @@ namespace Plugin.LocalNotification
         public static T DeserializeObject<T>(string returningData)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
-            using (var stringReader = new StringReader(returningData))
-            {
-                using (var xmlReader = XmlReader.Create(stringReader,
-                    new XmlReaderSettings
-                    {
-                        DtdProcessing = DtdProcessing.Prohibit
-                    }))
+            using var stringReader = new StringReader(returningData);
+            using var xmlReader = XmlReader.Create(stringReader,
+                new XmlReaderSettings
                 {
-                    var notification = (T)xmlSerializer.Deserialize(xmlReader);
-                    return notification;
-                }
-            }
+                    DtdProcessing = DtdProcessing.Prohibit
+                });
+            var notification = (T)xmlSerializer.Deserialize(xmlReader);
+            return notification;
         }
 
         /// <summary>
@@ -39,11 +35,9 @@ namespace Plugin.LocalNotification
         public static string SerializeObject<T>(T returningData)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
-            using (var stringWriter = new StringWriter())
-            {
-                xmlSerializer.Serialize(stringWriter, returningData);
-                return stringWriter.ToString();
-            }
+            using var stringWriter = new StringWriter();
+            xmlSerializer.Serialize(stringWriter, returningData);
+            return stringWriter.ToString();
         }
     }
 }

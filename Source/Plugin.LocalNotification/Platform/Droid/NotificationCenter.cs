@@ -102,38 +102,34 @@ namespace Plugin.LocalNotification
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            using (var channel = new NotificationChannel(request.Id, request.Name, request.Importance)
+            using var channel = new NotificationChannel(request.Id, request.Name, request.Importance)
             {
                 Description = request.Description,
                 Group = request.Group,
                 LightColor = request.LightColor,
                 LockscreenVisibility = request.LockscreenVisibility,
-            })
+            };
+            var soundUri = GetSoundUri(request.Sound);
+            if (soundUri != null)
             {
-                var soundUri = GetSoundUri(request.Sound);
-                if (soundUri != null)
-                {
-                    using (var audioAttributesBuilder = new AudioAttributes.Builder())
-                    {
-                        var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
-                            .SetContentType(AudioContentType.Music)
-                            .Build();
+                using var audioAttributesBuilder = new AudioAttributes.Builder();
+                var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
+                    .SetContentType(AudioContentType.Music)
+                    .Build();
 
-                        channel.SetSound(soundUri, audioAttributes);
-                    }
-                }
-
-                if (request.VibrationPattern != null)
-                {
-                    channel.SetVibrationPattern(request.VibrationPattern);
-                }
-
-                channel.SetShowBadge(true);
-                channel.EnableLights(true);
-                channel.EnableVibration(true);
-
-                notificationManager.CreateNotificationChannel(channel);
+                channel.SetSound(soundUri, audioAttributes);
             }
+
+            if (request.VibrationPattern != null)
+            {
+                channel.SetVibrationPattern(request.VibrationPattern);
+            }
+
+            channel.SetShowBadge(true);
+            channel.EnableLights(true);
+            channel.EnableVibration(true);
+
+            notificationManager.CreateNotificationChannel(channel);
         }
 
         internal static Android.Net.Uri GetSoundUri(string soundFileName)
