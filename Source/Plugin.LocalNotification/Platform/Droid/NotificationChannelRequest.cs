@@ -27,29 +27,29 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         /// Sets or gets, the user visible description of this channel.
         /// </summary>
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
 
         /// <summary>
         /// Sets or gets, what group this channel belongs to.
         /// </summary>
-        public string Group { get; set; } = string.Empty;
+        public string Group { get; set; }
 
         /// <summary>
         /// Sets or gets, the notification light color for notifications posted to this channel,
         /// if the device supports that feature
         /// </summary>
-        public Color? LightColor { get; set; }
+        public Color LightColor { get; set; }
 
         /// <summary>
         /// Sound file name for the notification.
         /// </summary>
-        public string Sound { get; set; } = string.Empty;
+        public string Sound { get; set; }
 
 #pragma warning disable CA1819 // Properties should not return arrays
         /// <summary>
         /// Only modifiable before the channel is submitted.
         /// </summary>
-        public long[]? VibrationPattern { get; set; }
+        public long[] VibrationPattern { get; set; }
 #pragma warning restore CA1819 // Properties should not return arrays
 
         /// <summary>

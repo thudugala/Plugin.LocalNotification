@@ -10,7 +10,7 @@ namespace Plugin.LocalNotification
     public static partial class NotificationCenter
 #pragma warning restore CA1724
     {
-        private static INotificationService? _current;
+        private static INotificationService _current;
 
         /// <summary>
         /// Platform specific INotificationService.

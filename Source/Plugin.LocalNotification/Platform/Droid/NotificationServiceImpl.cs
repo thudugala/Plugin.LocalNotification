@@ -13,11 +13,11 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        private readonly NotificationManager? _notificationManager;
-        private readonly WorkManager? _workManager;
+        private readonly NotificationManager _notificationManager;
+        private readonly WorkManager _workManager;
 
         /// <inheritdoc />
-        public event NotificationTappedEventHandler? NotificationTapped;
+        public event NotificationTappedEventHandler NotificationTapped;
 
         /// <inheritdoc />
         public void OnNotificationTapped(NotificationTappedEventArgs e)

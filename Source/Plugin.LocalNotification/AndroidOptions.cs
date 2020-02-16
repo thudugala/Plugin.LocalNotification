@@ -28,7 +28,7 @@ namespace Plugin.LocalNotification
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public string IconName { get; set; } = string.Empty;
+        public string IconName { get; set; }
 
         /// <summary>
         /// If set, the LED will have the provided ARGB color.
@@ -79,7 +79,7 @@ namespace Plugin.LocalNotification
         /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
         /// </summary>
 #pragma warning disable CA1819 // Properties should not return arrays
-        public long[]? VibrationPattern { get; set; }
+        public long[] VibrationPattern { get; set; }
 #pragma warning restore CA1819 // Properties should not return arrays
     }
 }

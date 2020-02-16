@@ -11,7 +11,7 @@ namespace Plugin.LocalNotification.Platform.iOS
     public class NotificationServiceImpl : INotificationService
     {
         /// <inheritdoc />
-        public event NotificationTappedEventHandler? NotificationTapped;
+        public event NotificationTappedEventHandler NotificationTapped;
 
         /// <inheritdoc />
         public void OnNotificationTapped(NotificationTappedEventArgs e)

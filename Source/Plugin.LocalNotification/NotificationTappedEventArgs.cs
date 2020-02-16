@@ -16,6 +16,6 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Returning data when tapped on notification.
         /// </summary>
-        public string? Data { get; internal set; }
+        public string Data { get; internal set; }
     }
 }
