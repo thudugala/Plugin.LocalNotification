@@ -61,6 +61,15 @@ namespace Plugin.LocalNotification.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Notification service not found.
+        /// </summary>
+        internal static string AndroidNotificationServiceNotFound {
+            get {
+                return ResourceManager.GetString("AndroidNotificationServiceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [Plugin.LocalNotification] No platform plugin found.  Did you install the nuget package in your app project as well?.
         /// </summary>
         internal static string PluginNotFound {

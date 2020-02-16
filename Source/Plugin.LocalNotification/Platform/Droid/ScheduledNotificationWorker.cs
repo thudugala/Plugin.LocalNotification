@@ -27,12 +27,23 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return Result.InvokeFailure();
             }
 
+            var serializedNotificationAndroid = InputData.GetString($"{NotificationCenter.ExtraReturnNotification}_Android");
+
             Task.Run(() =>
             {
                 try
                 {
                     Log.Info(Application.Context.PackageName, $"ScheduledNotificationWorker.DoWork: SerializedNotification [{serializedNotification}]");
                     var notification = ObjectSerializer.DeserializeObject<NotificationRequest>(serializedNotification);
+                    if (string.IsNullOrWhiteSpace(serializedNotificationAndroid) == false)
+                    {
+                        var notificationAndroid =
+                            ObjectSerializer.DeserializeObject<AndroidOptions>(serializedNotificationAndroid);
+                        if (notificationAndroid != null)
+                        {
+                            notification.Android = notificationAndroid;
+                        }
+                    }
 
                     if (notification.NotifyTime.HasValue && notification.Repeats != NotificationRepeat.No)
                     {

@@ -20,7 +20,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Details for the notification.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// A unique identifier for the request
@@ -42,18 +42,18 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Returning data when tapped on notification.
         /// </summary>
-        public string ReturningData { get; set; }
+        public string ReturningData { get; set; } = string.Empty;
 
         /// <summary>
         /// Sound file name for the notification.
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
         /// </summary>
-        public string Sound { get; set; }
+        public string Sound { get; set; } = string.Empty;
 
         /// <summary>
         /// Title for the notification.
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
     }
 }

@@ -15,14 +15,14 @@ namespace LocalNotification.Sample
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-            ScheduleNotification("first", 5);
-            ScheduleNotification("second", 10);
+            //ScheduleNotification("first", 5);
+            //ScheduleNotification("second", 10);
         }
 
-        void ScheduleNotification(string title, double seconds)
+        private void ScheduleNotification(string title, double seconds)
         {
             _tapCount++;
-            var notificationId = (int) DateTime.Now.Ticks;
+            var notificationId = (int)DateTime.Now.Ticks;
             var list = new List<string>
             {
                 typeof(NotificationPage).FullName,

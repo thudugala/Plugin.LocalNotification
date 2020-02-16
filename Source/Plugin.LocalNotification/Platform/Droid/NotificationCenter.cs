@@ -71,7 +71,7 @@ namespace Plugin.LocalNotification
         /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="request"></param>
-        public static void CreateNotificationChannel(NotificationChannelRequest request = null)
+        public static void CreateNotificationChannel(NotificationChannelRequest? request = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -106,7 +106,7 @@ namespace Plugin.LocalNotification
             {
                 Description = request.Description,
                 Group = request.Group,
-                LightColor = request.LightColor,
+                LightColor = request.LightColor.GetValueOrDefault(),
                 LockscreenVisibility = request.LockscreenVisibility,
             };
             var soundUri = GetSoundUri(request.Sound);
@@ -132,7 +132,7 @@ namespace Plugin.LocalNotification
             notificationManager.CreateNotificationChannel(channel);
         }
 
-        internal static Android.Net.Uri GetSoundUri(string soundFileName)
+        internal static Android.Net.Uri? GetSoundUri(string soundFileName)
         {
             if (string.IsNullOrWhiteSpace(soundFileName))
             {
