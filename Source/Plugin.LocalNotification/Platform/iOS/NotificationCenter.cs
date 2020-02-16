@@ -14,7 +14,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Return Data Key.
         /// </summary>
-        internal static NSString ExtraReturnDataIos = new NSString("Plugin.LocalNotification.RETURN_DATA");
+        public static NSString ExtraReturnDataIos => new NSString("Plugin.LocalNotification.RETURN_DATA");
 
         private static bool? _alertsAllowed;
 

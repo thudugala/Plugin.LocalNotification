@@ -12,17 +12,17 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Return Data Key.
         /// </summary>
-        internal static string ExtraReturnDataAndroid = "Plugin.LocalNotification.RETURN_DATA";
+        public static string ExtraReturnDataAndroid => "Plugin.LocalNotification.RETURN_DATA";
 
         /// <summary>
         /// Return Notification Key.
         /// </summary>
-        internal static string ExtraReturnNotification = "Plugin.LocalNotification.RETURN_NOTIFICATION";
+        public static string ExtraReturnNotification => "Plugin.LocalNotification.RETURN_NOTIFICATION";
 
         /// <summary>
         /// Default Channel Id.
         /// </summary>
-        internal static string DefaultChannelId => "Plugin.LocalNotification.GENERAL";
+        public static string DefaultChannelId => "Plugin.LocalNotification.GENERAL";
 
         static NotificationCenter()
         {
@@ -53,7 +53,7 @@ namespace Plugin.LocalNotification
                 {
                     return;
                 }
-                
+
                 var subscribeItem = new NotificationTappedEventArgs
                 {
                     Data = intent.GetStringExtra(ExtraReturnDataAndroid)
@@ -131,7 +131,7 @@ namespace Plugin.LocalNotification
                 channel.SetShowBadge(true);
                 channel.EnableLights(true);
                 channel.EnableVibration(true);
-                
+
                 notificationManager.CreateNotificationChannel(channel);
             }
         }
