@@ -4,6 +4,10 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.svg?label=NuGet)](https://www.nuget.org/packages/Plugin.LocalNotification/)
 
+# 4.1.4 Documentation
+
+- Please go to [3.1.4 Documentation](../../wiki/Usage-4.1.4), if you are referencing a version below 5.0.0. 
+- Version 5.* has setup differences in Android if upgrading from version 3.*
 
 # 3.0.2 Documentation
 
@@ -28,7 +32,7 @@ The local notification plugin provides a way to show local notifications from Xa
 |Platform|Supported|Version|Notes|
 | ------------------- | :-----------: | :------------------: | :------------------: |
 |Xamarin.iOS|Yes|iOS 10+| |
-|Xamarin.Android|Yes|API 14+|Project should [target Android framework 9.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
+|Xamarin.Android|Yes|API 19+|Project should [target Android framework 10.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
 
 # Usage
 
@@ -72,15 +76,9 @@ public partial class App : Application
 
 ### Android
 
-Project should [target Android framework 9.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
+Project should [target Android framework 10.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
 
-![image](https://user-images.githubusercontent.com/4112014/57818332-81bf9080-77d7-11e9-979d-8c7baa0407b9.png)
-
-Scheduled local notifications will persist after device reboot, if permission is set and SDK more than 5.0 Lollipop (API 21). **You only need to do this if you plugin verion is below 4.0.3**
-
-```XML
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-```
+![image](https://user-images.githubusercontent.com/4112014/74599294-5100e480-50e4-11ea-85a5-409af45bdab7.png)
 
 #### Setup
 
