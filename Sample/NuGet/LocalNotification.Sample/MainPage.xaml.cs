@@ -26,8 +26,7 @@ namespace LocalNotification.Sample
                 _tapCount.ToString()
             };
 
-            var serializer = new ObjectSerializer<List<string>>();
-            var serializeReturningData = serializer.SerializeObject(list);
+            var serializeReturningData = ObjectSerializer.SerializeObject(list);
 
             var request = new NotificationRequest
             {

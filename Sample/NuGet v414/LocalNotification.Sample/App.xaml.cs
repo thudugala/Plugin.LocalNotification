@@ -36,8 +36,7 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var serializer = new ObjectSerializer<List<string>>();
-            var list = serializer.DeserializeObject(e.Data);
+            var list = ObjectSerializer.DeserializeObject<List<string>>(e.Data);
             if (list.Count != 2)
             {
                 return;

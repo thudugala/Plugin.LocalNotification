@@ -26,8 +26,7 @@ namespace LocalNotification.Sample
                 _tapCount.ToString()
             };
 
-            var serializer = new ObjectSerializer<List<string>>();
-            var serializeReturningData = serializer.SerializeObject(list);
+            var serializeReturningData = ObjectSerializer.SerializeObject(list);
 
             var request = new NotificationRequest
             {
@@ -36,6 +35,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
+                Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
                 Android =
                 {
                     IconName = "my_icon",
