@@ -4,21 +4,6 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.svg?label=NuGet)](https://www.nuget.org/packages/Plugin.LocalNotification/)
 
-# 4.1.4 Documentation
-
-- Please go to [4.1.4 Documentation](../../wiki/Usage-4.1.4), if you are referencing a version below 5.0.0. 
-- Version 5.* has setup differences in Android if upgrading from version 3.*
-
-# 3.0.2 Documentation
-
-- Please go to [3.0.2 Documentation](../../wiki/Usage-3.0.2), if you are referencing a version below 4.0.0. 
-- Version 4.* has setup differences in Android if upgrading from version 3.*
-
-# 2.0.7 Documentation
-
-- Please go to [2.0.7 Documentation](../../wiki/Usage-2.0.7), if you are referencing a version below 3.0.0. 
-- Version 3.* has breaking changes if upgrading from version 2.*
-
 # Plugin.LocalNotification
 The local notification plugin provides a way to show local notifications from Xamarin.Forms apps.
 
@@ -147,6 +132,21 @@ https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 # Limitations
 
 Only support <b>iOS</b> and <b>Android</b> for the moment. 
+
+# 4.1.4 Documentation
+
+- Please go to [4.1.4 Documentation](../../wiki/Usage-4.1.4), if you are referencing a version below 5.0.0. 
+- Version 5.* has setup differences in Android if upgrading from version 3.*
+
+# 3.0.2 Documentation
+
+- Please go to [3.0.2 Documentation](../../wiki/Usage-3.0.2), if you are referencing a version below 4.0.0. 
+- Version 4.* has setup differences in Android if upgrading from version 3.*
+
+# 2.0.7 Documentation
+
+- Please go to [2.0.7 Documentation](../../wiki/Usage-2.0.7), if you are referencing a version below 3.0.0. 
+- Version 3.* has breaking changes if upgrading from version 2.*
 
 # Contributing
 
