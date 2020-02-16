@@ -6,7 +6,7 @@
 
 # 4.1.4 Documentation
 
-- Please go to [3.1.4 Documentation](../../wiki/Usage-4.1.4), if you are referencing a version below 5.0.0. 
+- Please go to [4.1.4 Documentation](../../wiki/Usage-4.1.4), if you are referencing a version below 5.0.0. 
 - Version 5.* has setup differences in Android if upgrading from version 3.*
 
 # 3.0.2 Documentation
@@ -25,7 +25,7 @@ The local notification plugin provides a way to show local notifications from Xa
 # Setup
 
 - `Plugin.LocalNotification` Available on NuGet: https://www.nuget.org/packages/Plugin.LocalNotification
-- Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.0 projects required for your app.
+- Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.1 projects required for your app.
 
 ## Platform Support
 
