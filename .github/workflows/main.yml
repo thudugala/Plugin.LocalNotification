@@ -1,0 +1,20 @@
+name: CI
+
+on: [push]
+
+jobs:
+  Android:
+
+    runs-on: windows-latest
+    
+    steps:
+
+    - uses: actions/checkout@v1
+      
+    - name: Android
+      run: |
+        cd Sample
+        cd NuGet
+        nuget restore
+        cd LocalNotification.Sample.Android
+        msbuild LocalNotification.Sample.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
