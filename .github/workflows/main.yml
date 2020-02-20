@@ -22,3 +22,24 @@ jobs:
       
     - name: build LocalNotification.Sample.Android.csproj
       run: msbuild Sample/NuGet/LocalNotification.Sample.Android/LocalNotification.Sample.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+
+  iOS:
+
+    runs-on: macos-latest
+    
+    steps:
+
+    - uses: actions/checkout@v1
+    
+    - name: Setup NuGet.exe
+      uses: NuGet/setup-nuget@v1.0.2
+    
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+      
+    - name : restore LocalNotification.Sample.sln
+      run: nuget restore Sample/NuGet/LocalNotification.Sample.sln
+      
+    - name: build LocalNotification.Sample.iOS.csproj
+      run: msbuild Sample/NuGet/LocalNotification.Sample.iOS/LocalNotification.Sample.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhoneSimulator /p:Configuration=Debug
+ 
