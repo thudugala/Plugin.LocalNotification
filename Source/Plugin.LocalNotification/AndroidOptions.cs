@@ -20,6 +20,18 @@ namespace Plugin.LocalNotification
         public string ChannelId { get; set; } = "Plugin.LocalNotification.GENERAL";
 
         /// <summary>
+        /// Set this notification to be part of a group of notifications sharing the same key.
+        /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
+        /// </summary>
+        public string Group { get; set; }
+
+        /// <summary>
+        /// Set this notification to be the group summary for a group of notifications.
+        /// Grouped notifications may display in a cluster or stack on devices which support such rendering
+        /// </summary>
+        public bool IsGroupSummary { get; set; }
+
+        /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
         public int? Color { get; set; }

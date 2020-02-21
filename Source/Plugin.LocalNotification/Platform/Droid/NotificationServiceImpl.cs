@@ -167,6 +167,15 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetAutoCancel(request.Android.AutoCancel);
             builder.SetOngoing(request.Android.Ongoing);
 
+            if (string.IsNullOrWhiteSpace(request.Android.Group) == false)
+            {
+                builder.SetGroup(request.Android.Group);
+                if (request.Android.IsGroupSummary)
+                {
+                    builder.SetGroupSummary(true);
+                }
+            }
+
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 builder.SetPriority((int)request.Android.Priority);

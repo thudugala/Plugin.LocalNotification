@@ -68,6 +68,40 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Create Notification Channel Group when API >= 26.
+        /// If you'd like to further organize the appearance of your channels in the settings UI, you can create channel groups.
+        /// This is a good idea when your app supports multiple user accounts (such as for work profiles),
+        /// so you can create a notification channel group for each account.
+        /// This way, users can easily identify and control multiple notification channels that have identical names.
+        /// </summary>
+        /// <param name="request"></param>
+        public static void CreateNotificationChannelGroup(NotificationChannelGroupRequest request)
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                return;
+            }
+
+            if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager
+                notificationManager))
+            {
+                return;
+            }
+
+            if (request is null ||
+                string.IsNullOrWhiteSpace(request.Group) ||
+                string.IsNullOrWhiteSpace(request.Name))
+            {
+                return;
+            }
+
+            using (var channelGroup = new NotificationChannelGroup(request.Group, request.Name))
+            {
+                notificationManager.CreateNotificationChannelGroup(channelGroup);
+            }
+        }
+
+        /// <summary>
         /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="request"></param>
@@ -144,6 +178,7 @@ namespace Plugin.LocalNotification
                 soundFileName =
                     $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
             }
+
             return Android.Net.Uri.Parse(soundFileName);
         }
     }

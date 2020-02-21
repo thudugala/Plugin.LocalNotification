@@ -22,6 +22,7 @@ namespace LocalNotification.Sample.Droid
             // you can created multiple Notification Channels with different names.
             NotificationCenter.CreateNotificationChannel(new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequest
             {
+                //Group = ""
                 Sound = Resource.Raw.good_things_happen.ToString()
             });
 

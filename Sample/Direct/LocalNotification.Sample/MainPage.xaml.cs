@@ -15,8 +15,26 @@ namespace LocalNotification.Sample
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-            //ScheduleNotification("first", 5);
-            //ScheduleNotification("second", 10);
+            ScheduleNotificationGroup();
+            ScheduleNotification("first", 5);
+            ScheduleNotification("second", 10);
+        }
+
+        private void ScheduleNotificationGroup()
+        {
+            var notificationId = (int)DateTime.Now.Ticks;
+            var notification = new NotificationRequest
+            {
+                NotificationId = notificationId,
+                Title = "Summary",
+                Description = $"Summary Desc",
+                Android =
+                {
+                    Group = "Plugin.LocalNotification.GROUP",
+                    IsGroupSummary = true
+                }
+            };
+            NotificationCenter.Current.Show(notification);
         }
 
         private void ScheduleNotification(string title, double seconds)
@@ -38,7 +56,11 @@ namespace LocalNotification.Sample
                 Title = title,
                 Description = $"Tap Count: {_tapCount}",
                 ReturningData = serializeReturningData,
-                NotifyTime = DateTime.Now.AddSeconds(seconds)
+                NotifyTime = DateTime.Now.AddSeconds(seconds),
+                Android =
+                {
+                    Group = "Plugin.LocalNotification.GROUP"
+                }
             };
             NotificationCenter.Current.Show(notification);
         }
