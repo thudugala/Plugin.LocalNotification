@@ -1,15 +1,20 @@
-  nuget: 
-    runs-on: macos-latest
-    
-    steps:
-    
-    - uses: actions/checkout@v1
-    
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
-          
-    - name : restorePlugin.LocalNotification.sln
-      run: nuget restore Source/Plugin.LocalNotification.sln
-    
-    - name: build Plugin.LocalNotification.csproj
-      run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+  name: Nuget Build 
+
+  on: [push]
+
+  jobs:
+    nuget: 
+      runs-on: macos-latest
+
+      steps:
+
+      - uses: actions/checkout@v1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.2
+
+      - name : restorePlugin.LocalNotification.sln
+        run: nuget restore Source/Plugin.LocalNotification.sln
+
+      - name: build Plugin.LocalNotification.csproj
+        run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
