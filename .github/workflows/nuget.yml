@@ -18,3 +18,8 @@
 
       - name: build Plugin.LocalNotification.csproj
         run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+      
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Plugin.LocalNotification
+          path: Source/Plugin.LocalNotification/bin/Debug/ 
