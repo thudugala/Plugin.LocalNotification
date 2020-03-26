@@ -28,5 +28,5 @@
           path: Source/Plugin.LocalNotification/bin/Debug/ 
 
       - name: Push generated package to GitHub registry
-        run: nuget push Source/Plugin.LocalNotification/bin/Debug/*.nupkg -Source "GitHub" -SkipDuplicate - 
+        run: nuget push Source/Plugin.LocalNotification/bin/Debug/*.nupkg -Source "GitHub" -SkipDuplicate
 
