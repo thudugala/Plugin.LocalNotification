@@ -12,6 +12,9 @@
 
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.2
+      
+      - name: Add private GitHub registry to NuGet
+        run: nuget sources add -name "GitHub" "https://nuget.pkg.github.com/thudugala/index.json" -UserName thudugala -Password ${{ secrets.Elvin_Package_Registry }}
 
       - name : restorePlugin.LocalNotification.sln
         run: nuget restore Source/Plugin.LocalNotification.sln
@@ -23,3 +26,7 @@
         with:
           name: Plugin.LocalNotification
           path: Source/Plugin.LocalNotification/bin/Debug/ 
+
+      - name: Push generated package to GitHub registry
+        run: nuget push Source/Plugin.LocalNotification/bin/Debug/*.nupkg -Source "GitHub" -SkipDuplicate - 
+
