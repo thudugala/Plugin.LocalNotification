@@ -63,7 +63,6 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -74,9 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Plugin.LocalNotification">
-      <Version>5.0.3</Version>
+      <Version>5.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.5.0.495" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.772" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
