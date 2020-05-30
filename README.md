@@ -13,6 +13,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 - `Plugin.LocalNotification` Available on NuGet: https://www.nuget.org/packages/Plugin.LocalNotification
 - Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.1 projects required for your app.
+- Must Use Xamarin.Forms 4.5.0.356 or above.
 
 ## Platform Support
 
