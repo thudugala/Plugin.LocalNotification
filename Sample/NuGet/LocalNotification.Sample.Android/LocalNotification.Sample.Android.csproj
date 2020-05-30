@@ -75,7 +75,7 @@
     <PackageReference Include="Plugin.LocalNotification">
       <Version>5.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.6.0.772" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.800" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
