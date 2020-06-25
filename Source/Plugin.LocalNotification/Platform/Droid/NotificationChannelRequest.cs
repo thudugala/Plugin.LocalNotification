@@ -56,5 +56,20 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.
         /// </summary>
         public NotificationVisibility LockscreenVisibility { get; set; } = NotificationVisibility.Secret;
+
+        /// <summary>
+        /// Sets or gets, Sets whether notifications posted to this channel can appear as application icon badges in a Launcher.
+        /// </summary>
+        public bool ShowBadge { get; set; } = true;
+
+        /// <summary>
+        /// Sets or gets, Sets whether notifications posted to this channel should display notification lights, on devices that support that feature.
+        /// </summary>
+        public bool EnableLights { get; set; } = true;
+
+        /// <summary>
+        /// Sets or gets, Sets whether notification posted to this channel should vibrate. The vibration pattern can be set with VibrationPattern
+        /// </summary>
+        public bool EnableVibration { get; set; } = true;
     }
 }

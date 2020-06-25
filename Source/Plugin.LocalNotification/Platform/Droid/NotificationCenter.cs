@@ -159,9 +159,9 @@ namespace Plugin.LocalNotification
                 channel.SetVibrationPattern(request.VibrationPattern);
             }
 
-            channel.SetShowBadge(true);
-            channel.EnableLights(true);
-            channel.EnableVibration(true);
+            channel.SetShowBadge(request.ShowBadge);
+            channel.EnableLights(request.EnableLights);
+            channel.EnableVibration(request.EnableVibration);
 
             notificationManager.CreateNotificationChannel(channel);
         }

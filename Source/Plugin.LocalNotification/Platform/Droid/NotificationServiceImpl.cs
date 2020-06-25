@@ -220,7 +220,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentIntent(pendingIntent);
 
             var notification = builder.Build();
-            if (request.Android.LedColor.HasValue)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
+                request.Android.LedColor.HasValue)
             {
                 notification.LedARGB = request.Android.LedColor.Value;
             }
