@@ -18,6 +18,11 @@
         /// <summary>
         /// Notification should repeat next week at same day, same time
         /// </summary>
-        Weekly
+        Weekly,
+
+        /// <summary>
+        /// Notification to be delivered after the specified amount of time elapses
+        /// </summary>
+        TimeInterval
     }
 }

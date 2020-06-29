@@ -35,7 +35,12 @@ namespace Plugin.LocalNotification
         public DateTime? NotifyTime { get; set; }
 
         /// <summary>
-        /// If true, will repeat again at the time specifies in NotifyTime.
+        /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
+        /// </summary>
+        public TimeSpan? NotifyRepeatInterval { get; set; }
+
+        /// <summary>
+        /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval
         /// </summary>
         public NotificationRepeat Repeats { get; set; } = NotificationRepeat.No;
 

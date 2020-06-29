@@ -65,6 +65,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public async void Show(NotificationRequest notificationRequest)
         {
+            UNNotificationTrigger trigger = null;
             try
             {
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
@@ -108,8 +109,20 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var repeats = notificationRequest.Repeats != NotificationRepeat.No;
-                using var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest);
-                using var trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
+
+                if (repeats && notificationRequest.Repeats == NotificationRepeat.TimeInterval &&
+                    notificationRequest.NotifyRepeatInterval.HasValue)
+                {
+                    var seconds = notificationRequest.NotifyRepeatInterval.Value.TotalSeconds;
+
+                    trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(seconds, true);
+                }
+                else
+                {
+                    using var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest);
+                    trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
+                }
+
                 var notificationId =
                     notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
 
@@ -121,6 +134,10 @@ namespace Plugin.LocalNotification.Platform.iOS
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+            }
+            finally
+            {
+                trigger?.Dispose();
             }
         }
 

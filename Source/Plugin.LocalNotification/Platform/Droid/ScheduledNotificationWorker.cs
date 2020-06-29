@@ -56,7 +56,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                                 {
                                     notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
                                 }
-
                                 break;
 
                             case NotificationRepeat.Weekly:
@@ -66,7 +65,18 @@ namespace Plugin.LocalNotification.Platform.Droid
                                 {
                                     notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
                                 }
+                                break;
 
+                            case NotificationRepeat.TimeInterval:
+                                if (notification.NotifyRepeatInterval.HasValue)
+                                {
+                                    notification.NotifyTime =
+                                        notification.NotifyTime.Value.Add(notification.NotifyRepeatInterval.Value);
+                                    while (notification.NotifyTime <= DateTime.Now)
+                                    {
+                                        notification.NotifyTime = notification.NotifyTime.Value.Add(notification.NotifyRepeatInterval.Value);
+                                    }
+                                }
                                 break;
                         }
 
