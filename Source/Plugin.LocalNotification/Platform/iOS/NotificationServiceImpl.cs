@@ -150,6 +150,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                 NotificationRepeat.No => new NSDateComponents
                 {
                     Day = dateTime.Day,
+                    Month = dateTime.Month,
+                    Year = dateTime.Year,
                     Hour = dateTime.Hour,
                     Minute = dateTime.Minute,
                     Second = dateTime.Second
