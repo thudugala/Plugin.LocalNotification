@@ -48,7 +48,7 @@
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.3.4.3" />
-    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.2.0.1" />
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.2.0.2" />
     <Compile Include="**/Platform/Droid/**/*.cs" />
   </ItemGroup>
 
