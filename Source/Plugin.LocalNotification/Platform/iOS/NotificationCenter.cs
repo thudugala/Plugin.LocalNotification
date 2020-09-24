@@ -49,11 +49,6 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                if (_alertsAllowed.HasValue)
-                {
-                    return _alertsAllowed.Value;
-                }
-
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
                 {
                     _alertsAllowed = true;
@@ -69,13 +64,20 @@ namespace Plugin.LocalNotification
                     return true;
                 }
 
-                // Ask the user for permission to show notifications on iOS 10.0+
-                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
-                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound)
-                    .ConfigureAwait(false);
+                if (_alertsAllowed == null)
+                {
+                    // Ask the user for permission to show notifications on iOS 10.0+
+                    var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
+                                                                                   UNAuthorizationOptions.Alert |
+                                                                                   UNAuthorizationOptions.Badge |
+                                                                                   UNAuthorizationOptions.Sound)
+                                                                               .ConfigureAwait(false);
 
-                _alertsAllowed = alertsAllowed;
-                Debug.WriteLine(error?.LocalizedDescription);
+                    _alertsAllowed = alertsAllowed;
+                    Debug.WriteLine(error?.LocalizedDescription);
+
+                    return _alertsAllowed.Value;
+                }
 
                 return _alertsAllowed.Value;
             }
