@@ -54,7 +54,7 @@ namespace Plugin.LocalNotification
         /// Ongoing notifications do not have an 'X' close button, and are not affected by the "Clear all" button.
         /// Default is false
         /// </summary>
-        public bool Ongoing { get; set; } = false;
+        public bool Ongoing { get; set; }
 
         /// <summary>
         /// Set the relative priority for this notification.
