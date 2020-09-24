@@ -52,7 +52,7 @@ public partial class App : Application
 		MainPage = new MainPage();
 	}
 	
-	private void OnLocalNotificationTapped(LocalNotificationTappedEvent e)
+	private void OnLocalNotificationTapped(NotificationTappedEventArgs e)
     	{
 		// your code goes here
 	}
