@@ -16,8 +16,6 @@ namespace Plugin.LocalNotification
         /// </summary>
         public static NSString ExtraReturnDataIos => new NSString("Plugin.LocalNotification.RETURN_DATA");
 
-        private static bool? _alertsAllowed;
-
         static NotificationCenter()
         {
             try
@@ -49,14 +47,8 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                if (_alertsAllowed.HasValue)
-                {
-                    return _alertsAllowed.Value;
-                }
-
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
                 {
-                    _alertsAllowed = true;
                     return true;
                 }
 
@@ -65,19 +57,18 @@ namespace Plugin.LocalNotification
 
                 if (allowed)
                 {
-                    _alertsAllowed = true;
                     return true;
                 }
 
                 // Ask the user for permission to show notifications on iOS 10.0+
                 var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
-                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound)
-                    .ConfigureAwait(false);
+                                                                               UNAuthorizationOptions.Alert |
+                                                                               UNAuthorizationOptions.Badge |
+                                                                               UNAuthorizationOptions.Sound)
+                                                                           .ConfigureAwait(false);
 
-                _alertsAllowed = alertsAllowed;
                 Debug.WriteLine(error?.LocalizedDescription);
-
-                return _alertsAllowed.Value;
+                return alertsAllowed;
             }
             catch (Exception ex)
             {
