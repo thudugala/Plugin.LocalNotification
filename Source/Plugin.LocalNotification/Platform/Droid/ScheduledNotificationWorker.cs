@@ -92,14 +92,6 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                     notification.NotifyTime = null;
                     NotificationCenter.Current.Show(notification);
-
-                    var args = new NotificationReceivedEventArgs
-                    {
-                        Title       = notification.Title,
-                        Description = notification.Description,
-                        Data        = notification.ReturningData
-                    };
-                    NotificationCenter.Current.OnNotificationReceived(args);
                 }
                 catch (Exception ex)
                 {
