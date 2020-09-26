@@ -59,6 +59,29 @@ public partial class App : Application
 }
 ```
 
+### Notification received event
+*On iOS this event is fired only when the app is in foreground*
+
+```csharp
+public partial class App : Application
+{
+	public App()
+	{
+		InitializeComponent();
+
+		// Local Notification received event listener
+		NotificationCenter.Current.NotificationReceived += OnLocalNotificationReceived;
+
+		MainPage = new MainPage();
+	}
+	
+	private void OnLocalNotificationReceived(NotificationReceivedEventArgs e)
+    	{
+		// your code goes here
+	}
+}
+```
+
 # Platform Specific Notes
 
 ### Android
