@@ -58,12 +58,38 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             try
             {
+                var presentationOptions = UNNotificationPresentationOptions.Alert;
+                var notificationContent = notification?.Request.Content;
+
+                if (notificationContent != null)
+                {
+                    var dictionary = notificationContent.UserInfo;
+                    var args = new NotificationReceivedEventArgs
+                    {
+                        Title       = notificationContent.Title,
+                        Description = notificationContent.Body,
+                        Data        = dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos)
+                                        ? dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
+                                        : ""
+                    };
+
+                    NotificationCenter.Current.OnNotificationReceived(args);
+
+
+                    if (dictionary.ContainsKey(NotificationCenter.ExtraNotificationReceivedIos))
+                    {
+                        var customOptions = dictionary[NotificationCenter.ExtraNotificationReceivedIos].ToString().ToLower();
+                        if (customOptions == "true")
+                            presentationOptions = UNNotificationPresentationOptions.None;
+                    }
+                }
+
                 if (completionHandler is null)
                 {
                     return;
                 }
 
-                completionHandler(UNNotificationPresentationOptions.Alert);
+                completionHandler(presentationOptions);
             }
             catch (Exception ex)
             {

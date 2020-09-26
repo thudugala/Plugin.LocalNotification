@@ -16,6 +16,11 @@ namespace Plugin.LocalNotification
         /// </summary>
         public static NSString ExtraReturnDataIos => new NSString("Plugin.LocalNotification.RETURN_DATA");
 
+        /// <summary>
+        /// Presentation Key for notification received on foreground.
+        /// </summary>
+        public static NSString ExtraNotificationReceivedIos => new NSString("Plugin.LocalNotification.NOTIFICATION_RECEIVED");
+
         static NotificationCenter()
         {
             try
