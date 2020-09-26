@@ -104,7 +104,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                             : returningData, NotificationCenter.ExtraReturnDataIos);
                 }
 
-                using var receivedData = new NSString(notificationRequest.iOS.HideAlertOnNotificationReceived.ToString());
+                using var receivedData = new NSString(notificationRequest.iOS.HideForegroundAlert.ToString());
                 userInfoDictionary.SetValueForKey(receivedData, NotificationCenter.ExtraNotificationReceivedIos);
 
                 using var content = new UNMutableNotificationContent

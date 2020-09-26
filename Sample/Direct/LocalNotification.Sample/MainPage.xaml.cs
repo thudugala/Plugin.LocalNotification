@@ -110,7 +110,7 @@ namespace LocalNotification.Sample
                 },
                 iOS =
                 {
-                    HideAlertOnNotificationReceived = CustomAlert.IsToggled
+                    HideForegroundAlert = CustomAlert.IsToggled
                 }
             };
 
