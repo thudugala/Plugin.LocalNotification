@@ -13,6 +13,11 @@ namespace Plugin.LocalNotification
         public AndroidOptions Android { get; set; } = new AndroidOptions();
 
         /// <summary>
+        /// iOS specific properties.
+        /// </summary>
+        public iOSOptions iOS { get; set; } = new iOSOptions();
+
+        /// <summary>
         /// Number of the badge displays on the Home Screen.
         /// </summary>
         public int BadgeNumber { get; set; }
@@ -45,7 +50,7 @@ namespace Plugin.LocalNotification
         public NotificationRepeat Repeats { get; set; } = NotificationRepeat.No;
 
         /// <summary>
-        /// Returning data when tapped on notification.
+        /// Returning data when tapped or received notification.
         /// </summary>
         public string ReturningData { get; set; } = string.Empty;
 

@@ -12,12 +12,26 @@ namespace LocalNotification.Sample
         public MainPage()
         {
             InitializeComponent();
+
+            NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
             ScheduleNotificationGroup();
             ScheduleNotification("first", 5);
             ScheduleNotification("second", 10);
+        }
+
+        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (CustomAlert.IsToggled)
+                    DisplayAlert(e.Title, e.Description, "OK");
+            });
         }
 
         private void ScheduleNotificationGroup()
@@ -94,6 +108,10 @@ namespace LocalNotification.Sample
                     //AutoCancel = false,
                     //Ongoing = true
                 },
+                iOS =
+                {
+                    HideForegroundAlert = CustomAlert.IsToggled
+                }
             };
 
             // if not specified, default sound will be played.
@@ -117,5 +135,6 @@ namespace LocalNotification.Sample
 
             NotificationCenter.Current.Show(request);
         }
+
     }
 }

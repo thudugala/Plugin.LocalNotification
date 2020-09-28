@@ -14,9 +14,18 @@ namespace Plugin.LocalNotification.Platform.iOS
         public event NotificationTappedEventHandler NotificationTapped;
 
         /// <inheritdoc />
+        public event NotificationReceivedEventHandler NotificationReceived;
+
+        /// <inheritdoc />
         public void OnNotificationTapped(NotificationTappedEventArgs e)
         {
             NotificationTapped?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationReceived(NotificationReceivedEventArgs e)
+        {
+            NotificationReceived?.Invoke(e);
         }
 
         /// <inheritdoc />
@@ -94,6 +103,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                             ? NSString.Empty
                             : returningData, NotificationCenter.ExtraReturnDataIos);
                 }
+
+                using var receivedData = new NSString(notificationRequest.iOS.HideForegroundAlert.ToString());
+                userInfoDictionary.SetValueForKey(receivedData, NotificationCenter.ExtraNotificationReceivedIos);
 
                 using var content = new UNMutableNotificationContent
                 {

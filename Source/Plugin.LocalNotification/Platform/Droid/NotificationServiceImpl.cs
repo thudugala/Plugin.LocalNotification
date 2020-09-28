@@ -20,9 +20,18 @@ namespace Plugin.LocalNotification.Platform.Droid
         public event NotificationTappedEventHandler NotificationTapped;
 
         /// <inheritdoc />
+        public event NotificationReceivedEventHandler NotificationReceived;
+
+        /// <inheritdoc />
         public void OnNotificationTapped(NotificationTappedEventArgs e)
         {
             NotificationTapped?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationReceived(NotificationReceivedEventArgs e)
+        {
+            NotificationReceived?.Invoke(e);
         }
 
         /// <summary>
@@ -232,6 +241,14 @@ namespace Plugin.LocalNotification.Platform.Droid
                 notification.Defaults = NotificationDefaults.All;
             }
             _notificationManager?.Notify(request.NotificationId, notification);
+
+            var args = new NotificationReceivedEventArgs
+            {
+                Title       = request.Title,
+                Description = request.Description,
+                Data        = request.ReturningData
+            };
+            NotificationCenter.Current.OnNotificationReceived(args);
         }
 
         private static int GetIcon(string iconName)

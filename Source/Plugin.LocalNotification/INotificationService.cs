@@ -11,6 +11,12 @@
         event NotificationTappedEventHandler NotificationTapped;
 
         /// <summary>
+        /// fires when notification is received.
+        /// On iOS this event is fired only when the app is in foreground
+        /// </summary>
+        event NotificationReceivedEventHandler NotificationReceived;
+
+        /// <summary>
         /// Cancel a notification match with the Id
         /// </summary>
         /// <param name="notificationId">A unique identifier for the already displaying local notification.</param>
@@ -26,6 +32,12 @@
         /// </summary>
         /// <param name="e"></param>
         void OnNotificationTapped(NotificationTappedEventArgs e);
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        void OnNotificationReceived(NotificationReceivedEventArgs e);
 
         /// <summary>
         /// Send a local notification to the device.
