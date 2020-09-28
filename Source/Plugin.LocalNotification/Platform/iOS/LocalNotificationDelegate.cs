@@ -66,21 +66,23 @@ namespace Plugin.LocalNotification.Platform.iOS
                     var dictionary = notificationContent.UserInfo;
                     var args = new NotificationReceivedEventArgs
                     {
-                        Title       = notificationContent.Title,
+                        Title = notificationContent.Title,
                         Description = notificationContent.Body,
-                        Data        = dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos)
+                        Data = dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos)
                                         ? dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
                                         : ""
                     };
 
                     NotificationCenter.Current.OnNotificationReceived(args);
 
-
                     if (dictionary.ContainsKey(NotificationCenter.ExtraNotificationReceivedIos))
                     {
-                        var customOptions = dictionary[NotificationCenter.ExtraNotificationReceivedIos].ToString().ToLower();
-                        if (customOptions == "true")
+                        var customOptions = dictionary[NotificationCenter.ExtraNotificationReceivedIos].ToString()
+                            .ToUpperInvariant();
+                        if (customOptions == "TRUE")
+                        {
                             presentationOptions = UNNotificationPresentationOptions.None;
+                        }
                     }
                 }
 
