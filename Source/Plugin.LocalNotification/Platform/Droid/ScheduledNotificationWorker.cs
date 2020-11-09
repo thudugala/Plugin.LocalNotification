@@ -70,12 +70,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                             case NotificationRepeat.TimeInterval:
                                 if (notification.NotifyRepeatInterval.HasValue)
                                 {
-                                    notification.NotifyTime =
-                                        notification.NotifyTime.Value.Add(notification.NotifyRepeatInterval.Value);
-                                    while (notification.NotifyTime <= DateTime.Now)
+                                    TimeSpan interval = notification.NotifyRepeatInterval.Value;
+                                    do
                                     {
-                                        notification.NotifyTime = notification.NotifyTime.Value.Add(notification.NotifyRepeatInterval.Value);
+                                        notification.NotifyTime = notification.NotifyTime.Value.Add(interval);
                                     }
+                                    while (notification.NotifyTime <= DateTime.Now);
                                 }
                                 break;
                         }

@@ -125,9 +125,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 if (repeats && notificationRequest.Repeats == NotificationRepeat.TimeInterval &&
                     notificationRequest.NotifyRepeatInterval.HasValue)
                 {
-                    var seconds = notificationRequest.NotifyRepeatInterval.Value.TotalSeconds;
+                    TimeSpan interval = notificationRequest.NotifyRepeatInterval.Value;
 
-                    trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(seconds, true);
+                    trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
                 }
                 else
                 {
