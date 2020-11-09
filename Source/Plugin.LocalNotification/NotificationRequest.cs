@@ -42,7 +42,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
         /// </summary>
-        public TimeSpan? NotifyRepeatInterval { get; set; }
+        public TimeSpanExt? NotifyRepeatInterval { get; set; }
 
         /// <summary>
         /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval
