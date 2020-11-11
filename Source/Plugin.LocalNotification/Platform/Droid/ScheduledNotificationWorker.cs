@@ -52,35 +52,27 @@ namespace Plugin.LocalNotification.Platform.Droid
                             case NotificationRepeat.Daily:
                                 // To be consistent with iOS, Schedule notification next day same time.
                                 notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
-                                while (notification.NotifyTime <= DateTime.Now)
-                                {
-                                    notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
-                                }
                                 break;
 
                             case NotificationRepeat.Weekly:
                                 // To be consistent with iOS, Schedule notification next week same day same time.
                                 notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
-                                while (notification.NotifyTime <= DateTime.Now)
-                                {
-                                    notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
-                                }
                                 break;
 
                             case NotificationRepeat.TimeInterval:
                                 if (notification.NotifyRepeatInterval.HasValue)
                                 {
                                     TimeSpan interval = notification.NotifyRepeatInterval.Value;
-                                    do
-                                    {
-                                        notification.NotifyTime = notification.NotifyTime.Value.Add(interval);
-                                    }
-                                    while (notification.NotifyTime <= DateTime.Now);
+                                    notification.NotifyTime = notification.NotifyTime.Value.Add(interval);
                                 }
                                 break;
                         }
 
-                        NotificationCenter.Current.Show(notification);
+                        var notificationService = TryGetDefaultDroidNotificationService();
+                        notificationService.ShowNow(notification, false);
+                        notificationService.EnqueueWorker(notification);
+
+                        return;
                     }
 
                     // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
@@ -100,6 +92,15 @@ namespace Plugin.LocalNotification.Platform.Droid
             });
 
             return Result.InvokeSuccess();
+        }
+
+        private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
+        {
+            if (NotificationCenter.Current is NotificationServiceImpl notificationService)
+            {
+                return notificationService;
+            }
+            return new NotificationServiceImpl();
         }
     }
 }
