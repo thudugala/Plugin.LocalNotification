@@ -12,8 +12,8 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        private readonly NotificationManager _notificationManager;
-        private readonly WorkManager _workManager;
+        protected readonly NotificationManager NotificationManager;
+        protected readonly WorkManager WorkManager;
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -45,10 +45,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                _notificationManager =
+                NotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
                     throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
-                _workManager = WorkManager.GetInstance(Application.Context);
+                WorkManager = WorkManager.GetInstance(Application.Context);
             }
             catch (Exception ex)
             {
@@ -66,8 +66,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                _workManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
-                _notificationManager?.Cancel(notificationId);
+                WorkManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
+                NotificationManager?.Cancel(notificationId);
             }
             catch (Exception ex)
             {
@@ -85,8 +85,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                _workManager?.CancelAllWork();
-                _notificationManager?.CancelAll();
+                WorkManager?.CancelAllWork();
+                NotificationManager?.CancelAll();
             }
             catch (Exception ex)
             {
@@ -124,7 +124,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        private void ShowLater(NotificationRequest notificationRequest)
+        protected virtual void ShowLater(NotificationRequest notificationRequest)
         {
             if (notificationRequest.NotifyTime is null ||
                 notificationRequest.NotifyTime.Value <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
@@ -137,7 +137,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             EnqueueWorker(notificationRequest);
         }
 
-        internal void ShowNow(NotificationRequest request, bool cancelBeforeShow)
+        protected internal virtual void ShowNow(NotificationRequest request, bool cancelBeforeShow)
         {
             if (cancelBeforeShow)
             {
@@ -225,7 +225,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 notification.Defaults = NotificationDefaults.All;
             }
-            _notificationManager?.Notify(request.NotificationId, notification);
+            NotificationManager?.Notify(request.NotificationId, notification);
 
             var args = new NotificationReceivedEventArgs
             {
@@ -236,7 +236,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             NotificationCenter.Current.OnNotificationReceived(args);
         }
 
-        internal void EnqueueWorker(NotificationRequest notificationRequest)
+        protected internal virtual void EnqueueWorker(NotificationRequest notificationRequest)
         {
             if (!notificationRequest.NotifyTime.HasValue)
             {
@@ -266,10 +266,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                 .SetInitialDelay(diff, TimeUnit.Milliseconds)
                 .Build();
 
-            _workManager?.Enqueue(workRequest);
+            WorkManager?.Enqueue(workRequest);
         }
 
-        private static int GetIcon(string iconName)
+        protected static int GetIcon(string iconName)
         {
             var iconId = 0;
             if (string.IsNullOrWhiteSpace(iconName) == false)
@@ -292,7 +292,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             return iconId;
         }
 
-        private void Log(string message)
+        protected static void Log(string message)
         {
             Android.Util.Log.Info(Application.Context.PackageName, message);
         }
