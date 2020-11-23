@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Util;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
@@ -13,8 +12,8 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        private readonly NotificationManager _notificationManager;
-        private readonly WorkManager _workManager;
+        protected readonly NotificationManager NotificationManager;
+        protected readonly WorkManager WorkManager;
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -46,10 +45,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                _notificationManager =
+                NotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
                     throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
-                _workManager = WorkManager.GetInstance(Application.Context);
+                WorkManager = WorkManager.GetInstance(Application.Context);
             }
             catch (Exception ex)
             {
@@ -67,8 +66,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                _workManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
-                _notificationManager?.Cancel(notificationId);
+                WorkManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
+                NotificationManager?.Cancel(notificationId);
             }
             catch (Exception ex)
             {
@@ -86,8 +85,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                _workManager?.CancelAllWork();
-                _notificationManager?.CancelAll();
+                WorkManager?.CancelAllWork();
+                NotificationManager?.CancelAll();
             }
             catch (Exception ex)
             {
@@ -116,7 +115,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
                 else
                 {
-                    ShowNow(notificationRequest);
+                    ShowNow(notificationRequest, true);
                 }
             }
             catch (Exception ex)
@@ -125,7 +124,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        private void ShowLater(NotificationRequest notificationRequest)
+        protected virtual void ShowLater(NotificationRequest notificationRequest)
         {
             if (notificationRequest.NotifyTime is null ||
                 notificationRequest.NotifyTime.Value <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
@@ -135,29 +134,15 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             Cancel(notificationRequest.NotificationId);
 
-            var notifyTime = notificationRequest.NotifyTime.Value;
-            var serializedNotification = ObjectSerializer.SerializeObject(notificationRequest);
-            // Why serialized options separately ?
-            // System.Xml.Serialization.XmlSerializer Deserialize and Serialize methods ignore object property "Android" when linking option set to "SDK Assemblies Only"
-            var serializedNotificationAndroid = ObjectSerializer.SerializeObject(notificationRequest.Android);
-            Log.Info(Application.Context.PackageName, $"NotificationServiceImpl.ShowLater: SerializedNotification [{serializedNotification}]");
-            using var dataBuilder = new Data.Builder();
-            dataBuilder.PutString(NotificationCenter.ExtraReturnNotification, serializedNotification);
-            dataBuilder.PutString($"{NotificationCenter.ExtraReturnNotification}_Android", serializedNotificationAndroid);
-
-            var requestBuilder = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>();
-            requestBuilder.AddTag(notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture));
-            requestBuilder.SetInputData(dataBuilder.Build());
-            var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
-            requestBuilder.SetInitialDelay(diff, TimeUnit.Milliseconds);
-
-            var workRequest = requestBuilder.Build();
-            _workManager?.Enqueue(workRequest);
+            EnqueueWorker(notificationRequest);
         }
 
-        private void ShowNow(NotificationRequest request)
+        protected internal virtual void ShowNow(NotificationRequest request, bool cancelBeforeShow)
         {
-            Cancel(request.NotificationId);
+            if (cancelBeforeShow)
+            {
+                Cancel(request.NotificationId);
+            }
 
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
@@ -240,18 +225,51 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 notification.Defaults = NotificationDefaults.All;
             }
-            _notificationManager?.Notify(request.NotificationId, notification);
+            NotificationManager?.Notify(request.NotificationId, notification);
 
             var args = new NotificationReceivedEventArgs
             {
-                Title       = request.Title,
+                Title = request.Title,
                 Description = request.Description,
-                Data        = request.ReturningData
+                Data = request.ReturningData
             };
             NotificationCenter.Current.OnNotificationReceived(args);
         }
 
-        private static int GetIcon(string iconName)
+        protected internal virtual void EnqueueWorker(NotificationRequest notificationRequest)
+        {
+            if (!notificationRequest.NotifyTime.HasValue)
+            {
+                Log($"{nameof(notificationRequest.NotifyTime)} value doesn't set!");
+                return;
+            }
+
+            var notifyTime = notificationRequest.NotifyTime.Value;
+            var serializedNotification = ObjectSerializer.SerializeObject(notificationRequest);
+
+            // Why serialized options separately ?
+            // System.Xml.Serialization.XmlSerializer Deserialize and Serialize methods ignore
+            // object property "Android" when linking option set to "SDK Assemblies Only"
+            var serializedNotificationAndroid = ObjectSerializer.SerializeObject(notificationRequest.Android);
+            Log($"NotificationServiceImpl.ShowLater: SerializedNotification [{serializedNotification}]");
+
+            using var dataBuilder = new Data.Builder()
+                .PutString(NotificationCenter.ExtraReturnNotification, serializedNotification)
+                .PutString($"{NotificationCenter.ExtraReturnNotification}_Android", serializedNotificationAndroid);
+            var data = dataBuilder.Build();
+            var tag = notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
+            var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
+
+            var workRequest = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>()
+                .AddTag(tag)
+                .SetInputData(data)
+                .SetInitialDelay(diff, TimeUnit.Milliseconds)
+                .Build();
+
+            WorkManager?.Enqueue(workRequest);
+        }
+
+        protected static int GetIcon(string iconName)
         {
             var iconId = 0;
             if (string.IsNullOrWhiteSpace(iconName) == false)
@@ -272,6 +290,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             return iconId;
+        }
+
+        protected static void Log(string message)
+        {
+            Android.Util.Log.Info(Application.Context.PackageName, message);
         }
     }
 }
