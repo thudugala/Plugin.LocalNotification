@@ -12,7 +12,14 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly NotificationManager NotificationManager;
+        
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly WorkManager WorkManager;
 
         /// <inheritdoc />
@@ -124,6 +131,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="notificationRequest"></param>
         protected virtual void ShowLater(NotificationRequest notificationRequest)
         {
             if (notificationRequest.NotifyTime is null ||
@@ -137,6 +148,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             EnqueueWorker(notificationRequest);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancelBeforeShow"></param>
         protected internal virtual void ShowNow(NotificationRequest request, bool cancelBeforeShow)
         {
             if (cancelBeforeShow)
@@ -206,7 +222,13 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
 
-            var notificationIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+            var notificationIntent = Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ?? string.Empty);
+            if (notificationIntent == null)
+            {
+                Log($"NotificationServiceImpl.ShowNow: notificationIntent is null");
+                return;
+            }
+
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
@@ -236,6 +258,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             NotificationCenter.Current.OnNotificationReceived(args);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="notificationRequest"></param>
         protected internal virtual void EnqueueWorker(NotificationRequest notificationRequest)
         {
             if (!notificationRequest.NotifyTime.HasValue)
@@ -269,12 +295,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             WorkManager?.Enqueue(workRequest);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iconName"></param>
+        /// <returns></returns>
         protected static int GetIcon(string iconName)
         {
             var iconId = 0;
             if (string.IsNullOrWhiteSpace(iconName) == false)
             {
-                iconId = Application.Context.Resources.GetIdentifier(iconName, "drawable", Application.Context.PackageName);
+                iconId = Application.Context.Resources?.GetIdentifier(iconName, "drawable", Application.Context.PackageName) ?? 0;
             }
 
             if (iconId != 0)
@@ -282,16 +313,20 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return iconId;
             }
 
-            iconId = Application.Context.ApplicationInfo.Icon;
+            iconId = Application.Context.ApplicationInfo?.Icon ?? 0;
             if (iconId == 0)
             {
-                iconId = Application.Context.Resources.GetIdentifier("icon", "drawable",
-                    Application.Context.PackageName);
+                iconId = Application.Context.Resources?.GetIdentifier("icon", "drawable",
+                    Application.Context.PackageName) ?? 0;
             }
 
             return iconId;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         protected static void Log(string message)
         {
             Android.Util.Log.Info(Application.Context.PackageName, message);
