@@ -15,7 +15,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5   
         
     - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
+      uses: microsoft/setup-msbuild@v1
       
     - name : restore LocalNotification.Sample.sln
       run: nuget restore Sample/NuGet/LocalNotification.Sample.sln
