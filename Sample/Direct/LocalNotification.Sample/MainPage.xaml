@@ -22,7 +22,10 @@
             <Label Text="Display Alert on notification received " />
             <Switch x:Name="CustomAlert" IsToggled="false" />
         </StackLayout>
-
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Play Sound when app is in Foreground" />
+            <Switch x:Name="ForegroundSound" IsToggled="false" />
+        </StackLayout>
         <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
             <Label Text="Use Custom Sound" />
             <Switch x:Name="CustomSoundSwitch" IsToggled="false" />
