@@ -91,15 +91,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                                                                                                     .ToUpperInvariant();
                         if (customOptions == "TRUE")
                         {
-                            if (presentationOptions == UNNotificationPresentationOptions.Alert)
-                            {
-                                presentationOptions = UNNotificationPresentationOptions.Sound|UNNotificationPresentationOptions.Alert;
-                            }
-                            else
-                            {
-                                presentationOptions = UNNotificationPresentationOptions.Sound;
-                            }
-                            
+                            presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ? 
+                                UNNotificationPresentationOptions.Sound|UNNotificationPresentationOptions.Alert :
+                                UNNotificationPresentationOptions.Sound;
                         }
                     }
                 }
