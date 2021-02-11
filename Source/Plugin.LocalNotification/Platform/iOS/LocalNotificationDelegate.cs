@@ -84,6 +84,24 @@ namespace Plugin.LocalNotification.Platform.iOS
                             presentationOptions = UNNotificationPresentationOptions.None;
                         }
                     }
+                    
+                    if (dictionary.ContainsKey(NotificationCenter.ExtraSoundInForegroundIos))
+                    {
+                        var customOptions = dictionary[NotificationCenter.ExtraSoundInForegroundIos].ToString()
+                                                                                                    .ToUpperInvariant();
+                        if (customOptions == "TRUE")
+                        {
+                            if (presentationOptions == UNNotificationPresentationOptions.Alert)
+                            {
+                                presentationOptions = UNNotificationPresentationOptions.Sound|UNNotificationPresentationOptions.Alert;
+                            }
+                            else
+                            {
+                                presentationOptions = UNNotificationPresentationOptions.Sound;
+                            }
+                            
+                        }
+                    }
                 }
 
                 if (completionHandler is null)
