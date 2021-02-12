@@ -20,6 +20,11 @@ namespace Plugin.LocalNotification
         /// Presentation Key for notification received on foreground.
         /// </summary>
         public static NSString ExtraNotificationReceivedIos => new NSString("Plugin.LocalNotification.NOTIFICATION_RECEIVED");
+        
+        /// <summary>
+        /// Key for extra playing sound in foreground.
+        /// </summary>
+        public static NSString ExtraSoundInForegroundIos => new NSString("Plugin.LocalNotification.NOTIFICATION_SOUND_FOREGROUND");
 
         static NotificationCenter()
         {

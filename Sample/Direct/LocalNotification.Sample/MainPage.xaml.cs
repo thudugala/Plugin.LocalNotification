@@ -110,7 +110,8 @@ namespace LocalNotification.Sample
                 },
                 iOS =
                 {
-                    HideForegroundAlert = CustomAlert.IsToggled
+                    HideForegroundAlert = CustomAlert.IsToggled,
+                    PlayForegroundSound = ForegroundSound.IsToggled
                 }
             };
 
