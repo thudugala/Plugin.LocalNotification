@@ -141,7 +141,7 @@ namespace Plugin.LocalNotification
                 Description = request.Description,
                 Group = request.Group,
                 LightColor = request.LightColor,
-                LockscreenVisibility = request.LockscreenVisibility,
+                LockscreenVisibility = request.LockscreenVisibility,                
             };
             var soundUri = GetSoundUri(request.Sound);
             if (soundUri != null)
@@ -162,6 +162,7 @@ namespace Plugin.LocalNotification
             channel.SetShowBadge(request.ShowBadge);
             channel.EnableLights(request.EnableLights);
             channel.EnableVibration(request.EnableVibration);
+            channel.SetBypassDnd(request.CanBypassDND);
 
             notificationManager.CreateNotificationChannel(channel);
         }

@@ -71,5 +71,10 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// Sets or gets, Sets whether notification posted to this channel should vibrate. The vibration pattern can be set with VibrationPattern
         /// </summary>
         public bool EnableVibration { get; set; } = true;
+
+        /// <summary>
+        /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Distrub) mode.
+        /// </summary>
+        public bool CanBypassDND { get; set; } = false;
     }
 }
