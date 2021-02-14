@@ -30,6 +30,8 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <CodeAnalysisRuleSet>Plugin.LocalNotification.ruleset</CodeAnalysisRuleSet>
+
+    <AssemblyVersion>5.2.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

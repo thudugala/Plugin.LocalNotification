@@ -5,7 +5,7 @@ namespace Plugin.LocalNotification
 	/// <summary>
 	/// Notification Request Builder
 	/// </summary>
-	public class NotificationBuilder
+	public class NotificationRequestBuilder
 	{
 		private string NotificationTitle = string.Empty;
 		private string NotificationDescription = string.Empty;
@@ -20,12 +20,12 @@ namespace Plugin.LocalNotification
 		private string NotificationSound = string.Empty;
 
 		/// <summary>
-		/// A unique identifier for the request
-		/// (if identifier is not unique, a new notification request object is not created).
-		/// You can use this identifier later to cancel a request that is still pending.
+		/// Initializes NotificationRequestBuilder with the specified notification Id.
 		/// </summary>
-		/// <param name="notificationId">The unique id</param>
-		public NotificationBuilder(int notificationId)
+		/// <param name="notificationId">A unique identifier for the request
+		/// (if identifier is not unique, a new notification request object is not created).
+		/// You can use this identifier later to cancel a request that is still pending.</param>
+		public NotificationRequestBuilder(int notificationId)
 		{
 			NotificationId = notificationId;
 			AndroidOptions = new AndroidOptions();
@@ -33,11 +33,33 @@ namespace Plugin.LocalNotification
 		}
 
 		/// <summary>
+		/// Initializes NotificationRequestBuilder with default value.
+		/// </summary>
+		public NotificationRequestBuilder()
+		{
+			AndroidOptions = new AndroidOptions();
+			iOSOptions = new iOSOptions();
+		}
+
+		/// <summary>
+		/// A unique identifier for the request
+		/// (if identifier is not unique, a new notification request object is not created).
+		/// You can use this identifier later to cancel a request that is still pending.
+		/// </summary>
+		/// <param name="notificationId"></param>
+		/// <returns></returns>
+		public NotificationRequestBuilder WithNotificationId(int notificationId)
+		{
+			NotificationId = notificationId;
+			return this;
+		}
+
+		/// <summary>
 		/// Android specific properties.
 		/// </summary>
 		/// <param name="options"></param>
 		/// <returns></returns>
-		public NotificationBuilder WithAndroidOptions(AndroidOptions options)
+		public NotificationRequestBuilder WithAndroidOptions(AndroidOptions options)
 		{
 			AndroidOptions = options;
 			return this;
@@ -46,7 +68,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// iOS specific properties.
 		/// </summary>
-		public NotificationBuilder WithiOSOptions(iOSOptions options)
+		public NotificationRequestBuilder WithiOSOptions(iOSOptions options)
 		{
 			iOSOptions = options;
 			return this;
@@ -55,7 +77,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// Title for the notification.
 		/// </summary>
-		public NotificationBuilder WithTitle(string title)
+		public NotificationRequestBuilder WithTitle(string title)
 		{
 			NotificationTitle = title;
 			return this;
@@ -64,7 +86,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// Details for the notification.
 		/// </summary>
-		public NotificationBuilder WithDescription(string description)
+		public NotificationRequestBuilder WithDescription(string description)
 		{
 			NotificationDescription = description;
 			return this;
@@ -73,7 +95,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// Time to show the notification.
 		/// </summary>
-		public NotificationBuilder NotifyAt(DateTime? notificationTime)
+		public NotificationRequestBuilder NotifyAt(DateTime? notificationTime)
 		{
 			NotifyTime = notificationTime;
 			return this;
@@ -82,7 +104,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// Number of the badge displays on the Home Screen.
 		/// </summary>
-		public NotificationBuilder WithBadgeCount(int count)
+		public NotificationRequestBuilder WithBadgeCount(int count)
 		{
 			BadgeNumberCount = count;
 			return this;
@@ -91,7 +113,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// Returning data when tapped or received notification.
 		/// </summary>
-		public NotificationBuilder WithReturningData(string serilizedReturningData)
+		public NotificationRequestBuilder WithReturningData(string serilizedReturningData)
 		{
 			ReturningData = serilizedReturningData;
 			return this;
@@ -102,7 +124,7 @@ namespace Plugin.LocalNotification
 		/// In Android, Only used if Android Api below 26.
 		/// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
 		/// </summary>
-		public NotificationBuilder WithSound(string fileName)
+		public NotificationRequestBuilder WithSound(string fileName)
 		{
 			NotificationSound = fileName;
 			return this;
@@ -111,7 +133,7 @@ namespace Plugin.LocalNotification
 		/// <summary>
 		/// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
 		/// </summary>
-		public NotificationBuilder SetNotificationRepeatInterval(NotificationRepeat repeatInterval, TimeSpanExt? timeSpanExt)
+		public NotificationRequestBuilder SetNotificationRepeatInterval(NotificationRepeat repeatInterval, TimeSpanExt? timeSpanExt)
 		{
 			RepeatInterval = repeatInterval;
 			RepeatSpan = timeSpanExt;

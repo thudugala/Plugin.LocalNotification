@@ -43,6 +43,15 @@ namespace Plugin.LocalNotification.Platform.Droid
 		}
 
 		/// <summary>
+		/// Sets, the channel id.
+		/// </summary>
+		public NotificationChannelRequestBuilder WithChannelId(string channelId)
+		{
+			ChannelId = channelId ?? NotificationCenter.DefaultChannelId;
+			return this;
+		}
+
+		/// <summary>
 		/// Sets, the level of interruption of this notification channel.
 		/// </summary>
 		public NotificationChannelRequestBuilder WithImportance(NotificationImportance importance)

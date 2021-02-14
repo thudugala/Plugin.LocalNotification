@@ -65,5 +65,18 @@ namespace Plugin.LocalNotification
         /// Title for the notification.
         /// </summary>
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Creates a NotificationRequestBuilder instance with specified notificationId.
+        /// </summary>
+        /// <param name="notificationId"></param>
+        /// <returns></returns>
+        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new NotificationRequestBuilder(notificationId);
+
+        /// <summary>
+        /// Creates a NotificationRequestBuilder instance with default values.
+        /// </summary>
+        /// <returns></returns>
+        public static NotificationRequestBuilder CreateBuilder() => new NotificationRequestBuilder();
     }
 }
