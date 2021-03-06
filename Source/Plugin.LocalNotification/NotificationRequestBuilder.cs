@@ -55,13 +55,35 @@ namespace Plugin.LocalNotification
 		}
 
 		/// <summary>
+		/// Android specific properties builder.
+		/// </summary>
+		/// <param name="builder"></param>
+		/// <returns></returns>
+		public NotificationRequestBuilder WithAndroidOptions(Func<AndroidOptionsBuilder, AndroidOptions> builder)
+		{
+			AndroidOptions = builder.Invoke(new AndroidOptionsBuilder());
+			return this;
+		}
+
+		/// <summary>
 		/// Android specific properties.
 		/// </summary>
 		/// <param name="options"></param>
 		/// <returns></returns>
 		public NotificationRequestBuilder WithAndroidOptions(AndroidOptions options)
 		{
-			AndroidOptions = options;
+			AndroidOptions = options;			
+			return this;
+		}
+
+		/// <summary>
+		/// iOS specific properties builder.
+		/// </summary>
+		/// <param name="builder"></param>
+		/// <returns></returns>
+		public NotificationRequestBuilder WithiOSOptions(Func<iOSOptionsBuilder, iOSOptions> builder)
+		{
+			iOSOptions = builder.Invoke(new iOSOptionsBuilder());
 			return this;
 		}
 

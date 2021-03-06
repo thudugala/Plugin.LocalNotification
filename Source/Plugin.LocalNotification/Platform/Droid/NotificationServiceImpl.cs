@@ -102,8 +102,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
+        public void Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
+
+        /// <inheritdoc />
         public void Show(NotificationRequest notificationRequest)
-        {
+        {            
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
