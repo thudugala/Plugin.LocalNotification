@@ -107,6 +107,22 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public void Show(NotificationRequest notificationRequest)
         {            
+            Show((builder) => builder
+                .NotifyAt(DateTime.Now.AddSeconds(10))
+                .WithDescription("SampleDescription")
+                .WithNotificationId(10)
+                .WithTitle("SampleTitle")
+                .WithAndroidOptions((android) => android
+                    .WithAutoCancel(true)
+                    .WithChannelId("General")
+                    .WithOngoingStatus(true)
+                    .WithPriority(NotificationPriority.High)
+                    .Build())
+                .WithiOSOptions((ios) => ios
+                    .WithForegroundAlertStatus(false)
+                    .WithForegroundSoundStatus(true)
+                    .Build())
+                .Create());
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
