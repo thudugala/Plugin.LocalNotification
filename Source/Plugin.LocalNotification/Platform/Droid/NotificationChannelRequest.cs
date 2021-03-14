@@ -75,7 +75,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Distrub) mode.
         /// </summary>
-        public bool CanBypassDND { get; set; } = false;
+        public bool CanBypassDnd { get; set; } = false;
 
         /// <summary>
         /// Creates a ChannelRequestBuilder with default values.

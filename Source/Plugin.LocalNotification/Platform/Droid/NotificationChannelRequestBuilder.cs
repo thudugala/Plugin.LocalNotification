@@ -23,7 +23,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 		private bool ShowBadge = true;
 		private bool EnableLights = true;
 		private bool EnableVibration = true;
-		private bool BypassDND = false;
+		private bool BypassDnd = false;
 
 		/// <summary>
 		/// Initializes builder with the specified channelID.
@@ -154,9 +154,9 @@ namespace Plugin.LocalNotification.Platform.Droid
 		/// <summary>
 		/// Sets, Sets whether notification posted to this channel can bypass DND (Do Not Distrub) mode.
 		/// </summary>
-		public NotificationChannelRequestBuilder ShouldBypassDND(bool value)
+		public NotificationChannelRequestBuilder ShouldBypassDnd(bool value)
 		{
-			BypassDND = value;
+			BypassDnd = value;
 			return this;
 		}
 
@@ -180,7 +180,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 				ShowBadge = ShowBadge,
 				Sound = SoundFile,
 				VibrationPattern = VibrationPattern,
-				CanBypassDND = BypassDND
+				CanBypassDnd = BypassDnd
 			};
 		}
 	}

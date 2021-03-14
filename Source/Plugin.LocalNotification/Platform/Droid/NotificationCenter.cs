@@ -178,7 +178,7 @@ namespace Plugin.LocalNotification
             channel.SetShowBadge(request.ShowBadge);
             channel.EnableLights(request.EnableLights);
             channel.EnableVibration(request.EnableVibration);
-            channel.SetBypassDnd(request.CanBypassDND);
+            channel.SetBypassDnd(request.CanBypassDnd);
 
             notificationManager.CreateNotificationChannel(channel);
         }
