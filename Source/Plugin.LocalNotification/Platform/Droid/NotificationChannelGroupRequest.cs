@@ -14,5 +14,16 @@
         ///
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="name"></param>
+        public NotificationChannelGroupRequest(string group, string name)
+		{
+            Group = group;
+            Name = name;
+		}
     }
 }

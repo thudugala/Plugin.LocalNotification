@@ -68,6 +68,16 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Create Notification Channel Group with builder when API >= 26.
+        /// If you'd like to further organize the appearance of your channels in the settings UI, you can create channel groups.
+        /// This is a good idea when your app supports multiple user accounts (such as for work profiles),
+        /// so you can create a notification channel group for each account.
+        /// This way, users can easily identify and control multiple notification channels that have identical names.
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void CreateNotificationChannelGroup(Func<NotificationChannelGroupRequestBuilder, NotificationChannelGroupRequest> builder) => CreateNotificationChannelGroup(builder.Invoke(new NotificationChannelGroupRequestBuilder()));
+
+        /// <summary>
         /// Create Notification Channel Group when API >= 26.
         /// If you'd like to further organize the appearance of your channels in the settings UI, you can create channel groups.
         /// This is a good idea when your app supports multiple user accounts (such as for work profiles),
@@ -102,6 +112,12 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Create Notification Channel with builder when API >= 26.
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void CreateNotificationChannel(Func<NotificationChannelRequestBuilder, NotificationChannelRequest> builder) => CreateNotificationChannel(builder.Invoke(new NotificationChannelRequestBuilder()));
+
+        /// <summary>
         /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="request"></param>
@@ -112,8 +128,8 @@ namespace Plugin.LocalNotification
                 return;
             }
 
-            if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager
-                notificationManager))
+            if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager
+                notificationManager)
             {
                 return;
             }
@@ -141,7 +157,7 @@ namespace Plugin.LocalNotification
                 Description = request.Description,
                 Group = request.Group,
                 LightColor = request.LightColor,
-                LockscreenVisibility = request.LockscreenVisibility,
+                LockscreenVisibility = request.LockscreenVisibility,                
             };
             var soundUri = GetSoundUri(request.Sound);
             if (soundUri != null)
@@ -162,6 +178,7 @@ namespace Plugin.LocalNotification
             channel.SetShowBadge(request.ShowBadge);
             channel.EnableLights(request.EnableLights);
             channel.EnableVibration(request.EnableVibration);
+            channel.SetBypassDnd(request.CanBypassDnd);
 
             notificationManager.CreateNotificationChannel(channel);
         }

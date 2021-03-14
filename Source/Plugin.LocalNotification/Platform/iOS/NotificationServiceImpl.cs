@@ -72,6 +72,9 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
+        public void Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
+
+        /// <inheritdoc />
         public async void Show(NotificationRequest notificationRequest)
         {
             UNNotificationTrigger trigger = null;
