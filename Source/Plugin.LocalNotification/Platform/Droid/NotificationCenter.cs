@@ -40,18 +40,18 @@ namespace Plugin.LocalNotification
         /// Notify Local Notification Tapped.
         /// </summary>
         /// <param name="intent"></param>
-        public static void NotifyNotificationTapped(Intent intent)
+        public static bool NotifyNotificationTapped(Intent intent)
         {
             try
             {
                 if (intent is null)
                 {
-                    return;
+                    return false;
                 }
 
                 if (intent.HasExtra(ExtraReturnDataAndroid) == false)
                 {
-                    return;
+                    return false;
                 }
 
                 var subscribeItem = new NotificationTappedEventArgs
@@ -60,10 +60,12 @@ namespace Plugin.LocalNotification
                 };
 
                 Current.OnNotificationTapped(subscribeItem);
+                return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
+                return false;
             }
         }
 
@@ -75,7 +77,7 @@ namespace Plugin.LocalNotification
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
         /// <param name="builder"></param>
-        public static void CreateNotificationChannelGroup(Func<NotificationChannelGroupRequestBuilder, NotificationChannelGroupRequest> builder) => CreateNotificationChannelGroup(builder.Invoke(new NotificationChannelGroupRequestBuilder()));
+        public static bool CreateNotificationChannelGroup(Func<NotificationChannelGroupRequestBuilder, NotificationChannelGroupRequest> builder) => CreateNotificationChannelGroup(builder.Invoke(new NotificationChannelGroupRequestBuilder()));
 
         /// <summary>
         /// Create Notification Channel Group when API >= 26.
@@ -85,51 +87,52 @@ namespace Plugin.LocalNotification
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
         /// <param name="request"></param>
-        public static void CreateNotificationChannelGroup(NotificationChannelGroupRequest request)
+        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest request)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                return;
+                return false;
             }
 
             if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager
                 notificationManager))
             {
-                return;
+                return false;
             }
 
             if (request is null ||
                 string.IsNullOrWhiteSpace(request.Group) ||
                 string.IsNullOrWhiteSpace(request.Name))
             {
-                return;
+                return false;
             }
 
             using var channelGroup = new NotificationChannelGroup(request.Group, request.Name);
             notificationManager.CreateNotificationChannelGroup(channelGroup);
+            return true;
         }
 
         /// <summary>
         /// Create Notification Channel with builder when API >= 26.
         /// </summary>
         /// <param name="builder"></param>
-        public static void CreateNotificationChannel(Func<NotificationChannelRequestBuilder, NotificationChannelRequest> builder) => CreateNotificationChannel(builder.Invoke(new NotificationChannelRequestBuilder()));
+        public static bool CreateNotificationChannel(Func<NotificationChannelRequestBuilder, NotificationChannelRequest> builder) => CreateNotificationChannel(builder.Invoke(new NotificationChannelRequestBuilder()));
 
         /// <summary>
         /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="request"></param>
-        public static void CreateNotificationChannel(NotificationChannelRequest request = null)
+        public static bool CreateNotificationChannel(NotificationChannelRequest request = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                return;
+                return false;
             }
 
             if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager
                 notificationManager)
             {
-                return;
+                return false;
             }
 
             request ??= new NotificationChannelRequest();
@@ -152,7 +155,7 @@ namespace Plugin.LocalNotification
                 Description = request.Description,
                 Group = request.Group,
                 LightColor = request.LightColor,
-                LockscreenVisibility = request.LockscreenVisibility,
+                LockscreenVisibility = request.LockScreenVisibility,
             };
             var soundUri = GetSoundUri(request.Sound);
             if (soundUri != null)
@@ -175,6 +178,8 @@ namespace Plugin.LocalNotification
             channel.SetBypassDnd(request.CanBypassDnd);
 
             notificationManager.CreateNotificationChannel(channel);
+
+            return true;
         }
 
         internal static Android.Net.Uri GetSoundUri(string soundFileName)

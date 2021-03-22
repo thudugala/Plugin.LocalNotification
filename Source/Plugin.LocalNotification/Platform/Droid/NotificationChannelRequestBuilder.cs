@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         private Color LightColor;
         private string SoundFile;
         private long[] VibrationPattern;
-        private NotificationVisibility LockscreenVisibility = NotificationVisibility.Secret;
+        private NotificationVisibility LockScreenVisibility = NotificationVisibility.Secret;
         private bool ShowBadge = true;
         private bool EnableLights = true;
         private bool EnableVibration = true;
@@ -113,11 +113,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// Sets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.
+        /// Sets, whether or not notifications posted to this channel are shown on the lock Screen in full or redacted form.
         /// </summary>
-        public NotificationChannelRequestBuilder WithLockscreenVisibility(NotificationVisibility lockscreenVisibility)
+        public NotificationChannelRequestBuilder WithLockScreenVisibility(NotificationVisibility lockScreenVisibility)
         {
-            LockscreenVisibility = lockscreenVisibility;
+            LockScreenVisibility = lockScreenVisibility;
             return this;
         }
 
@@ -149,7 +149,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// Sets, Sets whether notification posted to this channel can bypass DND (Do Not Distrub) mode.
+        /// Sets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
         /// </summary>
         public NotificationChannelRequestBuilder ShouldBypassDnd(bool value)
         {
@@ -170,7 +170,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             Group = Group,
             Importance = Importance,
             LightColor = LightColor,
-            LockscreenVisibility = LockscreenVisibility,
+            LockScreenVisibility = LockScreenVisibility,
             Name = Name,
             ShowBadge = ShowBadge,
             Sound = SoundFile,

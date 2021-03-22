@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
 
@@ -29,13 +30,13 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public void Cancel(int notificationId)
+        public bool Cancel(int notificationId)
         {
             try
             {
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
                 {
-                    return;
+                    return false;
                 }
 
                 var itemList = new[]
@@ -45,55 +46,60 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
                 UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                return false;
             }
         }
 
         /// <inheritdoc />
-        public void CancelAll()
+        public bool CancelAll()
         {
             try
             {
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
                 {
-                    return;
+                    return false;
                 }
 
                 UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
                 UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+                return true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                return false;
             }
         }
 
         /// <inheritdoc />
-        public void Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
+        public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
 
         /// <inheritdoc />
-        public async void Show(NotificationRequest notificationRequest)
+        public async Task<bool> Show(NotificationRequest notificationRequest)
         {
             UNNotificationTrigger trigger = null;
             try
             {
                 if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
                 {
-                    return;
+                    return false;
                 }
 
                 if (notificationRequest is null)
                 {
-                    return;
+                    return false;
                 }
 
                 var allowed = await NotificationCenter.AskPermissionAsync().ConfigureAwait(false);
                 if (allowed == false)
                 {
-                    return;
+                    return false;
                 }
 
                 var userInfoDictionary = new NSMutableDictionary();
@@ -148,10 +154,13 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request)
                     .ConfigureAwait(false);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                return false;
             }
             finally
             {

@@ -1,4 +1,7 @@
-﻿namespace Plugin.LocalNotification
+﻿using System;
+using System.Threading.Tasks;
+
+namespace Plugin.LocalNotification
 {
     /// <summary>
     /// Used to display platform specific local notifications.
@@ -20,12 +23,12 @@
         /// Cancel a notification match with the Id
         /// </summary>
         /// <param name="notificationId">A unique identifier for the already displaying local notification.</param>
-        void Cancel(int notificationId);
+        bool Cancel(int notificationId);
 
         /// <summary>
         /// Cancel all notification.
         /// </summary>
-        void CancelAll();
+        bool CancelAll();
 
         /// <summary>
         /// Internal use Only
@@ -42,7 +45,12 @@
         /// <summary>
         /// Send a local notification to the device.
         /// </summary>
+        Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder);
+
+        /// <summary>
+        /// Send a local notification to the device.
+        /// </summary>
         /// <param name="notificationRequest"></param>
-        void Show(NotificationRequest notificationRequest);
+        Task<bool> Show(NotificationRequest notificationRequest);
     }
 }

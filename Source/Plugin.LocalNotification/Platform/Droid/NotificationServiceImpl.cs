@@ -6,6 +6,7 @@ using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -64,73 +65,72 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public void Cancel(int notificationId)
+        public bool Cancel(int notificationId)
         {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
-                    return;
+                    return false;
                 }
 
                 WorkManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
                 NotificationManager?.Cancel(notificationId);
+                return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
+                return false;
             }
         }
 
         /// <inheritdoc />
-        public void CancelAll()
+        public bool CancelAll()
         {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
-                    return;
+                    return false;
                 }
 
                 WorkManager?.CancelAllWork();
                 NotificationManager?.CancelAll();
+                return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
+                return false;
             }
         }
 
         /// <inheritdoc />
-        public void Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
+        public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
 
         /// <inheritdoc />
-        public void Show(NotificationRequest notificationRequest)
+        public Task<bool> Show(NotificationRequest notificationRequest)
         {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
-                    return;
+                    return Task.FromResult(false);
                 }
 
                 if (notificationRequest is null)
                 {
-                    return;
+                    return Task.FromResult(false);
                 }
 
-                if (notificationRequest.NotifyTime.HasValue)
-                {
-                    ShowLater(notificationRequest);
-                }
-                else
-                {
-                    ShowNow(notificationRequest, true);
-                }
+                var result = notificationRequest.NotifyTime.HasValue ? ShowLater(notificationRequest) : ShowNow(notificationRequest, true);
+                return Task.FromResult(result);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
+                return Task.FromResult(false);
             }
         }
 
@@ -138,17 +138,17 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <param name="notificationRequest"></param>
-        protected virtual void ShowLater(NotificationRequest notificationRequest)
+        protected virtual bool ShowLater(NotificationRequest notificationRequest)
         {
             if (notificationRequest.NotifyTime is null ||
                 notificationRequest.NotifyTime.Value <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
             {
-                return;
+                return false;
             }
 
             Cancel(notificationRequest.NotificationId);
 
-            EnqueueWorker(notificationRequest);
+            return EnqueueWorker(notificationRequest);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         /// <param name="request"></param>
         /// <param name="cancelBeforeShow"></param>
-        protected internal virtual void ShowNow(NotificationRequest request, bool cancelBeforeShow)
+        protected internal virtual bool ShowNow(NotificationRequest request, bool cancelBeforeShow)
         {
             if (cancelBeforeShow)
             {
@@ -226,10 +226,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             var notificationIntent = Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ?? string.Empty);
-            if (notificationIntent == null)
+            if (notificationIntent is null)
             {
                 Log($"NotificationServiceImpl.ShowNow: notificationIntent is null");
-                return;
+                return false;
             }
 
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
@@ -259,18 +259,20 @@ namespace Plugin.LocalNotification.Platform.Droid
                 Data = request.ReturningData
             };
             NotificationCenter.Current.OnNotificationReceived(args);
+
+            return true;
         }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="notificationRequest"></param>
-        protected internal virtual void EnqueueWorker(NotificationRequest notificationRequest)
+        protected internal virtual bool EnqueueWorker(NotificationRequest notificationRequest)
         {
             if (!notificationRequest.NotifyTime.HasValue)
             {
                 Log($"{nameof(notificationRequest.NotifyTime)} value doesn't set!");
-                return;
+                return false;
             }
 
             var notifyTime = notificationRequest.NotifyTime.Value;
@@ -296,6 +298,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 .Build();
 
             WorkManager?.Enqueue(workRequest);
+            return true;
         }
 
         /// <summary>

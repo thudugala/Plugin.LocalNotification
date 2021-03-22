@@ -51,9 +51,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         public long[] VibrationPattern { get; set; }
 
         /// <summary>
-        /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.
+        /// Sets or gets, whether or not notifications posted to this channel are shown on the lock Screen in full or redacted form.
         /// </summary>
-        public NotificationVisibility LockscreenVisibility { get; set; } = NotificationVisibility.Secret;
+        public NotificationVisibility LockScreenVisibility { get; set; } = NotificationVisibility.Secret;
 
         /// <summary>
         /// Sets or gets, Sets whether notifications posted to this channel can appear as application icon badges in a Launcher.
@@ -71,7 +71,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         public bool EnableVibration { get; set; } = true;
 
         /// <summary>
-        /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Distrub) mode.
+        /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
         /// </summary>
         public bool CanBypassDnd { get; set; } = false;
 
@@ -79,12 +79,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// Creates a ChannelRequestBuilder with default values.
         /// </summary>
         /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder() => new ();
+        public static NotificationChannelRequestBuilder CreateBuilder() => new();
 
         /// <summary>
         /// Creates a ChannelRequestBuilder with specified channelId.
         /// </summary>
         /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new (channelId);
+        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new(channelId);
     }
 }
