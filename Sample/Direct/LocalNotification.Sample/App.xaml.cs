@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Plugin.LocalNotification;
 using System.Collections.Generic;
-using Plugin.LocalNotification;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-
-[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 
 namespace LocalNotification.Sample
 {
@@ -39,7 +35,7 @@ namespace LocalNotification.Sample
             {
                 return;
             }
-            
+
             var list = ObjectSerializer.DeserializeObject<List<string>>(e.Data);
             if (list.Count != 4)
             {
