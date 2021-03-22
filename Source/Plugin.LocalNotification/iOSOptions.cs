@@ -10,7 +10,7 @@
         /// Default is false
         /// </summary>
         public bool HideForegroundAlert { get; set; }
-        
+
         /// <summary>
         /// Setting this flag will enable iOS to play the default notification sound even if the app is in foreground
         /// Default is false

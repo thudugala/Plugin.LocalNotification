@@ -109,7 +109,7 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 using var receivedData = new NSString(notificationRequest.iOS.HideForegroundAlert.ToString());
                 userInfoDictionary.SetValueForKey(receivedData, NotificationCenter.ExtraNotificationReceivedIos);
-                
+
                 using var soundData = new NSString(notificationRequest.iOS.PlayForegroundSound.ToString());
                 userInfoDictionary.SetValueForKey(soundData, NotificationCenter.ExtraSoundInForegroundIos);
 

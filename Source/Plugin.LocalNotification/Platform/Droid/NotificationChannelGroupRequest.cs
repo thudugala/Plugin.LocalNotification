@@ -21,9 +21,9 @@
         /// <param name="group"></param>
         /// <param name="name"></param>
         public NotificationChannelGroupRequest(string group, string name)
-		{
+        {
             Group = group;
             Name = name;
-		}
+        }
     }
 }

@@ -40,9 +40,12 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
-                    var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
-                                    Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
-                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+                    if (response.Notification.Request.Content.Badge != null)
+                    {
+                        var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
+                                        Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+                    }
 
                     NotificationCenter.Current.OnNotificationTapped(subscribeItem);
                 });
@@ -84,15 +87,15 @@ namespace Plugin.LocalNotification.Platform.iOS
                             presentationOptions = UNNotificationPresentationOptions.None;
                         }
                     }
-                    
+
                     if (dictionary.ContainsKey(NotificationCenter.ExtraSoundInForegroundIos))
                     {
                         var customOptions = dictionary[NotificationCenter.ExtraSoundInForegroundIos].ToString()
                                                                                                     .ToUpperInvariant();
                         if (customOptions == "TRUE")
                         {
-                            presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ? 
-                                UNNotificationPresentationOptions.Sound|UNNotificationPresentationOptions.Alert :
+                            presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ?
+                                UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert :
                                 UNNotificationPresentationOptions.Sound;
                         }
                     }

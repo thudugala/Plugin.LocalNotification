@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
-#pragma warning disable CA1812
     [Preserve(AllMembers = true)]
     internal class ScheduledNotificationWorker : Worker
-#pragma warning restore CA1812
     {
         public ScheduledNotificationWorker(Context context, WorkerParameters workerParameters) : base(context,
             workerParameters)

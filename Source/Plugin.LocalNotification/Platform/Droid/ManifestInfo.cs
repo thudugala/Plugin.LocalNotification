@@ -3,5 +3,5 @@
 using Android;
 using Android.App;
 
-[assembly: UsesPermission(Android.Manifest.Permission.ReceiveBootCompleted)]
+[assembly: UsesPermission(Manifest.Permission.ReceiveBootCompleted)]
 [assembly: LinkerSafe]

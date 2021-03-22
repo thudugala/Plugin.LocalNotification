@@ -1,11 +1,11 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using AndroidX.Core.App;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
 using System.Globalization;
-using AndroidX.Core.App;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -13,12 +13,12 @@ namespace Plugin.LocalNotification.Platform.Droid
     public class NotificationServiceImpl : INotificationService
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected readonly NotificationManager NotificationManager;
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected readonly WorkManager WorkManager;
 
@@ -106,7 +106,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         /// <inheritdoc />
         public void Show(NotificationRequest notificationRequest)
-        {            
+        {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
@@ -135,7 +135,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationRequest"></param>
         protected virtual void ShowLater(NotificationRequest notificationRequest)
@@ -152,7 +152,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         /// <param name="cancelBeforeShow"></param>
@@ -262,7 +262,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationRequest"></param>
         protected internal virtual void EnqueueWorker(NotificationRequest notificationRequest)
@@ -299,7 +299,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="iconName"></param>
         /// <returns></returns>
@@ -327,7 +327,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         protected static void Log(string message)

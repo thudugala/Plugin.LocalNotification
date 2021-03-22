@@ -16,9 +16,9 @@ namespace Plugin.LocalNotification
     public class NotificationReceivedEventArgs : EventArgs
     {
         /// <summary>
-        /// Returning title when a notification is received.
+        /// Returning data when a notification is received.
         /// </summary>
-        public string Title { get; internal set; }
+        public string Data { get; internal set; }
 
         /// <summary>
         /// Returning details when a notification is received.
@@ -26,8 +26,8 @@ namespace Plugin.LocalNotification
         public string Description { get; internal set; } = string.Empty;
 
         /// <summary>
-        /// Returning data when a notification is received.
+        /// Returning title when a notification is received.
         /// </summary>
-        public string Data { get; internal set; }
+        public string Title { get; internal set; }
     }
 }

@@ -45,12 +45,10 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public string Sound { get; set; }
 
-#pragma warning disable CA1819 // Properties should not return arrays
         /// <summary>
         /// Only modifiable before the channel is submitted.
         /// </summary>
         public long[] VibrationPattern { get; set; }
-#pragma warning restore CA1819 // Properties should not return arrays
 
         /// <summary>
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lockscreen in full or redacted form.
@@ -81,12 +79,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// Creates a ChannelRequestBuilder with default values.
         /// </summary>
         /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder() => new NotificationChannelRequestBuilder();
+        public static NotificationChannelRequestBuilder CreateBuilder() => new ();
 
         /// <summary>
         /// Creates a ChannelRequestBuilder with specified channelId.
         /// </summary>
         /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new NotificationChannelRequestBuilder(channelId);
+        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new (channelId);
     }
 }

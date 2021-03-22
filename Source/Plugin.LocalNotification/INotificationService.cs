@@ -6,15 +6,15 @@
     public interface INotificationService
     {
         /// <summary>
-        /// fires when notification popup is tapped.
-        /// </summary>
-        event NotificationTappedEventHandler NotificationTapped;
-
-        /// <summary>
         /// fires when notification is received.
         /// On iOS this event is fired only when the app is in foreground
         /// </summary>
         event NotificationReceivedEventHandler NotificationReceived;
+
+        /// <summary>
+        /// fires when notification popup is tapped.
+        /// </summary>
+        event NotificationTappedEventHandler NotificationTapped;
 
         /// <summary>
         /// Cancel a notification match with the Id
@@ -31,13 +31,13 @@
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
-        void OnNotificationTapped(NotificationTappedEventArgs e);
+        void OnNotificationReceived(NotificationReceivedEventArgs e);
 
         /// <summary>
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
-        void OnNotificationReceived(NotificationReceivedEventArgs e);
+        void OnNotificationTapped(NotificationTappedEventArgs e);
 
         /// <summary>
         /// Send a local notification to the device.

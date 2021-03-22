@@ -105,10 +105,8 @@ namespace Plugin.LocalNotification
                 return;
             }
 
-            using (var channelGroup = new NotificationChannelGroup(request.Group, request.Name))
-            {
-                notificationManager.CreateNotificationChannelGroup(channelGroup);
-            }
+            using var channelGroup = new NotificationChannelGroup(request.Group, request.Name);
+            notificationManager.CreateNotificationChannelGroup(channelGroup);
         }
 
         /// <summary>
@@ -134,10 +132,7 @@ namespace Plugin.LocalNotification
                 return;
             }
 
-            if (request is null)
-            {
-                request = new NotificationChannelRequest();
-            }
+            request ??= new NotificationChannelRequest();
 
             if (string.IsNullOrWhiteSpace(request.Name))
             {
@@ -157,17 +152,16 @@ namespace Plugin.LocalNotification
                 Description = request.Description,
                 Group = request.Group,
                 LightColor = request.LightColor,
-                LockscreenVisibility = request.LockscreenVisibility,                
+                LockscreenVisibility = request.LockscreenVisibility,
             };
             var soundUri = GetSoundUri(request.Sound);
             if (soundUri != null)
             {
                 using var audioAttributesBuilder = new AudioAttributes.Builder();
                 var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
-                    .SetContentType(AudioContentType.Music)
-                    .Build();
-
-                channel.SetSound(soundUri, audioAttributes);
+                        ?.SetContentType(AudioContentType.Music)
+                        ?.Build();
+                    channel.SetSound(soundUri, audioAttributes);
             }
 
             if (request.VibrationPattern != null)

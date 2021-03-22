@@ -85,13 +85,11 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Vibrate with a given pattern.
-        /// Pass in an array of ints that are the durations for which to turn on or off the vibrator in milliseconds.
+        /// Pass in an array of int`s that are the durations for which to turn on or off the vibrator in milliseconds.
         /// The first value indicates the number of milliseconds to wait before turning the vibrator on.
         /// The next value indicates the number of milliseconds for which to keep the vibrator on before turning it off.
         /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
         /// </summary>
-#pragma warning disable CA1819 // Properties should not return arrays
         public long[] VibrationPattern { get; set; }
-#pragma warning restore CA1819 // Properties should not return arrays
     }
 }

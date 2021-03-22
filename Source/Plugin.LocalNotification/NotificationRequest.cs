@@ -10,12 +10,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidOptions Android { get; set; } = new AndroidOptions();
-
-        /// <summary>
-        /// iOS specific properties.
-        /// </summary>
-        public iOSOptions iOS { get; set; } = new iOSOptions();
+        public AndroidOptions Android { get; set; } = new ();
 
         /// <summary>
         /// Number of the badge displays on the Home Screen.
@@ -28,6 +23,11 @@ namespace Plugin.LocalNotification
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
+        /// iOS specific properties.
+        /// </summary>
+        public iOSOptions iOS { get; set; } = new ();
+
+        /// <summary>
         /// A unique identifier for the request
         /// (if identifier is not unique, a new notification request object is not created).
         /// You can use this identifier later to cancel a request that is still pending.
@@ -35,14 +35,14 @@ namespace Plugin.LocalNotification
         public int NotificationId { get; set; }
 
         /// <summary>
-        /// Time to show the notification.
-        /// </summary>
-        public DateTime? NotifyTime { get; set; }
-
-        /// <summary>
         /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
         /// </summary>
         public TimeSpanExt? NotifyRepeatInterval { get; set; }
+
+        /// <summary>
+        /// Time to show the notification.
+        /// </summary>
+        public DateTime? NotifyTime { get; set; }
 
         /// <summary>
         /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval
@@ -71,12 +71,12 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="notificationId"></param>
         /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new NotificationRequestBuilder(notificationId);
+        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new (notificationId);
 
         /// <summary>
         /// Creates a NotificationRequestBuilder instance with default values.
         /// </summary>
         /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder() => new NotificationRequestBuilder();
+        public static NotificationRequestBuilder CreateBuilder() => new ();
     }
 }
