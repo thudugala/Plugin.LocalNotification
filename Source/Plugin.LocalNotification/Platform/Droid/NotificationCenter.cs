@@ -121,6 +121,8 @@ namespace Plugin.LocalNotification
         /// <param name="request"></param>
         public static void CreateNotificationChannel(NotificationChannelRequest request = null)
         {
+            Initialize();
+
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 return;
@@ -201,12 +203,12 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// 
         /// </summary>
-        private static NotificationManager _notificationManager;
+        private static NotificationManager _notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
 
         /// <summary>
         /// 
         /// </summary>
-        private static WorkManager _workManager;
+        private static WorkManager _workManager = WorkManager.GetInstance(Application.Context);
 
         /// <inheritdoc />
         private static void OnPlatformNotificationTapped(NotificationTappedEventArgs e)
@@ -283,7 +285,6 @@ namespace Plugin.LocalNotification
         /// <inheritdoc />
         private static void PlatformShow(Func<NotificationRequestBuilder, NotificationRequest> builder)
         {
-            Initialize();
             Show(builder.Invoke(new NotificationRequestBuilder()));
         }
 
@@ -323,7 +324,6 @@ namespace Plugin.LocalNotification
         /// <param name="notificationRequest"></param>
         private static void ShowLater(NotificationRequest notificationRequest)
         {
-            // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
             if (notificationRequest.NotifyTime is null || notificationRequest.NotifyTime.Value <= DateTime.Now)
             {
                 return;
@@ -376,7 +376,7 @@ namespace Plugin.LocalNotification
             {
                 builder.SetPriority((int)request.Android.Priority);
 
-                var soundUri = NotificationCenter.GetSoundUri(request.Sound);
+                var soundUri = GetSoundUri(request.Sound);
                 if (soundUri != null)
                 {
                     builder.SetSound(soundUri);
@@ -416,24 +416,28 @@ namespace Plugin.LocalNotification
             }
 
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
+            notificationIntent.PutExtra(ExtraReturnDataAndroid, request.ReturningData);
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);
 
             var notification = builder.Build();
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
-                request.Android.LedColor.HasValue)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O && request.Android.LedColor.HasValue)
             {
                 notification.LedARGB = request.Android.LedColor.Value;
             }
 
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
-                string.IsNullOrWhiteSpace(request.Sound))
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O && string.IsNullOrWhiteSpace(request.Sound))
             {
                 notification.Defaults = NotificationDefaults.All;
             }
 
+            //var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+
+            //if(notificationManager is null)
+            //    return;
+
+            //notificationManager?.Notify(request.NotificationId, notification);
             _notificationManager?.Notify(request.NotificationId, notification);
 
             var args = new NotificationReceivedEventArgs

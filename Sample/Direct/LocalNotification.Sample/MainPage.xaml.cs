@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace LocalNotification.Sample
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage
     {
         private int TapCount;
 
@@ -41,7 +41,7 @@ namespace LocalNotification.Sample
             {
                 NotificationId = notificationId,
                 Title = "Summary",
-                Description = $"Summary Desc",
+                Description = "Summary Desc",
                 Android =
                 {
                     Group = "Plugin.LocalNotification.GROUP",
@@ -136,6 +136,5 @@ namespace LocalNotification.Sample
 
             NotificationCenter.Show(request);
         }
-
     }
 }

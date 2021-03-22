@@ -1,8 +1,5 @@
 ﻿using Android.App;
 using Android.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
