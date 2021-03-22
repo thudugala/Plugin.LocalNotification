@@ -30,7 +30,9 @@ namespace LocalNotification.Sample
             Device.BeginInvokeOnMainThread(() =>
             {
                 if (CustomAlert.IsToggled)
+                {
                     DisplayAlert(e.Title, e.Description, "OK");
+                }
             });
         }
 
@@ -41,7 +43,7 @@ namespace LocalNotification.Sample
             {
                 NotificationId = notificationId,
                 Title = "Summary",
-                Description = $"Summary Desc",
+                Description = "Summary Desc",
                 Android =
                 {
                     Group = "Plugin.LocalNotification.GROUP",

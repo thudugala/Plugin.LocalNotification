@@ -155,9 +155,9 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Returning data when tapped or received notification.
         /// </summary>
-        public NotificationRequestBuilder WithReturningData(string serilizedReturningData)
+        public NotificationRequestBuilder WithReturningData(string returningData)
         {
-            ReturningData = serilizedReturningData;
+            ReturningData = returningData;
             return this;
         }
 
