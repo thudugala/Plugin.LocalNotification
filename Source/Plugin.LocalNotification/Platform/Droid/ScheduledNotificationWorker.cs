@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
-#pragma warning disable CA1812
     [Preserve(AllMembers = true)]
     internal class ScheduledNotificationWorker : Worker
-#pragma warning restore CA1812
     {
         public ScheduledNotificationWorker(Context context, WorkerParameters workerParameters) : base(context,
             workerParameters)
@@ -68,9 +66,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                                 break;
                         }
 
-                        var notificationService = TryGetDefaultDroidNotificationService();
-                        notificationService.ShowNow(notification, false);
-                        notificationService.EnqueueWorker(notification);
+                        NotificationCenter.ShowNow(notification, false);
+                        NotificationCenter.EnqueueWorker(notification);
 
                         return;
                     }
@@ -83,7 +80,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     }
 
                     notification.NotifyTime = null;
-                    NotificationCenter.Current.Show(notification);
+                    NotificationCenter.Show(notification);
                 }
                 catch (Exception ex)
                 {
@@ -92,15 +89,6 @@ namespace Plugin.LocalNotification.Platform.Droid
             });
 
             return Result.InvokeSuccess();
-        }
-
-        private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
-        {
-            if (NotificationCenter.Current is NotificationServiceImpl notificationService)
-            {
-                return notificationService;
-            }
-            return new NotificationServiceImpl();
         }
     }
 }

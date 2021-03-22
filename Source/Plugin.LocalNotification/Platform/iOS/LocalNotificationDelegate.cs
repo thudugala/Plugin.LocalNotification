@@ -44,7 +44,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                                     Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
                     UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
 
-                    NotificationCenter.Current.OnNotificationTapped(subscribeItem);
+                    NotificationCenter.OnNotificationTapped(subscribeItem);
                 });
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                                         : ""
                     };
 
-                    NotificationCenter.Current.OnNotificationReceived(args);
+                    NotificationCenter.OnNotificationReceived(args);
 
                     if (dictionary.ContainsKey(NotificationCenter.ExtraNotificationReceivedIos))
                     {

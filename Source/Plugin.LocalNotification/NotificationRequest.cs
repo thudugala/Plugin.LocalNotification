@@ -10,12 +10,12 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidOptions Android { get; set; } = new AndroidOptions();
+        public AndroidOptions Android { get; set; } = new();
 
         /// <summary>
         /// iOS specific properties.
         /// </summary>
-        public iOSOptions iOS { get; set; } = new iOSOptions();
+        public iOSOptions iOS { get; set; } = new();
 
         /// <summary>
         /// Number of the badge displays on the Home Screen.
@@ -71,12 +71,12 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="notificationId"></param>
         /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new NotificationRequestBuilder(notificationId);
+        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new(notificationId);
 
         /// <summary>
         /// Creates a NotificationRequestBuilder instance with default values.
         /// </summary>
         /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder() => new NotificationRequestBuilder();
+        public static NotificationRequestBuilder CreateBuilder() => new();
     }
 }

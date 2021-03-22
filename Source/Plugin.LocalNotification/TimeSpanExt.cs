@@ -11,7 +11,7 @@ namespace Plugin.LocalNotification
     /// </summary>
     public struct TimeSpanExt : IXmlSerializable, IEquatable<TimeSpanExt>
     {
-        private TimeSpan _value;
+        private TimeSpan Value;
 
         /// <summary>
         /// 
@@ -58,7 +58,7 @@ namespace Plugin.LocalNotification
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            _value = TimeSpan.Parse(xmlValue, CultureInfo.CurrentCulture);
+            Value = TimeSpan.Parse(xmlValue, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Plugin.LocalNotification
                 throw new ArgumentNullException(nameof(writer));
             }
 
-            writer.WriteValue(_value.ToString());
+            writer.WriteValue(Value.ToString());
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public static TimeSpanExt ToTimeSpanExt(TimeSpan value)
         {
-            return new TimeSpanExt { _value = value };
+            return new() { Value = value };
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public static TimeSpan ToTimeSpan(TimeSpanExt value)
         {
-            return value._value;
+            return value.Value;
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public bool Equals(TimeSpanExt other)
         {
-            return other._value.Equals(_value);
+            return other.Value.Equals(Value);
         }
     }
 }

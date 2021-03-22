@@ -1,25 +1,45 @@
-﻿using System;
-
-namespace Plugin.LocalNotification
+﻿namespace Plugin.LocalNotification
 {
-    /// <summary>
-    /// Cross platform INotificationService Resolver.
-    /// </summary>
-#pragma warning disable CA1724
-
     public static partial class NotificationCenter
-#pragma warning restore CA1724
     {
-        private static INotificationService _current;
+        /// <summary>
+        /// fires when notification popup is tapped.
+        /// </summary>
+        public static event NotificationTappedEventHandler NotificationTapped;
 
         /// <summary>
-        /// Platform specific INotificationService.
+        /// fires when notification is received.
+        /// On iOS this event is fired only when the app is in foreground
         /// </summary>
-        public static INotificationService Current
-        {
-            get =>
-                _current ?? throw new InvalidOperationException(Properties.Resources.PluginNotFound);
-            set => _current = value;
-        }
+        public static event NotificationReceivedEventHandler NotificationReceived;
+
+        /// <summary>
+        /// Cancel a notification match with the Id
+        /// </summary>
+        /// <param name="notificationId">A unique identifier for the already displaying local notification.</param>
+        public static void Cancel(int notificationId)=>PlatformCancel(notificationId);
+
+        /// <summary>
+        /// Cancel all notification.
+        /// </summary>
+        public static void CancelAll()=> PlatformCancelAll();
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        public static void OnNotificationTapped(NotificationTappedEventArgs e)=> OnPlatformNotificationTapped(e);
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        public static void OnNotificationReceived(NotificationReceivedEventArgs e)=> OnPlatformNotificationReceived(e);
+
+        /// <summary>
+        /// Send a local notification to the device.
+        /// </summary>
+        /// <param name="notificationRequest"></param>
+        public static void Show(NotificationRequest notificationRequest)=>PlatformShow(notificationRequest);
     }
 }

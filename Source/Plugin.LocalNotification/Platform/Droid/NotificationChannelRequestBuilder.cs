@@ -166,7 +166,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 		/// <returns>The notification channel request</returns>
 		public NotificationChannelRequest Build()
 		{
-			return new NotificationChannelRequest()
+			return new()
 			{
 				Id = ChannelId,
 				Description = Description,

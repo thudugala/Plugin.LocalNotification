@@ -90,8 +90,6 @@ namespace Plugin.LocalNotification
         /// The next value indicates the number of milliseconds for which to keep the vibrator on before turning it off.
         /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
         /// </summary>
-#pragma warning disable CA1819 // Properties should not return arrays
         public long[] VibrationPattern { get; set; }
-#pragma warning restore CA1819 // Properties should not return arrays
     }
 }

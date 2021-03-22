@@ -81,12 +81,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// Creates a ChannelRequestBuilder with default values.
         /// </summary>
         /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder() => new NotificationChannelRequestBuilder();
+        public static NotificationChannelRequestBuilder CreateBuilder() => new();
 
         /// <summary>
         /// Creates a ChannelRequestBuilder with specified channelId.
         /// </summary>
         /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new NotificationChannelRequestBuilder(channelId);
+        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new(channelId);
     }
 }
