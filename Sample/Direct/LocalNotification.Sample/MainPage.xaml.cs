@@ -7,13 +7,13 @@ namespace LocalNotification.Sample
 {
     public partial class MainPage : ContentPage
     {
-        private int _tapCount;
+        private int TapCount;
 
         public MainPage()
         {
             InitializeComponent();
 
-            NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+            NotificationCenter.NotificationReceived += ShowCustomAlertFromNotification;
 
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
@@ -48,19 +48,19 @@ namespace LocalNotification.Sample
                     IsGroupSummary = true
                 }
             };
-            NotificationCenter.Current.Show(notification);
+            NotificationCenter.Show(notification);
         }
 
         private void ScheduleNotification(string title, double seconds)
         {
-            _tapCount++;
+            TapCount++;
             var notificationId = (int)DateTime.Now.Ticks;
             var list = new List<string>
             {
                 typeof(NotificationPage).FullName,
                 notificationId.ToString(),
                 title,
-                _tapCount.ToString()
+                TapCount.ToString()
             };
             var serializeReturningData = ObjectSerializer.SerializeObject(list);
 
@@ -68,7 +68,7 @@ namespace LocalNotification.Sample
             {
                 NotificationId = notificationId,
                 Title = title,
-                Description = $"Tap Count: {_tapCount}",
+                Description = $"Tap Count: {TapCount}",
                 ReturningData = serializeReturningData,
                 NotifyTime = DateTime.Now.AddSeconds(seconds),
                 Android =
@@ -76,12 +76,12 @@ namespace LocalNotification.Sample
                     Group = "Plugin.LocalNotification.GROUP"
                 }
             };
-            NotificationCenter.Current.Show(notification);
+            NotificationCenter.Show(notification);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            _tapCount++;
+            TapCount++;
             var notificationId = 100;
             var title = "Test";
             var list = new List<string>
@@ -89,7 +89,7 @@ namespace LocalNotification.Sample
                 typeof(NotificationPage).FullName,
                 notificationId.ToString(),
                 title,
-                _tapCount.ToString()
+                TapCount.ToString()
             };
             var serializeReturningData = ObjectSerializer.SerializeObject(list);
 
@@ -97,8 +97,8 @@ namespace LocalNotification.Sample
             {
                 NotificationId = notificationId,
                 Title = title,
-                Description = $"Tap Count: {_tapCount}",
-                BadgeNumber = _tapCount,
+                Description = $"Tap Count: {TapCount}",
+                BadgeNumber = TapCount,
                 ReturningData = serializeReturningData,
                 Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
                 Android =
@@ -134,7 +134,7 @@ namespace LocalNotification.Sample
                 request.NotifyTime = notifyDateTime;
             }
 
-            NotificationCenter.Current.Show(request);
+            NotificationCenter.Show(request);
         }
 
     }

@@ -1,10 +1,6 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-
-namespace LocalNotification.Sample
+﻿namespace LocalNotification.Sample
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class NotificationPage : ContentPage
+    public partial class NotificationPage
     {
         public NotificationPage(int id, string message, int tabCount)
         {

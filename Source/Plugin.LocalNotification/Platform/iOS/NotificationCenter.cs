@@ -43,7 +43,7 @@ namespace Plugin.LocalNotification
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// Returns true if Allowed.
         /// </summary>
-        private static async void AskPermission()
+        public static async void AskPermission()
         {
             await AskPermissionAsync().ConfigureAwait(false);
         }
@@ -52,7 +52,7 @@ namespace Plugin.LocalNotification
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// Returns true if Allowed.
         /// </summary>
-        private static async Task<bool> AskPermissionAsync()
+        public static async Task<bool> AskPermissionAsync()
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Plugin.LocalNotification
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
         /// <param name="uiApplication"></param>
-        private static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
+        public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
         {
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {

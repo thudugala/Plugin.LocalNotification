@@ -1,9 +1,9 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Plugin.LocalNotification;
+using Xamarin.Forms;
 
 namespace LocalNotification.Sample.Droid
 {
@@ -16,7 +16,7 @@ namespace LocalNotification.Sample.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Forms.Init(this, savedInstanceState);
 
             // Must create a Notification Channel when API >= 26
             // you can created multiple Notification Channels with different names.
