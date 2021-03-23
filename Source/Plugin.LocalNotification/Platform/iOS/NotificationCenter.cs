@@ -77,6 +77,9 @@ namespace Plugin.LocalNotification
                                                                            .ConfigureAwait(false);
 
                 Debug.WriteLine(error?.LocalizedDescription);
+
+                Initialize();
+
                 return alertsAllowed;
             }
             catch (Exception ex)
@@ -172,7 +175,6 @@ namespace Plugin.LocalNotification
         /// <inheritdoc />
         private static void PlatformShow(Func<NotificationRequestBuilder, NotificationRequest> builder)
         {
-            Initialize();
             Show(builder.Invoke(new NotificationRequestBuilder()));
         }
 
