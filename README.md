@@ -37,6 +37,39 @@ var notification = new NotificationRequest
 NotificationCenter.Current.Show(notification);
 ```
 
+### Or with Notification Request Builder
+
+```csharp
+ NotificationCenter.Current.Show((notification) => notification
+                        .NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
+                        .WithTitle("Test Title")
+                        .WithDescription("Test Description")
+                        .WithReturningData("Dummy Data") // Returning data when tapped on notification.
+                        .WithNotificationId(100)
+                        .Create());
+```
+
+### With platform specific options
+```csharp
+NotificationCenter.Current.Show((notification) => notification
+                    .NotifyAt(DateTime.Now.AddSeconds(30))
+                    .WithAndroidOptions((android) => android
+                         .WithAutoCancel(true)
+                         .WithChannelId("General")
+                         .WithPriority(NotificationPriority.High)
+                         .WithOngoingStatus(true)
+                         .Build())
+                    .WithiOSOptions((ios) => ios
+                        .WithForegroundAlertStatus(true)
+                        .WithForegroundSoundStatus(true)
+                        .Build())
+                    .WithReturningData("Dummy Data")
+                    .WithTitle("Test Title")
+                    .WithDescription("Test Description")
+                    .WithNotificationId(100)
+                    .Create());
+```
+
 ### Receive local notification tap event
 
 ```csharp
