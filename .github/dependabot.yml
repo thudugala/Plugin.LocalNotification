@@ -6,6 +6,11 @@
 version: 2
 updates:
   - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directory: "/Sample/Direct/LocalNotification.Sample.Android" # Location of package manifests
+    schedule:
+      interval: "daily"
+      
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/Sample/Direct/LocalNotification.Sample.iOS" # Location of package manifests
     schedule:
       interval: "daily"
