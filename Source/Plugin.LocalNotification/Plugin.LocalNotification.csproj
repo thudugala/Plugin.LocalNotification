@@ -21,7 +21,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>5.2.0</Version>
+    <Version>6.0.0</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
