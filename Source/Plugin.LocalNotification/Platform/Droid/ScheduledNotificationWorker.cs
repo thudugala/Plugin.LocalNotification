@@ -67,7 +67,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                         }
 
                         var notificationService = TryGetDefaultDroidNotificationService();
-                        notificationService.ShowNow(notification, false);
+                        notificationService.ShowNow(notification);
                         notificationService.EnqueueWorker(notification);
 
                         return;

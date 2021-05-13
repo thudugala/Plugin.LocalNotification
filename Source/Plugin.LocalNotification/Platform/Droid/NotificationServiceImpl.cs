@@ -124,7 +124,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return Task.FromResult(false);
                 }
 
-                var result = notificationRequest.NotifyTime.HasValue ? ShowLater(notificationRequest) : ShowNow(notificationRequest, true);
+                var result = notificationRequest.NotifyTime.HasValue ? ShowLater(notificationRequest) : ShowNow(notificationRequest);
                 return Task.FromResult(result);
             }
             catch (Exception ex)
@@ -155,14 +155,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="cancelBeforeShow"></param>
-        protected internal virtual bool ShowNow(NotificationRequest request, bool cancelBeforeShow)
+        protected internal virtual bool ShowNow(NotificationRequest request)
         {
-            if (cancelBeforeShow)
-            {
-                Cancel(request.NotificationId);
-            }
-
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
                 request.Android.ChannelId = NotificationCenter.DefaultChannelId;

@@ -15,12 +15,12 @@ namespace LocalNotification.Sample
 
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
 
-            NotifyDatePicker.MinimumDate = DateTime.Today;
-            NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
+            //NotifyDatePicker.MinimumDate = DateTime.Today;
+            //NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-            ScheduleNotificationGroup();
-            ScheduleNotification("first", 5);
-            ScheduleNotification("second", 10);
+            //ScheduleNotificationGroup();
+            //ScheduleNotification("first", 5);
+            //ScheduleNotification("second", 10);
         }
 
         private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
@@ -107,6 +107,9 @@ namespace LocalNotification.Sample
                 {
                     IconName = "icon1",
                     Color = 33468,
+                    ProgressBarIndeterminate = false,
+                    ProgressBarMax = 20,
+                    ProgressBarProgress = _tapCount
                     //AutoCancel = false,
                     //Ongoing = true
                 },
