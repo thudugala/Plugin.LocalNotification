@@ -152,6 +152,10 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 <img src="Screenshots/screenRecord.gif" alt="Screen Record"  width="512px" >
 
+# Video
+
+[![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
+
 # Notification Channels
 
 [Setting up Notification Channels](../../wiki/%5BAndroid---=-26%5D-Notification-Channel)
@@ -190,7 +194,8 @@ Only support <b>iOS</b> and <b>Android</b> for the moment.
 
 Contributions are welcome.  Feel free to file issues and pull requests on the repo and they'll be reviewed as time permits.
 
-## Icon and Sound
+## Thank you
 
 - Thank you for the Icons by [DinosoftLabs](https://www.iconfinder.com/dinosoftlabs) and [Iconic Hub](https://www.iconfinder.com/iconic_hub) 
 - Thank you for the sound file by [Notification sounds](https://notificationsounds.com/notification-sounds/good-things-happen-547)
+- Thank you for the tutorial video by [Gerald Versluis](https://www.youtube.com/channel/UCBBZ2kXWmd8eXlHg2wEaClw)
