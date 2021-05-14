@@ -210,7 +210,7 @@ Only support <b>iOS</b> and <b>Android</b> for the moment.
 
 # 5.2.0 Documentation
 
-- Please go to [5.2.0 Documentation](../../wiki/Usage-5.2.0), if you are referencing a version below 5.0.0. 
+- Please go to [5.2.0 Documentation](../../wiki/Usage-5.2.0), if you are referencing a version below 6.0.0. 
 - Version 6.* has setup differences in Android if upgrading from version 5.*
 
 # 4.1.4 Documentation
