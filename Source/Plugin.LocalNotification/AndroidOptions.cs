@@ -20,27 +20,33 @@ namespace Plugin.LocalNotification
         public string ChannelId { get; set; } = "Plugin.LocalNotification.GENERAL";
 
         /// <summary>
+        /// If set, the notification icon and application name will have the provided ARGB color.
+        /// </summary>
+        public int? Color { get; set; }
+
+        /// <summary>
         /// Set this notification to be part of a group of notifications sharing the same key.
         /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
         /// </summary>
         public string Group { get; set; }
 
         /// <summary>
-        /// Set this notification to be the group summary for a group of notifications.
-        /// Grouped notifications may display in a cluster or stack on devices which support such rendering
+        /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
+        /// if not set, application Icon will we used.
         /// </summary>
-        public bool IsGroupSummary { get; set; }
-
-        /// <summary>
-        /// If set, the notification icon and application name will have the provided ARGB color.
-        /// </summary>
-        public int? Color { get; set; }
+        public string IconLargeName { get; set; }
 
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public string IconName { get; set; }
+        public string IconSmallName { get; set; }
+
+        /// <summary>
+        /// Set this notification to be the group summary for a group of notifications.
+        /// Grouped notifications may display in a cluster or stack on devices which support such rendering
+        /// </summary>
+        public bool IsGroupSummary { get; set; }
 
         /// <summary>
         /// If set, the LED will have the provided ARGB color.

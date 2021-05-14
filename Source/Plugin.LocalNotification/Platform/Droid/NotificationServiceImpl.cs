@@ -7,6 +7,7 @@ using Java.Util.Concurrent;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using Android.Graphics;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -213,12 +214,17 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetColor(request.Android.Color.Value);
             }
 
-            builder.SetSmallIcon(GetIcon(request.Android.IconName));
+            builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
+            if (string.IsNullOrWhiteSpace(request.Android.IconLargeName) == false)
+            {
+                builder.SetLargeIcon(BitmapFactory.DecodeResource(Application.Context.Resources, GetIcon(request.Android.IconLargeName)));
+            }
+            
             if (request.Android.TimeoutAfter.HasValue)
             {
                 builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
-
+            
             var notificationIntent = Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ?? string.Empty);
             if (notificationIntent is null)
             {
