@@ -129,8 +129,7 @@ namespace Plugin.LocalNotification
                 return false;
             }
 
-            if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager
-                notificationManager)
+            if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager notificationManager))
             {
                 return false;
             }
