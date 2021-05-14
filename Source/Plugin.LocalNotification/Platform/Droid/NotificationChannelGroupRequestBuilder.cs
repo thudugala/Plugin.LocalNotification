@@ -16,7 +16,7 @@
         /// Builds the request to <see cref="NotificationChannelGroupRequest"/>
         /// </summary>
         /// <returns></returns>
-        public NotificationChannelGroupRequest Build() => new(Group, Name);
+        public NotificationChannelGroupRequest Build() => new NotificationChannelGroupRequest(Group, Name);
 
         /// <summary>
         /// Sets the Group

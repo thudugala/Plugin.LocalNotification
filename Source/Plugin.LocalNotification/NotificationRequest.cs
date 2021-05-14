@@ -11,7 +11,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidOptions Android { get; set; } = new ();
+        public AndroidOptions Android { get; set; } = new AndroidOptions();
 
         /// <summary>
         /// Number of the badge displays on the Home Screen.
@@ -26,7 +26,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// iOS specific properties.
         /// </summary>
-        public iOSOptions iOS { get; set; } = new ();
+        public iOSOptions iOS { get; set; } = new iOSOptions();
 
         /// <summary>
         /// A unique identifier for the request

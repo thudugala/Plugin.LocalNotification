@@ -69,7 +69,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public static TimeSpanExt ToTimeSpanExt(TimeSpan value)
         {
-            return new() { _value = value };
+            return new TimeSpanExt() { _value = value };
         }
 
         /// <summary>

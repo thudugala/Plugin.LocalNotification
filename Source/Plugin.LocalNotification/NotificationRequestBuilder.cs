@@ -45,7 +45,7 @@ namespace Plugin.LocalNotification
         /// Creates the notification request
         /// </summary>
         /// <returns>The notification request</returns>
-        public NotificationRequest Create() => new ()
+        public NotificationRequest Create() => new NotificationRequest()
         {
             Android = AndroidOptions,
             iOS = iOSOptions,
