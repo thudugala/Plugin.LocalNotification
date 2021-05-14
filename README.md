@@ -208,10 +208,15 @@ https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 
 Only support <b>iOS</b> and <b>Android</b> for the moment. 
 
+# 5.2.0 Documentation
+
+- Please go to [5.2.0 Documentation](../../wiki/Usage-5.2.0), if you are referencing a version below 6.0.0. 
+- Version 6.* has setup differences in Android if upgrading from version 5.*
+
 # 4.1.4 Documentation
 
 - Please go to [4.1.4 Documentation](../../wiki/Usage-4.1.4), if you are referencing a version below 5.0.0. 
-- Version 5.* has setup differences in Android if upgrading from version 3.*
+- Version 5.* has setup differences in Android if upgrading from version 4.*
 
 # 3.0.2 Documentation
 
