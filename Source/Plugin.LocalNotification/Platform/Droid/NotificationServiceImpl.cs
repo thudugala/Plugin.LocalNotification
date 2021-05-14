@@ -226,8 +226,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return false;
             }
 
+            var serializedNotification = ObjectSerializer.SerializeObject(request);
+
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ExtraReturnDataAndroid, request.ReturningData);
+            notificationIntent.PutExtra(NotificationCenter.ExtraReturnNotification, serializedNotification);
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);

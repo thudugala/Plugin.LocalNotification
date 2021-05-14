@@ -26,15 +26,18 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                var dictionary = response.Notification.Request.Content.UserInfo;
+                var notificationContent = response.Notification.Request.Content;
+
+                var dictionary = notificationContent.UserInfo;
 
                 if (!dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos))
                 {
                     return;
                 }
-
                 var subscribeItem = new NotificationTappedEventArgs
                 {
+                    Title = notificationContent.Title,
+                    Description = notificationContent.Body,
                     Data = dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
                 };
 

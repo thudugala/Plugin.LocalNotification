@@ -10,11 +10,6 @@ namespace Plugin.LocalNotification
     public static partial class NotificationCenter
     {
         /// <summary>
-        /// Return Data Key.
-        /// </summary>
-        public static string ExtraReturnDataAndroid => "Plugin.LocalNotification.RETURN_DATA";
-
-        /// <summary>
         /// Return Notification Key.
         /// </summary>
         public static string ExtraReturnNotification => "Plugin.LocalNotification.RETURN_NOTIFICATION";
@@ -49,14 +44,23 @@ namespace Plugin.LocalNotification
                     return false;
                 }
 
-                if (intent.HasExtra(ExtraReturnDataAndroid) == false)
+                if (intent.HasExtra(ExtraReturnNotification) == false)
                 {
                     return false;
                 }
 
+                var serializedNotification = intent.GetStringExtra(ExtraReturnNotification);
+                if (string.IsNullOrWhiteSpace(serializedNotification))
+                {
+                    return false;
+                }
+                var notification = ObjectSerializer.DeserializeObject<NotificationRequest>(serializedNotification);
+
                 var subscribeItem = new NotificationTappedEventArgs
                 {
-                    Data = intent.GetStringExtra(ExtraReturnDataAndroid)
+                    Title = notification.Title,
+                    Description = notification.Description,
+                    Data = notification.ReturningData
                 };
 
                 Current.OnNotificationTapped(subscribeItem);
