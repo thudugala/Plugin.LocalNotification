@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification
 {
@@ -78,5 +79,18 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <returns></returns>
         public static NotificationRequestBuilder CreateBuilder() => new NotificationRequestBuilder();
+
+        /// <summary>
+        /// Directly call Show() on this <see cref="NotificationRequest"/> instance.
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> Show() => NotificationCenter.Current.Show(this);
+
+        /// <summary>
+        /// Directly call Cancel(...) on this <see cref="NotificationRequest"/> instance.
+        /// <para>Notification Id set for this instance will be used to cancel this notification.</para>
+        /// </summary>
+        /// <returns></returns>
+        public bool Cancel() => NotificationCenter.Current.Cancel(this.NotificationId);
     }
 }

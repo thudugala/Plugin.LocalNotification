@@ -19,7 +19,7 @@ The local notification plugin provides a way to show local notifications from Xa
 |Platform|Supported|Version|Notes|
 | ------------------- | :-----------: | :------------------: | :------------------: |
 |Xamarin.iOS|Yes|iOS 10+| |
-|Xamarin.Android|Yes|API 19+|Project should [target Android framework 10.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
+|Xamarin.Android|Yes|API 19+|Project should [target Android framework 11.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)|
 
 # Usage
 
@@ -35,6 +35,39 @@ var notification = new NotificationRequest
     NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
 };
 NotificationCenter.Current.Show(notification);
+```
+
+### Or with Notification Request Builder
+
+```csharp
+ NotificationCenter.Current.Show((notification) => notification
+                        .NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
+                        .WithTitle("Test Title")
+                        .WithDescription("Test Description")
+                        .WithReturningData("Dummy Data") // Returning data when tapped on notification.
+                        .WithNotificationId(100)
+                        .Create());
+```
+
+### With platform specific options
+```csharp
+NotificationCenter.Current.Show((notification) => notification
+                    .NotifyAt(DateTime.Now.AddSeconds(30))
+                    .WithAndroidOptions((android) => android
+                         .WithAutoCancel(true)
+                         .WithChannelId("General")
+                         .WithPriority(NotificationPriority.High)
+                         .WithOngoingStatus(true)
+                         .Build())
+                    .WithiOSOptions((ios) => ios
+                        .WithForegroundAlertStatus(true)
+                        .WithForegroundSoundStatus(true)
+                        .Build())
+                    .WithReturningData("Dummy Data")
+                    .WithTitle("Test Title")
+                    .WithDescription("Test Description")
+                    .WithNotificationId(100)
+                    .Create());
 ```
 
 ### Receive local notification tap event
@@ -86,7 +119,7 @@ public partial class App : Application
 
 ### Android
 
-Project should [target Android framework 10.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
+Project should [target Android framework 11.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
 
 ![image](https://user-images.githubusercontent.com/4112014/74599294-5100e480-50e4-11ea-85a5-409af45bdab7.png)
 
