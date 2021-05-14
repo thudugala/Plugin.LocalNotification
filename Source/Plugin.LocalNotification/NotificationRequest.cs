@@ -71,12 +71,12 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="notificationId"></param>
         /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new (notificationId);
+        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new NotificationRequestBuilder(notificationId);
 
         /// <summary>
         /// Creates a NotificationRequestBuilder instance with default values.
         /// </summary>
         /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder() => new ();
+        public static NotificationRequestBuilder CreateBuilder() => new NotificationRequestBuilder();
     }
 }

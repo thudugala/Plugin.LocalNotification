@@ -16,7 +16,7 @@
         /// Builds the request to <see cref="iOSOptions"/>
         /// </summary>
         /// <returns></returns>
-        public iOSOptions Build() => new ()
+        public iOSOptions Build() => new iOSOptions()
         {
             HideForegroundAlert = HideForegroundAlert,
             PlayForegroundSound = PlayForegroundSound

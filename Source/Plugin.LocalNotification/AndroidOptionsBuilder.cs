@@ -33,7 +33,7 @@ namespace Plugin.LocalNotification
         /// Builds the request to <see cref="AndroidOptions"/>
         /// </summary>
         /// <returns></returns>
-        public AndroidOptions Build() => new ()
+        public AndroidOptions Build() => new AndroidOptions()
         {
             AutoCancel = AutoCancel,
             VibrationPattern = VibrationPattern,
