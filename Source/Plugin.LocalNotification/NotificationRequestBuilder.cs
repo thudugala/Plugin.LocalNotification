@@ -14,10 +14,8 @@ namespace Plugin.LocalNotification
         private int NotificationId;
         private string NotificationSound = string.Empty;
         private string NotificationTitle = string.Empty;
-        private DateTime? NotifyTime;
-        private NotificationRepeat RepeatInterval = NotificationRepeat.No;
-        private TimeSpanExt? RepeatSpan;
         private string ReturningData = string.Empty;
+        private NotificationRequestSchedule Schedule;
 
         /// <summary>
         /// Initializes NotificationRequestBuilder with the specified notification Id.
@@ -30,6 +28,7 @@ namespace Plugin.LocalNotification
             NotificationId = notificationId;
             AndroidOptions = new AndroidOptions();
             iOSOptions = new iOSOptions();
+            Schedule = new NotificationRequestSchedule();
         }
 
         /// <summary>
@@ -39,6 +38,7 @@ namespace Plugin.LocalNotification
         {
             AndroidOptions = new AndroidOptions();
             iOSOptions = new iOSOptions();
+            Schedule = new NotificationRequestSchedule();
         }
 
         /// <summary>
@@ -52,30 +52,31 @@ namespace Plugin.LocalNotification
             BadgeNumber = BadgeNumberCount,
             Description = NotificationDescription,
             NotificationId = NotificationId,
-            Repeats = RepeatInterval,
-            NotifyRepeatInterval = RepeatSpan,
-            NotifyTime = NotifyTime,
+            Schedule = Schedule,
             ReturningData = ReturningData,
             Sound = NotificationSound,
             Title = NotificationTitle
         };
-
+        
         /// <summary>
-        /// Time to show the notification.
+        /// 
         /// </summary>
-        public NotificationRequestBuilder NotifyAt(DateTime? notificationTime)
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public NotificationRequestBuilder WithScheduleOptions(Func<NotificationRequestScheduleBuilder, NotificationRequestSchedule> builder)
         {
-            NotifyTime = notificationTime;
+            Schedule = builder.Invoke(new NotificationRequestScheduleBuilder());
             return this;
         }
 
         /// <summary>
-        /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
+        /// 
         /// </summary>
-        public NotificationRequestBuilder SetNotificationRepeatInterval(NotificationRepeat repeatInterval, TimeSpanExt? timeSpanExt)
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public NotificationRequestBuilder WithScheduleOptions(NotificationRequestSchedule options)
         {
-            RepeatInterval = repeatInterval;
-            RepeatSpan = timeSpanExt;
+            Schedule = options;
             return this;
         }
 

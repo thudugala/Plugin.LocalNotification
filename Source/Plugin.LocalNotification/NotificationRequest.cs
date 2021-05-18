@@ -36,19 +36,9 @@ namespace Plugin.LocalNotification
         public int NotificationId { get; set; }
 
         /// <summary>
-        /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
+        /// Schedule notification
         /// </summary>
-        public TimeSpanExt? NotifyRepeatInterval { get; set; }
-
-        /// <summary>
-        /// Time to show the notification.
-        /// </summary>
-        public DateTime? NotifyTime { get; set; }
-
-        /// <summary>
-        /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval
-        /// </summary>
-        public NotificationRepeat Repeats { get; set; } = NotificationRepeat.No;
+        public NotificationRequestSchedule Schedule { get; set; } = new NotificationRequestSchedule();
 
         /// <summary>
         /// Returning data when tapped or received notification.

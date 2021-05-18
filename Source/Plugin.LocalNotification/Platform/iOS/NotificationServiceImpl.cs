@@ -103,21 +103,11 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var userInfoDictionary = new NSMutableDictionary();
-
-                if (string.IsNullOrWhiteSpace(notificationRequest.ReturningData) == false)
+                var dictionary = NotificationCenter.GetRequestSerialize(notificationRequest);
+                foreach (var item in dictionary)
                 {
-                    using var returningData = new NSString(notificationRequest.ReturningData);
-                    userInfoDictionary.SetValueForKey(
-                        string.IsNullOrWhiteSpace(notificationRequest.ReturningData)
-                            ? NSString.Empty
-                            : returningData, NotificationCenter.ExtraReturnDataIos);
+                    userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
                 }
-
-                using var receivedData = new NSString(notificationRequest.iOS.HideForegroundAlert.ToString());
-                userInfoDictionary.SetValueForKey(receivedData, NotificationCenter.ExtraNotificationReceivedIos);
-
-                using var soundData = new NSString(notificationRequest.iOS.PlayForegroundSound.ToString());
-                userInfoDictionary.SetValueForKey(soundData, NotificationCenter.ExtraSoundInForegroundIos);
 
                 using var content = new UNMutableNotificationContent
                 {
@@ -132,13 +122,14 @@ namespace Plugin.LocalNotification.Platform.iOS
                     content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
                 }
 
-                var repeats = notificationRequest.Repeats != NotificationRepeat.No;
+                var repeats = notificationRequest.Schedule.Repeats != NotificationRepeat.No;
 
-                if (repeats && notificationRequest.Repeats == NotificationRepeat.TimeInterval &&
-                    notificationRequest.NotifyRepeatInterval.HasValue)
+                if (repeats && notificationRequest.Schedule.Repeats == NotificationRepeat.TimeInterval &&
+                    notificationRequest.Schedule.NotifyRepeatInterval.HasValue)
                 {
-                    TimeSpan interval = notificationRequest.NotifyRepeatInterval.Value;
+                    TimeSpan interval = notificationRequest.Schedule.NotifyRepeatInterval.Value;
 
+                    // Cannot delay and repeat in when TimeInterval
                     trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
                 }
                 else
@@ -170,9 +161,9 @@ namespace Plugin.LocalNotification.Platform.iOS
 
         private static NSDateComponents GetNsDateComponentsFromDateTime(NotificationRequest notificationRequest)
         {
-            var dateTime = notificationRequest.NotifyTime ?? DateTime.Now.AddSeconds(1);
+            var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTime.Now.AddSeconds(1);
 
-            return notificationRequest.Repeats switch
+            return notificationRequest.Schedule.Repeats switch
             {
                 NotificationRepeat.Daily => new NSDateComponents
                 {

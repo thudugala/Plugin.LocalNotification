@@ -16,18 +16,8 @@ namespace Plugin.LocalNotification
     public class NotificationReceivedEventArgs : EventArgs
     {
         /// <summary>
-        /// Returning data when a notification is received.
+        /// Returning received notification.
         /// </summary>
-        public string Data { get; internal set; }
-
-        /// <summary>
-        /// Returning details when a notification is received.
-        /// </summary>
-        public string Description { get; internal set; } = string.Empty;
-
-        /// <summary>
-        /// Returning title when a notification is received.
-        /// </summary>
-        public string Title { get; internal set; }
+        public NotificationRequest Request { get; internal set; }
     }
 }

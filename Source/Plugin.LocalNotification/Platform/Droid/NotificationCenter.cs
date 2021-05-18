@@ -10,11 +10,6 @@ namespace Plugin.LocalNotification
     public static partial class NotificationCenter
     {
         /// <summary>
-        /// Return Notification Key.
-        /// </summary>
-        public static string ExtraReturnNotification => "Plugin.LocalNotification.RETURN_NOTIFICATION";
-
-        /// <summary>
         /// Default Channel Id.
         /// </summary>
         public static string DefaultChannelId => "Plugin.LocalNotification.GENERAL";
@@ -44,23 +39,28 @@ namespace Plugin.LocalNotification
                     return false;
                 }
 
-                if (intent.HasExtra(ExtraReturnNotification) == false)
+                if (intent.HasExtra(ReturnRequest) == false)
                 {
                     return false;
                 }
+                var requestSerialize = intent.GetStringExtra(ReturnRequest);
+                if (string.IsNullOrWhiteSpace(requestSerialize))
+                {
+                    return false;
+                }
+                var requestSerializeSchedule = intent.GetStringExtra(ReturnRequestSchedule);
+                var requestSerializeAndroid = intent.GetStringExtra(ReturnRequestAndroid);
+                var requestSerializeIos = intent.GetStringExtra(ReturnRequestIos);
 
-                var serializedNotification = intent.GetStringExtra(ExtraReturnNotification);
-                if (string.IsNullOrWhiteSpace(serializedNotification))
+                var notification = GetRequest(requestSerialize, requestSerializeSchedule, requestSerializeAndroid, requestSerializeIos);
+                if (notification is null)
                 {
                     return false;
                 }
-                var notification = ObjectSerializer.DeserializeObject<NotificationRequest>(serializedNotification);
 
                 var subscribeItem = new NotificationTappedEventArgs
                 {
-                    Title = notification.Title,
-                    Description = notification.Description,
-                    Data = notification.ReturningData
+                    Request = notification
                 };
 
                 Current.OnNotificationTapped(subscribeItem);
@@ -167,7 +167,7 @@ namespace Plugin.LocalNotification
                 var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
                         ?.SetContentType(AudioContentType.Music)
                         ?.Build();
-                    channel.SetSound(soundUri, audioAttributes);
+                channel.SetSound(soundUri, audioAttributes);
             }
 
             if (request.VibrationPattern != null)

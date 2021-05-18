@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Foundation;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using UIKit;
@@ -26,31 +27,24 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
-                var notificationContent = response.Notification.Request.Content;
+                var localNotification = GetRequest(response.Notification);
 
-                var dictionary = notificationContent.UserInfo;
-
-                if (!dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos))
+                var args = new NotificationTappedEventArgs
                 {
-                    return;
-                }
-                var subscribeItem = new NotificationTappedEventArgs
-                {
-                    Title = notificationContent.Title,
-                    Description = notificationContent.Body,
-                    Data = dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
+                    Request = localNotification
                 };
 
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
-                    if (response.Notification.Request.Content.Badge != null)
+                    if (localNotification != null && response.Notification.Request.Content.Badge != null)
                     {
                         var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
                                         Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
                         UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
                     }
 
-                    NotificationCenter.Current.OnNotificationTapped(subscribeItem);
+                    var notificationService = TryGetDefaultDroidNotificationService();
+                    notificationService.OnNotificationTapped(args);
                 });
             }
             catch (Exception ex)
@@ -59,48 +53,74 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
+        private NotificationRequest GetRequest(UNNotification notification)
+        {
+            var notificationContent = notification?.Request.Content;
+            if (notificationContent == null)
+            {
+                return null;
+            }
+            var dictionary = notificationContent.UserInfo;
+
+            if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
+            {
+                return null;
+            }
+            var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
+            var requestSerializeSchedule = string.Empty;
+            var requestSerializeAndroid = string.Empty;
+            var requestSerializeIos = string.Empty;
+            if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestSchedule)))
+            {
+                requestSerializeSchedule = dictionary[NotificationCenter.ReturnRequestSchedule].ToString();
+            }
+            if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestAndroid)))
+            {
+                requestSerializeAndroid = dictionary[NotificationCenter.ReturnRequestAndroid].ToString();
+            }
+            if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestIos)))
+            {
+                requestSerializeIos = dictionary[NotificationCenter.ReturnRequestIos].ToString();
+            }
+            var request = NotificationCenter.GetRequest(requestSerialize, requestSerializeSchedule, requestSerializeAndroid, requestSerializeIos);
+
+            return request;
+        }
+
         /// <inheritdoc />
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
             try
             {
                 var presentationOptions = UNNotificationPresentationOptions.Alert;
-                var notificationContent = notification?.Request.Content;
+                var localNotification = GetRequest(notification);
 
-                if (notificationContent != null)
+                if (localNotification != null)
                 {
-                    var dictionary = notificationContent.UserInfo;
-                    var args = new NotificationReceivedEventArgs
+                    if (localNotification.Schedule.NotifyAutoCancelTime.HasValue && localNotification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
-                        Title = notificationContent.Title,
-                        Description = notificationContent.Body,
-                        Data = dictionary.ContainsKey(NotificationCenter.ExtraReturnDataIos)
-                                        ? dictionary[NotificationCenter.ExtraReturnDataIos].ToString()
-                                        : ""
-                    };
-
-                    NotificationCenter.Current.OnNotificationReceived(args);
-
-                    if (dictionary.ContainsKey(NotificationCenter.ExtraNotificationReceivedIos))
-                    {
-                        var customOptions = dictionary[NotificationCenter.ExtraNotificationReceivedIos].ToString()
-                            .ToUpperInvariant();
-                        if (customOptions == "TRUE")
-                        {
-                            presentationOptions = UNNotificationPresentationOptions.None;
-                        }
+                        var notificationService = TryGetDefaultDroidNotificationService();
+                        notificationService.Cancel(localNotification.NotificationId);
+                        Debug.WriteLine("Notification Auto Canceled");
+                        return;
                     }
 
-                    if (dictionary.ContainsKey(NotificationCenter.ExtraSoundInForegroundIos))
+                    var args = new NotificationReceivedEventArgs
                     {
-                        var customOptions = dictionary[NotificationCenter.ExtraSoundInForegroundIos].ToString()
-                                                                                                    .ToUpperInvariant();
-                        if (customOptions == "TRUE")
-                        {
-                            presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ?
-                                UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert :
-                                UNNotificationPresentationOptions.Sound;
-                        }
+                        Request = localNotification
+                    };
+                    NotificationCenter.Current.OnNotificationReceived(args);
+
+                    if (localNotification.iOS.HideForegroundAlert)
+                    {
+                        presentationOptions = UNNotificationPresentationOptions.None;
+                    }
+
+                    if (localNotification.iOS.PlayForegroundSound)
+                    {
+                        presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ?
+                            UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert :
+                            UNNotificationPresentationOptions.Sound;
                     }
                 }
 
@@ -115,6 +135,15 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 Debug.WriteLine(ex);
             }
+        }
+
+        private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
+        {
+            if (NotificationCenter.Current is NotificationServiceImpl notificationService)
+            {
+                return notificationService;
+            }
+            return new NotificationServiceImpl();
         }
     }
 }

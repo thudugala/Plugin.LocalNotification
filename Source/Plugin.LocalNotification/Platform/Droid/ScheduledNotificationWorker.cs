@@ -1,7 +1,5 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.Runtime;
-using Android.Util;
 using AndroidX.Work;
 using System;
 using System.Threading.Tasks;
@@ -18,69 +16,71 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         public override Result DoWork()
         {
-            var serializedNotification = InputData.GetString(NotificationCenter.ExtraReturnNotification);
+            var requestSerialize = InputData.GetString(NotificationCenter.ReturnRequest);
 
-            if (string.IsNullOrWhiteSpace(serializedNotification))
+            if (string.IsNullOrWhiteSpace(requestSerialize))
             {
                 return Result.InvokeFailure();
             }
+            var requestSerializeSchedule = InputData.GetString(NotificationCenter.ReturnRequestSchedule);
+            var requestSerializeAndroid = InputData.GetString(NotificationCenter.ReturnRequestAndroid);
+            var requestSerializeIos = InputData.GetString(NotificationCenter.ReturnRequestIos);
 
-            var serializedNotificationAndroid = InputData.GetString($"{NotificationCenter.ExtraReturnNotification}_Android");
+            var notification = NotificationCenter.GetRequest(requestSerialize, requestSerializeSchedule, requestSerializeAndroid, requestSerializeIos);
+            if (notification is null)
+            {
+                return Result.InvokeFailure();
+            }
 
             Task.Run(() =>
             {
                 try
                 {
-                    Log.Info(Application.Context.PackageName, $"ScheduledNotificationWorker.DoWork: SerializedNotification [{serializedNotification}]");
-                    var notification = ObjectSerializer.DeserializeObject<NotificationRequest>(serializedNotification);
-                    if (string.IsNullOrWhiteSpace(serializedNotificationAndroid) == false)
+                    if (notification.Schedule.NotifyTime.HasValue && notification.Schedule.Repeats != NotificationRepeat.No)
                     {
-                        var notificationAndroid =
-                            ObjectSerializer.DeserializeObject<AndroidOptions>(serializedNotificationAndroid);
-                        if (notificationAndroid != null)
-                        {
-                            notification.Android = notificationAndroid;
-                        }
-                    }
-
-                    if (notification.NotifyTime.HasValue && notification.Repeats != NotificationRepeat.No)
-                    {
-                        switch (notification.Repeats)
+                        switch (notification.Schedule.Repeats)
                         {
                             case NotificationRepeat.Daily:
                                 // To be consistent with iOS, Schedule notification next day same time.
-                                notification.NotifyTime = notification.NotifyTime.Value.AddDays(1);
+                                notification.Schedule.NotifyTime = notification.Schedule.NotifyTime.Value.AddDays(1);
                                 break;
 
                             case NotificationRepeat.Weekly:
                                 // To be consistent with iOS, Schedule notification next week same day same time.
-                                notification.NotifyTime = notification.NotifyTime.Value.AddDays(7);
+                                notification.Schedule.NotifyTime = notification.Schedule.NotifyTime.Value.AddDays(7);
                                 break;
 
                             case NotificationRepeat.TimeInterval:
-                                if (notification.NotifyRepeatInterval.HasValue)
+                                if (notification.Schedule.NotifyRepeatInterval.HasValue)
                                 {
-                                    TimeSpan interval = notification.NotifyRepeatInterval.Value;
-                                    notification.NotifyTime = notification.NotifyTime.Value.Add(interval);
+                                    TimeSpan interval = notification.Schedule.NotifyRepeatInterval.Value;
+                                    notification.Schedule.NotifyTime = notification.Schedule.NotifyTime.Value.Add(interval);
                                 }
                                 break;
                         }
 
                         var notificationService = TryGetDefaultDroidNotificationService();
+
+                        if (notification.Schedule.NotifyAutoCancelTime.HasValue && notification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+                        {
+                            notificationService.Cancel(notification.NotificationId);
+                            System.Diagnostics.Debug.WriteLine("Notification Auto Canceled");
+                            return;
+                        }
+
                         notificationService.ShowNow(notification);
                         notificationService.EnqueueWorker(notification);
-
                         return;
                     }
 
                     // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
-                    if (notification.NotifyTime != null && notification.NotifyTime.Value <= DateTime.Now.AddMinutes(-1))
+                    if (notification.Schedule.NotifyTime != null && notification.Schedule.NotifyTime.Value <= DateTime.Now.AddMinutes(-1))
                     {
                         System.Diagnostics.Debug.WriteLine("NotifyTime is earlier than DateTime.Now, notification ignored");
                         return;
                     }
 
-                    notification.NotifyTime = null;
+                    notification.Schedule.NotifyTime = null;
                     NotificationCenter.Current.Show(notification);
                 }
                 catch (Exception ex)
