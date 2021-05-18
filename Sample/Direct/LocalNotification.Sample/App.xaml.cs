@@ -31,12 +31,12 @@ namespace LocalNotification.Sample
 
         private void LoadPageFromNotification(NotificationTappedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(e.Data))
+            if (e.Request is null)
             {
                 return;
             }
 
-            var list = ObjectSerializer.DeserializeObject<List<string>>(e.Data);
+            var list = ObjectSerializer.DeserializeObject<List<string>>(e.Request.ReturningData);
             if (list.Count != 4)
             {
                 return;

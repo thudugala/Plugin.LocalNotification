@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification
         /// Creates the notification request
         /// </summary>
         /// <returns>The notification request</returns>
-        public NotificationRequestSchedule Create() => new NotificationRequestSchedule()
+        public NotificationRequestSchedule Build() => new NotificationRequestSchedule()
         {
             NotifyRepeatInterval = NotifyRepeatInterval,
             NotifyAutoCancelTime = NotifyStopTime,

@@ -15,70 +15,12 @@ namespace LocalNotification.Sample
 
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
 
-            //NotifyDatePicker.MinimumDate = DateTime.Today;
-            //NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
+            NotifyDatePicker.MinimumDate = DateTime.Today;
+            NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-            //ScheduleNotificationGroup();
-            //ScheduleNotification("first", 5);
-            //ScheduleNotification("second", 10);
-        }
-
-        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine(e);
-
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (CustomAlert.IsToggled)
-                {
-                    DisplayAlert(e.Title, e.Description, "OK");
-                }
-            });
-        }
-
-        private void ScheduleNotificationGroup()
-        {
-            var notificationId = (int)DateTime.Now.Ticks;
-            var notification = new NotificationRequest
-            {
-                NotificationId = notificationId,
-                Title = "Summary",
-                Description = "Summary Desc",
-                Android =
-                {
-                    Group = "Plugin.LocalNotification.GROUP",
-                    IsGroupSummary = true
-                }
-            };
-            NotificationCenter.Current.Show(notification);
-        }
-
-        private void ScheduleNotification(string title, double seconds)
-        {
-            _tapCount++;
-            var notificationId = (int)DateTime.Now.Ticks;
-            var list = new List<string>
-            {
-                typeof(NotificationPage).FullName,
-                notificationId.ToString(),
-                title,
-                _tapCount.ToString()
-            };
-            var serializeReturningData = ObjectSerializer.SerializeObject(list);
-
-            var notification = new NotificationRequest
-            {
-                NotificationId = notificationId,
-                Title = title,
-                Description = $"Tap Count: {_tapCount}",
-                ReturningData = serializeReturningData,
-                NotifyTime = DateTime.Now.AddSeconds(seconds),
-                Android =
-                {
-                    Group = "Plugin.LocalNotification.GROUP"
-                }
-            };
-            NotificationCenter.Current.Show(notification);
+            ScheduleNotificationGroup();
+            ScheduleNotification("first", 5);
+            ScheduleNotification("second", 10);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -102,10 +44,9 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
                 Android =
                 {
-                    IconName = "icon1",
+                    IconSmallName = "icon1",
                     Color = 33468,
                     ProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
@@ -136,11 +77,78 @@ namespace LocalNotification.Sample
                 {
                     notifyDateTime = DateTime.Now.AddSeconds(10);
                 }
-                request.NotifyTime = notifyDateTime;
+
+                request.Schedule.NotifyTime = notifyDateTime;
+                request.Schedule.Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
             }
 
             NotificationCenter.Current.Show(request);
         }
 
+        private void ScheduleNotification(string title, double seconds)
+        {
+            _tapCount++;
+            var notificationId = (int)DateTime.Now.Ticks;
+            var list = new List<string>
+            {
+                typeof(NotificationPage).FullName,
+                notificationId.ToString(),
+                title,
+                _tapCount.ToString()
+            };
+            var serializeReturningData = ObjectSerializer.SerializeObject(list);
+
+            var notification = new NotificationRequest
+            {
+                NotificationId = notificationId,
+                Title = title,
+                Description = $"Tap Count: {_tapCount}",
+                ReturningData = serializeReturningData,
+                Schedule =
+                {
+                    NotifyTime = DateTime.Now.AddSeconds(seconds),
+                },
+                Android =
+                {
+                    Group = "Plugin.LocalNotification.GROUP"
+                }
+            };
+            NotificationCenter.Current.Show(notification);
+        }
+
+        private void ScheduleNotificationGroup()
+        {
+            var notificationId = (int)DateTime.Now.Ticks;
+            var notification = new NotificationRequest
+            {
+                NotificationId = notificationId,
+                Title = "Summary",
+                Description = "Summary Desc",
+                Android =
+                {
+                    Group = "Plugin.LocalNotification.GROUP",
+                    IsGroupSummary = true
+                }
+            };
+            NotificationCenter.Current.Show(notification);
+        }
+
+        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
+        {
+            if (e.Request is null)
+            {
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine(e);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (CustomAlert.IsToggled)
+                {
+                    DisplayAlert(e.Request.Title, e.Request.Description, "OK");
+                }
+            });
+        }
     }
 }
