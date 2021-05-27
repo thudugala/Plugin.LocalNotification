@@ -110,7 +110,7 @@ namespace LocalNotification.Sample
                 },
                 Android =
                 {
-                    Group = "Plugin.LocalNotification.GROUP"
+                    Group = AndroidOptions.DefaultGroupId
                 }
             };
             NotificationCenter.Current.Show(notification);
@@ -126,7 +126,7 @@ namespace LocalNotification.Sample
                 Description = "Summary Desc",
                 Android =
                 {
-                    Group = "Plugin.LocalNotification.GROUP",
+                    Group = AndroidOptions.DefaultGroupId,
                     IsGroupSummary = true
                 }
             };

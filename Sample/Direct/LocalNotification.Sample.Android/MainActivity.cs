@@ -19,10 +19,14 @@ namespace LocalNotification.Sample.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             // Must create a Notification Channel when API >= 26
+            // you can created multiple Notification Channel Groups with different names.
+            //NotificationCenter.CreateNotificationChannelGroup();
+
+            // Must create a Notification Channel when API >= 26
             // you can created multiple Notification Channels with different names.
             NotificationCenter.CreateNotificationChannel(new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequest
             {
-                //Group = ""
+                //Group = AndroidOptions.DefaultGroupId,
                 Sound = Resource.Raw.good_things_happen.ToString()
             });
 

@@ -160,7 +160,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
-                request.Android.ChannelId = NotificationCenter.DefaultChannelId;
+                request.Android.ChannelId = AndroidOptions.DefaultChannelId;
             }
 
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);

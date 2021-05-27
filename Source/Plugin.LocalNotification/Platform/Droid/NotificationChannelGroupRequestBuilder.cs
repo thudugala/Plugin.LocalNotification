@@ -5,18 +5,24 @@
     /// </summary>
     public class NotificationChannelGroupRequestBuilder
     {
-        private string Group;
-        private string Name;
+        private string _group;
+        private string _name;
 
         internal NotificationChannelGroupRequestBuilder()
         {
+            _group = AndroidOptions.DefaultGroupId;
+            _name = AndroidOptions.DefaultGroupName;
         }
 
         /// <summary>
         /// Builds the request to <see cref="NotificationChannelGroupRequest"/>
         /// </summary>
         /// <returns></returns>
-        public NotificationChannelGroupRequest Build() => new NotificationChannelGroupRequest(Group, Name);
+        public NotificationChannelGroupRequest Build() => new NotificationChannelGroupRequest()
+        {
+            Group = _group,
+            Name = _name
+        };
 
         /// <summary>
         /// Sets the Group
@@ -25,7 +31,7 @@
         /// <returns></returns>
         public NotificationChannelGroupRequestBuilder WithGroup(string group)
         {
-            Group = group;
+            _group = group ?? AndroidOptions.DefaultGroupId;
             return this;
         }
 
@@ -36,7 +42,7 @@
         /// <returns></returns>
         public NotificationChannelGroupRequestBuilder WithName(string name)
         {
-            Name = name;
+            _name = name ?? AndroidOptions.DefaultGroupName;
             return this;
         }
     }

@@ -26,7 +26,7 @@ namespace Plugin.LocalNotification
         internal AndroidOptionsBuilder()
         {
             Priority = NotificationPriority.Default;
-            ChannelId = "Plugin.LocalNotification.GENERAL";
+            ChannelId = AndroidOptions.DefaultChannelId;
             AutoCancel = true;
         }
 
@@ -69,7 +69,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithChannelId(string channelId)
         {
-            ChannelId = channelId;
+            ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
             return this;
         }
 

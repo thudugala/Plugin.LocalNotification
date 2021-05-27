@@ -9,11 +9,6 @@ namespace Plugin.LocalNotification
 {
     public static partial class NotificationCenter
     {
-        /// <summary>
-        /// Default Channel Id.
-        /// </summary>
-        public static string DefaultChannelId => "Plugin.LocalNotification.GENERAL";
-
         static NotificationCenter()
         {
             try
@@ -91,7 +86,7 @@ namespace Plugin.LocalNotification
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
         /// <param name="request"></param>
-        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest request)
+        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest request = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -104,11 +99,16 @@ namespace Plugin.LocalNotification
                 return false;
             }
 
-            if (request is null ||
-                string.IsNullOrWhiteSpace(request.Group) ||
-                string.IsNullOrWhiteSpace(request.Name))
+            request ??= new NotificationChannelGroupRequest();
+                
+            if (string.IsNullOrWhiteSpace(request.Group))
             {
-                return false;
+                request.Group = AndroidOptions.DefaultGroupId;
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                request.Name = AndroidOptions.DefaultGroupName;
             }
 
             using var channelGroup = new NotificationChannelGroup(request.Group, request.Name);
@@ -140,16 +140,16 @@ namespace Plugin.LocalNotification
 
             request ??= new NotificationChannelRequest();
 
-            if (string.IsNullOrWhiteSpace(request.Name))
-            {
-                request.Name = "General";
-            }
-
             if (string.IsNullOrWhiteSpace(request.Id))
             {
-                request.Id = DefaultChannelId;
+                request.Id = AndroidOptions.DefaultChannelId;
             }
 
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                request.Name = AndroidOptions.DefaultChannelName;
+            }
+            
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.

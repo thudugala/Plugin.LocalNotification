@@ -28,7 +28,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <param name="channelId">The channel id</param>
         public NotificationChannelRequestBuilder(string channelId)
         {
-            ChannelId = channelId ?? NotificationCenter.DefaultChannelId;
+            ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
         }
 
         /// <summary>
@@ -36,7 +36,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder()
         {
-            ChannelId = NotificationCenter.DefaultChannelId;
+            ChannelId = AndroidOptions.DefaultChannelId;
+            Name = AndroidOptions.DefaultChannelName;
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithChannelId(string channelId)
         {
-            ChannelId = channelId ?? NotificationCenter.DefaultChannelId;
+            ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
             return this;
         }
 
@@ -62,7 +63,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithName(string name)
         {
-            Name = name ?? "General";
+            Name = name ?? AndroidOptions.DefaultChannelName;
             return this;
         }
 

@@ -8,6 +8,26 @@ namespace Plugin.LocalNotification
     public class AndroidOptions
     {
         /// <summary>
+        /// Default Channel Id.
+        /// </summary>
+        public static string DefaultChannelId => "Plugin.LocalNotification.GENERAL";
+
+        /// <summary>
+        /// Default Channel Name
+        /// </summary>
+        public static string DefaultChannelName => "General";
+
+        /// <summary>
+        /// Default Group Id
+        /// </summary>
+        public static string DefaultGroupId => "Plugin.LocalNotification.Group";
+
+        /// <summary>
+        /// Default Group Name
+        /// </summary>
+        public static string DefaultGroupName => "GeneralGroup";
+
+        /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
         /// Default is true
         /// </summary>
@@ -17,7 +37,7 @@ namespace Plugin.LocalNotification
         /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
         /// Use this to target the Notification Channel.
         /// </summary>
-        public string ChannelId { get; set; } = "Plugin.LocalNotification.GENERAL";
+        public string ChannelId { get; set; } = DefaultChannelId;
 
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
