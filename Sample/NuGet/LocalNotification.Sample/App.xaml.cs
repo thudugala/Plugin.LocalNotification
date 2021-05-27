@@ -14,7 +14,7 @@ namespace LocalNotification.Sample
 
             MainPage = new NavigationPage(new MainPage());
         }
-
+        
         protected override void OnResume()
         {
             // Handle when your app resumes

@@ -12,6 +12,9 @@ namespace LocalNotification.Sample
         public MainPage()
         {
             InitializeComponent();
+
+            NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
         }
@@ -64,6 +67,24 @@ namespace LocalNotification.Sample
             }
 
             NotificationCenter.Current.Show(request);
+        }
+
+        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
+        {
+            if (e is null)
+            {
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine(e);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (CustomAlert.IsToggled)
+                {
+                    DisplayAlert(e.Title, e.Description, "OK");
+                }
+            });
         }
     }
 }
