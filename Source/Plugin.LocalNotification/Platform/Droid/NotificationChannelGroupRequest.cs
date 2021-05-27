@@ -16,7 +16,7 @@
         public string Name { get; set; }
 
         /// <summary>
-        /// Default ctor
+        /// Constructor to pass values directly
         /// </summary>
         /// <param name="group"></param>
         /// <param name="name"></param>
@@ -24,6 +24,14 @@
         {
             Group = group;
             Name = name;
+        }
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public NotificationChannelGroupRequest()
+        {
+
         }
     }
 }
