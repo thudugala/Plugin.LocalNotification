@@ -21,14 +21,21 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return;
                 }
 
+                var localNotification = GetRequest(response.Notification);
+
                 // Take action based on identifier
                 if (!response.IsDefaultAction)
                 {
+                    var actionIdentifier = response.ActionIdentifier;
+                    var userInfo = response.Notification.Request.Content.UserInfo;
+
+                    NotificationCenter.NotificationActions[actionIdentifier].Handler?.Invoke(localNotification.NotificationId, localNotification.ReturningData);
+
                     return;
                 }
 
-                var localNotification = GetRequest(response.Notification);
-
+                
+                
                 var args = new NotificationTappedEventArgs
                 {
                     Request = localNotification

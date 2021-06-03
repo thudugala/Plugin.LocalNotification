@@ -1,6 +1,7 @@
 ﻿using Foundation;
 using Plugin.LocalNotification.Platform.iOS;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ namespace Plugin.LocalNotification
 {
     public static partial class NotificationCenter
     {
+        public static Dictionary<string, NotificationAction> NotificationActions { get; set; } = new Dictionary<string, NotificationAction>();
+
         static NotificationCenter()
         {
             try
@@ -96,6 +99,24 @@ namespace Plugin.LocalNotification
                     uiApplication.ApplicationIconBadgeNumber = 0;
                 });
             });
+        }
+
+        /// <summary>
+        /// Register notification actions
+        /// </summary>
+        public static void RegisterActions(string categoryIdentifer, params NotificationAction[] actions)
+        {
+            foreach(var action in actions)
+            {
+                NotificationActions.Add(action.Identifier, action);
+            }
+
+            var UNNotificationActions = NotificationActions.Select(t => UNNotificationAction.FromIdentifier(t.Key, t.Value.Title, UNNotificationActionOptions.None));
+
+            var categories = UNNotificationCategory.FromIdentifier(categoryIdentifer, UNNotificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+
+            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(categories));
+
         }
     }
 }
