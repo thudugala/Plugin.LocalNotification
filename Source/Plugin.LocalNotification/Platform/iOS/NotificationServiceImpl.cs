@@ -77,19 +77,6 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        public void Pending()
-        {
-            
-
-            UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
-            {
-                foreach(var request in requests)
-                {
-                    var n = request.Content;
-                }
-            });
-        }
-
         /// <inheritdoc />
         public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
 
@@ -125,6 +112,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 using var content = new UNMutableNotificationContent
                 {
                     Title = notificationRequest.Title,
+                    Subtitle = notificationRequest.Subtitle,
                     Body = notificationRequest.Description,
                     Badge = notificationRequest.BadgeNumber,
                     UserInfo = userInfoDictionary,

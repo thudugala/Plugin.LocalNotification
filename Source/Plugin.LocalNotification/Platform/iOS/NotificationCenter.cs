@@ -12,7 +12,9 @@ namespace Plugin.LocalNotification
 {
     public static partial class NotificationCenter
     {
-        public static Dictionary<string, NotificationAction> NotificationActions { get; set; } = new Dictionary<string, NotificationAction>();
+
+        // All identifiers must be unique
+        public static Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
 
         static NotificationCenter()
         {
@@ -102,21 +104,55 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// Register notification actions
+        /// Register notification categories and their corresponding actions
         /// </summary>
-        public static void RegisterActions(string categoryIdentifer, params NotificationAction[] actions)
+        public static void RegisterCategories(NotificationCategory[] notificationCategories)
         {
-            foreach(var action in actions)
+            var categories = new List<UNNotificationCategory>();
+
+            foreach (var category in notificationCategories)
             {
-                NotificationActions.Add(action.Identifier, action);
+                var notificationCategory = RegisterActions(category);
+
+                categories.Add(notificationCategory);
             }
 
-            var UNNotificationActions = NotificationActions.Select(t => UNNotificationAction.FromIdentifier(t.Key, t.Value.Title, UNNotificationActionOptions.None));
+            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(categories.ToArray()));
+        }
 
-            var categories = UNNotificationCategory.FromIdentifier(categoryIdentifer, UNNotificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+        private static UNNotificationCategory RegisterActions(NotificationCategory category)
+        {
+            foreach (var notificationAction in category.NotificationActions)
+            {
+                NotificationActions.Add(notificationAction.Identifier, notificationAction);
+            }
 
-            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(categories));
+            var notificationActions = category
+                .NotificationActions
+                .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.ActionType)));
 
+            var notificationCategory = UNNotificationCategory
+                .FromIdentifier(category.Identifier, notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+
+            return notificationCategory;
+        }
+
+        private static UNNotificationActionOptions ToNativeActionType(ActionTypes actionsType)
+        {
+            switch(actionsType)
+            {
+                case ActionTypes.Foreground:
+                    return UNNotificationActionOptions.Foreground;
+
+                case ActionTypes.Destructive:
+                    return UNNotificationActionOptions.Destructive;
+
+                case ActionTypes.AuthenticationRequired:
+                    return UNNotificationActionOptions.AuthenticationRequired;
+
+                default:
+                    return UNNotificationActionOptions.None;
+            }
         }
     }
 }

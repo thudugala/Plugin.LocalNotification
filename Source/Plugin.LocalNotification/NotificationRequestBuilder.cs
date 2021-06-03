@@ -14,6 +14,7 @@ namespace Plugin.LocalNotification
         private int NotificationId;
         private string NotificationSound = string.Empty;
         private string NotificationTitle = string.Empty;
+        private string NotificationSubtitle = string.Empty;
         private string ReturningData = string.Empty;
         private NotificationRequestSchedule Schedule;
 
@@ -179,6 +180,15 @@ namespace Plugin.LocalNotification
         public NotificationRequestBuilder WithTitle(string title)
         {
             NotificationTitle = title;
+            return this;
+        }
+
+        /// <summary>
+        /// Title for the notification.
+        /// </summary>
+        public NotificationRequestBuilder WithSubtitle(string subtitle)
+        {
+            NotificationSubtitle = subtitle;
             return this;
         }
     }

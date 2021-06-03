@@ -165,6 +165,10 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
             builder.SetContentTitle(request.Title);
+
+            builder.SetSubText(request.Subtitle);
+
+
             builder.SetContentText(request.Description);
             using (var bigTextStyle = new NotificationCompat.BigTextStyle())
             {
@@ -183,6 +187,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                     builder.SetGroupSummary(true);
                 }
             }
+
+            if (!string.IsNullOrEmpty(request.Category))
+            {
+                builder.SetCategory(request.Category);
+            }
+
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
