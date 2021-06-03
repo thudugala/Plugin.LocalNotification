@@ -19,8 +19,8 @@ namespace LocalNotification.Sample
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
             ScheduleNotificationGroup();
-            ScheduleNotification("first", 5);
-            ScheduleNotification("second", 10);
+            ScheduleNotification("first", 10);
+            ScheduleNotification("second", 20);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
