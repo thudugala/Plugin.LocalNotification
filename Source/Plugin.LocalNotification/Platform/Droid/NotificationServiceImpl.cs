@@ -7,6 +7,7 @@ using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
 using System.Globalization;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -215,7 +216,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
-            if (string.IsNullOrWhiteSpace(request.Android.IconLargeName) == false)
+            if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.Name) == false)
             {
                 builder.SetLargeIcon(BitmapFactory.DecodeResource(Application.Context.Resources, GetIcon(request.Android.IconLargeName)));
             }
@@ -232,7 +233,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return false;
             }
 
-            var serializedNotification = ObjectSerializer.SerializeObject(request);
+            var serializedNotification = JsonSerializer.Serialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedNotification);
 
@@ -262,7 +263,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             return true;
         }
-
+        
         /// <summary>
         ///
         /// </summary>
@@ -300,14 +301,19 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         ///
         /// </summary>
-        /// <param name="iconName"></param>
+        /// <param name="icon"></param>
         /// <returns></returns>
-        protected static int GetIcon(string iconName)
+        protected static int GetIcon(AndroidNotificationIcon icon)
         {
             var iconId = 0;
-            if (string.IsNullOrWhiteSpace(iconName) == false)
+            if (icon != null && string.IsNullOrWhiteSpace(icon.Name) == false)
             {
-                iconId = Application.Context.Resources?.GetIdentifier(iconName, "drawable", Application.Context.PackageName) ?? 0;
+                if (string.IsNullOrWhiteSpace(icon.Type))
+                {
+                    icon.Type = AndroidNotificationIcon.DefaultType;
+                }
+
+                iconId = Application.Context.Resources?.GetIdentifier(icon.Name, icon.Type, Application.Context.PackageName) ?? 0;
             }
 
             if (iconId != 0)
@@ -318,7 +324,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             iconId = Application.Context.ApplicationInfo?.Icon ?? 0;
             if (iconId == 0)
             {
-                iconId = Application.Context.Resources?.GetIdentifier("icon", "drawable",
+                iconId = Application.Context.Resources?.GetIdentifier("icon", AndroidNotificationIcon.DefaultType,
                     Application.Context.PackageName) ?? 0;
             }
 

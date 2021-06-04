@@ -1,6 +1,7 @@
 ﻿using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -35,7 +36,7 @@ namespace LocalNotification.Sample
                 title,
                 _tapCount.ToString()
             };
-            var serializeReturningData = ObjectSerializer.SerializeObject(list);
+            var serializeReturningData = JsonSerializer.Serialize(list);
 
             var request = new NotificationRequest
             {
@@ -46,7 +47,7 @@ namespace LocalNotification.Sample
                 ReturningData = serializeReturningData,
                 Android =
                 {
-                    IconSmallName = "icon1",
+                    IconSmallName = new AndroidNotificationIcon("icon1"),
                     Color = 33468,
                     ProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
@@ -96,7 +97,7 @@ namespace LocalNotification.Sample
                 title,
                 _tapCount.ToString()
             };
-            var serializeReturningData = ObjectSerializer.SerializeObject(list);
+            var serializeReturningData = JsonSerializer.Serialize(list);
 
             var notification = new NotificationRequest
             {

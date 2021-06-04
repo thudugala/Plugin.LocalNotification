@@ -11,8 +11,8 @@ namespace Plugin.LocalNotification
         private string ChannelId;
         private int? Color;
         private string Group;
-        private string IconLargeName;
-        private string IconSmallName;
+        private AndroidNotificationIcon IconLargeName;
+        private AndroidNotificationIcon IconSmallName;
         private bool IsGroupSummary;
         private int? LedColor;
         private bool Ongoing;
@@ -106,9 +106,9 @@ namespace Plugin.LocalNotification
         /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidOptionsBuilder WithIconLargeName(string iconName)
+        public AndroidOptionsBuilder WithIconLargeName(AndroidNotificationIcon icon)
         {
-            IconLargeName = iconName;
+            IconLargeName = icon;
             return this;
         }
 
@@ -116,9 +116,9 @@ namespace Plugin.LocalNotification
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidOptionsBuilder WithIconSmallName(string iconName)
+        public AndroidOptionsBuilder WithIconSmallName(AndroidNotificationIcon icon)
         {
-            IconSmallName = iconName;
+            IconSmallName = icon;
             return this;
         }
 

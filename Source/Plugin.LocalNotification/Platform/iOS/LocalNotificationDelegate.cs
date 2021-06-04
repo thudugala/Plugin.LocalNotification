@@ -67,22 +67,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                 return null;
             }
             var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
-            var requestSerializeSchedule = string.Empty;
-            var requestSerializeAndroid = string.Empty;
-            var requestSerializeIos = string.Empty;
-            if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestSchedule)))
-            {
-                requestSerializeSchedule = dictionary[NotificationCenter.ReturnRequestSchedule].ToString();
-            }
-            if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestAndroid)))
-            {
-                requestSerializeAndroid = dictionary[NotificationCenter.ReturnRequestAndroid].ToString();
-            }
-            if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestIos)))
-            {
-                requestSerializeIos = dictionary[NotificationCenter.ReturnRequestIos].ToString();
-            }
-            var request = NotificationCenter.GetRequest(requestSerialize, requestSerializeSchedule, requestSerializeAndroid, requestSerializeIos);
+          
+            var request = NotificationCenter.GetRequest(requestSerialize);
 
             return request;
         }

@@ -1,5 +1,4 @@
-﻿using Foundation;
-using Plugin.LocalNotification.Platform.iOS;
+﻿using Plugin.LocalNotification.Platform.iOS;
 using System;
 using System.Diagnostics;
 using System.Linq;

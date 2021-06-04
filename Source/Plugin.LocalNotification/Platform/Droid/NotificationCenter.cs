@@ -43,11 +43,7 @@ namespace Plugin.LocalNotification
                 {
                     return false;
                 }
-                var requestSerializeSchedule = intent.GetStringExtra(ReturnRequestSchedule);
-                var requestSerializeAndroid = intent.GetStringExtra(ReturnRequestAndroid);
-                var requestSerializeIos = intent.GetStringExtra(ReturnRequestIos);
-
-                var notification = GetRequest(requestSerialize, requestSerializeSchedule, requestSerializeAndroid, requestSerializeIos);
+                var notification = GetRequest(requestSerialize);
                 if (notification is null)
                 {
                     return false;

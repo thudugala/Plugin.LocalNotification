@@ -22,11 +22,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 return Result.InvokeFailure();
             }
-            var requestSerializeSchedule = InputData.GetString(NotificationCenter.ReturnRequestSchedule);
-            var requestSerializeAndroid = InputData.GetString(NotificationCenter.ReturnRequestAndroid);
-            var requestSerializeIos = InputData.GetString(NotificationCenter.ReturnRequestIos);
 
-            var notification = NotificationCenter.GetRequest(requestSerialize, requestSerializeSchedule, requestSerializeAndroid, requestSerializeIos);
+            var notification = NotificationCenter.GetRequest(requestSerialize);
             if (notification is null)
             {
                 return Result.InvokeFailure();

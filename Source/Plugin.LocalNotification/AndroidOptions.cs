@@ -26,7 +26,7 @@ namespace Plugin.LocalNotification
         /// Default Group Name
         /// </summary>
         public static string DefaultGroupName => "GeneralGroup";
-
+        
         /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
         /// Default is true
@@ -54,13 +54,13 @@ namespace Plugin.LocalNotification
         /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public string IconLargeName { get; set; }
+        public AndroidNotificationIcon IconLargeName { get; set; } = new AndroidNotificationIcon();
 
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public string IconSmallName { get; set; }
+        public AndroidNotificationIcon IconSmallName { get; set; } = new AndroidNotificationIcon();
 
         /// <summary>
         /// Set this notification to be the group summary for a group of notifications.
