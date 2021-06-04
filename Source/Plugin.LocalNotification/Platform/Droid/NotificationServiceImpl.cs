@@ -1,11 +1,14 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using AndroidX.Core.App;
+using AndroidX.Core.Graphics.Drawable;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -23,6 +26,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         protected readonly WorkManager WorkManager;
+
+        public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -193,7 +198,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 builder.SetCategory(request.Category);
             }
 
-
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 builder.SetPriority((int)request.Android.Priority);
@@ -249,6 +253,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);
+
+
+            if (NotificationActions.Count > 0)
+            {
+                foreach(var notificationAction in NotificationActions)
+                {
+                    var action = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(notificationAction.Value.Title), pendingIntent);
+
+                    builder.AddAction(action);
+                }
+            }
 
             var notification = builder.Build();
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
@@ -342,6 +357,21 @@ namespace Plugin.LocalNotification.Platform.Droid
         protected static void Log(string message)
         {
             Android.Util.Log.Info(Application.Context.PackageName, message);
+        }
+
+        public void RegisterCategories(NotificationCategory[] notificationCategories)
+        {
+            foreach(var category in notificationCategories)
+            {
+                RegisterActions(category.NotificationActions);
+            }
+        }
+        private void RegisterActions(NotificationAction[] notificationActions)
+        {
+            foreach(var action in notificationActions)
+            {
+                NotificationActions.Add(action.Identifier, action);
+            }
         }
     }
 }

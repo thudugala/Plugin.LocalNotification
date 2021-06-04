@@ -1,7 +1,5 @@
-﻿using Foundation;
-using Plugin.LocalNotification.Platform.iOS;
+﻿using Plugin.LocalNotification.Platform.iOS;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +10,6 @@ namespace Plugin.LocalNotification
 {
     public static partial class NotificationCenter
     {
-
-        // All identifiers must be unique
-        public static Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
-
         static NotificationCenter()
         {
             try
@@ -101,58 +95,6 @@ namespace Plugin.LocalNotification
                     uiApplication.ApplicationIconBadgeNumber = 0;
                 });
             });
-        }
-
-        /// <summary>
-        /// Register notification categories and their corresponding actions
-        /// </summary>
-        public static void RegisterCategories(NotificationCategory[] notificationCategories)
-        {
-            var categories = new List<UNNotificationCategory>();
-
-            foreach (var category in notificationCategories)
-            {
-                var notificationCategory = RegisterActions(category);
-
-                categories.Add(notificationCategory);
-            }
-
-            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(categories.ToArray()));
-        }
-
-        private static UNNotificationCategory RegisterActions(NotificationCategory category)
-        {
-            foreach (var notificationAction in category.NotificationActions)
-            {
-                NotificationActions.Add(notificationAction.Identifier, notificationAction);
-            }
-
-            var notificationActions = category
-                .NotificationActions
-                .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.ActionType)));
-
-            var notificationCategory = UNNotificationCategory
-                .FromIdentifier(category.Identifier, notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
-
-            return notificationCategory;
-        }
-
-        private static UNNotificationActionOptions ToNativeActionType(ActionTypes actionsType)
-        {
-            switch(actionsType)
-            {
-                case ActionTypes.Foreground:
-                    return UNNotificationActionOptions.Foreground;
-
-                case ActionTypes.Destructive:
-                    return UNNotificationActionOptions.Destructive;
-
-                case ActionTypes.AuthenticationRequired:
-                    return UNNotificationActionOptions.AuthenticationRequired;
-
-                default:
-                    return UNNotificationActionOptions.None;
-            }
         }
     }
 }

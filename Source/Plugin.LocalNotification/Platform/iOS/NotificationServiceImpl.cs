@@ -1,7 +1,9 @@
 ﻿using Foundation;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
@@ -11,6 +13,10 @@ namespace Plugin.LocalNotification.Platform.iOS
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
+
+        // All identifiers must be unique
+        public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
+
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
 
@@ -201,6 +207,56 @@ namespace Plugin.LocalNotification.Platform.iOS
                     Second = dateTime.Second
                 }
             };
+        }
+
+        /// <inheritdoc />
+        public void RegisterCategories(NotificationCategory[] notificationCategories)
+        {
+            var categories = new List<UNNotificationCategory>();
+
+            foreach (var category in notificationCategories)
+            {
+                var notificationCategory = RegisterActions(category);
+
+                categories.Add(notificationCategory);
+            }
+
+            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(categories.ToArray()));
+        }
+
+        private static UNNotificationCategory RegisterActions(NotificationCategory category)
+        {
+            foreach (var notificationAction in category.NotificationActions)
+            {
+                NotificationCenter.Current.NotificationActions.Add(notificationAction.Identifier, notificationAction);
+            }
+
+            var notificationActions = category
+                .NotificationActions
+                .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.ActionType)));
+
+            var notificationCategory = UNNotificationCategory
+                .FromIdentifier(category.Identifier, notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+
+            return notificationCategory;
+        }
+
+        private static UNNotificationActionOptions ToNativeActionType(ActionTypes actionsType)
+        {
+            switch (actionsType)
+            {
+                case ActionTypes.Foreground:
+                    return UNNotificationActionOptions.Foreground;
+
+                case ActionTypes.Destructive:
+                    return UNNotificationActionOptions.Destructive;
+
+                case ActionTypes.AuthenticationRequired:
+                    return UNNotificationActionOptions.AuthenticationRequired;
+
+                default:
+                    return UNNotificationActionOptions.None;
+            }
         }
     }
 }

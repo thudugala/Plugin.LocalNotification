@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification
@@ -52,5 +53,16 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="notificationRequest"></param>
         Task<bool> Show(NotificationRequest notificationRequest);
+
+
+        /// <summary>
+        /// Storage for actions
+        /// </summary>
+        Dictionary<string, NotificationAction> NotificationActions { get; }
+
+        /// <summary>
+        /// Register notification categories and their corresponding actions
+        /// </summary>
+        void RegisterCategories(NotificationCategory[] notificationCategories);
     }
 }

@@ -29,7 +29,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     var actionIdentifier = response.ActionIdentifier;
                     var userInfo = response.Notification.Request.Content.UserInfo;
 
-                    NotificationCenter.NotificationActions[actionIdentifier].Handler?.Invoke(localNotification.NotificationId, localNotification.ReturningData);
+                    NotificationCenter.Current.NotificationActions[actionIdentifier].Handler?.Invoke(localNotification.NotificationId, localNotification.ReturningData);
 
                     return;
                 }
