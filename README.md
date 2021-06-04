@@ -121,7 +121,7 @@ public partial class App : Application
 
 Project should [target Android framework 11.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
 
-![image](https://user-images.githubusercontent.com/4112014/74599294-5100e480-50e4-11ea-85a5-409af45bdab7.png)
+![image](https://user-images.githubusercontent.com/4112014/120728139-5af46400-c530-11eb-9299-fd9ac9221589.png)
 
 #### Setup
 
