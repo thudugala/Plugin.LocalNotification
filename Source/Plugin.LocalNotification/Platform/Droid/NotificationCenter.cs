@@ -96,7 +96,7 @@ namespace Plugin.LocalNotification
             }
 
             request ??= new NotificationChannelGroupRequest();
-                
+
             if (string.IsNullOrWhiteSpace(request.Group))
             {
                 request.Group = AndroidOptions.DefaultGroupId;
@@ -145,7 +145,7 @@ namespace Plugin.LocalNotification
             {
                 request.Name = AndroidOptions.DefaultChannelName;
             }
-            
+
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.

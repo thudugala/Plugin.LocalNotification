@@ -164,6 +164,18 @@ namespace Plugin.LocalNotification.Platform.Droid
                 request.Android.ChannelId = AndroidOptions.DefaultChannelId;
             }
 
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                var channel = NotificationManager.GetNotificationChannel(request.Android.ChannelId);
+                if (channel is null)
+                {
+                    NotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
+                    {
+                        Id = request.Android.ChannelId
+                    });
+                }
+            }
+
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
@@ -221,9 +233,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                     request.Android.IsProgressBarIndeterminate.Value);
             }
 
-            if (request.Android.Color.HasValue)
+            if (string.IsNullOrWhiteSpace(request.Android.Color) == false)
             {
-                builder.SetColor(request.Android.Color.Value);
+                var colorId = Application.Context.Resources?.GetIdentifier(request.Android.Color, "color", Application.Context.PackageName) ?? 0;
+                builder.SetColor(colorId);
             }
 
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));

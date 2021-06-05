@@ -42,7 +42,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
-        public int? Color { get; set; }
+        public string Color { get; set; }
 
         /// <summary>
         /// Set this notification to be part of a group of notifications sharing the same key.
