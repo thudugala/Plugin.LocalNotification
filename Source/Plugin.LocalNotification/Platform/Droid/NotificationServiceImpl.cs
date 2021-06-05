@@ -256,13 +256,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
                 request.Android.LedColor.HasValue)
             {
+#pragma warning disable 618
                 notification.LedARGB = request.Android.LedColor.Value;
+#pragma warning restore 618
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
                 string.IsNullOrWhiteSpace(request.Sound))
             {
+#pragma warning disable 618
                 notification.Defaults = NotificationDefaults.All;
+#pragma warning restore 618
             }
             NotificationManager?.Notify(request.NotificationId, notification);
 
