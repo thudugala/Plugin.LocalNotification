@@ -173,5 +173,17 @@ namespace Plugin.LocalNotification
             _options.VibrationPattern = pattern;
             return this;
         }
+
+        /// <summary>
+        /// Sphere of visibility of this notification,
+        /// which affects how and when the SystemUI reveals the notification's presence and contents in untrusted situations (namely, on the secure lockscreen).
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public AndroidOptionsBuilder WithVisibilityType(AndroidVisibilityType type)
+        {
+            _options.VisibilityType = type;
+            return this;
+        }
     }
 }

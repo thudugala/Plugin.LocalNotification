@@ -186,9 +186,14 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
             }
 
-            if (!string.IsNullOrEmpty(request.Category))
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
-                builder.SetCategory(request.Category);
+                if (string.IsNullOrWhiteSpace(request.CategoryCode) == false)
+                {
+                    builder.SetCategory(request.CategoryCode);
+                }
+
+                builder.SetVisibility(ToNativeVisibilityType(request.Android.VisibilityType));
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -268,6 +273,22 @@ namespace Plugin.LocalNotification.Platform.Droid
             NotificationCenter.Current.OnNotificationReceived(args);
 
             return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected static int ToNativeVisibilityType(AndroidVisibilityType type)
+        {
+            return type switch
+            {
+                AndroidVisibilityType.Private => (int)NotificationVisibility.Private,
+                AndroidVisibilityType.Public => (int)NotificationVisibility.Public,
+                AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
         }
 
         /// <summary>

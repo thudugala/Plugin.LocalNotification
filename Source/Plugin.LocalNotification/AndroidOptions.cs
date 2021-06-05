@@ -26,7 +26,7 @@ namespace Plugin.LocalNotification
         /// Default Group Name
         /// </summary>
         public static string DefaultGroupName => "GeneralGroup";
-        
+
         /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
         /// Default is true
@@ -69,6 +69,11 @@ namespace Plugin.LocalNotification
         public bool IsGroupSummary { get; set; }
 
         /// <summary>
+        /// Set whether this progress bar is in indeterminate mode
+        /// </summary>
+        public bool? IsProgressBarIndeterminate { get; set; }
+
+        /// <summary>
         /// If set, the LED will have the provided ARGB color.
         /// </summary>
         public int? LedColor { get; set; }
@@ -88,11 +93,6 @@ namespace Plugin.LocalNotification
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
         /// </summary>
         public NotificationPriority Priority { get; set; } = NotificationPriority.Default;
-
-        /// <summary>
-        /// Set whether this progress bar is in indeterminate mode
-        /// </summary>
-        public bool? IsProgressBarIndeterminate { get; set; }
 
         /// <summary>
         /// Set Upper limit of this progress bar's range
@@ -117,5 +117,11 @@ namespace Plugin.LocalNotification
         /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
         /// </summary>
         public long[] VibrationPattern { get; set; }
+
+        /// <summary>
+        /// Sphere of visibility of this notification,
+        /// which affects how and when the SystemUI reveals the notification's presence and contents in untrusted situations (namely, on the secure lockscreen).
+        /// </summary>
+        public AndroidVisibilityType VisibilityType { get; set; } = AndroidVisibilityType.Private;
     }
 }

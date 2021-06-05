@@ -117,7 +117,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     Badge = notificationRequest.BadgeNumber,
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default,
-                    CategoryIdentifier = notificationRequest.Category
+                    CategoryIdentifier = notificationRequest.CategoryCode
                 };
                 if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
                 {
