@@ -33,9 +33,9 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 try
                 {
-                    if (notification.Schedule.NotifyTime.HasValue && notification.Schedule.Repeats != NotificationRepeat.No)
+                    if (notification.Schedule.NotifyTime.HasValue && notification.Schedule.RepeatType != NotificationRepeat.No)
                     {
-                        switch (notification.Schedule.Repeats)
+                        switch (notification.Schedule.RepeatType)
                         {
                             case NotificationRepeat.Daily:
                                 // To be consistent with iOS, Schedule notification next day same time.

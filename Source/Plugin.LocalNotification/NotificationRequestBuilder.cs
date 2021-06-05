@@ -7,15 +7,7 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class NotificationRequestBuilder
     {
-        private AndroidOptions AndroidOptions;
-        private int BadgeNumberCount;
-        private iOSOptions iOSOptions;
-        private string NotificationDescription = string.Empty;
-        private int NotificationId;
-        private string NotificationSound = string.Empty;
-        private string NotificationTitle = string.Empty;
-        private string ReturningData = string.Empty;
-        private NotificationRequestSchedule Schedule;
+        private readonly NotificationRequest _request;
 
         /// <summary>
         /// Initializes NotificationRequestBuilder with the specified notification Id.
@@ -23,12 +15,9 @@ namespace Plugin.LocalNotification
         /// <param name="notificationId">A unique identifier for the request
         /// (if identifier is not unique, a new notification request object is not created).
         /// You can use this identifier later to cancel a request that is still pending.</param>
-        public NotificationRequestBuilder(int notificationId)
+        public NotificationRequestBuilder(int notificationId) : this()
         {
-            NotificationId = notificationId;
-            AndroidOptions = new AndroidOptions();
-            iOSOptions = new iOSOptions();
-            Schedule = new NotificationRequestSchedule();
+            _request.NotificationId = notificationId;
         }
 
         /// <summary>
@@ -36,49 +25,14 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestBuilder()
         {
-            AndroidOptions = new AndroidOptions();
-            iOSOptions = new iOSOptions();
-            Schedule = new NotificationRequestSchedule();
+            _request = new NotificationRequest();
         }
 
         /// <summary>
         /// Creates the notification request
         /// </summary>
         /// <returns>The notification request</returns>
-        public NotificationRequest Create() => new NotificationRequest()
-        {
-            Android = AndroidOptions,
-            iOS = iOSOptions,
-            BadgeNumber = BadgeNumberCount,
-            Description = NotificationDescription,
-            NotificationId = NotificationId,
-            Schedule = Schedule,
-            ReturningData = ReturningData,
-            Sound = NotificationSound,
-            Title = NotificationTitle
-        };
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public NotificationRequestBuilder WithScheduleOptions(Func<NotificationRequestScheduleBuilder, NotificationRequestSchedule> builder)
-        {
-            Schedule = builder.Invoke(new NotificationRequestScheduleBuilder());
-            return this;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        public NotificationRequestBuilder WithScheduleOptions(NotificationRequestSchedule options)
-        {
-            Schedule = options;
-            return this;
-        }
+        public NotificationRequest Create() => _request;
 
         /// <summary>
         /// Android specific properties builder.
@@ -87,7 +41,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public NotificationRequestBuilder WithAndroidOptions(Func<AndroidOptionsBuilder, AndroidOptions> builder)
         {
-            AndroidOptions = builder.Invoke(new AndroidOptionsBuilder());
+            _request.Android = builder.Invoke(new AndroidOptionsBuilder());
             return this;
         }
 
@@ -98,16 +52,26 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public NotificationRequestBuilder WithAndroidOptions(AndroidOptions options)
         {
-            AndroidOptions = options;
+            _request.Android = options;
             return this;
         }
 
         /// <summary>
         /// Number of the badge displays on the Home Screen.
         /// </summary>
-        public NotificationRequestBuilder WithBadgeCount(int count)
+        public NotificationRequestBuilder WithBadgeNumber(int number)
         {
-            BadgeNumberCount = count;
+            _request.BadgeNumber = number;
+            return this;
+        }
+
+        /// <summary>
+        /// Category for the notification.
+        /// In Android Must be one of the predefined notification categories
+        /// </summary>
+        public NotificationRequestBuilder WithCategory(string category)
+        {
+            _request.Category = category;
             return this;
         }
 
@@ -116,7 +80,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestBuilder WithDescription(string description)
         {
-            NotificationDescription = description;
+            _request.Description = description;
             return this;
         }
 
@@ -127,7 +91,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public NotificationRequestBuilder WithiOSOptions(Func<iOSOptionsBuilder, iOSOptions> builder)
         {
-            iOSOptions = builder.Invoke(new iOSOptionsBuilder());
+            _request.iOS = builder.Invoke(new iOSOptionsBuilder());
             return this;
         }
 
@@ -136,7 +100,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestBuilder WithiOSOptions(iOSOptions options)
         {
-            iOSOptions = options;
+            _request.iOS = options;
             return this;
         }
 
@@ -149,7 +113,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public NotificationRequestBuilder WithNotificationId(int notificationId)
         {
-            NotificationId = notificationId;
+            _request.NotificationId = notificationId;
             return this;
         }
 
@@ -158,7 +122,29 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestBuilder WithReturningData(string returningData)
         {
-            ReturningData = returningData;
+            _request.ReturningData = returningData;
+            return this;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public NotificationRequestBuilder WithScheduleOptions(Func<NotificationRequestScheduleBuilder, NotificationRequestSchedule> builder)
+        {
+            _request.Schedule = builder.Invoke(new NotificationRequestScheduleBuilder());
+            return this;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public NotificationRequestBuilder WithScheduleOptions(NotificationRequestSchedule options)
+        {
+            _request.Schedule = options;
             return this;
         }
 
@@ -169,7 +155,16 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestBuilder WithSound(string fileName)
         {
-            NotificationSound = fileName;
+            _request.Sound = fileName;
+            return this;
+        }
+
+        /// <summary>
+        /// SubTitle for the notification.
+        /// </summary>
+        public NotificationRequestBuilder WithSubTitle(string subtitle)
+        {
+            _request.Subtitle = subtitle;
             return this;
         }
 
@@ -178,7 +173,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestBuilder WithTitle(string title)
         {
-            NotificationTitle = title;
+            _request.Title = title;
             return this;
         }
     }

@@ -5,30 +5,29 @@
     /// </summary>
     public class iOSOptionsBuilder
     {
-        private bool HideForegroundAlert;
-        private bool PlayForegroundSound;
+        private readonly iOSOptions _options;
 
+        /// <summary>
+        ///
+        /// </summary>
         internal iOSOptionsBuilder()
         {
+            _options = new iOSOptions();
         }
 
         /// <summary>
         /// Builds the request to <see cref="iOSOptions"/>
         /// </summary>
         /// <returns></returns>
-        public iOSOptions Build() => new iOSOptions()
-        {
-            HideForegroundAlert = HideForegroundAlert,
-            PlayForegroundSound = PlayForegroundSound
-        };
+        public iOSOptions Build() => _options;
 
         /// <summary>
         /// Setting this flag will prevent iOS from displaying the default banner when a Notification is received in foreground
         /// Default is false
         /// </summary>
-        public iOSOptionsBuilder WithForegroundAlertStatus(bool shouldHideForegroundAlert)
+        public iOSOptionsBuilder ShouldHideForegroundAlert(bool hideForegroundAlert)
         {
-            HideForegroundAlert = shouldHideForegroundAlert;
+            _options.HideForegroundAlert = hideForegroundAlert;
             return this;
         }
 
@@ -36,9 +35,9 @@
         /// Setting this flag will enable iOS to play the default notification sound even if the app is in foreground
         /// Default is false
         /// </summary>
-        public iOSOptionsBuilder WithForegroundSoundStatus(bool shouldPlayForegroundSound)
+        public iOSOptionsBuilder ShouldPlayForegroundSound(bool playForegroundSound)
         {
-            PlayForegroundSound = shouldPlayForegroundSound;
+            _options.PlayForegroundSound = playForegroundSound;
             return this;
         }
     }

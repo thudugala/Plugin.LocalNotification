@@ -49,7 +49,7 @@ namespace LocalNotification.Sample
                 {
                     IconSmallName = new AndroidNotificationIcon("icon1"),
                     Color = 33468,
-                    ProgressBarIndeterminate = false,
+                    IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
                     ProgressBarProgress = _tapCount
                     //AutoCancel = false,
@@ -80,7 +80,7 @@ namespace LocalNotification.Sample
                 }
 
                 request.Schedule.NotifyTime = notifyDateTime;
-                request.Schedule.Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
+                request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
             }
 
             NotificationCenter.Current.Show(request);

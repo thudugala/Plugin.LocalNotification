@@ -7,30 +7,29 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class NotificationRequestScheduleBuilder
     {
-        private TimeSpanExt? NotifyRepeatInterval;
-        private DateTime? NotifyStopTime;
-        private DateTime? NotifyTime;
-        private NotificationRepeat RepeatType = NotificationRepeat.No;
+        private readonly NotificationRequestSchedule _schedule;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public NotificationRequestScheduleBuilder()
+        {
+            _schedule = new NotificationRequestSchedule();
+        }
 
         /// <summary>
         /// Creates the notification request
         /// </summary>
         /// <returns>The notification request</returns>
-        public NotificationRequestSchedule Build() => new NotificationRequestSchedule()
-        {
-            NotifyRepeatInterval = NotifyRepeatInterval,
-            NotifyAutoCancelTime = NotifyStopTime,
-            NotifyTime = NotifyTime,
-            Repeats = RepeatType
-        };
+        public NotificationRequestSchedule Build() => _schedule;
 
         /// <summary>
         /// Time to show the notification.
         /// </summary>
         public NotificationRequestScheduleBuilder NotifyAt(DateTime? startTime, DateTime? autoCancelTime = null)
         {
-            NotifyTime = startTime;
-            NotifyStopTime = autoCancelTime;
+            _schedule.NotifyTime = startTime;
+            _schedule.NotifyAutoCancelTime = autoCancelTime;
             return this;
         }
 
@@ -39,8 +38,8 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequestScheduleBuilder SetNotificationRepeatInterval(NotificationRepeat repeatType, TimeSpanExt? repeatInterval = null)
         {
-            RepeatType = repeatType;
-            NotifyRepeatInterval = repeatInterval;
+            _schedule.RepeatType = repeatType;
+            _schedule.NotifyRepeatInterval = repeatInterval;
             return this;
         }
     }

@@ -6,20 +6,14 @@
     public class AndroidNotificationIcon
     {
         /// <summary>
-        /// Default Group Name
-        /// </summary>
-        public static string DefaultType => "drawable";
-
-        /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidNotificationIcon()
         {
-            
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         public AndroidNotificationIcon(string name)
@@ -28,7 +22,7 @@
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type"></param>
@@ -37,6 +31,11 @@
             Name = name;
             Type = type ?? DefaultType;
         }
+
+        /// <summary>
+        /// Default Group Name
+        /// </summary>
+        public static string DefaultType => "drawable";
 
         /// <summary>
         /// The name of the desired resource

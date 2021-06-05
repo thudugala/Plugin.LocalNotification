@@ -8,36 +8,23 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// </summary>
     public class NotificationChannelRequestBuilder
     {
-        private NotificationImportance Importance = NotificationImportance.Default;
-        private string ChannelId;
-        private string Name;
-        private string Description;
-        private string Group;
-        private Color LightColor;
-        private string SoundFile;
-        private long[] VibrationPattern;
-        private NotificationVisibility LockScreenVisibility = NotificationVisibility.Secret;
-        private bool ShowBadge = true;
-        private bool EnableLights = true;
-        private bool EnableVibration = true;
-        private bool BypassDnd = false;
-
-        /// <summary>
-        /// Initializes builder with the specified channelID.
-        /// </summary>
-        /// <param name="channelId">The channel id</param>
-        public NotificationChannelRequestBuilder(string channelId)
-        {
-            ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
-        }
+        private readonly NotificationChannelRequest _channelRequest;
 
         /// <summary>
         /// Initializes builder with the default channel id.
         /// </summary>
         public NotificationChannelRequestBuilder()
         {
-            ChannelId = AndroidOptions.DefaultChannelId;
-            Name = AndroidOptions.DefaultChannelName;
+            _channelRequest = new NotificationChannelRequest();
+        }
+
+        /// <summary>
+        /// Initializes builder with the specified channelID.
+        /// </summary>
+        /// <param name="channelId">The channel id</param>
+        public NotificationChannelRequestBuilder(string channelId) : this()
+        {
+            _channelRequest.Id = channelId ?? AndroidOptions.DefaultChannelId;
         }
 
         /// <summary>
@@ -45,7 +32,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithChannelId(string channelId)
         {
-            ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
+            _channelRequest.Id = channelId ?? AndroidOptions.DefaultChannelId;
             return this;
         }
 
@@ -54,7 +41,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithImportance(NotificationImportance importance)
         {
-            Importance = importance;
+            _channelRequest.Importance = importance;
             return this;
         }
 
@@ -63,7 +50,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithName(string name)
         {
-            Name = name ?? AndroidOptions.DefaultChannelName;
+            _channelRequest.Name = name ?? AndroidOptions.DefaultChannelName;
             return this;
         }
 
@@ -72,7 +59,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithDescription(string description)
         {
-            Description = description;
+            _channelRequest.Description = description;
             return this;
         }
 
@@ -81,7 +68,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithGroup(string groupName)
         {
-            Group = groupName;
+            _channelRequest.Group = groupName;
             return this;
         }
 
@@ -91,25 +78,25 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithLightColor(Color lightColor)
         {
-            LightColor = lightColor;
+            _channelRequest.LightColor = lightColor;
             return this;
         }
 
         /// <summary>
         /// Sound file name for the notification.
         /// </summary>
-        public NotificationChannelRequestBuilder WithCustomSound(string soundFilePath)
+        public NotificationChannelRequestBuilder WithSound(string filePath)
         {
-            SoundFile = soundFilePath;
+            _channelRequest.Sound = filePath;
             return this;
         }
 
         /// <summary>
         /// Only modifiable before the channel is submitted.
         /// </summary>
-        public NotificationChannelRequestBuilder WithCustomVibrationPattern(long[] vibrationPattern)
+        public NotificationChannelRequestBuilder WithVibrationPattern(long[] vibrationPattern)
         {
-            VibrationPattern = vibrationPattern;
+            _channelRequest.VibrationPattern = vibrationPattern;
             return this;
         }
 
@@ -118,7 +105,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithLockScreenVisibility(NotificationVisibility lockScreenVisibility)
         {
-            LockScreenVisibility = lockScreenVisibility;
+            _channelRequest.LockScreenVisibility = lockScreenVisibility;
             return this;
         }
 
@@ -127,7 +114,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithBadges(bool value)
         {
-            ShowBadge = value;
+            _channelRequest.ShowBadge = value;
             return this;
         }
 
@@ -136,7 +123,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithLights(bool value)
         {
-            EnableLights = value;
+            _channelRequest.EnableLights = value;
             return this;
         }
 
@@ -145,7 +132,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder WithVibration(bool value)
         {
-            EnableVibration = value;
+            _channelRequest.EnableVibration = value;
             return this;
         }
 
@@ -154,7 +141,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public NotificationChannelRequestBuilder ShouldBypassDnd(bool value)
         {
-            BypassDnd = value;
+            _channelRequest.CanBypassDnd = value;
             return this;
         }
 
@@ -162,21 +149,6 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// Creates NotificationChannelRequest from this builder.
         /// </summary>
         /// <returns>The notification channel request</returns>
-        public NotificationChannelRequest Build() => new NotificationChannelRequest()
-        {
-            Id = ChannelId,
-            Description = Description,
-            EnableLights = EnableLights,
-            EnableVibration = EnableVibration,
-            Group = Group,
-            Importance = Importance,
-            LightColor = LightColor,
-            LockScreenVisibility = LockScreenVisibility,
-            Name = Name,
-            ShowBadge = ShowBadge,
-            Sound = SoundFile,
-            VibrationPattern = VibrationPattern,
-            CanBypassDnd = BypassDnd
-        };
+        public NotificationChannelRequest Build() => _channelRequest;
     }
 }

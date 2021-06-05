@@ -137,7 +137,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationRequest"></param>
         protected virtual bool ShowLater(NotificationRequest notificationRequest)
@@ -166,6 +166,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
             builder.SetContentTitle(request.Title);
+            builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
             using (var bigTextStyle = new NotificationCompat.BigTextStyle())
             {
@@ -183,6 +184,11 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     builder.SetGroupSummary(true);
                 }
+            }
+
+            if (!string.IsNullOrEmpty(request.Category))
+            {
+                builder.SetCategory(request.Category);
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -203,11 +209,11 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (request.Android.ProgressBarMax.HasValue &&
                 request.Android.ProgressBarProgress.HasValue &&
-                request.Android.ProgressBarIndeterminate.HasValue)
+                request.Android.IsProgressBarIndeterminate.HasValue)
             {
                 builder.SetProgress(request.Android.ProgressBarMax.Value,
                     request.Android.ProgressBarProgress.Value,
-                    request.Android.ProgressBarIndeterminate.Value);
+                    request.Android.IsProgressBarIndeterminate.Value);
             }
 
             if (request.Android.Color.HasValue)
@@ -263,7 +269,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             return true;
         }
-        
+
         /// <summary>
         ///
         /// </summary>

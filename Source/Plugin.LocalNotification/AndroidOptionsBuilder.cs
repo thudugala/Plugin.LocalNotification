@@ -7,51 +7,40 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class AndroidOptionsBuilder
     {
-        private bool AutoCancel;
-        private string ChannelId;
-        private int? Color;
-        private string Group;
-        private AndroidNotificationIcon IconLargeName;
-        private AndroidNotificationIcon IconSmallName;
-        private bool IsGroupSummary;
-        private int? LedColor;
-        private bool Ongoing;
-        private NotificationPriority Priority;
-        private bool? ProgressBarIndeterminate;
-        private int? ProgressBarMax;
-        private int? ProgressBarProgress;
-        private TimeSpan? TimeoutAfter;
-        private long[] VibrationPattern;
+        private readonly AndroidOptions _options;
 
-        internal AndroidOptionsBuilder()
+        /// <summary>
+        ///
+        /// </summary>
+        public AndroidOptionsBuilder()
         {
-            Priority = NotificationPriority.Default;
-            ChannelId = AndroidOptions.DefaultChannelId;
-            AutoCancel = true;
+            _options = new AndroidOptions();
         }
 
         /// <summary>
         /// Builds the request to <see cref="AndroidOptions"/>
         /// </summary>
         /// <returns></returns>
-        public AndroidOptions Build() => new AndroidOptions()
+        public AndroidOptions Build() => _options;
+
+        /// <summary>
+        /// Set this notification to be the group summary for a group of notifications.
+        /// Grouped notifications may display in a cluster or stack on devices which support such rendering
+        /// </summary>
+        public AndroidOptionsBuilder ShouldGroupSummary(bool isGroupSummary)
         {
-            AutoCancel = AutoCancel,
-            VibrationPattern = VibrationPattern,
-            ChannelId = ChannelId,
-            Color = Color,
-            Group = Group,
-            IconSmallName = IconSmallName,
-            IconLargeName = IconLargeName,
-            IsGroupSummary = IsGroupSummary,
-            LedColor = LedColor,
-            Ongoing = Ongoing,
-            Priority = Priority,
-            ProgressBarIndeterminate = ProgressBarIndeterminate,
-            ProgressBarMax = ProgressBarMax,
-            ProgressBarProgress = ProgressBarProgress,
-            TimeoutAfter = TimeoutAfter
-        };
+            _options.IsGroupSummary = isGroupSummary;
+            return this;
+        }
+
+        /// <summary>
+        /// Set whether this progress bar is in indeterminate mode
+        /// </summary>
+        public AndroidOptionsBuilder ShouldProgressBarIndeterminate(bool? progressBarIndeterminate)
+        {
+            _options.IsProgressBarIndeterminate = progressBarIndeterminate;
+            return this;
+        }
 
         /// <summary>
         /// Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
@@ -59,7 +48,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithAutoCancel(bool shouldCancel)
         {
-            AutoCancel = shouldCancel;
+            _options.AutoCancel = shouldCancel;
             return this;
         }
 
@@ -69,7 +58,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithChannelId(string channelId)
         {
-            ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
+            _options.ChannelId = channelId ?? AndroidOptions.DefaultChannelId;
             return this;
         }
 
@@ -78,7 +67,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithColor(int? color)
         {
-            Color = color;
+            _options.Color = color;
             return this;
         }
 
@@ -88,17 +77,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithGroup(string group)
         {
-            Group = group;
-            return this;
-        }
-
-        /// <summary>
-        /// Set this notification to be the group summary for a group of notifications.
-        /// Grouped notifications may display in a cluster or stack on devices which support such rendering
-        /// </summary>
-        public AndroidOptionsBuilder WithGroupSummaryStatus(bool isGroupSummary)
-        {
-            IsGroupSummary = isGroupSummary;
+            _options.Group = group;
             return this;
         }
 
@@ -108,7 +87,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithIconLargeName(AndroidNotificationIcon icon)
         {
-            IconLargeName = icon;
+            _options.IconLargeName = icon;
             return this;
         }
 
@@ -118,7 +97,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithIconSmallName(AndroidNotificationIcon icon)
         {
-            IconSmallName = icon;
+            _options.IconSmallName = icon;
             return this;
         }
 
@@ -127,7 +106,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithLedColor(int? ledColor)
         {
-            LedColor = ledColor;
+            _options.LedColor = ledColor;
             return this;
         }
 
@@ -138,9 +117,9 @@ namespace Plugin.LocalNotification
         /// Ongoing notifications do not have an 'X' close button, and are not affected by the "Clear all" button.
         /// Default is false
         /// </summary>
-        public AndroidOptionsBuilder WithOngoingStatus(bool isOngoing)
+        public AndroidOptionsBuilder WithOngoing(bool isOngoing)
         {
-            Ongoing = isOngoing;
+            _options.Ongoing = isOngoing;
             return this;
         }
 
@@ -151,16 +130,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithPriority(NotificationPriority priority)
         {
-            Priority = priority;
-            return this;
-        }
-
-        /// <summary>
-        /// Set whether this progress bar is in indeterminate mode
-        /// </summary>
-        public AndroidOptionsBuilder WithProgressBarIndeterminate(bool? progressBarIndeterminate)
-        {
-            ProgressBarIndeterminate = progressBarIndeterminate;
+            _options.Priority = priority;
             return this;
         }
 
@@ -169,7 +139,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithProgressBarMax(int? progressBarMax)
         {
-            ProgressBarMax = progressBarMax;
+            _options.ProgressBarMax = progressBarMax;
             return this;
         }
 
@@ -178,7 +148,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithProgressBarProgress(int? progress)
         {
-            ProgressBarProgress = progress;
+            _options.ProgressBarProgress = progress;
             return this;
         }
 
@@ -187,7 +157,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithTimeout(TimeSpan? timeoutAfter)
         {
-            TimeoutAfter = timeoutAfter;
+            _options.TimeoutAfter = timeoutAfter;
             return this;
         }
 
@@ -200,7 +170,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public AndroidOptionsBuilder WithVibrationPattern(long[] pattern)
         {
-            VibrationPattern = pattern;
+            _options.VibrationPattern = pattern;
             return this;
         }
     }

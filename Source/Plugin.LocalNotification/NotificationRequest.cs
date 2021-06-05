@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification
 {
@@ -56,6 +55,16 @@ namespace Plugin.LocalNotification
         /// Title for the notification.
         /// </summary>
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Subtitle for the notification.
+        /// </summary>
+        public string Subtitle { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Notification category for actions
+        /// </summary>
+        public string Category { get; set; } = string.Empty;
 
         /// <summary>
         /// Creates a NotificationRequestBuilder instance with specified notificationId.

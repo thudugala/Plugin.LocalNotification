@@ -25,6 +25,6 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval
         /// </summary>
-        public NotificationRepeat Repeats { get; set; } = NotificationRepeat.No;
+        public NotificationRepeat RepeatType { get; set; } = NotificationRepeat.No;
     }
 }

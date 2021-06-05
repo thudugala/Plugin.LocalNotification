@@ -112,19 +112,21 @@ namespace Plugin.LocalNotification.Platform.iOS
                 using var content = new UNMutableNotificationContent
                 {
                     Title = notificationRequest.Title,
+                    Subtitle = notificationRequest.Subtitle,
                     Body = notificationRequest.Description,
                     Badge = notificationRequest.BadgeNumber,
                     UserInfo = userInfoDictionary,
-                    Sound = UNNotificationSound.Default
+                    Sound = UNNotificationSound.Default,
+                    CategoryIdentifier = notificationRequest.Category
                 };
                 if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
                 {
                     content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
                 }
 
-                var repeats = notificationRequest.Schedule.Repeats != NotificationRepeat.No;
+                var repeats = notificationRequest.Schedule.RepeatType != NotificationRepeat.No;
 
-                if (repeats && notificationRequest.Schedule.Repeats == NotificationRepeat.TimeInterval &&
+                if (repeats && notificationRequest.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
                     notificationRequest.Schedule.NotifyRepeatInterval.HasValue)
                 {
                     TimeSpan interval = notificationRequest.Schedule.NotifyRepeatInterval.Value;
@@ -163,7 +165,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTime.Now.AddSeconds(1);
 
-            return notificationRequest.Schedule.Repeats switch
+            return notificationRequest.Schedule.RepeatType switch
             {
                 NotificationRepeat.Daily => new NSDateComponents
                 {

@@ -92,7 +92,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Set whether this progress bar is in indeterminate mode
         /// </summary>
-        public bool? ProgressBarIndeterminate { get; set; }
+        public bool? IsProgressBarIndeterminate { get; set; }
 
         /// <summary>
         /// Set Upper limit of this progress bar's range
