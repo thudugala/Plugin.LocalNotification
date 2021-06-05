@@ -74,6 +74,9 @@
     <Compile Update="ActionTypes.cs">
       <SubType></SubType>
     </Compile>
+    <Compile Update="NotificationCategories.cs">
+      <SubType></SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

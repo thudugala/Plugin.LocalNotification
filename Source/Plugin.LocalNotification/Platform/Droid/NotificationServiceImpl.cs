@@ -1,10 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
 using AndroidX.Core.App;
-using AndroidX.Core.Graphics.Drawable;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
@@ -193,9 +191,9 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
             }
 
-            if (!string.IsNullOrEmpty(request.Category))
+            if (request.Category != NotificationCategoryTypes.None && Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                builder.SetCategory(request.Category);
+                builder.SetCategory(ToNativeCategory(request.Category));
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -371,6 +369,30 @@ namespace Plugin.LocalNotification.Platform.Droid
             foreach(var action in notificationActions)
             {
                 NotificationActions.Add(action.Identifier, action);
+            }
+        }
+
+        private string ToNativeCategory(NotificationCategoryTypes type)
+        {
+            switch (type)
+            {
+                case NotificationCategoryTypes.None:
+                    return NotificationCompat.CategoryStatus;
+
+                case NotificationCategoryTypes.Alarm:
+                    return NotificationCompat.CategoryAlarm;
+
+                case NotificationCategoryTypes.Reminder:
+                    return NotificationCompat.CategoryReminder;
+
+                case NotificationCategoryTypes.Event:
+                    return NotificationCompat.CategoryEvent;
+
+                case NotificationCategoryTypes.System:
+                    return NotificationCompat.CategorySystem;
+
+                default:
+                    return NotificationCompat.CategoryStatus;
             }
         }
     }

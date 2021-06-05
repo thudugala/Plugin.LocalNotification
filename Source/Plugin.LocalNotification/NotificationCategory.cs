@@ -9,12 +9,12 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class NotificationCategory
     {
-        public NotificationCategory(string identifier)
+        public NotificationCategory(NotificationCategoryTypes type)
         {
-            Identifier = identifier;
+            Type = type;
         }
 
-        public string Identifier { get; }
+        public NotificationCategoryTypes Type { get; }
 
         public NotificationAction[] NotificationActions { get; set; }
     }

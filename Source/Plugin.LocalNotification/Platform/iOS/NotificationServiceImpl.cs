@@ -123,7 +123,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     Badge = notificationRequest.BadgeNumber,
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default,
-                    CategoryIdentifier = notificationRequest.Category,
+                    CategoryIdentifier = ToNativeCategory(notificationRequest.Category),
                 };
                 if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
                 {
@@ -236,7 +236,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.ActionType)));
 
             var notificationCategory = UNNotificationCategory
-                .FromIdentifier(category.Identifier, notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+                .FromIdentifier(ToNativeCategory(category.Type), notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
 
             return notificationCategory;
         }
@@ -256,6 +256,18 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 default:
                     return UNNotificationActionOptions.None;
+            }
+        }
+
+        private static string ToNativeCategory(NotificationCategoryTypes type)
+        {
+            switch (type)
+            {
+                case NotificationCategoryTypes.Alarm:
+                    return "ALARM";
+
+                default:
+                    return string.Empty;
             }
         }
     }
