@@ -65,7 +65,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
-        public AndroidOptionsBuilder WithColor(int? color)
+        public AndroidOptionsBuilder WithColor(string color)
         {
             _options.Color = color;
             return this;

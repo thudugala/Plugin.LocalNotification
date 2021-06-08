@@ -29,7 +29,7 @@ namespace LocalNotification.Sample.Droid
                 //Group = AndroidOptions.DefaultGroupId,
                 Sound = Resource.Raw.good_things_happen.ToString()
             });
-
+            
             LoadApplication(new App());
 
             NotificationCenter.NotifyNotificationTapped(Intent);

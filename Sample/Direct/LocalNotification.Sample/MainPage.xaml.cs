@@ -48,7 +48,7 @@ namespace LocalNotification.Sample
                 Android =
                 {
                     IconSmallName = new AndroidNotificationIcon("icon1"),
-                    Color = 33468,
+                    Color = "colorPrimary",
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
                     ProgressBarProgress = _tapCount
@@ -147,7 +147,9 @@ namespace LocalNotification.Sample
             {
                 if (CustomAlert.IsToggled)
                 {
-                    DisplayAlert(e.Request.Title, e.Request.Description, "OK");
+                    var requestJson = JsonSerializer.Serialize(e.Request);
+
+                    DisplayAlert(e.Request.Title, requestJson, "OK");
                 }
             });
         }
