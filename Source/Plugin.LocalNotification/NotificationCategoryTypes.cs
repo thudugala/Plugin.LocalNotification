@@ -7,6 +7,8 @@ namespace Plugin.LocalNotification
         Alarm,
         Reminder,
         Event,
-        System
+        System,
+        Error,
+        StopWatch
     }
 }

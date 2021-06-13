@@ -253,6 +253,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentIntent(pendingIntent);
 
 
+            // @TODO pendingIntent needs to be routed to handler
+            /*
             if (NotificationActions.Count > 0)
             {
                 foreach(var notificationAction in NotificationActions)
@@ -261,7 +263,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                     builder.AddAction(action);
                 }
-            }
+            }*/
 
             var notification = builder.Build();
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
@@ -374,6 +376,8 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private string ToNativeCategory(NotificationCategoryTypes type)
         {
+
+       
             switch (type)
             {
                 case NotificationCategoryTypes.None:
@@ -390,6 +394,12 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                 case NotificationCategoryTypes.System:
                     return NotificationCompat.CategorySystem;
+
+                case NotificationCategoryTypes.Error:
+                    return NotificationCompat.CategoryError;
+
+                case NotificationCategoryTypes.StopWatch:
+                    return NotificationCompat.CategoryStopwatch;
 
                 default:
                     return NotificationCompat.CategoryStatus;
