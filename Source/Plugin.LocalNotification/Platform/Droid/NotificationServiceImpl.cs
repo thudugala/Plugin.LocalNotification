@@ -6,6 +6,7 @@ using AndroidX.Core.App;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         protected readonly WorkManager WorkManager;
+
+        public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -200,9 +203,9 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
-                if (string.IsNullOrWhiteSpace(request.CategoryCode) == false)
+                if (request.Category != NotificationCategoryTypes.None)
                 {
-                    builder.SetCategory(request.CategoryCode);
+                   builder.SetCategory(ToNativeCategory(request.Category));
                 }
 
                 builder.SetVisibility(ToNativeVisibilityType(request.Android.VisibilityType));
@@ -264,6 +267,19 @@ namespace Plugin.LocalNotification.Platform.Droid
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);
+
+
+            // @TODO pendingIntent needs to be routed to handler
+            /*
+            if (NotificationActions.Count > 0)
+            {
+                foreach(var notificationAction in NotificationActions)
+                {
+                    var action = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(notificationAction.Value.Title), pendingIntent);
+
+                    builder.AddAction(action);
+                }
+            }*/
 
             var notification = builder.Build();
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
@@ -382,6 +398,53 @@ namespace Plugin.LocalNotification.Platform.Droid
         protected static void Log(string message)
         {
             Android.Util.Log.Info(Application.Context.PackageName, message);
+        }
+
+        public void RegisterCategories(NotificationCategory[] notificationCategories)
+        {
+            foreach(var category in notificationCategories)
+            {
+                RegisterActions(category.NotificationActions);
+            }
+        }
+        private void RegisterActions(NotificationAction[] notificationActions)
+        {
+            foreach(var action in notificationActions)
+            {
+                NotificationActions.Add(action.Identifier, action);
+            }
+        }
+
+        private string ToNativeCategory(NotificationCategoryTypes type)
+        {
+
+       
+            switch (type)
+            {
+                case NotificationCategoryTypes.None:
+                    return NotificationCompat.CategoryStatus;
+
+                case NotificationCategoryTypes.Alarm:
+                    return NotificationCompat.CategoryAlarm;
+
+                case NotificationCategoryTypes.Reminder:
+                    return NotificationCompat.CategoryReminder;
+
+                case NotificationCategoryTypes.Event:
+                    return NotificationCompat.CategoryEvent;
+
+                case NotificationCategoryTypes.System:
+                    return NotificationCompat.CategorySystem;
+
+                case NotificationCategoryTypes.Error:
+                    return NotificationCompat.CategoryError;
+
+                case NotificationCategoryTypes.StopWatch:
+                    return NotificationCompat.CategoryStopwatch;
+
+                default:
+                    return NotificationCompat.CategoryStatus;
+            }
         }
     }
 }

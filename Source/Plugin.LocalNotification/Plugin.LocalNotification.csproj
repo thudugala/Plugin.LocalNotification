@@ -66,6 +66,18 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="NotificationAction.cs">
+      <SubType></SubType>
+    </Compile>
+    <Compile Update="NotificationCategory.cs">
+      <SubType></SubType>
+    </Compile>
+    <Compile Update="ActionTypes.cs">
+      <SubType></SubType>
+    </Compile>
+    <Compile Update="NotificationCategories.cs">
+      <SubType></SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
