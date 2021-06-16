@@ -62,9 +62,9 @@ namespace Plugin.LocalNotification
         public string Subtitle { get; set; } = string.Empty;
 
         /// <summary>
-        /// Notification category for  actions
+        /// Notification category for actions
         /// </summary>
-        public NotificationCategoryTypes Category { get; set; } = NotificationCategoryTypes.None;
+        public NotificationCategoryType CategoryType { get; set; } = NotificationCategoryType.None;
 
         /// <summary>
         /// Creates a NotificationRequestBuilder instance with specified notificationId.

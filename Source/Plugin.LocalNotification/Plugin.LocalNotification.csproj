@@ -72,7 +72,7 @@
     <Compile Update="NotificationCategory.cs">
       <SubType></SubType>
     </Compile>
-    <Compile Update="ActionTypes.cs">
+    <Compile Update="iOSActionType.cs">
       <SubType></SubType>
     </Compile>
     <Compile Update="NotificationCategories.cs">

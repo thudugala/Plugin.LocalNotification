@@ -13,7 +13,6 @@ namespace Plugin.LocalNotification.Platform.iOS
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-
         // All identifiers must be unique
         public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
 
@@ -87,7 +86,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
 
         /// <inheritdoc />
-        public async Task<bool> Show(NotificationRequest notificationRequest)
+        public async Task<bool> Show(NotificationRequest request)
         {
             UNNotificationTrigger trigger = null;
             try
@@ -97,7 +96,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                if (notificationRequest is null)
+                if (request is null)
                 {
                     return false;
                 }
@@ -109,7 +108,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var userInfoDictionary = new NSMutableDictionary();
-                var dictionary = NotificationCenter.GetRequestSerialize(notificationRequest);
+                var dictionary = NotificationCenter.GetRequestSerialize(request);
                 foreach (var item in dictionary)
                 {
                     userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
@@ -117,41 +116,44 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 using var content = new UNMutableNotificationContent
                 {
-                    Title = notificationRequest.Title,
-                    Subtitle = notificationRequest.Subtitle,
-                    Body = notificationRequest.Description,
-                    Badge = notificationRequest.BadgeNumber,
+                    Title = request.Title,
+                    Subtitle = request.Subtitle,
+                    Body = request.Description,
+                    Badge = request.BadgeNumber,
                     UserInfo = userInfoDictionary,
-                    Sound = UNNotificationSound.Default,
-                    CategoryIdentifier = ToNativeCategory(notificationRequest.Category),
+                    Sound = UNNotificationSound.Default
                 };
-                if (string.IsNullOrWhiteSpace(notificationRequest.Sound) == false)
+                if (request.CategoryType != NotificationCategoryType.None)
                 {
-                    content.Sound = UNNotificationSound.GetSound(notificationRequest.Sound);
+                    content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
+                }
+                if (string.IsNullOrWhiteSpace(request.Sound) == false)
+                {
+                    content.Sound = UNNotificationSound.GetSound(request.Sound);
                 }
 
-                var repeats = notificationRequest.Schedule.RepeatType != NotificationRepeat.No;
+                var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
 
-                if (repeats && notificationRequest.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
-                    notificationRequest.Schedule.NotifyRepeatInterval.HasValue)
+                if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
+                    request.Schedule.NotifyRepeatInterval.HasValue)
                 {
-                    TimeSpan interval = notificationRequest.Schedule.NotifyRepeatInterval.Value;
+                    TimeSpan interval = request.Schedule.NotifyRepeatInterval.Value;
 
                     // Cannot delay and repeat in when TimeInterval
                     trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
                 }
                 else
                 {
-                    using var notifyTime = GetNsDateComponentsFromDateTime(notificationRequest);
+                    using var notifyTime = GetNsDateComponentsFromDateTime(request);
                     trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
                 }
 
                 var notificationId =
-                    notificationRequest.NotificationId.ToString(CultureInfo.CurrentCulture);
+                    request.NotificationId.ToString(CultureInfo.CurrentCulture);
 
-                var request = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
+                var nativeRequest = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
 
-                await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request)
+                await UNUserNotificationCenter.Current.AddNotificationRequestAsync(nativeRequest)
                     .ConfigureAwait(false);
 
                 return true;
@@ -212,20 +214,33 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public void RegisterCategories(NotificationCategory[] notificationCategories)
         {
-            var categories = new List<UNNotificationCategory>();
+            var nativeCategoryList = new List<UNNotificationCategory>();
 
             foreach (var category in notificationCategories)
             {
-                var notificationCategory = RegisterActions(category);
-
-                categories.Add(notificationCategory);
+                var nativeCategory = RegisterActions(category);
+                if (nativeCategory is null)
+                {
+                    continue;
+                }
+                nativeCategoryList.Add(nativeCategory);
             }
 
-            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(categories.ToArray()));
+            if (nativeCategoryList.Any() == false)
+            {
+                return;
+            }
+
+            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(nativeCategoryList.ToArray()));
         }
 
         private static UNNotificationCategory RegisterActions(NotificationCategory category)
         {
+            if (category is null || category.CategoryType == NotificationCategoryType.None)
+            {
+                return null;
+            }
+
             foreach (var notificationAction in category.NotificationActions)
             {
                 NotificationCenter.Current.NotificationActions.Add(notificationAction.Identifier, notificationAction);
@@ -233,42 +248,29 @@ namespace Plugin.LocalNotification.Platform.iOS
 
             var notificationActions = category
                 .NotificationActions
-                .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.ActionType)));
+                .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.iOSAction)));
 
             var notificationCategory = UNNotificationCategory
-                .FromIdentifier(ToNativeCategory(category.Type), notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+                .FromIdentifier(ToNativeCategory(category.CategoryType), notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
 
             return notificationCategory;
         }
 
-        private static UNNotificationActionOptions ToNativeActionType(ActionTypes actionsType)
+        private static UNNotificationActionOptions ToNativeActionType(iOSActionType type)
         {
-            switch (actionsType)
+            return type switch
             {
-                case ActionTypes.Foreground:
-                    return UNNotificationActionOptions.Foreground;
-
-                case ActionTypes.Destructive:
-                    return UNNotificationActionOptions.Destructive;
-
-                case ActionTypes.AuthenticationRequired:
-                    return UNNotificationActionOptions.AuthenticationRequired;
-
-                default:
-                    return UNNotificationActionOptions.None;
-            }
+                iOSActionType.Foreground => UNNotificationActionOptions.Foreground,
+                iOSActionType.Destructive => UNNotificationActionOptions.Destructive,
+                iOSActionType.AuthenticationRequired => UNNotificationActionOptions.AuthenticationRequired,
+                iOSActionType.None => UNNotificationActionOptions.None,
+                _ => UNNotificationActionOptions.None,
+            };
         }
 
-        private static string ToNativeCategory(NotificationCategoryTypes type)
+        private static string ToNativeCategory(NotificationCategoryType type)
         {
-            switch (type)
-            {
-                case NotificationCategoryTypes.Alarm:
-                    return "ALARM";
-
-                default:
-                    return string.Empty;
-            }
+            return type.ToString();
         }
     }
 }

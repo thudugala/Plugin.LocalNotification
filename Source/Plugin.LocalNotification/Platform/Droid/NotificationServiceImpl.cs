@@ -203,9 +203,9 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
-                if (request.Category != NotificationCategoryTypes.None)
+                if (request.CategoryType != NotificationCategoryType.None)
                 {
-                   builder.SetCategory(ToNativeCategory(request.Category));
+                    builder.SetCategory(ToNativeCategory(request.CategoryType));
                 }
 
                 builder.SetVisibility(ToNativeVisibilityType(request.Android.VisibilityType));
@@ -267,7 +267,6 @@ namespace Plugin.LocalNotification.Platform.Droid
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);
-
 
             // @TODO pendingIntent needs to be routed to handler
             /*
@@ -402,49 +401,35 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         public void RegisterCategories(NotificationCategory[] notificationCategories)
         {
-            foreach(var category in notificationCategories)
+            foreach (var category in notificationCategories)
             {
                 RegisterActions(category.NotificationActions);
             }
         }
         private void RegisterActions(NotificationAction[] notificationActions)
         {
-            foreach(var action in notificationActions)
+            foreach (var action in notificationActions)
             {
                 NotificationActions.Add(action.Identifier, action);
             }
         }
 
-        private string ToNativeCategory(NotificationCategoryTypes type)
+        private string ToNativeCategory(NotificationCategoryType type)
         {
-
-       
-            switch (type)
+            return type switch
             {
-                case NotificationCategoryTypes.None:
-                    return NotificationCompat.CategoryStatus;
-
-                case NotificationCategoryTypes.Alarm:
-                    return NotificationCompat.CategoryAlarm;
-
-                case NotificationCategoryTypes.Reminder:
-                    return NotificationCompat.CategoryReminder;
-
-                case NotificationCategoryTypes.Event:
-                    return NotificationCompat.CategoryEvent;
-
-                case NotificationCategoryTypes.System:
-                    return NotificationCompat.CategorySystem;
-
-                case NotificationCategoryTypes.Error:
-                    return NotificationCompat.CategoryError;
-
-                case NotificationCategoryTypes.StopWatch:
-                    return NotificationCompat.CategoryStopwatch;
-
-                default:
-                    return NotificationCompat.CategoryStatus;
-            }
+                NotificationCategoryType.Alarm => NotificationCompat.CategoryAlarm,
+                NotificationCategoryType.Status => NotificationCompat.CategoryStatus,
+                NotificationCategoryType.Reminder => NotificationCompat.CategoryReminder,
+                NotificationCategoryType.Event => NotificationCompat.CategoryEvent,
+                NotificationCategoryType.Error => NotificationCompat.CategoryError,
+                NotificationCategoryType.StopWatch => NotificationCompat.CategoryStopwatch,
+                NotificationCategoryType.Progress => NotificationCompat.CategoryProgress,
+                NotificationCategoryType.Promo => NotificationCompat.CategoryPromo,
+                NotificationCategoryType.Recommendation => NotificationCompat.CategoryRecommendation,
+                NotificationCategoryType.Service => NotificationCompat.CategoryService,
+                _ => NotificationCompat.CategoryStatus
+            };
         }
     }
 }

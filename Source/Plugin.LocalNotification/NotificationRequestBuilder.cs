@@ -69,9 +69,9 @@ namespace Plugin.LocalNotification
         /// Category for the notification.
         /// In Android Must be one of the predefined notification categories
         /// </summary>
-        public NotificationRequestBuilder WithCategoryCode(NotificationCategoryTypes category)
+        public NotificationRequestBuilder WithCategoryType(NotificationCategoryType type)
         {
-            _request.Category = category;
+            _request.CategoryType = type;
             return this;
         }
 
