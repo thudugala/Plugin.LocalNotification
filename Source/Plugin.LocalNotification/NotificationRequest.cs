@@ -61,6 +61,12 @@ namespace Plugin.LocalNotification
         /// </summary>
         public string Subtitle { get; set; } = string.Empty;
 
+
+        /// <summary>
+        /// Image for notification.  Use resource name for platforms.
+        /// </summary>
+        public string Image { get; set; } = string.Empty;
+
         /// <summary>
         /// Notification category for actions
         /// </summary>

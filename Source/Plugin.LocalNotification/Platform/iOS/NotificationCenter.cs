@@ -1,5 +1,6 @@
 ﻿using Plugin.LocalNotification.Platform.iOS;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,6 +95,37 @@ namespace Plugin.LocalNotification
                 {
                     uiApplication.ApplicationIconBadgeNumber = 0;
                 });
+            });
+        }
+
+        /// <summary>
+        /// Get pending notifications
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<IEnumerable<iOSNotification>> PendingNotificationsAsync()
+        {
+            var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
+
+            return pending.Select(t => new iOSNotification()
+            {
+                Id = t.Identifier,
+                Title = t.Content.Title
+
+            });
+        }
+
+        /// <summary>
+        /// Get notifications that are currently delivered
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<IEnumerable<iOSNotification>> DeliveredNotificationsAsync()
+        {
+            var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
+
+            return delivered.Select(t => new iOSNotification()
+            {
+                Id = t.Request.Identifier,
+                Title = t.Request.Content.Title
             });
         }
     }
