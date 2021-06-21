@@ -128,9 +128,6 @@ namespace Plugin.LocalNotification
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            var notificationContent = pending.First().Content;
-
-
             return pending.Select(t => GetNotificationRequest(t));
         }
 
@@ -144,6 +141,5 @@ namespace Plugin.LocalNotification
 
             return delivered.Select(t => GetNotificationRequest(t.Request));
         }
-
     }
 }
