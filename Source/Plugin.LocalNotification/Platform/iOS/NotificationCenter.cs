@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification.Platform.iOS;
+﻿using Foundation;
+using Plugin.LocalNotification.Platform.iOS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -98,35 +99,51 @@ namespace Plugin.LocalNotification
             });
         }
 
+
+        public static NotificationRequest GetNotificationRequest(UNNotificationRequest notification)
+        {
+            var notificationContent = notification?.Content;
+            if (notificationContent == null)
+            {
+                return null;
+            }
+            var dictionary = notificationContent.UserInfo;
+
+            if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
+            {
+                return null;
+            }
+            var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
+
+            var request = NotificationCenter.GetRequest(requestSerialize);
+
+            return request;
+        }
+
         /// <summary>
         /// Get pending notifications
         /// </summary>
         /// <returns></returns>
-        public static async Task<IEnumerable<iOSNotification>> PendingNotificationsAsync()
+        public static async Task<IEnumerable<NotificationRequest>> PendingNotificationsAsync()
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            return pending.Select(t => new iOSNotification()
-            {
-                Id = t.Identifier,
-                Title = t.Content.Title
+            var notificationContent = pending.First().Content;
 
-            });
+
+            return pending.Select(t => GetNotificationRequest(t));
         }
 
         /// <summary>
         /// Get notifications that are currently delivered
         /// </summary>
         /// <returns></returns>
-        public static async Task<IEnumerable<iOSNotification>> DeliveredNotificationsAsync()
+        public static async Task<IEnumerable<NotificationRequest>> DeliveredNotificationsAsync()
         {
             var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
 
-            return delivered.Select(t => new iOSNotification()
-            {
-                Id = t.Request.Identifier,
-                Title = t.Request.Content.Title
-            });
+            return delivered.Select(t => GetNotificationRequest(t.Request));
         }
+
     }
 }
