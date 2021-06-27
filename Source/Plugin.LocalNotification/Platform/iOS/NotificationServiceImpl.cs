@@ -14,9 +14,6 @@ namespace Plugin.LocalNotification.Platform.iOS
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        // All identifiers must be unique
-        public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
-
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
 
@@ -24,15 +21,24 @@ namespace Plugin.LocalNotification.Platform.iOS
         public event NotificationReceivedEventHandler NotificationReceived;
 
         /// <inheritdoc />
-        public void OnNotificationTapped(NotificationTappedEventArgs e)
+        public event NotificationActionTappedEventHandler NotificationActionTapped;
+
+        /// <inheritdoc />
+        public void OnNotificationTapped(NotificationEventArgs e)
         {
             NotificationTapped?.Invoke(e);
         }
 
         /// <inheritdoc />
-        public void OnNotificationReceived(NotificationReceivedEventArgs e)
+        public void OnNotificationReceived(NotificationEventArgs e)
         {
             NotificationReceived?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationActionTapped(NotificationActionEventArgs e)
+        {
+            NotificationActionTapped?.Invoke(e);
         }
 
         /// <inheritdoc />
@@ -123,7 +129,6 @@ namespace Plugin.LocalNotification.Platform.iOS
                     Badge = request.BadgeNumber,
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default,
-                    
                 };
 
                 // Image Attachment
@@ -132,7 +137,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     var e = Path.GetExtension(request.Image);
                     var imageAttachment = NSBundle.MainBundle.GetUrlForResource(Path.GetFileNameWithoutExtension(request.Image), Path.GetExtension(request.Image));
 
-                    if(imageAttachment == null)
+                    if (imageAttachment == null)
                     {
                         Debug.WriteLine("Failed to find attachment image. Make sure the image is marked as EmbeddedResource and the path is correct.");
                         return false;
@@ -140,9 +145,8 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                     UNNotificationAttachmentOptions options = null;
 
-                    content.Attachments = new UNNotificationAttachment[] { UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _) };
+                    content.Attachments = new[] { UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _) };
                 }
-
 
                 if (request.CategoryType != NotificationCategoryType.None)
                 {
@@ -233,19 +237,9 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public void RegisterCategories(NotificationCategory[] notificationCategories)
+        public void RegisterCategoryList(IList<NotificationCategory> categoryList)
         {
-            var nativeCategoryList = new List<UNNotificationCategory>();
-
-            foreach (var category in notificationCategories)
-            {
-                var nativeCategory = RegisterActions(category);
-                if (nativeCategory is null)
-                {
-                    continue;
-                }
-                nativeCategoryList.Add(nativeCategory);
-            }
+            var nativeCategoryList = categoryList.Select(RegisterActionList).Where(nativeCategory => nativeCategory != null).ToList();
 
             if (nativeCategoryList.Any() == false)
             {
@@ -255,24 +249,33 @@ namespace Plugin.LocalNotification.Platform.iOS
             UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(nativeCategoryList.ToArray()));
         }
 
-        private static UNNotificationCategory RegisterActions(NotificationCategory category)
+        private static UNNotificationCategory RegisterActionList(NotificationCategory category)
         {
             if (category is null || category.CategoryType == NotificationCategoryType.None)
             {
                 return null;
             }
 
-            foreach (var notificationAction in category.NotificationActions)
+            var nativeActionList = new List<UNNotificationAction>();
+            foreach (var notificationAction in category.ActionList)
             {
-                NotificationCenter.Current.NotificationActions.Add(notificationAction.Identifier, notificationAction);
+                if (string.IsNullOrWhiteSpace(notificationAction.ActionId))
+                {
+                    continue;
+                }
+
+                var nativeAction = UNNotificationAction.FromIdentifier(notificationAction.ActionId, notificationAction.Title,
+                    ToNativeActionType(notificationAction.iOSAction));
+                nativeActionList.Add(nativeAction);
             }
 
-            var notificationActions = category
-                .NotificationActions
-                .Select(t => UNNotificationAction.FromIdentifier(t.Identifier, t.Title, ToNativeActionType(t.iOSAction)));
+            if (nativeActionList.Any() == false)
+            {
+                return null;
+            }
 
             var notificationCategory = UNNotificationCategory
-                .FromIdentifier(ToNativeCategory(category.CategoryType), notificationActions.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+                .FromIdentifier(ToNativeCategory(category.CategoryType), nativeActionList.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
 
             return notificationCategory;
         }

@@ -22,35 +22,35 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var localNotification = GetRequest(response.Notification);
-
-                // Take action based on identifier
-                if (!response.IsDefaultAction)
-                {
-                    var actionIdentifier = response.ActionIdentifier;
-                    var userInfo = response.Notification.Request.Content.UserInfo;
-
-                    NotificationCenter.Current.NotificationActions[actionIdentifier].Handler?.Invoke(localNotification.NotificationId, localNotification.ReturningData);
-
-                    return;
-                }
-
-                
-                
-                var args = new NotificationTappedEventArgs
-                {
-                    Request = localNotification
-                };
+                var notificationService = TryGetDefaultIOsNotificationService();
 
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
+                    // Take action based on identifier
+                    if (!response.IsDefaultAction)
+                    {
+                        if (string.IsNullOrWhiteSpace(response.ActionIdentifier) == false)
+                        {
+                            var actionArgs = new NotificationActionEventArgs
+                            {
+                                ActionId = response.ActionIdentifier,
+                                Request = localNotification
+                            };
+                            notificationService.OnNotificationActionTapped(actionArgs);
+                            return;
+                        }
+                    }
+
                     if (localNotification != null && response.Notification.Request.Content.Badge != null)
                     {
                         var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
                                         Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
                         UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
                     }
-
-                    var notificationService = TryGetDefaultDroidNotificationService();
+                    var args = new NotificationEventArgs
+                    {
+                        Request = localNotification
+                    };
                     notificationService.OnNotificationTapped(args);
                 });
             }
@@ -74,7 +74,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 return null;
             }
             var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
-          
+
             var request = NotificationCenter.GetRequest(requestSerialize);
 
             return request;
@@ -90,19 +90,20 @@ namespace Plugin.LocalNotification.Platform.iOS
 
                 if (localNotification != null)
                 {
+                    var notificationService = TryGetDefaultIOsNotificationService();
+
                     if (localNotification.Schedule.NotifyAutoCancelTime.HasValue && localNotification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
-                        var notificationService = TryGetDefaultDroidNotificationService();
                         notificationService.Cancel(localNotification.NotificationId);
                         Debug.WriteLine("Notification Auto Canceled");
                         return;
                     }
 
-                    var args = new NotificationReceivedEventArgs
+                    var args = new NotificationEventArgs
                     {
                         Request = localNotification
                     };
-                    NotificationCenter.Current.OnNotificationReceived(args);
+                    notificationService.OnNotificationReceived(args);
 
                     if (localNotification.iOS.HideForegroundAlert)
                     {
@@ -130,13 +131,11 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
+        private static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {
-            if (NotificationCenter.Current is NotificationServiceImpl notificationService)
-            {
-                return notificationService;
-            }
-            return new NotificationServiceImpl();
+            return NotificationCenter.Current is NotificationServiceImpl notificationService
+                ? notificationService
+                : new NotificationServiceImpl();
         }
     }
 }

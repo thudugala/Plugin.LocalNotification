@@ -91,11 +91,9 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
         {
-            if (NotificationCenter.Current is NotificationServiceImpl notificationService)
-            {
-                return notificationService;
-            }
-            return new NotificationServiceImpl();
+            return NotificationCenter.Current is NotificationServiceImpl notificationService
+                ? notificationService
+                : new NotificationServiceImpl();
         }
     }
 }

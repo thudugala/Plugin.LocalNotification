@@ -49,7 +49,7 @@ namespace Plugin.LocalNotification
                     return false;
                 }
 
-                var subscribeItem = new NotificationTappedEventArgs
+                var subscribeItem = new NotificationEventArgs
                 {
                     Request = notification
                 };

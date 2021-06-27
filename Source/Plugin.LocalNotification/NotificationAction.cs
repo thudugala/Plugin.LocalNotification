@@ -1,5 +1,3 @@
-using System;
-
 namespace Plugin.LocalNotification
 {
     /// <summary>
@@ -8,19 +6,14 @@ namespace Plugin.LocalNotification
     public class NotificationAction
     {
         /// <summary>
-        ///
+        /// A unique identifier for the Action
         /// </summary>
-        public string Identifier { get; set; }
+        public string ActionId { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         public string Title { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public Action<int, string> Handler { get; set; }
 
         /// <summary>
         ///

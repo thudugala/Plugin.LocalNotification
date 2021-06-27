@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Plugin.LocalNotification
@@ -8,13 +7,23 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class NotificationCategory
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
         public NotificationCategory(NotificationCategoryType type)
         {
             CategoryType = type;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public NotificationCategoryType CategoryType { get; }
 
-        public NotificationAction[] NotificationActions { get; set; }
+        /// <summary>
+        ///
+        /// </summary>
+        public IList<NotificationAction> ActionList { get; set; }
     }
 }

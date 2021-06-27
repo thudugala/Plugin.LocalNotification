@@ -10,6 +10,11 @@ namespace Plugin.LocalNotification
     public interface INotificationService
     {
         /// <summary>
+        /// fires when notification popup action is tapped.
+        /// </summary>
+        event NotificationActionTappedEventHandler NotificationActionTapped;
+
+        /// <summary>
         /// fires when notification is received.
         /// On iOS this event is fired only when the app is in foreground
         /// </summary>
@@ -35,13 +40,24 @@ namespace Plugin.LocalNotification
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
-        void OnNotificationReceived(NotificationReceivedEventArgs e);
+        void OnNotificationActionTapped(NotificationActionEventArgs e);
 
         /// <summary>
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
-        void OnNotificationTapped(NotificationTappedEventArgs e);
+        void OnNotificationReceived(NotificationEventArgs e);
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        void OnNotificationTapped(NotificationEventArgs e);
+
+        /// <summary>
+        /// Register notification categories and their corresponding actions
+        /// </summary>
+        void RegisterCategoryList(IList<NotificationCategory> categoryList);
 
         /// <summary>
         /// Send a local notification to the device.
@@ -53,16 +69,5 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="request"></param>
         Task<bool> Show(NotificationRequest request);
-
-
-        /// <summary>
-        /// Storage for actions
-        /// </summary>
-        Dictionary<string, NotificationAction> NotificationActions { get; }
-
-        /// <summary>
-        /// Register notification categories and their corresponding actions
-        /// </summary>
-        void RegisterCategories(NotificationCategory[] notificationCategories);
     }
 }

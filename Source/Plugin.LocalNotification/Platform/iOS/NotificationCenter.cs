@@ -99,8 +99,7 @@ namespace Plugin.LocalNotification
             });
         }
 
-
-        public static NotificationRequest GetNotificationRequest(UNNotificationRequest notification)
+        private static NotificationRequest GetNotificationRequest(UNNotificationRequest notification)
         {
             var notificationContent = notification?.Content;
             if (notificationContent == null)
@@ -109,13 +108,13 @@ namespace Plugin.LocalNotification
             }
             var dictionary = notificationContent.UserInfo;
 
-            if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
+            if (!dictionary.ContainsKey(new NSString(ReturnRequest)))
             {
                 return null;
             }
-            var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
+            var requestSerialize = dictionary[ReturnRequest].ToString();
 
-            var request = NotificationCenter.GetRequest(requestSerialize);
+            var request = GetRequest(requestSerialize);
 
             return request;
         }
@@ -128,7 +127,7 @@ namespace Plugin.LocalNotification
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            return pending.Select(t => GetNotificationRequest(t));
+            return pending.Select(GetNotificationRequest);
         }
 
         /// <summary>

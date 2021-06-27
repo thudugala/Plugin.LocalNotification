@@ -8,6 +8,7 @@ using Java.Util.Concurrent;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
+        private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
+
         /// <summary>
         ///
         /// </summary>
@@ -26,8 +29,6 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         protected readonly WorkManager WorkManager;
 
-        public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
-
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
 
@@ -35,15 +36,24 @@ namespace Plugin.LocalNotification.Platform.Droid
         public event NotificationReceivedEventHandler NotificationReceived;
 
         /// <inheritdoc />
-        public void OnNotificationTapped(NotificationTappedEventArgs e)
+        public event NotificationActionTappedEventHandler NotificationActionTapped;
+
+        /// <inheritdoc />
+        public void OnNotificationTapped(NotificationEventArgs e)
         {
             NotificationTapped?.Invoke(e);
         }
 
         /// <inheritdoc />
-        public void OnNotificationReceived(NotificationReceivedEventArgs e)
+        public void OnNotificationReceived(NotificationEventArgs e)
         {
             NotificationReceived?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationActionTapped(NotificationActionEventArgs e)
+        {
+            NotificationActionTapped?.Invoke(e);
         }
 
         /// <summary>
@@ -260,25 +270,30 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return false;
             }
 
-            var serializedNotification = JsonSerializer.Serialize(request);
+            var serializedRequest = JsonSerializer.Serialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedNotification);
+            notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
 
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);
 
-            // @TODO pendingIntent needs to be routed to handler
-            /*
-            if (NotificationActions.Count > 0)
+            if (_categoryList.Any())
             {
-                foreach(var notificationAction in NotificationActions)
+                var categoryByType = _categoryList.FirstOrDefault(c => c.CategoryType == request.CategoryType);
+                if (categoryByType != null)
                 {
-                    var action = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(notificationAction.Value.Title), pendingIntent);
-
-                    builder.AddAction(action);
+                    foreach (var notificationAction in categoryByType.ActionList)
+                    {
+                        var nativeAction = CreateAction(request, serializedRequest, notificationAction);
+                        if (nativeAction is null)
+                        {
+                            continue;
+                        }
+                        builder.AddAction(nativeAction);
+                    }
                 }
-            }*/
+            }
 
             var notification = builder.Build();
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
@@ -298,7 +313,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             NotificationManager?.Notify(request.NotificationId, notification);
 
-            var args = new NotificationReceivedEventArgs
+            var args = new NotificationEventArgs
             {
                 Request = request
             };
@@ -306,6 +321,48 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             return true;
         }
+
+        private NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
+        {
+            var pendingIntent = CreateActionIntent(request, serializedRequest, action);
+            var nativeAction = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(action.Title), pendingIntent);
+
+            return nativeAction;
+        }
+
+        private PendingIntent CreateActionIntent(NotificationRequest request, string serializedRequest, NotificationAction action)
+        {
+            var intent = new Intent(Application.Context, typeof(NotificationActionReceiver));
+            intent.SetAction(NotificationActionReceiver.EntryIntentAction)
+                .PutExtra(NotificationActionReceiver.NotificationActionActionId, action.ActionId)
+                .PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
+
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context,
+                request.NotificationId + 1000,
+                intent,
+                PendingIntentFlags.CancelCurrent
+            );
+
+            return pendingIntent;
+        }
+
+        //private NotificationCompat.Action CreateTextReply(NotificationRequest request, string serializedRequest, NotificationAction action)
+        //{
+        //    var pendingIntent = CreateActionIntent(request, serializedRequest, action);
+
+        //    var input = new AndroidX.Core.App.RemoteInput.Builder(AndroidNotificationProcessor.RemoteInputResultKey)
+        //        .SetLabel(action.Title)
+        //        .Build();
+
+        //    var iconId = GetIcon(request.Android.IconSmallName);
+        //    var nativeAction = new NotificationCompat.Action.Builder(iconId, action.Title, pendingIntent)
+        //        .SetAllowGeneratedReplies(true)
+        //        .AddRemoteInput(input)
+        //        .Build();
+
+        //    return nativeAction;
+        //}
 
         /// <summary>
         ///
@@ -399,18 +456,16 @@ namespace Plugin.LocalNotification.Platform.Droid
             Android.Util.Log.Info(Application.Context.PackageName, message);
         }
 
-        public void RegisterCategories(NotificationCategory[] notificationCategories)
+        /// <inheritdoc />
+        public void RegisterCategoryList(IList<NotificationCategory> categoryList)
         {
-            foreach (var category in notificationCategories)
+            foreach (var category in categoryList)
             {
-                RegisterActions(category.NotificationActions);
-            }
-        }
-        private void RegisterActions(NotificationAction[] notificationActions)
-        {
-            foreach (var action in notificationActions)
-            {
-                NotificationActions.Add(action.Identifier, action);
+                if (category.CategoryType == NotificationCategoryType.None)
+                {
+                    continue;
+                }
+                _categoryList.Add(category);
             }
         }
 
