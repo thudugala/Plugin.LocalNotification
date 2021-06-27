@@ -32,7 +32,10 @@ var notification = new NotificationRequest
     Title = "Test",
     Description = "Test Description",
     ReturningData = "Dummy data", // Returning data when tapped on notification.
-    NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
+    Schedule = 
+    {
+        NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
+    }
 };
 NotificationCenter.Current.Show(notification);
 ```
@@ -52,7 +55,9 @@ NotificationCenter.Current.Show(notification);
 ### With platform specific options
 ```csharp
 NotificationCenter.Current.Show((notification) => notification
-                    .NotifyAt(DateTime.Now.AddSeconds(30))
+                    .WithScheduleOptions((schedule) => schedule
+		         .NotifyAt(DateTime.Now.AddSeconds(30))
+			 .Build())
                     .WithAndroidOptions((android) => android
                          .WithAutoCancel(true)
                          .WithChannelId("General")
