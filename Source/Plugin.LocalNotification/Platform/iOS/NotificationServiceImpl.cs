@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
@@ -121,8 +122,28 @@ namespace Plugin.LocalNotification.Platform.iOS
                     Body = request.Description,
                     Badge = request.BadgeNumber,
                     UserInfo = userInfoDictionary,
-                    Sound = UNNotificationSound.Default
+                    Sound = UNNotificationSound.Default,
+                    
                 };
+
+                // Image Attachment
+                if (!string.IsNullOrWhiteSpace(request.Image))
+                {
+                    var e = Path.GetExtension(request.Image);
+                    var imageAttachment = NSBundle.MainBundle.GetUrlForResource(Path.GetFileNameWithoutExtension(request.Image), Path.GetExtension(request.Image));
+
+                    if(imageAttachment == null)
+                    {
+                        Debug.WriteLine("Failed to find attachment image. Make sure the image is marked as EmbeddedResource and the path is correct.");
+                        return false;
+                    }
+
+                    UNNotificationAttachmentOptions options = null;
+
+                    content.Attachments = new UNNotificationAttachment[] { UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _) };
+                }
+
+
                 if (request.CategoryType != NotificationCategoryType.None)
                 {
                     content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
