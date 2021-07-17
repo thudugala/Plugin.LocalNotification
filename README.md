@@ -194,7 +194,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
             return base.FinishedLaunching(app, options);
         }
 
-		public override void WillEnterForeground(UIApplication uiApplication)
+	public override void WillEnterForeground(UIApplication uiApplication)
         {
             Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
         }
@@ -208,14 +208,6 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 [![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
 
-# Notification Channels
-
-[Setting up Notification Channels](../../wiki/%5BAndroid---=-26%5D-Notification-Channel)
-
-# Custom Sound
-
-[Notification with a Sound-File](../../wiki/Notification-with-a-Sound-File)
-
 # SourceLink Support
 
 In Visual Studio, confirm that SourceLink is enabled. 
@@ -227,10 +219,15 @@ https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 
 Only support <b>iOS</b> and <b>Android</b> for the moment. 
 
+# 6.1.0 Documentation
+
+- Please go to [6.1.0 Documentation](../../wiki/Usage-6.1.0), if you are referencing a version below 7.0.0. 
+- Version 7.* has setup differences upgrading from version 6.*
+
 # 5.2.0 Documentation
 
 - Please go to [5.2.0 Documentation](../../wiki/Usage-5.2.0), if you are referencing a version below 6.0.0. 
-- Version 6.* has setup differences in Android if upgrading from version 5.*
+- Version 6.* has setup differences if upgrading from version 5.*
 
 # 4.1.4 Documentation
 
