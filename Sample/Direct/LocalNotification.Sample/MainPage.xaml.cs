@@ -14,29 +14,25 @@ namespace LocalNotification.Sample
         {
             InitializeComponent();
 
-            NotificationCenter.Current.RegisterCategoryList(new List<NotificationCategory>()
+            NotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
             {
-                new NotificationCategory()
+                new NotificationCategory(NotificationCategoryType.Status)
                 {
-                    CategoryType = NotificationCategoryType.Status,
-                    ActionList = new List<NotificationAction>()
+                    ActionList = new HashSet<NotificationAction>( new List<NotificationAction>()
                     {
-                        new NotificationAction()
+                        new NotificationAction(100)
                         {
-                            ActionId = 100,
                             Title = "Hello",
                             iOSAction = iOSActionType.None
                         },
-                        new NotificationAction()
+                        new NotificationAction(101)
                         {
-                            ActionId = 101,
                             Title = "Close",
                             iOSAction = iOSActionType.None
                         }
-                    }
+                    })
                 },
-
-            });
+            }));
 
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
             NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;

@@ -57,7 +57,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Register notification categories and their corresponding actions
         /// </summary>
-        void RegisterCategoryList(IList<NotificationCategory> categoryList);
+        void RegisterCategoryList(HashSet<NotificationCategory> categoryList);
 
         /// <summary>
         /// Send a local notification to the device.

@@ -237,14 +237,13 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public void RegisterCategoryList(IList<NotificationCategory> categoryList)
+        public void RegisterCategoryList(HashSet<NotificationCategory> categoryList)
         {
             if (categoryList is null || categoryList.Any() == false)
             {
                 return;
             }
 
-            var categorySet = new HashSet<NotificationCategoryType>();
             var nativeCategoryList = new List<UNNotificationCategory>();
             foreach (var category in categoryList)
             {
@@ -252,14 +251,6 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     continue;
                 }
-
-                if (categorySet.Contains(category.CategoryType))
-                {
-                    continue;
-                }
-
-                categorySet.Add(category.CategoryType);
-
                 var nativeCategory = RegisterActionList(category);
                 if (nativeCategory != null)
                 {
@@ -283,20 +274,12 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
 
             var nativeActionList = new List<UNNotificationAction>();
-            var actionIdSet = new HashSet<int>();
             foreach (var notificationAction in category.ActionList)
             {
                 if (notificationAction.ActionId == -1000)
                 {
                     continue;
                 }
-
-                if (actionIdSet.Contains(notificationAction.ActionId))
-                {
-                    continue;
-                }
-
-                actionIdSet.Add(notificationAction.ActionId);
 
                 var nativeAction = UNNotificationAction.FromIdentifier(notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
                     ToNativeActionType(notificationAction.iOSAction));
