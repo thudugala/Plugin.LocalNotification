@@ -152,10 +152,10 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 {
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
-	    .....
-	    // Must create a Notification Channel when API >= 26
-        // you can created multiple Notification Channels with different names.
-        NotificationCenter.CreateNotificationChannel();		
+	    	.....
+	    	// Must create a Notification Channel when API >= 26
+        	// you can created multiple Notification Channels with different names.
+        	NotificationCenter.CreateNotificationChannel();		
 		.....		
 		LoadApplication(new App());
 		.....	
