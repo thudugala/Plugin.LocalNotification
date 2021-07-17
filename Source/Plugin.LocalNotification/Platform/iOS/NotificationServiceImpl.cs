@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -132,19 +133,13 @@ namespace Plugin.LocalNotification.Platform.iOS
                 };
 
                 // Image Attachment
-                if (!string.IsNullOrWhiteSpace(request.Image))
+                if (request.Image is { Length: > 0 })
                 {
-                    var imageAttachment = NSBundle.MainBundle.GetUrlForResource(Path.GetFileNameWithoutExtension(request.Image), Path.GetExtension(request.Image));
-
-                    if (imageAttachment is null)
+                    var nativeImage = await GetNativeImage(request.Image);
+                    if (nativeImage != null)
                     {
-                        Debug.WriteLine("Failed to find attachment image. Make sure the image is marked as EmbeddedResource and the path is correct.");
-                        return false;
+                        content.Attachments = new[] { nativeImage };
                     }
-
-                    UNNotificationAttachmentOptions options = null;
-
-                    content.Attachments = new[] { UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _) };
                 }
 
                 if (request.CategoryType != NotificationCategoryType.None)
@@ -191,6 +186,35 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 trigger?.Dispose();
             }
+        }
+
+        private async Task<UNNotificationAttachment> GetNativeImage(byte[] imageBytes)
+        {
+            if (imageBytes is null || imageBytes.Length <= 0)
+            {
+                return null;
+            }
+
+            await using var stream = new MemoryStream(imageBytes);
+            var image = Image.FromStream(stream);
+            var imageExtension = image.RawFormat.ToString();
+
+            var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
+                NSSearchPathDomain.User);
+            var cachesFolder = cache[0];
+            var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}.{imageExtension}";
+
+            if (File.Exists(cacheFile))
+            {
+                File.Delete(cacheFile);
+            }
+            await File.WriteAllBytesAsync(cacheFile, imageBytes);
+
+            var imageAttachment = NSUrl.CreateFileUrl(cacheFile, false, null);
+
+            var options = new UNNotificationAttachmentOptions();
+
+            return UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _);
         }
 
         private static NSDateComponents GetNsDateComponentsFromDateTime(NotificationRequest notificationRequest)

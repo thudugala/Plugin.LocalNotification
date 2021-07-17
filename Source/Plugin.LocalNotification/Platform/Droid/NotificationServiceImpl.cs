@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Path = System.IO.Path;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -193,16 +194,12 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            if (string.IsNullOrWhiteSpace(request.Image) == false)
+            if (request.Image is {Length: > 0})
             {
-                var imageId = Application.Context.Resources?.GetIdentifier(request.Image, AndroidNotificationIcon.DefaultType, Application.Context.PackageName);
-                if (imageId.HasValue && imageId != 0)
-                {
-                    using var picStyle = new NotificationCompat.BigPictureStyle();
-                    picStyle.BigPicture(BitmapFactory.DecodeResource(Application.Context.Resources, imageId.Value));
-                    picStyle.SetSummaryText(request.Subtitle);
-                    builder.SetStyle(picStyle);
-                }
+                using var picStyle = new NotificationCompat.BigPictureStyle();
+                picStyle.BigPicture(BitmapFactory.DecodeByteArray(request.Image, 0, request.Image.Length));
+                picStyle.SetSummaryText(request.Subtitle);
+                builder.SetStyle(picStyle);
             }
             else
             {

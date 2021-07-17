@@ -4,6 +4,7 @@ using Android.Media;
 using Android.OS;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
+using System.IO;
 
 namespace Plugin.LocalNotification
 {
@@ -188,11 +189,14 @@ namespace Plugin.LocalNotification
                 return null;
             }
 
-            if (soundFileName.Contains("://", StringComparison.InvariantCulture) == false)
+            if (soundFileName.Contains("://", StringComparison.InvariantCulture))
             {
-                soundFileName =
-                    $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
+                return Android.Net.Uri.Parse(soundFileName);
             }
+
+            soundFileName = Path.GetFileNameWithoutExtension(soundFileName);
+            soundFileName =
+                $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
 
             return Android.Net.Uri.Parse(soundFileName);
         }

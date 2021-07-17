@@ -63,9 +63,9 @@ namespace Plugin.LocalNotification
 
 
         /// <summary>
-        /// Image for notification.  Use resource name for platforms.
+        /// Image for notification.
         /// </summary>
-        public string Image { get; set; } = string.Empty;
+        public byte[] Image { get; set; }
 
         /// <summary>
         /// Notification category for actions
