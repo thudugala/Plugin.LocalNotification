@@ -259,12 +259,12 @@ namespace Plugin.LocalNotification.Platform.iOS
             var nativeActionList = new List<UNNotificationAction>();
             foreach (var notificationAction in category.ActionList)
             {
-                if (string.IsNullOrWhiteSpace(notificationAction.ActionId))
+                if (notificationAction.ActionId == -1000)
                 {
                     continue;
                 }
 
-                var nativeAction = UNNotificationAction.FromIdentifier(notificationAction.ActionId, notificationAction.Title,
+                var nativeAction = UNNotificationAction.FromIdentifier(notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
                     ToNativeActionType(notificationAction.iOSAction));
                 nativeActionList.Add(nativeAction);
             }

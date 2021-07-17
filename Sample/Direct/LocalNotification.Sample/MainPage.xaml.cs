@@ -14,14 +14,56 @@ namespace LocalNotification.Sample
         {
             InitializeComponent();
 
+            NotificationCenter.Current.RegisterCategoryList(new List<NotificationCategory>()
+            {
+                new NotificationCategory()
+                {
+                    CategoryType = NotificationCategoryType.Status,
+                    ActionList = new List<NotificationAction>()
+                    {
+                        new NotificationAction()
+                        {
+                            ActionId = 100,
+                            Title = "Hello",
+                            iOSAction = iOSActionType.None
+                        },
+                        new NotificationAction()
+                        {
+                            ActionId = 101,
+                            Title = "Close",
+                            iOSAction = iOSActionType.None
+                        }
+                    }
+                },
+
+            });
+
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+            NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
 
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-            ScheduleNotificationGroup();
-            ScheduleNotification("first", 10);
-            ScheduleNotification("second", 20);
+            //ScheduleNotificationGroup();
+            //ScheduleNotification("first", 10);
+            //ScheduleNotification("second", 20);
+        }
+
+        private void Current_NotificationActionTapped(NotificationActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case 100:
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
+                    });
+                    break;
+
+                case 101:
+                    NotificationCenter.Current.Cancel(e.Request.NotificationId);
+                    break;
+            }
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -45,6 +87,7 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
+                CategoryType = NotificationCategoryType.Status,
                 Android =
                 {
                     IconSmallName = new AndroidNotificationIcon("icon1"),
@@ -134,7 +177,7 @@ namespace LocalNotification.Sample
             NotificationCenter.Current.Show(notification);
         }
 
-        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
+        private void ShowCustomAlertFromNotification(NotificationEventArgs e)
         {
             if (e.Request is null)
             {

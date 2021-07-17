@@ -8,7 +8,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// A unique identifier for the Action
         /// </summary>
-        public string ActionId { get; set; }
+        public int ActionId { get; set; }
 
         /// <summary>
         ///

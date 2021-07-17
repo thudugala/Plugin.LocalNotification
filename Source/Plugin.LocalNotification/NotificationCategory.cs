@@ -6,20 +6,11 @@ namespace Plugin.LocalNotification
     /// Categories serve as the container for actions
     /// </summary>
     public class NotificationCategory
-    {
+    {        
         /// <summary>
         ///
         /// </summary>
-        /// <param name="type"></param>
-        public NotificationCategory(NotificationCategoryType type)
-        {
-            CategoryType = type;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public NotificationCategoryType CategoryType { get; }
+        public NotificationCategoryType CategoryType { get; set; }
 
         /// <summary>
         ///

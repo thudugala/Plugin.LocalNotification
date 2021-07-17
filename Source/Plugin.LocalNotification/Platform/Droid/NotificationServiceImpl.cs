@@ -324,13 +324,13 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
         {
-            var pendingIntent = CreateActionIntent(request, serializedRequest, action);
+            var pendingIntent = CreateActionIntent(serializedRequest, action);
             var nativeAction = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(action.Title), pendingIntent);
 
             return nativeAction;
         }
 
-        private PendingIntent CreateActionIntent(NotificationRequest request, string serializedRequest, NotificationAction action)
+        private PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action)
         {
             var intent = new Intent(Application.Context, typeof(NotificationActionReceiver));
             intent.SetAction(NotificationActionReceiver.EntryIntentAction)
@@ -339,7 +339,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             var pendingIntent = PendingIntent.GetBroadcast(
                 Application.Context,
-                request.NotificationId + 1000,
+                action.ActionId,
                 intent,
                 PendingIntentFlags.CancelCurrent
             );

@@ -39,22 +39,26 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 if (intent.Action != EntryIntentAction)
                 {
+                    System.Diagnostics.Debug.WriteLine("Action Key Not found");
                     return;
                 }
 
                 if (intent.HasExtra(NotificationActionActionId) == false)
                 {
+                    System.Diagnostics.Debug.WriteLine("Action Id Key Not found");
                     return;
                 }
 
                 if (intent.HasExtra(NotificationCenter.ReturnRequest) == false)
                 {
+                    System.Diagnostics.Debug.WriteLine("Request Key Not found");
                     return;
                 }
 
-                var actionId = intent.GetStringExtra(NotificationActionActionId);
-                if (string.IsNullOrWhiteSpace(actionId))
+                var actionId = intent.GetIntExtra(NotificationActionActionId, -1000);
+                if (actionId == -1000)
                 {
+                    System.Diagnostics.Debug.WriteLine("Action Id Not found");
                     return;
                 }
 

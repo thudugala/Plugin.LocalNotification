@@ -41,7 +41,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Tapped Action Id
         /// </summary>
-        public string ActionId { get; set; }
+        public int ActionId { get; set; }
 
         /// <summary>
         /// Returning notification.

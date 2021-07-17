@@ -29,11 +29,12 @@ namespace Plugin.LocalNotification.Platform.iOS
                     // Take action based on identifier
                     if (!response.IsDefaultAction)
                     {
-                        if (string.IsNullOrWhiteSpace(response.ActionIdentifier) == false)
+                        if (string.IsNullOrWhiteSpace(response.ActionIdentifier) == false &&
+                            int.TryParse(response.ActionIdentifier, out var actionId))
                         {
                             var actionArgs = new NotificationActionEventArgs
                             {
-                                ActionId = response.ActionIdentifier,
+                                ActionId = actionId,
                                 Request = localNotification
                             };
                             notificationService.OnNotificationActionTapped(actionArgs);
