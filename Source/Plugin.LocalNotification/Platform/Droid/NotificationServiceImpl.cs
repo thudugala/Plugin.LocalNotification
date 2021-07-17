@@ -193,10 +193,26 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            using (var bigTextStyle = new NotificationCompat.BigTextStyle())
+            if (string.IsNullOrWhiteSpace(request.Image) == false)
             {
-                var bigText = bigTextStyle.BigText(request.Description);
-                builder.SetStyle(bigText);
+                var imageId = Application.Context.Resources?.GetIdentifier(request.Image, AndroidNotificationIcon.DefaultType, Application.Context.PackageName);
+                if (imageId.HasValue && imageId != 0)
+                {
+                    using var picStyle = new NotificationCompat.BigPictureStyle();
+                    picStyle.BigPicture(BitmapFactory.DecodeResource(Application.Context.Resources, imageId.Value));
+                    picStyle.SetSummaryText(request.Subtitle);
+                    builder.SetStyle(picStyle);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(request.Description) == false)
+                {
+                    using var bigTextStyle = new NotificationCompat.BigTextStyle();
+                    bigTextStyle.BigText(request.Description);
+                    bigTextStyle.SetSummaryText(request.Subtitle);
+                    builder.SetStyle(bigTextStyle);
+                }
             }
             builder.SetNumber(request.BadgeNumber);
             builder.SetAutoCancel(request.Android.AutoCancel);
