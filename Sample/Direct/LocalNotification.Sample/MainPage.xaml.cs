@@ -1,6 +1,8 @@
 ﻿using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using Xamarin.Forms;
 
@@ -64,6 +66,15 @@ namespace LocalNotification.Sample
 
         private void Button_Clicked(object sender, EventArgs e)
         {
+            var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.icon.png");
+            byte[] imageBytes = null;
+            if (imageStream != null)
+            {
+                using var ms = new MemoryStream();
+                imageStream.CopyTo(ms);
+                imageBytes = ms.ToArray();
+            }
+            
             _tapCount++;
             var notificationId = 100;
             var title = "Test";
@@ -80,9 +91,11 @@ namespace LocalNotification.Sample
             {
                 NotificationId = notificationId,
                 Title = title,
+                Subtitle = $"Tap Count: {_tapCount}",
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
+                Image = imageBytes,
                 CategoryType = NotificationCategoryType.Status,
                 Android =
                 {

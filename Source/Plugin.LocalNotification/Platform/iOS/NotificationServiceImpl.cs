@@ -133,7 +133,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 };
 
                 // Image Attachment
-                if (request.Image is { Length: > 0 })
+                if (request.Image != null && request.Image.Length > 0)
                 {
                     var nativeImage = await GetNativeImage(request.Image);
                     if (nativeImage != null)

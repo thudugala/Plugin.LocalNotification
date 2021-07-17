@@ -194,7 +194,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            if (request.Image is {Length: > 0})
+            if (request.Image != null && request.Image.Length > 0)
             {
                 using var picStyle = new NotificationCompat.BigPictureStyle();
                 picStyle.BigPicture(BitmapFactory.DecodeByteArray(request.Image, 0, request.Image.Length));
