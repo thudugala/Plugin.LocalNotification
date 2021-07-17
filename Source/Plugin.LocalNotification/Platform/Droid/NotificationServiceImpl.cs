@@ -6,6 +6,7 @@ using AndroidX.Core.App;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -46,9 +47,21 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
+        public Task<IList<int>> PendingNotificationList()
+        {
+            return null;
+        }
+
+        /// <inheritdoc />
         public void OnNotificationReceived(NotificationEventArgs e)
         {
             NotificationReceived?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public Task<IList<int>> DeliveredNotificationList()
+        {
+            return null;
         }
 
         /// <inheritdoc />

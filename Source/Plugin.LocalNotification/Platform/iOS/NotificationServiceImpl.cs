@@ -336,5 +336,21 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             return type.ToString();
         }
+
+        /// <inheritdoc />
+        public async Task<IList<int>> PendingNotificationList()
+        {
+            var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
+
+            return pending.Select(r => int.Parse(r.Identifier, CultureInfo.InvariantCulture)).ToList();
+        }
+
+        /// <inheritdoc />
+        public async Task<IList<int>> DeliveredNotificationList()
+        {
+            var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
+
+            return delivered.Select(t => int.Parse(t.Request.Identifier, CultureInfo.InvariantCulture)).ToList();
+        }
     }
 }

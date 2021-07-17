@@ -37,6 +37,12 @@ namespace Plugin.LocalNotification
         bool CancelAll();
 
         /// <summary>
+        /// Get notifications that are currently delivered
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<int>> DeliveredNotificationList();
+
+        /// <summary>
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
@@ -53,6 +59,12 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="e"></param>
         void OnNotificationTapped(NotificationEventArgs e);
+
+        /// <summary>
+        /// Get pending notifications
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<int>> PendingNotificationList();
 
         /// <summary>
         /// Register notification categories and their corresponding actions
