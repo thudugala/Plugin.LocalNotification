@@ -134,10 +134,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 // Image Attachment
                 if (!string.IsNullOrWhiteSpace(request.Image))
                 {
-                    var e = Path.GetExtension(request.Image);
                     var imageAttachment = NSBundle.MainBundle.GetUrlForResource(Path.GetFileNameWithoutExtension(request.Image), Path.GetExtension(request.Image));
 
-                    if (imageAttachment == null)
+                    if (imageAttachment is null)
                     {
                         Debug.WriteLine("Failed to find attachment image. Make sure the image is marked as EmbeddedResource and the path is correct.");
                         return false;

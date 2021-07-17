@@ -25,7 +25,7 @@ The local notification plugin provides a way to show local notifications from Xa
 | Scheduled               | ✅           | ✅               |
 | Custom Sounds           | ✅           | ✅               |
 | Images                  | ✅           | ❌               |
-| Notification Actions    | ✅           | ❌               |
+| Notification Actions    | ✅           | ✅               |
 | Pending Notifications   | ✅           | ❌               |
 | Delivered Notifications | ✅           | ❌               |
 
@@ -70,8 +70,8 @@ NotificationCenter.Current.Show(notification);
 ```csharp
 NotificationCenter.Current.Show((notification) => notification
                     .WithScheduleOptions((schedule) => schedule
-		         .NotifyAt(DateTime.Now.AddSeconds(30))
-			 .Build())
+					.NotifyAt(DateTime.Now.AddSeconds(30))
+					.Build())
                     .WithAndroidOptions((android) => android
                          .WithAutoCancel(true)
                          .WithChannelId("General")
@@ -152,10 +152,10 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 {
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
-	        .....
-	        // Must create a Notification Channel when API >= 26
-                // you can created multiple Notification Channels with different names.
-                NotificationCenter.CreateNotificationChannel();		
+	    .....
+	    // Must create a Notification Channel when API >= 26
+        // you can created multiple Notification Channels with different names.
+        NotificationCenter.CreateNotificationChannel();		
 		.....		
 		LoadApplication(new App());
 		.....	
@@ -194,7 +194,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
             return base.FinishedLaunching(app, options);
         }
 
-	public override void WillEnterForeground(UIApplication uiApplication)
+		public override void WillEnterForeground(UIApplication uiApplication)
         {
             Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
         }
