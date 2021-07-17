@@ -459,12 +459,48 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public void RegisterCategoryList(IList<NotificationCategory> categoryList)
         {
+            if (categoryList is null || categoryList.Any() == false)
+            {
+                return;
+            }
+
+            var categorySet = new HashSet<NotificationCategoryType>();
             foreach (var category in categoryList)
             {
                 if (category.CategoryType == NotificationCategoryType.None)
                 {
                     continue;
                 }
+
+                if (categorySet.Contains(category.CategoryType))
+                {
+                    continue;
+                }
+
+                categorySet.Add(category.CategoryType);
+
+                var duplicateActionList = new List<NotificationAction>();
+                var actionIdSet = new HashSet<int>();
+                foreach (var notificationAction in category.ActionList)
+                {
+                    if (actionIdSet.Contains(notificationAction.ActionId))
+                    {
+                        duplicateActionList.Add(notificationAction);
+                    }
+                    else
+                    {
+                        actionIdSet.Add(notificationAction.ActionId);
+                    }
+                }
+
+                if (duplicateActionList.Any())
+                {
+                    foreach (var duplicateAction in duplicateActionList)
+                    {
+                        category.ActionList.Remove(duplicateAction);
+                    }
+                }
+
                 _categoryList.Add(category);
             }
         }

@@ -239,7 +239,33 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public void RegisterCategoryList(IList<NotificationCategory> categoryList)
         {
-            var nativeCategoryList = categoryList.Select(RegisterActionList).Where(nativeCategory => nativeCategory != null).ToList();
+            if (categoryList is null || categoryList.Any() == false)
+            {
+                return;
+            }
+
+            var categorySet = new HashSet<NotificationCategoryType>();
+            var nativeCategoryList = new List<UNNotificationCategory>();
+            foreach (var category in categoryList)
+            {
+                if (category.CategoryType == NotificationCategoryType.None)
+                {
+                    continue;
+                }
+
+                if (categorySet.Contains(category.CategoryType))
+                {
+                    continue;
+                }
+
+                categorySet.Add(category.CategoryType);
+
+                var nativeCategory = RegisterActionList(category);
+                if (nativeCategory != null)
+                {
+                    nativeCategoryList.Add(nativeCategory);
+                }
+            }
 
             if (nativeCategoryList.Any() == false)
             {
@@ -257,12 +283,20 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
 
             var nativeActionList = new List<UNNotificationAction>();
+            var actionIdSet = new HashSet<int>();
             foreach (var notificationAction in category.ActionList)
             {
                 if (notificationAction.ActionId == -1000)
                 {
                     continue;
                 }
+
+                if (actionIdSet.Contains(notificationAction.ActionId))
+                {
+                    continue;
+                }
+
+                actionIdSet.Add(notificationAction.ActionId);
 
                 var nativeAction = UNNotificationAction.FromIdentifier(notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
                     ToNativeActionType(notificationAction.iOSAction));
