@@ -44,7 +44,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return HashCode.Combine(CategoryType);
+            return CategoryType.GetHashCode();
         }
     }
 }

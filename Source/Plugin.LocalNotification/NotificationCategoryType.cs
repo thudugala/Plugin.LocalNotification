@@ -34,12 +34,7 @@ namespace Plugin.LocalNotification
         /// Error in background operation or authentication status
         /// </summary>
         Error,
-
-        /// <summary>
-        /// Running stopwatch
-        /// </summary>
-        StopWatch,
-
+        
         /// <summary>
         /// Progress of a long-running background operation
         /// </summary>

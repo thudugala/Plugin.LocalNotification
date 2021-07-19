@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text.Json;
 using Xamarin.Forms;
 
@@ -47,34 +46,19 @@ namespace LocalNotification.Sample
             //ScheduleNotification("second", 20);
         }
 
-        private void Current_NotificationActionTapped(NotificationActionEventArgs e)
-        {
-            switch (e.ActionId)
-            {
-                case 100:
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
-                    });
-                    break;
-
-                case 101:
-                    NotificationCenter.Current.Cancel(e.Request.NotificationId);
-                    break;
-            }
-        }
-
         private void Button_Clicked(object sender, EventArgs e)
         {
             var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.icon.png");
             byte[] imageBytes = null;
             if (imageStream != null)
             {
-                using var ms = new MemoryStream();
-                imageStream.CopyTo(ms);
-                imageBytes = ms.ToArray();
+                using (var ms = new MemoryStream())
+                {
+                    imageStream.CopyTo(ms);
+                    imageBytes = ms.ToArray();
+                }
             }
-            
+
             _tapCount++;
             var notificationId = 100;
             var title = "Test";
@@ -136,6 +120,23 @@ namespace LocalNotification.Sample
             }
 
             NotificationCenter.Current.Show(request);
+        }
+
+        private void Current_NotificationActionTapped(NotificationActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case 100:
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
+                    });
+                    break;
+
+                case 101:
+                    NotificationCenter.Current.Cancel(e.Request.NotificationId);
+                    break;
+            }
         }
 
         private void ScheduleNotification(string title, double seconds)

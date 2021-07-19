@@ -48,7 +48,7 @@ namespace Plugin.LocalNotification
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return HashCode.Combine(ActionId);
+            return ActionId.GetHashCode();
         }
     }
 }

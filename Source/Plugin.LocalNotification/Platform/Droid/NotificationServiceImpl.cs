@@ -6,13 +6,11 @@ using AndroidX.Core.App;
 using AndroidX.Work;
 using Java.Util.Concurrent;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Path = System.IO.Path;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -510,7 +508,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 NotificationCategoryType.Reminder => NotificationCompat.CategoryReminder,
                 NotificationCategoryType.Event => NotificationCompat.CategoryEvent,
                 NotificationCategoryType.Error => NotificationCompat.CategoryError,
-                NotificationCategoryType.StopWatch => NotificationCompat.CategoryStopwatch,
                 NotificationCategoryType.Progress => NotificationCompat.CategoryProgress,
                 NotificationCategoryType.Promo => NotificationCompat.CategoryPromo,
                 NotificationCategoryType.Recommendation => NotificationCompat.CategoryRecommendation,
