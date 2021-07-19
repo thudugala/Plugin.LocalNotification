@@ -1,7 +1,6 @@
 ﻿using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -30,7 +29,7 @@ namespace LocalNotification.Sample
                 _tapCount.ToString()
             };
 
-            var serializeReturningData = JsonSerializer.Serialize(list);
+            var serializeReturningData = ObjectSerializer.SerializeObject(list);
 
             var request = new NotificationRequest
             {
@@ -41,7 +40,7 @@ namespace LocalNotification.Sample
                 ReturningData = serializeReturningData,
                 Android =
                 {
-                    IconSmallName = new AndroidNotificationIcon("my_icon"),
+                    IconSmallName = "my_icon",
                     //AutoCancel = false,
                     //Ongoing = true
                 },
@@ -63,16 +62,20 @@ namespace LocalNotification.Sample
                 {
                     notifyDateTime = DateTime.Now.AddSeconds(10);
                 }
-                request.Schedule.NotifyTime = notifyDateTime;
-                request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
+
+                request.Schedule = new NotificationRequestSchedule()
+                {
+                    NotifyTime = notifyDateTime,
+                    Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
+                };
             }
 
             NotificationCenter.Current.Show(request);
         }
 
-        private void ShowCustomAlertFromNotification(NotificationEventArgs e)
+        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
         {
-            if (e.Request is null)
+            if (e is null)
             {
                 return;
             }
@@ -83,9 +86,7 @@ namespace LocalNotification.Sample
             {
                 if (CustomAlert.IsToggled)
                 {
-                    var requestJson = JsonSerializer.Serialize(e.Request);
-
-                    DisplayAlert(e.Request.Title, requestJson, "OK");
+                    DisplayAlert(e.Request.Title, e.Request.Description, "OK");
                 }
             });
         }

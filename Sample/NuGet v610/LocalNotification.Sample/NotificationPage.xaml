@@ -12,25 +12,9 @@
                 VerticalOptions="CenterAndExpand" />
 
             <Label
-                x:Name="IdLabel"
-                HorizontalOptions="CenterAndExpand"
-                VerticalOptions="CenterAndExpand" />
-
-            <Label
-                x:Name="MessageLabel"
-                HorizontalOptions="CenterAndExpand"
-                VerticalOptions="CenterAndExpand" />
-
-            <Label
                 x:Name="TapCountLabel"
                 HorizontalOptions="CenterAndExpand"
                 VerticalOptions="CenterAndExpand" />
-
-            <Button
-                Clicked="Button_Clicked"
-                HorizontalOptions="Center"
-                Text="Go Back"
-                VerticalOptions="Center" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

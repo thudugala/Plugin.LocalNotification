@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json;
 using Plugin.LocalNotification;
 using Xamarin.Forms;
 
@@ -30,30 +29,25 @@ namespace LocalNotification.Sample
         {
         }
 
-        private async void LoadPageFromNotification(NotificationEventArgs e)
+        private void LoadPageFromNotification(NotificationTappedEventArgs e)
         {
-            if (e.Request is null)
+            if (string.IsNullOrWhiteSpace(e.Request.ReturningData))
             {
                 return;
             }
 
-            var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
-            if (list is null || list.Count != 4)
+            var list = ObjectSerializer.DeserializeObject<List<string>>(e.Request.ReturningData);
+            if (list.Count != 2)
             {
                 return;
             }
-
             if (list[0] != typeof(NotificationPage).FullName)
             {
                 return;
             }
+            var tapCount = list[1];
 
-            var id = list[1];
-            var message = list[2];
-            var tapCount = list[3];
-
-            await ((NavigationPage)MainPage).Navigation.PushModalAsync(new NotificationPage(int.Parse(id), message,
-                int.Parse(tapCount)));
+            ((NavigationPage)MainPage).Navigation.PushAsync(new NotificationPage(int.Parse(tapCount)));
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LocalNotification.Sample.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    xmlns:local="clr-namespace:LocalNotification.Sample"
+    Title="Main"
+    ios:Page.UseSafeArea="true">
+
+    <StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <DatePicker x:Name="NotifyDatePicker" Format="d" />
+            <TimePicker x:Name="NotifyTimePicker" Format="t" />
+            <Switch x:Name="UseNotifyTimeSwitch" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Repeat next day at same time" />
+            <Switch x:Name="RepeatSwitch" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Display Alert on notification received " />
+            <Switch x:Name="CustomAlert" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Use Custom Sound" />
+            <Switch x:Name="CustomSoundSwitch" IsToggled="false" />
+        </StackLayout>
+        <Label HorizontalOptions="Center" Text="In Android &gt;= 26, Use NotificationChannel to set Sound" />
+
+        <!--  Place new controls here  -->
+        <Button
+            Clicked="Button_Clicked"
+            HorizontalOptions="Center"
+            Text="Send Local Notification"
+            VerticalOptions="CenterAndExpand" />
+    </StackLayout>
+</ContentPage>
