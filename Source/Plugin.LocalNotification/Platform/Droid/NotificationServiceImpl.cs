@@ -296,7 +296,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
-            if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.Name) == false)
+            if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.ResourceName) == false)
             {
                 var largeIcon= await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, GetIcon(request.Android.IconLargeName));
                 if(largeIcon != null)
@@ -498,14 +498,14 @@ namespace Plugin.LocalNotification.Platform.Droid
         protected static int GetIcon(AndroidIcon icon)
         {
             var iconId = 0;
-            if (icon != null && string.IsNullOrWhiteSpace(icon.Name) == false)
+            if (icon != null && string.IsNullOrWhiteSpace(icon.ResourceName) == false)
             {
                 if (string.IsNullOrWhiteSpace(icon.Type))
                 {
                     icon.Type = AndroidIcon.DefaultType;
                 }
 
-                iconId = Application.Context.Resources?.GetIdentifier(icon.Name, icon.Type, Application.Context.PackageName) ?? 0;
+                iconId = Application.Context.Resources?.GetIdentifier(icon.ResourceName, icon.Type, Application.Context.PackageName) ?? 0;
             }
 
             if (iconId != 0)

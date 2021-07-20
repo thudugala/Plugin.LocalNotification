@@ -15,20 +15,20 @@
         /// <summary>
         ///
         /// </summary>
-        /// <param name="name"></param>
-        public AndroidIcon(string name)
+        /// <param name="resourceName"></param>
+        public AndroidIcon(string resourceName)
         {
-            Name = name;
+            ResourceName = resourceName;
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="resourceName"></param>
         /// <param name="type"></param>
-        public AndroidIcon(string name, string type)
+        public AndroidIcon(string resourceName, string type)
         {
-            Name = name;
+            ResourceName = resourceName;
             Type = type ?? DefaultType;
         }
 
@@ -40,7 +40,7 @@
         /// <summary>
         /// The name of the desired resource
         /// </summary>
-        public string Name { get; set; }
+        public string ResourceName { get; set; }
 
         /// <summary>
         /// Optional default resource type to find, if "type/" is

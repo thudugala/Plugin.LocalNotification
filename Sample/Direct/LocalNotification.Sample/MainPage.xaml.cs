@@ -81,12 +81,21 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                Image = imageBytes,
+                Image = new NotificationImage
+                {
+                    Binary = imageBytes
+                },
                 CategoryType = NotificationCategoryType.Status,
                 Android =
                 {
-                    IconSmallName = new AndroidIcon("icon1"),
-                    Color = "colorPrimary",
+                    IconSmallName =
+                    {
+                        ResourceName = "icon1",
+                    },
+                    Color =
+                    {
+                        ResourceName = "colorPrimary"
+                    },
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
                     ProgressBarProgress = _tapCount
