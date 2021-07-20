@@ -85,7 +85,7 @@ namespace LocalNotification.Sample
                 CategoryType = NotificationCategoryType.Status,
                 Android =
                 {
-                    IconSmallName = new AndroidNotificationIcon("icon1"),
+                    IconSmallName = new AndroidIcon("icon1"),
                     Color = "colorPrimary",
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,

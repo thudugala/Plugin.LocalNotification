@@ -65,7 +65,25 @@ namespace Plugin.LocalNotification.AndroidOption
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
-        public AndroidOptionsBuilder WithColor(string color)
+        public AndroidOptionsBuilder WithColor(int argb)
+        {
+            _options.Color.Argb = argb;
+            return this;
+        }
+
+        /// <summary>
+        /// If set, the notification icon and application name will have the provided ARGB color.
+        /// </summary>
+        public AndroidOptionsBuilder WithColor(string resourceName)
+        {
+            _options.Color.ResourceName = resourceName;
+            return this;
+        }
+
+        /// <summary>
+        /// If set, the notification icon and application name will have the provided ARGB color.
+        /// </summary>
+        public AndroidOptionsBuilder WithColor(AndroidColor color)
         {
             _options.Color = color;
             return this;
@@ -85,7 +103,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidOptionsBuilder WithIconLargeName(AndroidNotificationIcon icon)
+        public AndroidOptionsBuilder WithIconLargeName(AndroidIcon icon)
         {
             _options.IconLargeName = icon;
             return this;
@@ -95,7 +113,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidOptionsBuilder WithIconSmallName(AndroidNotificationIcon icon)
+        public AndroidOptionsBuilder WithIconSmallName(AndroidIcon icon)
         {
             _options.IconSmallName = icon;
             return this;

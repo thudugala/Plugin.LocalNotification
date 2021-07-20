@@ -3,12 +3,12 @@
     /// <summary>
     ///
     /// </summary>
-    public class AndroidNotificationIcon
+    public class AndroidIcon
     {
         /// <summary>
         ///
         /// </summary>
-        public AndroidNotificationIcon()
+        public AndroidIcon()
         {
         }
 
@@ -16,7 +16,7 @@
         ///
         /// </summary>
         /// <param name="name"></param>
-        public AndroidNotificationIcon(string name)
+        public AndroidIcon(string name)
         {
             Name = name;
         }
@@ -26,7 +26,7 @@
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type"></param>
-        public AndroidNotificationIcon(string name, string type)
+        public AndroidIcon(string name, string type)
         {
             Name = name;
             Type = type ?? DefaultType;
