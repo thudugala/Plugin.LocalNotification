@@ -24,7 +24,7 @@ The local notification plugin provides a way to show local notifications from Xa
 | Subtitle                | ✅           | ✅               |
 | Scheduled               | ✅           | ✅               |
 | Custom Sounds           | ✅           | ✅               |
-| Images                  | ✅           | ❌               |
+| Images                  | ✅           | ✅               |
 | Notification Actions    | ✅           | ✅               |
 | Pending Notifications   | ✅           | ❌               |
 | Delivered Notifications | ✅           | ❌               |
@@ -222,7 +222,7 @@ Only support <b>iOS</b> and <b>Android</b> for the moment.
 # 6.1.0 Documentation
 
 - Please go to [6.1.0 Documentation](../../wiki/Usage-6.1.0), if you are referencing a version below 7.0.0. 
-- Version 7.* has setup differences upgrading from version 6.*
+- Version 7.* and 8.* has setup differences upgrading from version 6.*
 
 # 5.2.0 Documentation
 
