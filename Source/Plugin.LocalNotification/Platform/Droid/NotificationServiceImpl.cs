@@ -272,7 +272,8 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (string.IsNullOrWhiteSpace(request.Android.Color) == false)
             {
-                var colorId = Application.Context.Resources?.GetIdentifier(request.Android.Color, "color", Application.Context.PackageName) ?? 0;
+                var colorResourceId = Application.Context.Resources?.GetIdentifier(request.Android.Color, "color", Application.Context.PackageName) ?? 0;
+                var colorId = Application.Context.GetColor(colorResourceId);
                 builder.SetColor(colorId);
             }
 
