@@ -67,7 +67,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Image for notification.
         /// </summary>
-        public byte[] Image { get; set; }
+        public NotificationImage Image { get; set; } = new NotificationImage();
 
         /// <summary>
         /// Notification category for actions

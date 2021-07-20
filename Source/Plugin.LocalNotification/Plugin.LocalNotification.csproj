@@ -6,7 +6,6 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <NeutralLanguage>en</NeutralLanguage>
-    <LangVersion>latest</LangVersion>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using Plugin.LocalNotification.iOSOption;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +8,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Plugin.LocalNotification.iOSOption;
 using UIKit;
 using UserNotifications;
 
@@ -123,7 +123,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
                 }
 
-                using var content = new UNMutableNotificationContent
+                using (var content = new UNMutableNotificationContent
                 {
                     Title = request.Title,
                     Subtitle = request.Subtitle,
@@ -131,52 +131,56 @@ namespace Plugin.LocalNotification.Platform.iOS
                     Badge = request.BadgeNumber,
                     UserInfo = userInfoDictionary,
                     Sound = UNNotificationSound.Default,
-                };
-
-                // Image Attachment
-                if (request.Image != null && request.Image.Length > 0)
+                })
                 {
-                    var nativeImage = await GetNativeImage(request.Image);
-                    if (nativeImage != null)
+                    // Image Attachment
+                    if (request.Image != null)
                     {
-                        content.Attachments = new[] { nativeImage };
+                        var nativeImage = await GetNativeImage(request.Image);
+                        if (nativeImage != null)
+                        {
+                            content.Attachments = new[] {nativeImage};
+                        }
                     }
+
+                    if (request.CategoryType != NotificationCategoryType.None)
+                    {
+                        content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(request.Sound) == false)
+                    {
+                        content.Sound = UNNotificationSound.GetSound(request.Sound);
+                    }
+
+                    var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
+
+                    if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
+                        request.Schedule.NotifyRepeatInterval.HasValue)
+                    {
+                        TimeSpan interval = request.Schedule.NotifyRepeatInterval.Value;
+
+                        // Cannot delay and repeat in when TimeInterval
+                        trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
+                    }
+                    else
+                    {
+                        using (var notifyTime = GetNsDateComponentsFromDateTime(request))
+                        {
+                            trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
+                        }
+                    }
+
+                    var notificationId =
+                        request.NotificationId.ToString(CultureInfo.CurrentCulture);
+
+                    var nativeRequest = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
+
+                    await UNUserNotificationCenter.Current.AddNotificationRequestAsync(nativeRequest)
+                        .ConfigureAwait(false);
+
+                    return true;
                 }
-
-                if (request.CategoryType != NotificationCategoryType.None)
-                {
-                    content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
-                }
-                if (string.IsNullOrWhiteSpace(request.Sound) == false)
-                {
-                    content.Sound = UNNotificationSound.GetSound(request.Sound);
-                }
-
-                var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
-
-                if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
-                    request.Schedule.NotifyRepeatInterval.HasValue)
-                {
-                    TimeSpan interval = request.Schedule.NotifyRepeatInterval.Value;
-
-                    // Cannot delay and repeat in when TimeInterval
-                    trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
-                }
-                else
-                {
-                    using var notifyTime = GetNsDateComponentsFromDateTime(request);
-                    trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
-                }
-
-                var notificationId =
-                    request.NotificationId.ToString(CultureInfo.CurrentCulture);
-
-                var nativeRequest = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
-
-                await UNUserNotificationCenter.Current.AddNotificationRequestAsync(nativeRequest)
-                    .ConfigureAwait(false);
-
-                return true;
             }
             catch (Exception ex)
             {
@@ -189,29 +193,52 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private async Task<UNNotificationAttachment> GetNativeImage(byte[] imageBytes)
+        private async Task<UNNotificationAttachment> GetNativeImage(NotificationImage notificationImage)
         {
-            if (imageBytes is null || imageBytes.Length <= 0)
+            if (notificationImage is null || notificationImage.HasValue == false)
             {
                 return null;
             }
 
-            await using var stream = new MemoryStream(imageBytes);
-            var image = Image.FromStream(stream);
-            var imageExtension = image.RawFormat.ToString();
-
-            var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
-                NSSearchPathDomain.User);
-            var cachesFolder = cache[0];
-            var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}.{imageExtension}";
-
-            if (File.Exists(cacheFile))
+            NSUrl imageAttachment = null;
+            if (string.IsNullOrWhiteSpace(notificationImage.ResourceName) == false)
             {
-                File.Delete(cacheFile);
+                imageAttachment = NSBundle.MainBundle.GetUrlForResource(Path.GetFileNameWithoutExtension(notificationImage.ResourceName), Path.GetExtension(notificationImage.ResourceName));
             }
-            await File.WriteAllBytesAsync(cacheFile, imageBytes);
+            if (string.IsNullOrWhiteSpace(notificationImage.FilePath) == false)
+            {
+                if (File.Exists(notificationImage.FilePath))
+                {
+                    imageAttachment = NSUrl.CreateFileUrl(notificationImage.FilePath, false, null);
+                }
+            }
+            if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
+            {
+                using (var stream = new MemoryStream(notificationImage.Binary))
+                {
+                    var image = Image.FromStream(stream);
+                    var imageExtension = image.RawFormat.ToString();
 
-            var imageAttachment = NSUrl.CreateFileUrl(cacheFile, false, null);
+                    var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
+                        NSSearchPathDomain.User);
+                    var cachesFolder = cache[0];
+                    var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}.{imageExtension}";
+
+                    if (File.Exists(cacheFile))
+                    {
+                        File.Delete(cacheFile);
+                    }
+
+                    await File.WriteAllBytesAsync(cacheFile, notificationImage.Binary);
+
+                    imageAttachment = NSUrl.CreateFileUrl(cacheFile, false, null);
+                }
+            }
+
+            if (imageAttachment is null)
+            {
+                return null;
+            }
 
             var options = new UNNotificationAttachmentOptions();
 
@@ -222,42 +249,41 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTime.Now.AddSeconds(1);
 
-            return notificationRequest.Schedule.RepeatType switch
+            switch (notificationRequest.Schedule.RepeatType)
             {
-                NotificationRepeat.Daily => new NSDateComponents
-                {
-                    Hour = dateTime.Hour,
-                    Minute = dateTime.Minute,
-                    Second = dateTime.Second
-                },
-                NotificationRepeat.Weekly => new NSDateComponents
-                {
-                    // iOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
-                    // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
-                    // .Net: The returned value is an integer between 0 and 6,
-                    // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
-                    Weekday = (int)dateTime.DayOfWeek + 1,
-                    Hour = dateTime.Hour,
-                    Minute = dateTime.Minute,
-                    Second = dateTime.Second
-                },
-                NotificationRepeat.No => new NSDateComponents
-                {
-                    Day = dateTime.Day,
-                    Month = dateTime.Month,
-                    Year = dateTime.Year,
-                    Hour = dateTime.Hour,
-                    Minute = dateTime.Minute,
-                    Second = dateTime.Second
-                },
-                _ => new NSDateComponents
-                {
-                    Day = dateTime.Day,
-                    Hour = dateTime.Hour,
-                    Minute = dateTime.Minute,
-                    Second = dateTime.Second
-                }
-            };
+                case NotificationRepeat.Daily:
+                    return new NSDateComponents
+                    {
+                        Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                    };
+                case NotificationRepeat.Weekly:
+                    return new NSDateComponents
+                    {
+                        // iOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
+                        // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
+                        // .Net: The returned value is an integer between 0 and 6,
+                        // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
+                        Weekday = (int) dateTime.DayOfWeek + 1,
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
+                    };
+                case NotificationRepeat.No:
+                    return new NSDateComponents
+                    {
+                        Day = dateTime.Day,
+                        Month = dateTime.Month,
+                        Year = dateTime.Year,
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
+                    };
+                default:
+                    return new NSDateComponents
+                    {
+                        Day = dateTime.Day, Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                    };
+            }
         }
 
         /// <inheritdoc />
@@ -323,14 +349,17 @@ namespace Plugin.LocalNotification.Platform.iOS
 
         private static UNNotificationActionOptions ToNativeActionType(iOSActionType type)
         {
-            return type switch
+            switch (type)
             {
-                iOSActionType.Foreground => UNNotificationActionOptions.Foreground,
-                iOSActionType.Destructive => UNNotificationActionOptions.Destructive,
-                iOSActionType.AuthenticationRequired => UNNotificationActionOptions.AuthenticationRequired,
-                iOSActionType.None => UNNotificationActionOptions.None,
-                _ => UNNotificationActionOptions.None,
-            };
+                case iOSActionType.Foreground:
+                    return UNNotificationActionOptions.Foreground;
+                case iOSActionType.Destructive:
+                    return UNNotificationActionOptions.Destructive;
+                case iOSActionType.AuthenticationRequired:
+                    return UNNotificationActionOptions.AuthenticationRequired;
+                default:
+                    return UNNotificationActionOptions.None;
+            }
         }
 
         private static string ToNativeCategory(NotificationCategoryType type)

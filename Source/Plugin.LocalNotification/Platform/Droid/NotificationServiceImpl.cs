@@ -9,6 +9,7 @@ using Plugin.LocalNotification.AndroidOption;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -138,27 +139,32 @@ namespace Plugin.LocalNotification.Platform.Droid
         public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
 
         /// <inheritdoc />
-        public Task<bool> Show(NotificationRequest notificationRequest)
+        public async Task<bool> Show(NotificationRequest notificationRequest)
         {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
-                    return Task.FromResult(false);
+                    return false;
                 }
 
                 if (notificationRequest is null)
                 {
-                    return Task.FromResult(false);
+                    return false;
                 }
 
-                var result = notificationRequest.Schedule.NotifyTime.HasValue ? ShowLater(notificationRequest) : ShowNow(notificationRequest);
-                return Task.FromResult(result);
+                if (notificationRequest.Schedule.NotifyTime.HasValue)
+                {
+                    return ShowLater(notificationRequest);
+                }
+
+                var result =  await ShowNow(notificationRequest);
+                return result;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
-                return Task.FromResult(false);
+                Log(ex.Message);
+                return false;
             }
         }
 
@@ -183,7 +189,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <param name="request"></param>
-        protected internal virtual bool ShowNow(NotificationRequest request)
+        protected internal virtual async Task<bool> ShowNow(NotificationRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
@@ -206,12 +212,16 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            if (request.Image != null && request.Image.Length > 0)
+            if (request.Image != null && request.Image.HasValue)
             {
-                using var picStyle = new NotificationCompat.BigPictureStyle();
-                picStyle.BigPicture(BitmapFactory.DecodeByteArray(request.Image, 0, request.Image.Length));
-                picStyle.SetSummaryText(request.Subtitle);
-                builder.SetStyle(picStyle);
+                var imageBitmap = await GetNativeImage(request.Image);
+                if (imageBitmap != null)
+                {
+                    using var picStyle = new NotificationCompat.BigPictureStyle();
+                    picStyle.BigPicture(imageBitmap);
+                    picStyle.SetSummaryText(request.Subtitle);
+                    builder.SetStyle(picStyle);
+                }
             }
             else
             {
@@ -288,7 +298,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
             if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.Name) == false)
             {
-                builder.SetLargeIcon(BitmapFactory.DecodeResource(Application.Context.Resources, GetIcon(request.Android.IconLargeName)));
+                var largeIcon= await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, GetIcon(request.Android.IconLargeName));
+                if(largeIcon != null)
+                {
+                    builder.SetLargeIcon(largeIcon);
+                }
             }
 
             if (request.Android.TimeoutAfter.HasValue)
@@ -353,6 +367,35 @@ namespace Plugin.LocalNotification.Platform.Droid
             NotificationCenter.Current.OnNotificationReceived(args);
 
             return true;
+        }
+
+        private async Task<Bitmap> GetNativeImage(NotificationImage notificationImage)
+        {
+            if (notificationImage is null || notificationImage.HasValue == false)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(notificationImage.ResourceName) == false)
+            {
+                var imageId = Application.Context.Resources?.GetIdentifier(notificationImage.ResourceName, AndroidIcon.DefaultType, Application.Context.PackageName);
+                if (imageId != null)
+                {
+                    return await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, imageId.Value);
+                }
+            }
+            if (string.IsNullOrWhiteSpace(notificationImage.FilePath) == false)
+            {
+                if (File.Exists(notificationImage.FilePath))
+                {
+                    return await BitmapFactory.DecodeFileAsync(notificationImage.FilePath);
+                }
+            }
+            if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
+            {
+                return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0, notificationImage.Binary.Length);
+            }
+            return null;
         }
 
         private NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
