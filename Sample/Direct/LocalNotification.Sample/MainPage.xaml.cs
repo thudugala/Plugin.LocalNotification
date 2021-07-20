@@ -81,8 +81,9 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                Image = new NotificationImage
+                Image =
                 {
+                    //ResourceName = "icon",
                     Binary = imageBytes
                 },
                 CategoryType = NotificationCategoryType.Status,
