@@ -1,4 +1,4 @@
-﻿namespace Plugin.LocalNotification
+﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     /// Sphere of visibility of this notification,

@@ -1,4 +1,4 @@
-namespace Plugin.LocalNotification
+namespace Plugin.LocalNotification.iOSOption
 {
     /// <summary>
     /// The behaviors you can apply to an action

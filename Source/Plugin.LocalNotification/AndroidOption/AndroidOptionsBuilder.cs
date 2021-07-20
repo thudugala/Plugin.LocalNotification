@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plugin.LocalNotification
+namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     /// NotificationRequest for Android

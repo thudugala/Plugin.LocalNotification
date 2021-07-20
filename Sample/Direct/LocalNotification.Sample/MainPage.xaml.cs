@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample

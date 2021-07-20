@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Plugin.LocalNotification.AndroidOption;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
