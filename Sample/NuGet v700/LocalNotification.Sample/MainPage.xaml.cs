@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using Plugin.LocalNotification.AndroidOption;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -42,7 +41,7 @@ namespace LocalNotification.Sample
                 ReturningData = serializeReturningData,
                 Android =
                 {
-                    IconSmallName = new AndroidIcon("my_icon"),
+                    IconSmallName = new AndroidNotificationIcon("my_icon"),
                     //AutoCancel = false,
                     //Ongoing = true
                 },
