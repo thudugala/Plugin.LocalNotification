@@ -104,7 +104,7 @@ public partial class App : Application
 		MainPage = new MainPage();
 	}
 	
-	private void OnLocalNotificationTapped(NotificationTappedEventArgs e)
+	private void OnLocalNotificationTapped(NotificationEventArgs e)
     	{
 		// your code goes here
 	}
@@ -127,7 +127,7 @@ public partial class App : Application
 		MainPage = new MainPage();
 	}
 	
-	private void OnLocalNotificationReceived(NotificationReceivedEventArgs e)
+	private void OnLocalNotificationReceived(NotificationEventArgs e)
     	{
 		// your code goes here
 	}
