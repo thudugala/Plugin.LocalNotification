@@ -49,7 +49,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public Task<IList<int>> PendingNotificationList()
         {
-            return null;
+            IList<int> result = new List<int>();
+            return Task.FromResult(result);
         }
 
         /// <inheritdoc />
@@ -61,7 +62,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public Task<IList<int>> DeliveredNotificationList()
         {
-            return null;
+            IList<int> result = new List<int>();
+            return Task.FromResult(result);
         }
 
         /// <inheritdoc />

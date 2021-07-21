@@ -8,7 +8,7 @@ namespace Plugin.LocalNotification
     public class NotificationImage
     {
         /// <summary>
-        ///
+        /// Must be less than 8Kb
         /// </summary>
         public byte[] Binary { get; set; }
 
@@ -20,8 +20,8 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public bool HasValue => string.IsNullOrWhiteSpace(ResourceName) ||
-                                string.IsNullOrWhiteSpace(FilePath) ||
+        public bool HasValue => string.IsNullOrWhiteSpace(ResourceName) == false ||
+                                string.IsNullOrWhiteSpace(FilePath) == false ||
                                 (Binary != null && Binary.Length > 0);
 
         /// <summary>

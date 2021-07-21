@@ -29,7 +29,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return Result.InvokeFailure();
             }
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 try
                 {
@@ -65,7 +65,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                             return;
                         }
 
-                        notificationService.ShowNow(notification);
+                        await notificationService.ShowNow(notification);
                         notificationService.EnqueueWorker(notification);
                         return;
                     }
@@ -78,7 +78,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     }
 
                     notification.Schedule.NotifyTime = null;
-                    NotificationCenter.Current.Show(notification);
+                    await NotificationCenter.Current.Show(notification);
                 }
                 catch (Exception ex)
                 {
