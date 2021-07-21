@@ -51,13 +51,13 @@ var notification = new NotificationRequest
         NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
     }
 };
-NotificationCenter.Current.Show(notification);
+await NotificationCenter.Current.Show(notification);
 ```
 
 ### Or with Notification Request Builder
 
 ```csharp
- NotificationCenter.Current.Show((notification) => notification
+await NotificationCenter.Current.Show((notification) => notification
                         .NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
                         .WithTitle("Test Title")
                         .WithDescription("Test Description")
@@ -68,7 +68,7 @@ NotificationCenter.Current.Show(notification);
 
 ### With platform specific options
 ```csharp
-NotificationCenter.Current.Show((notification) => notification
+await NotificationCenter.Current.Show((notification) => notification
                     .WithScheduleOptions((schedule) => schedule
 					.NotifyAt(DateTime.Now.AddSeconds(30))
 					.Build())
