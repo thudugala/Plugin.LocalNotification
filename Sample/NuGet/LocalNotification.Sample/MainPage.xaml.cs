@@ -21,7 +21,7 @@ namespace LocalNotification.Sample
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked(object sender, EventArgs e)
         {
             _tapCount++;
 
@@ -68,7 +68,7 @@ namespace LocalNotification.Sample
                 request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
             }
 
-            NotificationCenter.Current.Show(request);
+            await NotificationCenter.Current.Show(request);
         }
 
         private void ShowCustomAlertFromNotification(NotificationEventArgs e)
