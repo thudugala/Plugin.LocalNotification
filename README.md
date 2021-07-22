@@ -11,7 +11,7 @@ The local notification plugin provides a way to show local notifications from Xa
 # Setup
 
 - `Plugin.LocalNotification` Available on NuGet: https://www.nuget.org/packages/Plugin.LocalNotification
-- Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.1 projects required for your app.
+- Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.0/2.1 projects required for your app.
 - Must Use Xamarin.Forms 4.5.0.356 or above.
 
 ## Platform Support
@@ -51,13 +51,13 @@ var notification = new NotificationRequest
         NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
     }
 };
-NotificationCenter.Current.Show(notification);
+await NotificationCenter.Current.Show(notification);
 ```
 
 ### Or with Notification Request Builder
 
 ```csharp
- NotificationCenter.Current.Show((notification) => notification
+await NotificationCenter.Current.Show((notification) => notification
                         .NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
                         .WithTitle("Test Title")
                         .WithDescription("Test Description")
@@ -68,7 +68,7 @@ NotificationCenter.Current.Show(notification);
 
 ### With platform specific options
 ```csharp
-NotificationCenter.Current.Show((notification) => notification
+await NotificationCenter.Current.Show((notification) => notification
                     .WithScheduleOptions((schedule) => schedule
 					.NotifyAt(DateTime.Now.AddSeconds(30))
 					.Build())
