@@ -127,8 +127,11 @@ namespace LocalNotification.Sample
                     notifyDateTime = DateTime.Now.AddSeconds(10);
                 }
 
+                request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
                 request.Schedule.NotifyTime = notifyDateTime;
-                request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
+                //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
+                request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
+                request.Schedule.NotifyRepeatInterval = TimeSpanExt.ToTimeSpanExt(TimeSpan.FromMinutes(2));
             }
 
             NotificationCenter.Current.Show(request);

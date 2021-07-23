@@ -61,6 +61,15 @@ namespace Plugin.LocalNotification.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alarm service not found.
+        /// </summary>
+        internal static string AndroidAlarmServiceNotFound {
+            get {
+                return ResourceManager.GetString("AndroidAlarmServiceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notification service not found.
         /// </summary>
         internal static string AndroidNotificationServiceNotFound {

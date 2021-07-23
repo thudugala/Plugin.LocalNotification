@@ -11,7 +11,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         Enabled = true,
         Exported = false
     )]
-    public class NotificationActionReceiver : BroadcastReceiver
+    internal class NotificationActionReceiver : BroadcastReceiver
     {
         /// <summary>
         ///

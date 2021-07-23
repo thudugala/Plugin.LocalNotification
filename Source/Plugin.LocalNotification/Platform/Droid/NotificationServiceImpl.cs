@@ -3,12 +3,9 @@ using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
-using AndroidX.Work;
-using Java.Util.Concurrent;
 using Plugin.LocalNotification.AndroidOption;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -24,12 +21,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         ///
         /// </summary>
-        protected readonly NotificationManager NotificationManager;
-
+        protected readonly NotificationManager MyNotificationManager;
+        
         /// <summary>
         ///
         /// </summary>
-        protected readonly WorkManager WorkManager;
+        protected readonly AlarmManager MyAlarmManager;
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -84,10 +81,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                NotificationManager =
+                MyNotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
                     throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
-                WorkManager = WorkManager.GetInstance(Application.Context);
+
+                MyAlarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager ??
+                                 throw new ApplicationException(Properties.Resources.AndroidAlarmServiceNotFound);
             }
             catch (Exception ex)
             {
@@ -105,8 +104,17 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                WorkManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
-                NotificationManager?.Cancel(notificationId);
+                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                var alarmIntent = PendingIntent.GetBroadcast(
+                    Application.Context,
+                    notificationId,
+                    intent,
+                    PendingIntentFlags.CancelCurrent
+                );
+
+                MyAlarmManager?.Cancel(alarmIntent);
+
+                MyNotificationManager?.Cancel(notificationId);
                 return true;
             }
             catch (Exception ex)
@@ -126,8 +134,18 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                WorkManager?.CancelAllWork();
-                NotificationManager?.CancelAll();
+                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                var alarmIntent = PendingIntent.GetBroadcast(
+                    Application.Context,
+                    0,
+                    intent,
+                    PendingIntentFlags.CancelCurrent
+                );
+
+                MyAlarmManager?.Cancel(alarmIntent);
+                alarmIntent?.Cancel();
+
+                MyNotificationManager?.CancelAll();
                 return true;
             }
             catch (Exception ex)
@@ -160,7 +178,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return ShowLater(notificationRequest);
                 }
 
-                var result =  await ShowNow(notificationRequest);
+                var result = await ShowNow(notificationRequest);
                 return result;
             }
             catch (Exception ex)
@@ -173,18 +191,75 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         ///
         /// </summary>
-        /// <param name="notificationRequest"></param>
-        protected virtual bool ShowLater(NotificationRequest notificationRequest)
+        /// <param name="request"></param>
+        protected virtual bool ShowLater(NotificationRequest request)
         {
-            if (notificationRequest.Schedule.NotifyTime is null ||
-                notificationRequest.Schedule.NotifyTime.Value <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
+            if (request.Schedule.NotifyTime is null ||
+                request.Schedule.NotifyTime <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
             {
                 return false;
             }
 
-            Cancel(notificationRequest.NotificationId);
+            var dictionaryRequest = NotificationCenter.GetRequestSerialize(request);
 
-            return EnqueueWorker(notificationRequest);
+            var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+            foreach (var item in dictionaryRequest)
+            {
+                intent.PutExtra(item.Key, item.Value);
+            }
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context,
+                request.NotificationId,
+                intent,
+                PendingIntentFlags.UpdateCurrent
+            );
+
+            var utcAlarmTimeInMillis = (request.Schedule.NotifyTime.Value.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
+            var triggerTime = (long)utcAlarmTimeInMillis;
+
+            if (request.Schedule.RepeatType != NotificationRepeat.No)
+            {
+                TimeSpan? repeatInterval = null;
+                switch (request.Schedule.RepeatType)
+                {
+                    case NotificationRepeat.Daily:
+                        // To be consistent with iOS, Schedule notification next day same time.
+                        repeatInterval = TimeSpan.FromDays(1);
+                        break;
+
+                    case NotificationRepeat.Weekly:
+                        // To be consistent with iOS, Schedule notification next week same day same time.
+                        repeatInterval = TimeSpan.FromDays(7);
+                        break;
+
+                    case NotificationRepeat.TimeInterval:
+                        if (request.Schedule.NotifyRepeatInterval.HasValue)
+                        {
+                            repeatInterval = request.Schedule.NotifyRepeatInterval.Value;
+                        }
+                        break;
+                }
+
+                if (repeatInterval == null)
+                {
+                    return true;
+                }
+                var intervalTime = (long)repeatInterval.Value.TotalMilliseconds;
+
+                MyAlarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, intervalTime, pendingIntent);
+            }
+            else
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                {
+                    MyAlarmManager.SetExactAndAllowWhileIdle(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
+                }
+                else
+                {
+                    MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -200,7 +275,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var channel = NotificationManager.GetNotificationChannel(request.Android.ChannelId);
+                var channel = MyNotificationManager.GetNotificationChannel(request.Android.ChannelId);
                 if (channel is null)
                 {
                     NotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
@@ -300,8 +375,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
             if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.ResourceName) == false)
             {
-                var largeIcon= await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, GetIcon(request.Android.IconLargeName));
-                if(largeIcon != null)
+                var largeIcon = await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, GetIcon(request.Android.IconLargeName));
+                if (largeIcon != null)
                 {
                     builder.SetLargeIcon(largeIcon);
                 }
@@ -360,7 +435,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 notification.Defaults = NotificationDefaults.All;
 #pragma warning restore 618
             }
-            NotificationManager?.Notify(request.NotificationId, notification);
+            MyNotificationManager?.Notify(request.NotificationId, notification);
 
             var args = new NotificationEventArgs
             {
@@ -456,40 +531,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="request"></param>
-        protected internal virtual bool EnqueueWorker(NotificationRequest request)
-        {
-            if (!request.Schedule.NotifyTime.HasValue)
-            {
-                Log($"{nameof(request.Schedule.NotifyTime)} value doesn't set!");
-                return false;
-            }
-
-            var notifyTime = request.Schedule.NotifyTime.Value;
-
-            using var dataBuilder = new Data.Builder();
-            var dictionary = NotificationCenter.GetRequestSerialize(request);
-            foreach (var item in dictionary)
-            {
-                dataBuilder.PutString(item.Key, item.Value);
-            }
-            var data = dataBuilder.Build();
-            var tag = request.NotificationId.ToString(CultureInfo.CurrentCulture);
-            var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
-
-            var workRequest = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>()
-                .AddTag(tag)
-                .SetInputData(data)
-                .SetInitialDelay(diff, TimeUnit.Milliseconds)
-                .Build();
-
-            WorkManager?.Enqueue(workRequest);
-            return true;
         }
 
         /// <summary>
