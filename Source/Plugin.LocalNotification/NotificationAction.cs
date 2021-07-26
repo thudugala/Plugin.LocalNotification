@@ -1,16 +1,31 @@
 using System;
+using Plugin.LocalNotification.iOSOption;
 
 namespace Plugin.LocalNotification
 {
     /// <summary>
     ///
     /// </summary>
-    public class NotificationAction
+    public class NotificationAction : IEquatable<NotificationAction>
     {
+        /// <summary>
+        /// ActionId is the unique identifier for the Category
+        /// </summary>
+        /// <param name="actionId">A unique identifier for the Action</param>
+        public NotificationAction(int actionId)
+        {
+            ActionId = actionId;
+        }
+
+        /// <summary>
+        /// A unique identifier for the Action
+        /// </summary>
+        public int ActionId { get; }
+
         /// <summary>
         ///
         /// </summary>
-        public string Identifier { get; set; }
+        public iOSActionType iOSAction { get; set; } = iOSActionType.None;
 
         /// <summary>
         ///
@@ -20,11 +35,21 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public Action<int, string> Handler { get; set; }
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(NotificationAction other)
+        {
+            return other != null &&
+                   ActionId == other.ActionId;
+        }
 
         /// <summary>
         ///
         /// </summary>
-        public iOSActionType iOSAction { get; set; } = iOSActionType.None;
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return ActionId.GetHashCode();
+        }
     }
 }

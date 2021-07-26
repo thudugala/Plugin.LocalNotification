@@ -11,7 +11,7 @@ The local notification plugin provides a way to show local notifications from Xa
 # Setup
 
 - `Plugin.LocalNotification` Available on NuGet: https://www.nuget.org/packages/Plugin.LocalNotification
-- Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.1 projects required for your app.
+- Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.0/2.1 projects required for your app.
 - Must Use Xamarin.Forms 4.5.0.356 or above.
 
 ## Platform Support
@@ -24,8 +24,8 @@ The local notification plugin provides a way to show local notifications from Xa
 | Subtitle                | ✅           | ✅               |
 | Scheduled               | ✅           | ✅               |
 | Custom Sounds           | ✅           | ✅               |
-| Images                  | ✅           | ❌               |
-| Notification Actions    | ✅           | ❌               |
+| Images                  | ✅           | ✅               |
+| Notification Actions    | ✅           | ✅               |
 | Pending Notifications   | ✅           | ❌               |
 | Delivered Notifications | ✅           | ❌               |
 
@@ -46,15 +46,18 @@ var notification = new NotificationRequest
     Title = "Test",
     Description = "Test Description",
     ReturningData = "Dummy data", // Returning data when tapped on notification.
-    NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
+    Schedule = 
+    {
+        NotifyTime = DateTime.Now.AddSeconds(30) // Used for Scheduling local notification, if not specified notification will show immediately.
+    }
 };
-NotificationCenter.Current.Show(notification);
+await NotificationCenter.Current.Show(notification);
 ```
 
 ### Or with Notification Request Builder
 
 ```csharp
- NotificationCenter.Current.Show((notification) => notification
+await NotificationCenter.Current.Show((notification) => notification
                         .NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
                         .WithTitle("Test Title")
                         .WithDescription("Test Description")
@@ -65,8 +68,10 @@ NotificationCenter.Current.Show(notification);
 
 ### With platform specific options
 ```csharp
-NotificationCenter.Current.Show((notification) => notification
-                    .NotifyAt(DateTime.Now.AddSeconds(30))
+await NotificationCenter.Current.Show((notification) => notification
+                    .WithScheduleOptions((schedule) => schedule
+					.NotifyAt(DateTime.Now.AddSeconds(30))
+					.Build())
                     .WithAndroidOptions((android) => android
                          .WithAutoCancel(true)
                          .WithChannelId("General")
@@ -99,7 +104,7 @@ public partial class App : Application
 		MainPage = new MainPage();
 	}
 	
-	private void OnLocalNotificationTapped(NotificationTappedEventArgs e)
+	private void OnLocalNotificationTapped(NotificationEventArgs e)
     	{
 		// your code goes here
 	}
@@ -122,7 +127,7 @@ public partial class App : Application
 		MainPage = new MainPage();
 	}
 	
-	private void OnLocalNotificationReceived(NotificationReceivedEventArgs e)
+	private void OnLocalNotificationReceived(NotificationEventArgs e)
     	{
 		// your code goes here
 	}
@@ -147,10 +152,10 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
 {
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
-	        .....
-	        // Must create a Notification Channel when API >= 26
-                // you can created multiple Notification Channels with different names.
-                NotificationCenter.CreateNotificationChannel();		
+	    	.....
+	    	// Must create a Notification Channel when API >= 26
+        	// you can created multiple Notification Channels with different names.
+        	NotificationCenter.CreateNotificationChannel();		
 		.....		
 		LoadApplication(new App());
 		.....	
@@ -203,14 +208,6 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 [![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
 
-# Notification Channels
-
-[Setting up Notification Channels](../../wiki/%5BAndroid---=-26%5D-Notification-Channel)
-
-# Custom Sound
-
-[Notification with a Sound-File](../../wiki/Notification-with-a-Sound-File)
-
 # SourceLink Support
 
 In Visual Studio, confirm that SourceLink is enabled. 
@@ -222,10 +219,15 @@ https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 
 Only support <b>iOS</b> and <b>Android</b> for the moment. 
 
+# 6.1.0 Documentation
+
+- Please go to [6.1.0 Documentation](../../wiki/Usage-6.1.0), if you are referencing a version below 7.0.0. 
+- Version 7.* and 8.* has setup differences upgrading from version 6.*
+
 # 5.2.0 Documentation
 
 - Please go to [5.2.0 Documentation](../../wiki/Usage-5.2.0), if you are referencing a version below 6.0.0. 
-- Version 6.* has setup differences in Android if upgrading from version 5.*
+- Version 6.* has setup differences if upgrading from version 5.*
 
 # 4.1.4 Documentation
 

@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
 
 namespace Plugin.LocalNotification
 {
@@ -63,9 +65,9 @@ namespace Plugin.LocalNotification
 
 
         /// <summary>
-        /// Image for notification.  Use resource name for platforms.
+        /// Image for notification.
         /// </summary>
-        public string Image { get; set; } = string.Empty;
+        public NotificationImage Image { get; set; } = new NotificationImage();
 
         /// <summary>
         /// Notification category for actions

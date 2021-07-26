@@ -1,6 +1,8 @@
 ﻿using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using Plugin.LocalNotification.AndroidOption;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -19,7 +21,7 @@ namespace LocalNotification.Sample
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked(object sender, EventArgs e)
         {
             _tapCount++;
 
@@ -29,7 +31,7 @@ namespace LocalNotification.Sample
                 _tapCount.ToString()
             };
 
-            var serializeReturningData = ObjectSerializer.SerializeObject(list);
+            var serializeReturningData = JsonSerializer.Serialize(list);
 
             var request = new NotificationRequest
             {
@@ -38,10 +40,9 @@ namespace LocalNotification.Sample
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
-                Repeats = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No,
                 Android =
                 {
-                    IconName = "my_icon",
+                    IconSmallName = new AndroidIcon("my_icon"),
                     //AutoCancel = false,
                     //Ongoing = true
                 },
@@ -63,15 +64,16 @@ namespace LocalNotification.Sample
                 {
                     notifyDateTime = DateTime.Now.AddSeconds(10);
                 }
-                request.NotifyTime = notifyDateTime;
+                request.Schedule.NotifyTime = notifyDateTime;
+                request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
             }
 
-            NotificationCenter.Current.Show(request);
+            await NotificationCenter.Current.Show(request);
         }
 
-        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
+        private void ShowCustomAlertFromNotification(NotificationEventArgs e)
         {
-            if (e is null)
+            if (e.Request is null)
             {
                 return;
             }
@@ -82,7 +84,9 @@ namespace LocalNotification.Sample
             {
                 if (CustomAlert.IsToggled)
                 {
-                    DisplayAlert(e.Title, e.Description, "OK");
+                    var requestJson = JsonSerializer.Serialize(e.Request);
+
+                    DisplayAlert(e.Request.Title, requestJson, "OK");
                 }
             });
         }

@@ -30,7 +30,7 @@ namespace LocalNotification.Sample
         {
         }
 
-        private async void LoadPageFromNotification(NotificationTappedEventArgs e)
+        private async void LoadPageFromNotification(NotificationEventArgs e)
         {
             if (e.Request is null)
             {

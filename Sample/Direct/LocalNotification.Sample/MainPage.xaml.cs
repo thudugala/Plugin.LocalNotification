@@ -1,7 +1,10 @@
 ﻿using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
+using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -14,18 +17,50 @@ namespace LocalNotification.Sample
         {
             InitializeComponent();
 
+            NotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
+            {
+                new NotificationCategory(NotificationCategoryType.Status)
+                {
+                    ActionList = new HashSet<NotificationAction>( new List<NotificationAction>()
+                    {
+                        new NotificationAction(100)
+                        {
+                            Title = "Hello",
+                            iOSAction = iOSActionType.None
+                        },
+                        new NotificationAction(101)
+                        {
+                            Title = "Close",
+                            iOSAction = iOSActionType.None
+                        }
+                    })
+                },
+            }));
+
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+            NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
 
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-            ScheduleNotificationGroup();
-            ScheduleNotification("first", 10);
-            ScheduleNotification("second", 20);
+            //ScheduleNotificationGroup();
+            //ScheduleNotification("first", 10);
+            //ScheduleNotification("second", 20);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
+            var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.icon.png");
+            byte[] imageBytes = null;
+            if (imageStream != null)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    imageStream.CopyTo(ms);
+                    imageBytes = ms.ToArray();
+                }
+            }
+
             _tapCount++;
             var notificationId = 100;
             var title = "Test";
@@ -42,13 +77,26 @@ namespace LocalNotification.Sample
             {
                 NotificationId = notificationId,
                 Title = title,
+                Subtitle = $"Tap Count: {_tapCount}",
                 Description = $"Tap Count: {_tapCount}",
                 BadgeNumber = _tapCount,
                 ReturningData = serializeReturningData,
+                Image =
+                {
+                    //ResourceName = "icon",
+                    Binary = imageBytes
+                },
+                CategoryType = NotificationCategoryType.Status,
                 Android =
                 {
-                    IconSmallName = new AndroidNotificationIcon("icon1"),
-                    Color = "colorPrimary",
+                    IconSmallName =
+                    {
+                        ResourceName = "icon1",
+                    },
+                    Color =
+                    {
+                        ResourceName = "colorPrimary"
+                    },
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
                     ProgressBarProgress = _tapCount
@@ -79,11 +127,31 @@ namespace LocalNotification.Sample
                     notifyDateTime = DateTime.Now.AddSeconds(10);
                 }
 
+                request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
                 request.Schedule.NotifyTime = notifyDateTime;
-                request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
+                //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
+                request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
+                request.Schedule.NotifyRepeatInterval = TimeSpanExt.ToTimeSpanExt(TimeSpan.FromMinutes(2));
             }
 
             NotificationCenter.Current.Show(request);
+        }
+
+        private void Current_NotificationActionTapped(NotificationActionEventArgs e)
+        {
+            switch (e.ActionId)
+            {
+                case 100:
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
+                    });
+                    break;
+
+                case 101:
+                    NotificationCenter.Current.Cancel(e.Request.NotificationId);
+                    break;
+            }
         }
 
         private void ScheduleNotification(string title, double seconds)
@@ -134,7 +202,7 @@ namespace LocalNotification.Sample
             NotificationCenter.Current.Show(notification);
         }
 
-        private void ShowCustomAlertFromNotification(NotificationReceivedEventArgs e)
+        private void ShowCustomAlertFromNotification(NotificationEventArgs e)
         {
             if (e.Request is null)
             {

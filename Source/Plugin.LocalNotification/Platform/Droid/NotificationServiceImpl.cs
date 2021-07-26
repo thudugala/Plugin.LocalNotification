@@ -3,11 +3,11 @@ using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
-using AndroidX.Work;
-using Java.Util.Concurrent;
+using Plugin.LocalNotification.AndroidOption;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,17 +16,17 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        /// <summary>
-        ///
-        /// </summary>
-        protected readonly NotificationManager NotificationManager;
+        private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
         /// <summary>
         ///
         /// </summary>
-        protected readonly WorkManager WorkManager;
-
-        public Dictionary<string, NotificationAction> NotificationActions { get; } = new Dictionary<string, NotificationAction>();
+        protected readonly NotificationManager MyNotificationManager;
+        
+        /// <summary>
+        ///
+        /// </summary>
+        protected readonly AlarmManager MyAlarmManager;
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -35,15 +35,38 @@ namespace Plugin.LocalNotification.Platform.Droid
         public event NotificationReceivedEventHandler NotificationReceived;
 
         /// <inheritdoc />
-        public void OnNotificationTapped(NotificationTappedEventArgs e)
+        public event NotificationActionTappedEventHandler NotificationActionTapped;
+
+        /// <inheritdoc />
+        public void OnNotificationTapped(NotificationEventArgs e)
         {
             NotificationTapped?.Invoke(e);
         }
 
         /// <inheritdoc />
-        public void OnNotificationReceived(NotificationReceivedEventArgs e)
+        public Task<IList<int>> PendingNotificationList()
+        {
+            IList<int> result = new List<int>();
+            return Task.FromResult(result);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationReceived(NotificationEventArgs e)
         {
             NotificationReceived?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public Task<IList<int>> DeliveredNotificationList()
+        {
+            IList<int> result = new List<int>();
+            return Task.FromResult(result);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationActionTapped(NotificationActionEventArgs e)
+        {
+            NotificationActionTapped?.Invoke(e);
         }
 
         /// <summary>
@@ -58,10 +81,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                NotificationManager =
+                MyNotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
                     throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
-                WorkManager = WorkManager.GetInstance(Application.Context);
+
+                MyAlarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager ??
+                                 throw new ApplicationException(Properties.Resources.AndroidAlarmServiceNotFound);
             }
             catch (Exception ex)
             {
@@ -79,8 +104,17 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                WorkManager?.CancelAllWorkByTag(notificationId.ToString(CultureInfo.CurrentCulture));
-                NotificationManager?.Cancel(notificationId);
+                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                var alarmIntent = PendingIntent.GetBroadcast(
+                    Application.Context,
+                    notificationId,
+                    intent,
+                    PendingIntentFlags.CancelCurrent
+                );
+
+                MyAlarmManager?.Cancel(alarmIntent);
+
+                MyNotificationManager?.Cancel(notificationId);
                 return true;
             }
             catch (Exception ex)
@@ -100,8 +134,18 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                WorkManager?.CancelAllWork();
-                NotificationManager?.CancelAll();
+                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                var alarmIntent = PendingIntent.GetBroadcast(
+                    Application.Context,
+                    0,
+                    intent,
+                    PendingIntentFlags.CancelCurrent
+                );
+
+                MyAlarmManager?.Cancel(alarmIntent);
+                alarmIntent?.Cancel();
+
+                MyNotificationManager?.CancelAll();
                 return true;
             }
             catch (Exception ex)
@@ -115,52 +159,114 @@ namespace Plugin.LocalNotification.Platform.Droid
         public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
 
         /// <inheritdoc />
-        public Task<bool> Show(NotificationRequest notificationRequest)
+        public async Task<bool> Show(NotificationRequest notificationRequest)
         {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
                 {
-                    return Task.FromResult(false);
+                    return false;
                 }
 
                 if (notificationRequest is null)
                 {
-                    return Task.FromResult(false);
+                    return false;
                 }
 
-                var result = notificationRequest.Schedule.NotifyTime.HasValue ? ShowLater(notificationRequest) : ShowNow(notificationRequest);
-                return Task.FromResult(result);
+                if (notificationRequest.Schedule.NotifyTime.HasValue)
+                {
+                    return ShowLater(notificationRequest);
+                }
+
+                var result = await ShowNow(notificationRequest);
+                return result;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
-                return Task.FromResult(false);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="notificationRequest"></param>
-        protected virtual bool ShowLater(NotificationRequest notificationRequest)
-        {
-            if (notificationRequest.Schedule.NotifyTime is null ||
-                notificationRequest.Schedule.NotifyTime.Value <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
-            {
+                Log(ex.Message);
                 return false;
             }
-
-            Cancel(notificationRequest.NotificationId);
-
-            return EnqueueWorker(notificationRequest);
         }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="request"></param>
-        protected internal virtual bool ShowNow(NotificationRequest request)
+        protected virtual bool ShowLater(NotificationRequest request)
+        {
+            if (request.Schedule.NotifyTime is null ||
+                request.Schedule.NotifyTime <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
+            {
+                return false;
+            }
+
+            var dictionaryRequest = NotificationCenter.GetRequestSerialize(request);
+
+            var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+            foreach (var item in dictionaryRequest)
+            {
+                intent.PutExtra(item.Key, item.Value);
+            }
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context,
+                request.NotificationId,
+                intent,
+                PendingIntentFlags.UpdateCurrent
+            );
+
+            var utcAlarmTimeInMillis = (request.Schedule.NotifyTime.Value.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
+            var triggerTime = (long)utcAlarmTimeInMillis;
+
+            if (request.Schedule.RepeatType != NotificationRepeat.No)
+            {
+                TimeSpan? repeatInterval = null;
+                switch (request.Schedule.RepeatType)
+                {
+                    case NotificationRepeat.Daily:
+                        // To be consistent with iOS, Schedule notification next day same time.
+                        repeatInterval = TimeSpan.FromDays(1);
+                        break;
+
+                    case NotificationRepeat.Weekly:
+                        // To be consistent with iOS, Schedule notification next week same day same time.
+                        repeatInterval = TimeSpan.FromDays(7);
+                        break;
+
+                    case NotificationRepeat.TimeInterval:
+                        if (request.Schedule.NotifyRepeatInterval.HasValue)
+                        {
+                            repeatInterval = request.Schedule.NotifyRepeatInterval.Value;
+                        }
+                        break;
+                }
+
+                if (repeatInterval == null)
+                {
+                    return true;
+                }
+                var intervalTime = (long)repeatInterval.Value.TotalMilliseconds;
+
+                MyAlarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, intervalTime, pendingIntent);
+            }
+            else
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                {
+                    MyAlarmManager.SetExactAndAllowWhileIdle(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
+                }
+                else
+                {
+                    MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="request"></param>
+        protected internal virtual async Task<bool> ShowNow(NotificationRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
@@ -169,7 +275,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var channel = NotificationManager.GetNotificationChannel(request.Android.ChannelId);
+                var channel = MyNotificationManager.GetNotificationChannel(request.Android.ChannelId);
                 if (channel is null)
                 {
                     NotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
@@ -183,10 +289,26 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            using (var bigTextStyle = new NotificationCompat.BigTextStyle())
+            if (request.Image != null && request.Image.HasValue)
             {
-                var bigText = bigTextStyle.BigText(request.Description);
-                builder.SetStyle(bigText);
+                var imageBitmap = await GetNativeImage(request.Image);
+                if (imageBitmap != null)
+                {
+                    using var picStyle = new NotificationCompat.BigPictureStyle();
+                    picStyle.BigPicture(imageBitmap);
+                    picStyle.SetSummaryText(request.Subtitle);
+                    builder.SetStyle(picStyle);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(request.Description) == false)
+                {
+                    using var bigTextStyle = new NotificationCompat.BigTextStyle();
+                    bigTextStyle.BigText(request.Description);
+                    bigTextStyle.SetSummaryText(request.Subtitle);
+                    builder.SetStyle(bigTextStyle);
+                }
             }
             builder.SetNumber(request.BadgeNumber);
             builder.SetAutoCancel(request.Android.AutoCancel);
@@ -236,16 +358,28 @@ namespace Plugin.LocalNotification.Platform.Droid
                     request.Android.IsProgressBarIndeterminate.Value);
             }
 
-            if (string.IsNullOrWhiteSpace(request.Android.Color) == false)
+            if (request.Android.Color != null)
             {
-                var colorId = Application.Context.Resources?.GetIdentifier(request.Android.Color, "color", Application.Context.PackageName) ?? 0;
-                builder.SetColor(colorId);
+                if (request.Android.Color.Argb.HasValue)
+                {
+                    builder.SetColor(request.Android.Color.Argb.Value);
+                }
+                else if (string.IsNullOrWhiteSpace(request.Android.Color.ResourceName) == false)
+                {
+                    var colorResourceId = Application.Context.Resources?.GetIdentifier(request.Android.Color.ResourceName, "color", Application.Context.PackageName) ?? 0;
+                    var colorId = Application.Context.GetColor(colorResourceId);
+                    builder.SetColor(colorId);
+                }
             }
 
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
-            if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.Name) == false)
+            if (request.Android.IconLargeName != null && string.IsNullOrWhiteSpace(request.Android.IconLargeName.ResourceName) == false)
             {
-                builder.SetLargeIcon(BitmapFactory.DecodeResource(Application.Context.Resources, GetIcon(request.Android.IconLargeName)));
+                var largeIcon = await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, GetIcon(request.Android.IconLargeName));
+                if (largeIcon != null)
+                {
+                    builder.SetLargeIcon(largeIcon);
+                }
             }
 
             if (request.Android.TimeoutAfter.HasValue)
@@ -260,25 +394,30 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return false;
             }
 
-            var serializedNotification = JsonSerializer.Serialize(request);
+            var serializedRequest = JsonSerializer.Serialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedNotification);
+            notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
 
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId, notificationIntent,
                 PendingIntentFlags.CancelCurrent);
             builder.SetContentIntent(pendingIntent);
 
-            // @TODO pendingIntent needs to be routed to handler
-            /*
-            if (NotificationActions.Count > 0)
+            if (_categoryList.Any())
             {
-                foreach(var notificationAction in NotificationActions)
+                var categoryByType = _categoryList.FirstOrDefault(c => c.CategoryType == request.CategoryType);
+                if (categoryByType != null)
                 {
-                    var action = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(notificationAction.Value.Title), pendingIntent);
-
-                    builder.AddAction(action);
+                    foreach (var notificationAction in categoryByType.ActionList)
+                    {
+                        var nativeAction = CreateAction(request, serializedRequest, notificationAction);
+                        if (nativeAction is null)
+                        {
+                            continue;
+                        }
+                        builder.AddAction(nativeAction);
+                    }
                 }
-            }*/
+            }
 
             var notification = builder.Build();
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
@@ -296,9 +435,9 @@ namespace Plugin.LocalNotification.Platform.Droid
                 notification.Defaults = NotificationDefaults.All;
 #pragma warning restore 618
             }
-            NotificationManager?.Notify(request.NotificationId, notification);
+            MyNotificationManager?.Notify(request.NotificationId, notification);
 
-            var args = new NotificationReceivedEventArgs
+            var args = new NotificationEventArgs
             {
                 Request = request
             };
@@ -306,6 +445,77 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             return true;
         }
+
+        private async Task<Bitmap> GetNativeImage(NotificationImage notificationImage)
+        {
+            if (notificationImage is null || notificationImage.HasValue == false)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(notificationImage.ResourceName) == false)
+            {
+                var imageId = Application.Context.Resources?.GetIdentifier(notificationImage.ResourceName, AndroidIcon.DefaultType, Application.Context.PackageName);
+                if (imageId != null)
+                {
+                    return await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, imageId.Value);
+                }
+            }
+            if (string.IsNullOrWhiteSpace(notificationImage.FilePath) == false)
+            {
+                if (File.Exists(notificationImage.FilePath))
+                {
+                    return await BitmapFactory.DecodeFileAsync(notificationImage.FilePath);
+                }
+            }
+            if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
+            {
+                return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0, notificationImage.Binary.Length);
+            }
+            return null;
+        }
+
+        private NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
+        {
+            var pendingIntent = CreateActionIntent(serializedRequest, action);
+            var nativeAction = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(action.Title), pendingIntent);
+
+            return nativeAction;
+        }
+
+        private PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action)
+        {
+            var intent = new Intent(Application.Context, typeof(NotificationActionReceiver));
+            intent.SetAction(NotificationActionReceiver.EntryIntentAction)
+                .PutExtra(NotificationActionReceiver.NotificationActionActionId, action.ActionId)
+                .PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
+
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context,
+                action.ActionId,
+                intent,
+                PendingIntentFlags.CancelCurrent
+            );
+
+            return pendingIntent;
+        }
+
+        //private NotificationCompat.Action CreateTextReply(NotificationRequest request, string serializedRequest, NotificationAction action)
+        //{
+        //    var pendingIntent = CreateActionIntent(request, serializedRequest, action);
+
+        //    var input = new AndroidX.Core.App.RemoteInput.Builder(AndroidNotificationProcessor.RemoteInputResultKey)
+        //        .SetLabel(action.Title)
+        //        .Build();
+
+        //    var iconId = GetIcon(request.Android.IconSmallName);
+        //    var nativeAction = new NotificationCompat.Action.Builder(iconId, action.Title, pendingIntent)
+        //        .SetAllowGeneratedReplies(true)
+        //        .AddRemoteInput(input)
+        //        .Build();
+
+        //    return nativeAction;
+        //}
 
         /// <summary>
         ///
@@ -326,53 +536,19 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         ///
         /// </summary>
-        /// <param name="request"></param>
-        protected internal virtual bool EnqueueWorker(NotificationRequest request)
-        {
-            if (!request.Schedule.NotifyTime.HasValue)
-            {
-                Log($"{nameof(request.Schedule.NotifyTime)} value doesn't set!");
-                return false;
-            }
-
-            var notifyTime = request.Schedule.NotifyTime.Value;
-
-            using var dataBuilder = new Data.Builder();
-            var dictionary = NotificationCenter.GetRequestSerialize(request);
-            foreach (var item in dictionary)
-            {
-                dataBuilder.PutString(item.Key, item.Value);
-            }
-            var data = dataBuilder.Build();
-            var tag = request.NotificationId.ToString(CultureInfo.CurrentCulture);
-            var diff = (long)(notifyTime - DateTime.Now).TotalMilliseconds;
-
-            var workRequest = OneTimeWorkRequest.Builder.From<ScheduledNotificationWorker>()
-                .AddTag(tag)
-                .SetInputData(data)
-                .SetInitialDelay(diff, TimeUnit.Milliseconds)
-                .Build();
-
-            WorkManager?.Enqueue(workRequest);
-            return true;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="icon"></param>
         /// <returns></returns>
-        protected static int GetIcon(AndroidNotificationIcon icon)
+        protected static int GetIcon(AndroidIcon icon)
         {
             var iconId = 0;
-            if (icon != null && string.IsNullOrWhiteSpace(icon.Name) == false)
+            if (icon != null && string.IsNullOrWhiteSpace(icon.ResourceName) == false)
             {
                 if (string.IsNullOrWhiteSpace(icon.Type))
                 {
-                    icon.Type = AndroidNotificationIcon.DefaultType;
+                    icon.Type = AndroidIcon.DefaultType;
                 }
 
-                iconId = Application.Context.Resources?.GetIdentifier(icon.Name, icon.Type, Application.Context.PackageName) ?? 0;
+                iconId = Application.Context.Resources?.GetIdentifier(icon.ResourceName, icon.Type, Application.Context.PackageName) ?? 0;
             }
 
             if (iconId != 0)
@@ -383,7 +559,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             iconId = Application.Context.ApplicationInfo?.Icon ?? 0;
             if (iconId == 0)
             {
-                iconId = Application.Context.Resources?.GetIdentifier("icon", AndroidNotificationIcon.DefaultType,
+                iconId = Application.Context.Resources?.GetIdentifier("icon", AndroidIcon.DefaultType,
                     Application.Context.PackageName) ?? 0;
             }
 
@@ -399,18 +575,22 @@ namespace Plugin.LocalNotification.Platform.Droid
             Android.Util.Log.Info(Application.Context.PackageName, message);
         }
 
-        public void RegisterCategories(NotificationCategory[] notificationCategories)
+        /// <inheritdoc />
+        public void RegisterCategoryList(HashSet<NotificationCategory> categoryList)
         {
-            foreach (var category in notificationCategories)
+            if (categoryList is null || categoryList.Any() == false)
             {
-                RegisterActions(category.NotificationActions);
+                return;
             }
-        }
-        private void RegisterActions(NotificationAction[] notificationActions)
-        {
-            foreach (var action in notificationActions)
+
+            foreach (var category in categoryList)
             {
-                NotificationActions.Add(action.Identifier, action);
+                if (category.CategoryType == NotificationCategoryType.None)
+                {
+                    continue;
+                }
+
+                _categoryList.Add(category);
             }
         }
 
@@ -423,7 +603,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 NotificationCategoryType.Reminder => NotificationCompat.CategoryReminder,
                 NotificationCategoryType.Event => NotificationCompat.CategoryEvent,
                 NotificationCategoryType.Error => NotificationCompat.CategoryError,
-                NotificationCategoryType.StopWatch => NotificationCompat.CategoryStopwatch,
                 NotificationCategoryType.Progress => NotificationCompat.CategoryProgress,
                 NotificationCategoryType.Promo => NotificationCompat.CategoryPromo,
                 NotificationCategoryType.Recommendation => NotificationCompat.CategoryRecommendation,

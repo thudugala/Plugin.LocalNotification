@@ -10,6 +10,11 @@ namespace Plugin.LocalNotification
     public interface INotificationService
     {
         /// <summary>
+        /// fires when notification popup action is tapped.
+        /// </summary>
+        event NotificationActionTappedEventHandler NotificationActionTapped;
+
+        /// <summary>
         /// fires when notification is received.
         /// On iOS this event is fired only when the app is in foreground
         /// </summary>
@@ -32,16 +37,39 @@ namespace Plugin.LocalNotification
         bool CancelAll();
 
         /// <summary>
-        /// Internal use Only
+        /// Get notifications that are currently delivered
         /// </summary>
-        /// <param name="e"></param>
-        void OnNotificationReceived(NotificationReceivedEventArgs e);
+        /// <returns></returns>
+        Task<IList<int>> DeliveredNotificationList();
 
         /// <summary>
         /// Internal use Only
         /// </summary>
         /// <param name="e"></param>
-        void OnNotificationTapped(NotificationTappedEventArgs e);
+        void OnNotificationActionTapped(NotificationActionEventArgs e);
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        void OnNotificationReceived(NotificationEventArgs e);
+
+        /// <summary>
+        /// Internal use Only
+        /// </summary>
+        /// <param name="e"></param>
+        void OnNotificationTapped(NotificationEventArgs e);
+
+        /// <summary>
+        /// Get pending notifications
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<int>> PendingNotificationList();
+
+        /// <summary>
+        /// Register notification categories and their corresponding actions
+        /// </summary>
+        void RegisterCategoryList(HashSet<NotificationCategory> categoryList);
 
         /// <summary>
         /// Send a local notification to the device.
@@ -53,16 +81,5 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="request"></param>
         Task<bool> Show(NotificationRequest request);
-
-
-        /// <summary>
-        /// Storage for actions
-        /// </summary>
-        Dictionary<string, NotificationAction> NotificationActions { get; }
-
-        /// <summary>
-        /// Register notification categories and their corresponding actions
-        /// </summary>
-        void RegisterCategories(NotificationCategory[] notificationCategories);
     }
 }

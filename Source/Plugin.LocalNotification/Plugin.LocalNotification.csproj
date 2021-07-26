@@ -1,12 +1,11 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;MonoAndroid11.0;Xamarin.iOS10</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;MonoAndroid10.0;MonoAndroid11.0;Xamarin.iOS10</TargetFrameworks>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <NeutralLanguage>en</NeutralLanguage>
-    <LangVersion>latest</LangVersion>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -21,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>6.1.0</Version>
+    <Version>9.0.0-preview01</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -51,8 +50,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
-    <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.5.0.1" />
-    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.5.0" />
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0" />
     <Compile Include="**/Platform/Droid/**/*.cs" />
   </ItemGroup>
 
@@ -72,7 +70,7 @@
     <Compile Update="NotificationCategory.cs">
       <SubType></SubType>
     </Compile>
-    <Compile Update="iOSActionType.cs">
+    <Compile Update="iOSOption\iOSActionType.cs">
       <SubType></SubType>
     </Compile>
     <Compile Update="NotificationCategories.cs">

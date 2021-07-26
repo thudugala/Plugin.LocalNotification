@@ -1,6 +1,5 @@
 using Android.App;
 using Android.Content;
-using AndroidX.Work;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -13,7 +12,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         public override void OnReceive(Context context, Intent intent)
         {
             // HACK: Used to resume one-time workers after reboot.
-            var _ = WorkManager.GetInstance(Application.Context);
+            var _ = Application.Context.GetSystemService(Context.NotificationService);
 
             Android.Util.Log.Info(
                 Application.Context.PackageName,

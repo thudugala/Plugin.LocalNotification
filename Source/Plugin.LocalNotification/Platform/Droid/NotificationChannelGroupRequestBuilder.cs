@@ -1,4 +1,6 @@
-﻿namespace Plugin.LocalNotification.Platform.Droid
+﻿using Plugin.LocalNotification.AndroidOption;
+
+namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <summary>
     ///
