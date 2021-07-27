@@ -610,5 +610,40 @@ namespace Plugin.LocalNotification.Platform.Droid
                 _ => NotificationCompat.CategoryStatus
             };
         }
+
+        /// <inheritdoc />
+        public bool Clear(IList<int> notificationIds)
+        {
+            try
+            {
+                foreach (var notificationId in notificationIds)
+                {
+                    MyNotificationManager.Cancel(notificationId);
+                }
+            }
+            catch(Exception ex)
+            {
+                Log(ex.Message);
+                return false;
+            }
+            
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool ClearAll()
+        {
+            try
+            {
+                MyNotificationManager.CancelAll();
+            }
+            catch(Exception ex)
+            {
+                Log(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
     }
 }
