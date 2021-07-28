@@ -382,5 +382,49 @@ namespace Plugin.LocalNotification.Platform.iOS
 
             return delivered.Select(t => int.Parse(t.Request.Identifier, CultureInfo.InvariantCulture)).ToList();
         }
+
+        /// <inheritdoc />
+        public bool Clear(IList<int> notificationIds)
+        {
+            try
+            {
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    return false;
+                }
+
+                var itemList = notificationIds.Select(t => t.ToString(CultureInfo.InvariantCulture)).ToArray();
+
+                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return false;
+            }
+        }
+
+        /// <inheritdoc />
+        public bool ClearAll()
+        {
+            try
+            {
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    return false;
+                }
+
+                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return false;
+            }
+        }
     }
 }

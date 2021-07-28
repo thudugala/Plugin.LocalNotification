@@ -16,18 +16,19 @@ The local notification plugin provides a way to show local notifications from Xa
 
 ## Platform Support
 
-| Feature                 | Xamarin.iOS | Xamarin.Android |
-| ----------------------- | ----------- | --------------- |
-| Required SDK            | >= 10       | >= API 19       |
-| Title                   | ✅           | ✅               |
-| Description             | ✅           | ✅               |
-| Subtitle                | ✅           | ✅               |
-| Scheduled               | ✅           | ✅               |
-| Custom Sounds           | ✅           | ✅               |
-| Images                  | ✅           | ✅               |
-| Notification Actions    | ✅           | ✅               |
-| Pending Notifications   | ✅           | ❌               |
-| Delivered Notifications | ✅           | ❌               |
+| Feature                       | Xamarin.iOS | Xamarin.Android |
+| ----------------------------- | ----------- | --------------- |
+| Required SDK                  | >= 10       | >= API 19       |
+| Title                         | ✅           | ✅               |
+| Description                   | ✅           | ✅               |
+| Subtitle                      | ✅           | ✅               |
+| Scheduled                     | ✅           | ✅               |
+| Custom Sounds                 | ✅           | ✅               |
+| Images                        | ✅           | ✅               |
+| Notification Actions          | ✅           | ✅               |
+| Clear Delivered Notifications | ✅           | ✅               |
+| Get Pending Notifications     | ✅           | ❌               |
+| Get Delivered Notifications   | ✅           | ❌               |
 
 
 
