@@ -26,8 +26,8 @@ The local notification plugin provides a way to show local notifications from Xa
 | Images                        | ✅           | ✅               |
 | Notification Actions          | ✅           | ✅               |
 | Clear Delivered Notifications | ✅           | ✅               |
-| Get Pending Notifications     | ✅           | ❌               |
-| Get Delivered Notifications   | ✅           | ❌               |
+| Get Pending Notifications     | ✅           | ✅               |
+| Get Delivered Notifications   | ✅           | ✅               |
 
 
 
