@@ -57,8 +57,10 @@ await NotificationCenter.Current.Show(notification);
 ### Or with Notification Request Builder
 
 ```csharp
-await NotificationCenter.Current.Show((notification) => notification
-                        .NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
+await NotificationCenter.Current.Show((notification) => notification                     
+			.WithScheduleOptions((schedule) => schedule
+					.NotifyAt(DateTime.Now.AddSeconds(30)) // Used for Scheduling local notification, if not specified notification will show immediately.
+					.Build())
                         .WithTitle("Test Title")
                         .WithDescription("Test Description")
                         .WithReturningData("Dummy Data") // Returning data when tapped on notification.
