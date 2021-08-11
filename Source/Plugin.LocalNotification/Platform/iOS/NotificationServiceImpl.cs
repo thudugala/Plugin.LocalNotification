@@ -44,7 +44,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public bool Cancel(int notificationId)
+        public bool Cancel(params int[] notificationIdList)
         {
             try
             {
@@ -53,10 +53,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                var itemList = new[]
-                {
-                    notificationId.ToString(CultureInfo.CurrentCulture)
-                };
+                var itemList = notificationIdList.Cast<string>().ToArray();
 
                 UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
                 UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
@@ -139,7 +136,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                         var nativeImage = await GetNativeImage(request.Image);
                         if (nativeImage != null)
                         {
-                            content.Attachments = new[] {nativeImage};
+                            content.Attachments = new[] { nativeImage };
                         }
                     }
 
@@ -193,7 +190,12 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private async Task<UNNotificationAttachment> GetNativeImage(NotificationImage notificationImage)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="notificationImage"></param>
+        /// <returns></returns>
+        protected virtual async Task<UNNotificationAttachment> GetNativeImage(NotificationImage notificationImage)
         {
             if (notificationImage is null || notificationImage.HasValue == false)
             {
@@ -245,7 +247,12 @@ namespace Plugin.LocalNotification.Platform.iOS
             return UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _);
         }
 
-        private static NSDateComponents GetNsDateComponentsFromDateTime(NotificationRequest notificationRequest)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="notificationRequest"></param>
+        /// <returns></returns>
+        protected static NSDateComponents GetNsDateComponentsFromDateTime(NotificationRequest notificationRequest)
         {
             var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTime.Now.AddSeconds(1);
 
@@ -254,8 +261,11 @@ namespace Plugin.LocalNotification.Platform.iOS
                 case NotificationRepeat.Daily:
                     return new NSDateComponents
                     {
-                        Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
                     };
+
                 case NotificationRepeat.Weekly:
                     return new NSDateComponents
                     {
@@ -263,11 +273,12 @@ namespace Plugin.LocalNotification.Platform.iOS
                         // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
                         // .Net: The returned value is an integer between 0 and 6,
                         // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
-                        Weekday = (int) dateTime.DayOfWeek + 1,
+                        Weekday = (int)dateTime.DayOfWeek + 1,
                         Hour = dateTime.Hour,
                         Minute = dateTime.Minute,
                         Second = dateTime.Second
                     };
+
                 case NotificationRepeat.No:
                     return new NSDateComponents
                     {
@@ -278,10 +289,14 @@ namespace Plugin.LocalNotification.Platform.iOS
                         Minute = dateTime.Minute,
                         Second = dateTime.Second
                     };
+
                 default:
                     return new NSDateComponents
                     {
-                        Day = dateTime.Day, Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                        Day = dateTime.Day,
+                        Hour = dateTime.Hour,
+                        Minute = dateTime.Minute,
+                        Second = dateTime.Second
                     };
             }
         }
@@ -316,7 +331,12 @@ namespace Plugin.LocalNotification.Platform.iOS
             UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(nativeCategoryList.ToArray()));
         }
 
-        private static UNNotificationCategory RegisterActionList(NotificationCategory category)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        protected static UNNotificationCategory RegisterActionList(NotificationCategory category)
         {
             if (category is null || category.CategoryType == NotificationCategoryType.None)
             {
@@ -347,22 +367,35 @@ namespace Plugin.LocalNotification.Platform.iOS
             return notificationCategory;
         }
 
-        private static UNNotificationActionOptions ToNativeActionType(iOSActionType type)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected static UNNotificationActionOptions ToNativeActionType(iOSActionType type)
         {
             switch (type)
             {
                 case iOSActionType.Foreground:
                     return UNNotificationActionOptions.Foreground;
+
                 case iOSActionType.Destructive:
                     return UNNotificationActionOptions.Destructive;
+
                 case iOSActionType.AuthenticationRequired:
                     return UNNotificationActionOptions.AuthenticationRequired;
+
                 default:
                     return UNNotificationActionOptions.None;
             }
         }
 
-        private static string ToNativeCategory(NotificationCategoryType type)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected static string ToNativeCategory(NotificationCategoryType type)
         {
             return type.ToString();
         }
@@ -384,7 +417,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public bool Clear(IList<int> notificationIds)
+        public bool Clear(params int[] notificationIdList)
         {
             try
             {
@@ -393,7 +426,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                var itemList = notificationIds.Select(t => t.ToString(CultureInfo.InvariantCulture)).ToArray();
+                var itemList = notificationIdList.Cast<string>().ToArray();
 
                 UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
 

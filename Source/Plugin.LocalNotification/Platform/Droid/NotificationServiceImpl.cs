@@ -699,6 +699,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         protected virtual string ToNativeCategory(NotificationCategoryType type)
         {
             return type switch
