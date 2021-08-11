@@ -18,7 +18,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// </summary>
         public const string SharedName = "Plugin.LocalNotification." + nameof(Preferences);
 
-        static bool ContainsKey(string key)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool ContainsKey(string key)
         {
             lock (locker)
             {
@@ -29,7 +34,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        static void Remove(string key)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        public static void Remove(string key)
         {
             lock (locker)
             {
@@ -41,7 +50,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        static void Clear()
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void Clear()
         {
             lock (locker)
             {
@@ -53,7 +65,13 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        static void Set<T>(string key, T value)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void Set<T>(string key, T value)
         {
             lock (locker)
             {
@@ -99,7 +117,14 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        static T Get<T>(string key, T defaultValue)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static T Get<T>(string key, T defaultValue)
         {
             lock (locker)
             {
@@ -160,7 +185,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        static ISharedPreferences GetSharedPreferences()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static ISharedPreferences GetSharedPreferences()
         {
             var context = Application.Context;
 

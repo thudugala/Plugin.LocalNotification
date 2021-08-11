@@ -28,13 +28,24 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Cancel a notification match with the Id
         /// </summary>
-        /// <param name="notificationId">A unique identifier for the already displaying local notification.</param>
-        bool Cancel(int notificationId);
+        /// <param name="notificationIdList">A unique identifier for the already displaying local notification.</param>
+        bool Cancel(params int[] notificationIdList);
 
         /// <summary>
         /// Cancel all notification.
         /// </summary>
         bool CancelAll();
+
+        /// <summary>
+        /// Use this method to selectively remove notifications that you no longer want displayed in Notification Center. This will not cancel future notifications
+        /// </summary>
+        /// <param name="notificationIdList"></param>
+        bool Clear(params int[] notificationIdList);
+
+        /// <summary>
+        /// Use this method to remove all notifications displayed in Notification Center. This will not cancel future notifications.
+        /// </summary>
+        bool ClearAll();
 
         /// <summary>
         /// Get notifications that are currently delivered
@@ -81,20 +92,5 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="request"></param>
         Task<bool> Show(NotificationRequest request);
-
-
-        /// <summary>
-        /// Use this method to selectively remove notifications that you no longer want displayed in Notification Center. This will not cancel future notifications 
-        /// </summary>
-        /// <param name="notificationId"></param>
-        bool Clear(IList<int> notificationIds);
-
-
-        /// <summary>
-        /// Use this method to remove all notifications displayed in Notification Center. This will not cancel future notifications. 
-        /// </summary>
-        /// <param name="notificationId"></param>
-        bool ClearAll();
-
     }
 }

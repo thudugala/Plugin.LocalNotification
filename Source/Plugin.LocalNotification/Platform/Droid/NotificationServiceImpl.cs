@@ -16,13 +16,28 @@ namespace Plugin.LocalNotification.Platform.Droid
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
+        /// <summary>
+        ///
+        /// </summary>
+        protected const string PreferencesPendingIdListKey = "Plugin.LocalNotification.PendingIdList";
+
+        /// <summary>
+        ///
+        /// </summary>
+        protected const string PreferencesDeliveredIdListKey = "Plugin.LocalNotification.DeliveredIdList";
+
+        /// <summary>
+        ///
+        /// </summary>
+        protected const string PreferencesSplitChar = ",";
+
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
         /// <summary>
         ///
         /// </summary>
         protected readonly NotificationManager MyNotificationManager;
-        
+
         /// <summary>
         ///
         /// </summary>
@@ -47,6 +62,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         public Task<IList<int>> PendingNotificationList()
         {
             IList<int> result = new List<int>();
+            var idStr = Preferences.Get(PreferencesPendingIdListKey, string.Empty);
+            if (string.IsNullOrWhiteSpace(idStr) == false)
+            {
+                result = idStr.Split(PreferencesSplitChar).Cast<int>().ToList();
+            }
             return Task.FromResult(result);
         }
 
@@ -60,6 +80,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         public Task<IList<int>> DeliveredNotificationList()
         {
             IList<int> result = new List<int>();
+            var idStr = Preferences.Get(PreferencesDeliveredIdListKey, string.Empty);
+            if (string.IsNullOrWhiteSpace(idStr) == false)
+            {
+                result = idStr.Split(PreferencesSplitChar).Cast<int>().ToList();
+            }
             return Task.FromResult(result);
         }
 
@@ -95,7 +120,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public bool Cancel(int notificationId)
+        public bool Cancel(params int[] notificationIdList)
         {
             try
             {
@@ -104,23 +129,67 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-                var alarmIntent = PendingIntent.GetBroadcast(
-                    Application.Context,
-                    notificationId,
-                    intent,
-                    PendingIntentFlags.CancelCurrent
-                );
+                foreach (var notificationId in notificationIdList)
+                {
+                    var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                    var alarmIntent = PendingIntent.GetBroadcast(
+                        Application.Context,
+                        notificationId,
+                        intent,
+                        PendingIntentFlags.CancelCurrent
+                    );
 
-                MyAlarmManager?.Cancel(alarmIntent);
-
-                MyNotificationManager?.Cancel(notificationId);
+                    MyAlarmManager?.Cancel(alarmIntent);
+                    MyNotificationManager?.Cancel(notificationId);
+                }
+                RemovePreferencesNotificationId(PreferencesPendingIdListKey, notificationIdList);
+                RemovePreferencesNotificationId(PreferencesDeliveredIdListKey, notificationIdList);
                 return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
                 return false;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="notificationIdList"></param>
+        protected virtual void RemovePreferencesNotificationId(string key, params int[] notificationIdList)
+        {
+            var idStr = Preferences.Get(key, string.Empty);
+            if (string.IsNullOrWhiteSpace(idStr) == false)
+            {
+                var idList = idStr.Split(PreferencesSplitChar).ToList();
+
+                idList.RemoveAll(r => notificationIdList.Contains(int.Parse(r)));
+
+                var newIdStr = string.Join(PreferencesSplitChar, idList);
+
+                Preferences.Set(key, newIdStr);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="notificationId"></param>
+        protected virtual void AddPreferencesNotificationId(string key, int notificationId)
+        {
+            var idStr = Preferences.Get(key, string.Empty);
+            if (string.IsNullOrWhiteSpace(idStr) == false)
+            {
+                var idList = idStr.Split(PreferencesSplitChar).ToList();
+
+                idList.Add(notificationId.ToString());
+
+                var newIdStr = string.Join(PreferencesSplitChar, idList);
+
+                Preferences.Set(key, newIdStr);
             }
         }
 
@@ -134,18 +203,31 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-                var alarmIntent = PendingIntent.GetBroadcast(
-                    Application.Context,
-                    0,
-                    intent,
-                    PendingIntentFlags.CancelCurrent
-                );
+                var idStr = Preferences.Get(PreferencesPendingIdListKey, string.Empty);
+                if (string.IsNullOrWhiteSpace(idStr) == false)
+                {
+                    var idList = idStr.Split(PreferencesSplitChar);
+                    foreach (var id in idList)
+                    {
+                        var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                        var alarmIntent = PendingIntent.GetBroadcast(
+                            Application.Context,
+                            0,
+                            intent,
+                            PendingIntentFlags.CancelCurrent
+                        );
 
-                MyAlarmManager?.Cancel(alarmIntent);
-                alarmIntent?.Cancel();
+                        MyAlarmManager?.Cancel(alarmIntent);
+                        alarmIntent?.Cancel();
+                    }
+                    if (idList != null && idList.Any())
+                    {
+                        Preferences.Set(PreferencesPendingIdListKey, string.Empty);
+                    }
+                }
 
                 MyNotificationManager?.CancelAll();
+                Preferences.Set(PreferencesDeliveredIdListKey, string.Empty);
                 return true;
             }
             catch (Exception ex)
@@ -259,6 +341,9 @@ namespace Plugin.LocalNotification.Platform.Droid
                     MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
                 }
             }
+
+            AddPreferencesNotificationId(PreferencesPendingIdListKey, request.NotificationId);
+
             return true;
         }
 
@@ -266,7 +351,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <param name="request"></param>
-        protected internal virtual async Task<bool> ShowNow(NotificationRequest request)
+        protected virtual async Task<bool> ShowNow(NotificationRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
@@ -443,10 +528,17 @@ namespace Plugin.LocalNotification.Platform.Droid
             };
             NotificationCenter.Current.OnNotificationReceived(args);
 
+            AddPreferencesNotificationId(PreferencesDeliveredIdListKey, request.NotificationId);
+
             return true;
         }
 
-        private async Task<Bitmap> GetNativeImage(NotificationImage notificationImage)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="notificationImage"></param>
+        /// <returns></returns>
+        protected virtual async Task<Bitmap> GetNativeImage(NotificationImage notificationImage)
         {
             if (notificationImage is null || notificationImage.HasValue == false)
             {
@@ -475,7 +567,14 @@ namespace Plugin.LocalNotification.Platform.Droid
             return null;
         }
 
-        private NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="serializedRequest"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
         {
             var pendingIntent = CreateActionIntent(serializedRequest, action);
             var nativeAction = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(action.Title), pendingIntent);
@@ -483,7 +582,13 @@ namespace Plugin.LocalNotification.Platform.Droid
             return nativeAction;
         }
 
-        private PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="serializedRequest"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action)
         {
             var intent = new Intent(Application.Context, typeof(NotificationActionReceiver));
             intent.SetAction(NotificationActionReceiver.EntryIntentAction)
@@ -594,7 +699,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
         }
 
-        private string ToNativeCategory(NotificationCategoryType type)
+        protected virtual string ToNativeCategory(NotificationCategoryType type)
         {
             return type switch
             {
@@ -612,21 +717,22 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public bool Clear(IList<int> notificationIds)
+        public bool Clear(params int[] notificationIdList)
         {
             try
             {
-                foreach (var notificationId in notificationIds)
+                foreach (var notificationId in notificationIdList)
                 {
                     MyNotificationManager.Cancel(notificationId);
                 }
+                RemovePreferencesNotificationId(PreferencesDeliveredIdListKey, notificationIdList);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log(ex.Message);
                 return false;
             }
-            
+
             return true;
         }
 
@@ -636,8 +742,9 @@ namespace Plugin.LocalNotification.Platform.Droid
             try
             {
                 MyNotificationManager.CancelAll();
+                Preferences.Set(PreferencesDeliveredIdListKey, string.Empty);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log(ex.Message);
                 return false;
