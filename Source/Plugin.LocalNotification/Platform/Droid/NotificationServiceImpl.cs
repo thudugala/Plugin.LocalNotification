@@ -577,7 +577,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
         {
             var pendingIntent = CreateActionIntent(serializedRequest, action);
-            var nativeAction = new NotificationCompat.Action(GetIcon(request.Android.IconSmallName), new Java.Lang.String(action.Title), pendingIntent);
+            if(string.IsNullOrWhiteSpace(action.AndroidIconName.ResourceName))
+            {
+                action.AndroidIconName = request.Android.IconSmallName;
+            }
+
+            var nativeAction = new NotificationCompat.Action(GetIcon(action.AndroidIconName), new Java.Lang.String(action.Title), pendingIntent);
 
             return nativeAction;
         }

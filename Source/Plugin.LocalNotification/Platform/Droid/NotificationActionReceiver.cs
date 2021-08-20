@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         ///
         /// </summary>
-        public const string ReceiverName = "Plugin.LocalNotification." + nameof(NotificationActionReceiver);
+        public const string ReceiverName = "plugin.LocalNotification." + nameof(NotificationActionReceiver);
 
         /// <summary>
         ///
