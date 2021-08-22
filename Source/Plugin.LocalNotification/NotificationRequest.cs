@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 
@@ -99,5 +100,81 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <returns></returns>
         public bool Cancel() => NotificationCenter.Current.Cancel(this.NotificationId);
+
+        /// <summary>
+        /// internal use, only for Android
+        /// </summary>
+        /// <returns></returns>
+        internal TimeSpan? GetNotifyRepeatInterval()
+        {
+            TimeSpan? repeatInterval = null;           
+            switch (Schedule.RepeatType)
+            {
+                case NotificationRepeat.Daily:
+                    // To be consistent with iOS, Schedule notification next day same time.
+                    repeatInterval = TimeSpan.FromDays(1);
+                    break;
+
+                case NotificationRepeat.Weekly:
+                    // To be consistent with iOS, Schedule notification next week same day same time.
+                    repeatInterval = TimeSpan.FromDays(7);
+                    break;
+
+                case NotificationRepeat.TimeInterval:
+                    if (Schedule.NotifyRepeatInterval.HasValue)
+                    {
+                        repeatInterval = Schedule.NotifyRepeatInterval.Value;
+                    }
+                    break;
+            }
+            return repeatInterval;
+        }
+
+        /// <summary>
+        /// internal use, only for Android
+        /// </summary>
+        /// <returns></returns>
+        internal DateTime? GetNextNotifyTime()
+        {
+            if (IsStillActiveForReSchedule() == false)
+            {
+                return null;
+            }
+
+            var repeatInterval = GetNotifyRepeatInterval();
+            if(repeatInterval is null)
+            {
+                return null;
+            }
+                        
+            var newNotifyTime = Schedule.NotifyTime.Value.Add(repeatInterval.Value);
+            var nowTime = DateTime.Now.AddSeconds(10);
+            while (newNotifyTime <= nowTime)
+            {
+                newNotifyTime = newNotifyTime.Add(repeatInterval.Value);
+            }
+            return newNotifyTime;
+        }
+
+        /// <summary>
+        /// internal use, only for Android
+        /// </summary>
+        /// <returns></returns>
+        internal bool IsStillActiveForReSchedule()
+        {
+            // NotifyTime does not change for Repeat request
+            if (Schedule.NotifyTime is null)
+            {
+                return false;
+            }
+
+            if (Schedule.NotifyAutoCancelTime != null &&
+               Schedule.NotifyAutoCancelTime <= DateTime.Now)
+            {
+                return false;
+            }
+
+            return Schedule.RepeatType != NotificationRepeat.No;
+        }
     }
 }

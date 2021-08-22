@@ -8,7 +8,7 @@ namespace Plugin.LocalNotification
     public class NotificationImage
     {
         /// <summary>
-        /// Must be less than 8Kb
+        /// Must be less than 90Kb
         /// </summary>
         public byte[] Binary { get; set; }
 

@@ -15,22 +15,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        protected const string PreferencesPendingIdListKey = "Plugin.LocalNotification.PendingIdList";
-
-        /// <summary>
-        ///
-        /// </summary>
-        protected const string PreferencesDeliveredIdListKey = "Plugin.LocalNotification.DeliveredIdList";
-
-        /// <summary>
-        ///
-        /// </summary>
-        protected const string PreferencesSplitChar = ",";
-
+    {    
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
         /// <summary>
@@ -59,15 +44,10 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public Task<IList<int>> PendingNotificationList()
+        public Task<IList<NotificationRequest>> GetPendingNotificationList()
         {
-            IList<int> result = new List<int>();
-            var idStr = Preferences.Get(PreferencesPendingIdListKey, string.Empty);
-            if (string.IsNullOrWhiteSpace(idStr) == false)
-            {
-                result = idStr.Split(PreferencesSplitChar).Cast<int>().ToList();
-            }
-            return Task.FromResult(result);
+            IList<NotificationRequest> itemList = NotificationRepository.Current.GetPendingList();
+            return Task.FromResult(itemList);
         }
 
         /// <inheritdoc />
@@ -77,15 +57,10 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public Task<IList<int>> DeliveredNotificationList()
+        public Task<IList<NotificationRequest>> GetDeliveredNotificationList()
         {
-            IList<int> result = new List<int>();
-            var idStr = Preferences.Get(PreferencesDeliveredIdListKey, string.Empty);
-            if (string.IsNullOrWhiteSpace(idStr) == false)
-            {
-                result = idStr.Split(PreferencesSplitChar).Cast<int>().ToList();
-            }
-            return Task.FromResult(result);
+            IList<NotificationRequest> itemList = NotificationRepository.Current.GetDeliveredList();         
+            return Task.FromResult(itemList);
         }
 
         /// <inheritdoc />
@@ -142,54 +117,14 @@ namespace Plugin.LocalNotification.Platform.Droid
                     MyAlarmManager?.Cancel(alarmIntent);
                     MyNotificationManager?.Cancel(notificationId);
                 }
-                RemovePreferencesNotificationId(PreferencesPendingIdListKey, notificationIdList);
-                RemovePreferencesNotificationId(PreferencesDeliveredIdListKey, notificationIdList);
+                NotificationRepository.Current.RemoveByPendingIdList(notificationIdList);
+                NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
                 return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
                 return false;
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="notificationIdList"></param>
-        protected virtual void RemovePreferencesNotificationId(string key, params int[] notificationIdList)
-        {
-            var idStr = Preferences.Get(key, string.Empty);
-            if (string.IsNullOrWhiteSpace(idStr) == false)
-            {
-                var idList = idStr.Split(PreferencesSplitChar).ToList();
-
-                idList.RemoveAll(r => notificationIdList.Contains(int.Parse(r)));
-
-                var newIdStr = string.Join(PreferencesSplitChar, idList);
-
-                Preferences.Set(key, newIdStr);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="notificationId"></param>
-        protected virtual void AddPreferencesNotificationId(string key, int notificationId)
-        {
-            var idStr = Preferences.Get(key, string.Empty);
-            if (string.IsNullOrWhiteSpace(idStr) == false)
-            {
-                var idList = idStr.Split(PreferencesSplitChar).ToList();
-
-                idList.Add(notificationId.ToString());
-
-                var newIdStr = string.Join(PreferencesSplitChar, idList);
-
-                Preferences.Set(key, newIdStr);
             }
         }
 
@@ -203,31 +138,25 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return false;
                 }
 
-                var idStr = Preferences.Get(PreferencesPendingIdListKey, string.Empty);
-                if (string.IsNullOrWhiteSpace(idStr) == false)
-                {
-                    var idList = idStr.Split(PreferencesSplitChar);
-                    foreach (var id in idList)
-                    {
-                        var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-                        var alarmIntent = PendingIntent.GetBroadcast(
-                            Application.Context,
-                            0,
-                            intent,
-                            PendingIntentFlags.CancelCurrent
-                        );
 
-                        MyAlarmManager?.Cancel(alarmIntent);
-                        alarmIntent?.Cancel();
-                    }
-                    if (idList != null && idList.Any())
-                    {
-                        Preferences.Set(PreferencesPendingIdListKey, string.Empty);
-                    }
+                var idList = NotificationRepository.Current.GetPendingList().Select(r => r.NotificationId).ToList();
+                foreach (var id in idList)
+                {
+                    var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+                    var alarmIntent = PendingIntent.GetBroadcast(
+                        Application.Context,
+                        id,
+                        intent,
+                        PendingIntentFlags.CancelCurrent
+                    );
+
+                    MyAlarmManager?.Cancel(alarmIntent);
+                    alarmIntent?.Cancel();
                 }
 
                 MyNotificationManager?.CancelAll();
-                Preferences.Set(PreferencesDeliveredIdListKey, string.Empty);
+                NotificationRepository.Current.RemovePendingList();
+                NotificationRepository.Current.RemoveDeliveredList();
                 return true;
             }
             catch (Exception ex)
@@ -299,50 +228,16 @@ namespace Plugin.LocalNotification.Platform.Droid
             var utcAlarmTimeInMillis = (request.Schedule.NotifyTime.Value.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
             var triggerTime = (long)utcAlarmTimeInMillis;
 
-            if (request.Schedule.RepeatType != NotificationRepeat.No)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
-                TimeSpan? repeatInterval = null;
-                switch (request.Schedule.RepeatType)
-                {
-                    case NotificationRepeat.Daily:
-                        // To be consistent with iOS, Schedule notification next day same time.
-                        repeatInterval = TimeSpan.FromDays(1);
-                        break;
-
-                    case NotificationRepeat.Weekly:
-                        // To be consistent with iOS, Schedule notification next week same day same time.
-                        repeatInterval = TimeSpan.FromDays(7);
-                        break;
-
-                    case NotificationRepeat.TimeInterval:
-                        if (request.Schedule.NotifyRepeatInterval.HasValue)
-                        {
-                            repeatInterval = request.Schedule.NotifyRepeatInterval.Value;
-                        }
-                        break;
-                }
-
-                if (repeatInterval == null)
-                {
-                    return true;
-                }
-                var intervalTime = (long)repeatInterval.Value.TotalMilliseconds;
-
-                MyAlarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, intervalTime, pendingIntent);
+                MyAlarmManager.SetExactAndAllowWhileIdle(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
             }
             else
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                {
-                    MyAlarmManager.SetExactAndAllowWhileIdle(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
-                }
-                else
-                {
-                    MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
-                }
+                MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
             }
-
-            AddPreferencesNotificationId(PreferencesPendingIdListKey, request.NotificationId);
+            
+            NotificationRepository.Current.AddPendingRequest(request);
 
             return true;
         }
@@ -528,7 +423,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             };
             NotificationCenter.Current.OnNotificationReceived(args);
 
-            AddPreferencesNotificationId(PreferencesDeliveredIdListKey, request.NotificationId);
+            NotificationRepository.Current.AddDeliveredRequest(request);
 
             return true;
         }
@@ -735,7 +630,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     MyNotificationManager.Cancel(notificationId);
                 }
-                RemovePreferencesNotificationId(PreferencesDeliveredIdListKey, notificationIdList);
+                NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
             }
             catch (Exception ex)
             {
@@ -752,7 +647,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             try
             {
                 MyNotificationManager.CancelAll();
-                Preferences.Set(PreferencesDeliveredIdListKey, string.Empty);
+                NotificationRepository.Current.RemoveDeliveredList();
             }
             catch (Exception ex)
             {

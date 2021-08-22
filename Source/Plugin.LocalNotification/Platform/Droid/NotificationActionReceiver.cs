@@ -9,7 +9,8 @@ namespace Plugin.LocalNotification.Platform.Droid
     [BroadcastReceiver(
         Name = ReceiverName,
         Enabled = true,
-        Exported = false
+        Exported = false,
+        Label = "Plugin LocalNotification Action Receiver"
     )]
     internal class NotificationActionReceiver : BroadcastReceiver
     {

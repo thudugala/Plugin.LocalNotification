@@ -20,9 +20,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     return;
                 }
-
-                var localNotification = GetRequest(response.Notification);
+                               
                 var notificationService = TryGetDefaultIOsNotificationService();
+                var localNotification = notificationService.GetRequest(response?.Notification?.Request?.Content);
 
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
@@ -60,39 +60,17 @@ namespace Plugin.LocalNotification.Platform.iOS
                 Debug.WriteLine(ex);
             }
         }
-
-        private NotificationRequest GetRequest(UNNotification notification)
-        {
-            var notificationContent = notification?.Request.Content;
-            if (notificationContent == null)
-            {
-                return null;
-            }
-            var dictionary = notificationContent.UserInfo;
-
-            if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
-            {
-                return null;
-            }
-            var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
-
-            var request = NotificationCenter.GetRequest(requestSerialize);
-
-            return request;
-        }
-
+                
         /// <inheritdoc />
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
             try
             {
                 var presentationOptions = UNNotificationPresentationOptions.Alert;
-                var localNotification = GetRequest(notification);
-
+                var notificationService = TryGetDefaultIOsNotificationService();
+                var localNotification = notificationService.GetRequest(notification?.Request?.Content);
                 if (localNotification != null)
-                {
-                    var notificationService = TryGetDefaultIOsNotificationService();
-
+                {                    
                     if (localNotification.Schedule.NotifyAutoCancelTime.HasValue && localNotification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
                         notificationService.Cancel(localNotification.NotificationId);

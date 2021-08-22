@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 
 namespace Plugin.LocalNotification
@@ -30,7 +29,6 @@ namespace Plugin.LocalNotification
 
         internal static NotificationRequest GetRequest(string serializedRequest)
         {
-            System.Diagnostics.Debug.WriteLine($"GetNotification");
             System.Diagnostics.Debug.WriteLine($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
             {
@@ -45,13 +43,12 @@ namespace Plugin.LocalNotification
         {
             var dictionary = new Dictionary<string, string>();
 
-            if (request.Image.Binary != null && request.Image.Binary.Length > 8000)
+            if (request.Image.Binary != null && request.Image.Binary.Length > 90000)
             {
                 request.Image.Binary = null;
             }
             var serializedRequest = JsonSerializer.Serialize(request);
 
-            System.Diagnostics.Debug.WriteLine($"GetNotificationSerialize");
             System.Diagnostics.Debug.WriteLine($"Serialized Request [{serializedRequest}]");
             
             dictionary.Add(ReturnRequest, serializedRequest);

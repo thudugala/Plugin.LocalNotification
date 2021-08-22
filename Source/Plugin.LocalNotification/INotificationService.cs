@@ -51,7 +51,7 @@ namespace Plugin.LocalNotification
         /// Get notifications that are currently delivered
         /// </summary>
         /// <returns></returns>
-        Task<IList<int>> DeliveredNotificationList();
+        Task<IList<NotificationRequest>> GetDeliveredNotificationList();
 
         /// <summary>
         /// Internal use Only
@@ -75,7 +75,7 @@ namespace Plugin.LocalNotification
         /// Get pending notifications
         /// </summary>
         /// <returns></returns>
-        Task<IList<int>> PendingNotificationList();
+        Task<IList<NotificationRequest>> GetPendingNotificationList();
 
         /// <summary>
         /// Register notification categories and their corresponding actions

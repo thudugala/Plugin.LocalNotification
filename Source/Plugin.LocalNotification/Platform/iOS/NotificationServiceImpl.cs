@@ -401,19 +401,19 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public async Task<IList<int>> PendingNotificationList()
+        public async Task<IList<NotificationRequest>> GetPendingNotificationList()
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            return pending.Select(r => int.Parse(r.Identifier, CultureInfo.InvariantCulture)).ToList();
+            return pending.Select(r => GetRequest(r.Content)).ToList();
         }
 
         /// <inheritdoc />
-        public async Task<IList<int>> DeliveredNotificationList()
+        public async Task<IList<NotificationRequest>> GetDeliveredNotificationList()
         {
             var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
 
-            return delivered.Select(t => int.Parse(t.Request.Identifier, CultureInfo.InvariantCulture)).ToList();
+            return delivered.Select(r => GetRequest(r.Request.Content)).ToList();
         }
 
         /// <inheritdoc />
@@ -458,6 +458,25 @@ namespace Plugin.LocalNotification.Platform.iOS
                 Debug.WriteLine(ex);
                 return false;
             }
+        }
+
+        internal NotificationRequest GetRequest(UNNotificationContent notificationContent)
+        {
+            if (notificationContent == null)
+            {
+                return null;
+            }
+            var dictionary = notificationContent.UserInfo;
+
+            if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
+            {
+                return null;
+            }
+            var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
+
+            var request = NotificationCenter.GetRequest(requestSerialize);
+
+            return request;
         }
     }
 }

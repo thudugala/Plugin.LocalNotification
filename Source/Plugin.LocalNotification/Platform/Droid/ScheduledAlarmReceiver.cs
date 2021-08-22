@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using System;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -6,8 +7,12 @@ namespace Plugin.LocalNotification.Platform.Droid
     [BroadcastReceiver(
         Name = ReceiverName,
         Enabled = true,
-        Exported = false
+        Exported = false,
+        Label = "Plugin LocalNotification Scheduled Alarm Receiver"
     )]
+    [IntentFilter(
+        new[] { Intent.ActionBootCompleted },
+        Categories = new[] { Intent.CategoryHome })]
     internal class ScheduledAlarmReceiver : BroadcastReceiver
     {
         /// <summary>
@@ -27,38 +32,45 @@ namespace Plugin.LocalNotification.Platform.Droid
                     return;
                 }
 
-                var notification = NotificationCenter.GetRequest(requestSerialize);
-                if (notification is null)
+                var request = NotificationCenter.GetRequest(requestSerialize);
+                if (request is null)
                 {
                     System.Diagnostics.Debug.WriteLine("Request Not Found");
                     return;
                 }
 
-                if (notification.Schedule.NotifyTime.HasValue &&
-                    notification.Schedule.RepeatType != NotificationRepeat.No)
-                {
-                    var notificationService = TryGetDefaultDroidNotificationService();
+                var notificationService = TryGetDefaultDroidNotificationService();
 
-                    if (notification.Schedule.NotifyAutoCancelTime.HasValue &&
-                        notification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+                if (request.Schedule.NotifyTime.HasValue &&
+                    request.Schedule.RepeatType != NotificationRepeat.No)
+                {                   
+                    if (request.Schedule.NotifyAutoCancelTime.HasValue &&
+                        request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
-                        notificationService.Cancel(notification.NotificationId);
+                        notificationService.Cancel(request.NotificationId);
                         System.Diagnostics.Debug.WriteLine("Notification Auto Canceled");
                         return;
                     }
-                }
-                
-                notification.Schedule.RepeatType = NotificationRepeat.No;
-                // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
-                //if (notification.Schedule.NotifyTime != null &&
-                //    notification.Schedule.NotifyTime.Value <= DateTime.Now.AddMinutes(-1))
-                //{
-                //    System.Diagnostics.Debug.WriteLine("NotifyTime is earlier than DateTime.Now, notification ignored");
-                //    return;
-                //}
 
-                notification.Schedule.NotifyTime = null;
-                await NotificationCenter.Current.Show(notification);
+                    request.Schedule.NotifyTime = request.GetNextNotifyTime();
+                    if (request.Schedule.NotifyTime.HasValue)
+                    {
+                        // schedule again.
+                        await notificationService.Show(request);
+                        // Show now
+                        request.Schedule.NotifyTime = null;
+                    }
+                }
+
+                // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
+                if (request.Schedule.NotifyTime.HasValue &&
+                    request.Schedule.NotifyTime.Value <= DateTime.Now)
+                {
+                    System.Diagnostics.Debug.WriteLine("NotifyTime is earlier than DateTime.Now, notification ignored");
+                    return;
+                }
+
+                await notificationService.Show(request);
             }
             catch (Exception ex)
             {

@@ -26,11 +26,19 @@ namespace LocalNotification.Sample
                         new NotificationAction(100)
                         {
                             Title = "Hello",
+                            AndroidIconName =
+                            {
+                                ResourceName = "i2",
+                            },
                             iOSAction = iOSActionType.None
                         },
                         new NotificationAction(101)
                         {
                             Title = "Close",
+                            AndroidIconName =
+                            {
+                                ResourceName = "i3",
+                            },
                             iOSAction = iOSActionType.None
                         }
                     })
