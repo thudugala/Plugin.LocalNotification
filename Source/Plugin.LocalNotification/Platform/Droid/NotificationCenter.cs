@@ -2,10 +2,10 @@
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
 using System.IO;
-using Plugin.LocalNotification.AndroidOption;
 
 namespace Plugin.LocalNotification
 {

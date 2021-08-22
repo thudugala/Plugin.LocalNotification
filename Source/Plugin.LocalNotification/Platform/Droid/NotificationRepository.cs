@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     internal class NotificationRepository
     {
@@ -19,7 +19,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         private static readonly object locker = new object();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal static NotificationRepository Current => MySingleton.Value;
 
@@ -34,7 +34,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         private const string DeliveredListKey = "DeliveredList";
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         private ISharedPreferences GetSharedPreferences()
@@ -44,7 +44,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationIdList"></param>
         internal void RemoveByPendingIdList(params int[] notificationIdList)
@@ -55,7 +55,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         internal void AddPendingRequest(NotificationRequest request)
@@ -68,7 +68,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         internal void AddDeliveredRequest(NotificationRequest request)
@@ -76,11 +76,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             var itemList = GetDeliveredList();
             itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
             itemList.Add(request);
-            SetDeliveredList(itemList);            
+            SetDeliveredList(itemList);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void RemoveDeliveredList()
         {
@@ -88,7 +88,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void RemovePendingList()
         {
@@ -96,7 +96,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationIdList"></param>
         internal void RemoveByDeliveredIdList(params int[] notificationIdList)
@@ -107,7 +107,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         internal List<NotificationRequest> GetPendingList()
@@ -122,7 +122,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         internal List<NotificationRequest> GetDeliveredList()
@@ -149,7 +149,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
             }
         }
-                
+
         private void SetList(string key, List<NotificationRequest> list)
         {
             lock (locker)

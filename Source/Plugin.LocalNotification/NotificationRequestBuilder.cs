@@ -1,6 +1,6 @@
-﻿using System;
-using Plugin.LocalNotification.AndroidOption;
+﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
+using System;
 
 namespace Plugin.LocalNotification
 {

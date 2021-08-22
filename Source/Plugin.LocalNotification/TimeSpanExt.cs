@@ -14,7 +14,7 @@ namespace Plugin.LocalNotification
         private TimeSpan _value;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         public static implicit operator TimeSpan(TimeSpanExt value)
@@ -104,7 +104,7 @@ namespace Plugin.LocalNotification
         {
             return _value.GetHashCode();
         }
-        
+
         /// <summary>
         ///
         /// </summary>

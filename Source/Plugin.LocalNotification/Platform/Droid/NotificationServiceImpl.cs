@@ -15,7 +15,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 {
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
-    {    
+    {
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <inheritdoc />
         public Task<IList<NotificationRequest>> GetDeliveredNotificationList()
         {
-            IList<NotificationRequest> itemList = NotificationRepository.Current.GetDeliveredList();         
+            IList<NotificationRequest> itemList = NotificationRepository.Current.GetDeliveredList();
             return Task.FromResult(itemList);
         }
 
@@ -137,7 +137,6 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     return false;
                 }
-
 
                 var idList = NotificationRepository.Current.GetPendingList().Select(r => r.NotificationId).ToList();
                 foreach (var id in idList)
@@ -236,7 +235,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
             }
-            
+
             NotificationRepository.Current.AddPendingRequest(request);
 
             return true;
@@ -472,7 +471,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest, NotificationAction action)
         {
             var pendingIntent = CreateActionIntent(serializedRequest, action);
-            if(string.IsNullOrWhiteSpace(action.AndroidIconName.ResourceName))
+            if (string.IsNullOrWhiteSpace(action.AndroidIconName.ResourceName))
             {
                 action.AndroidIconName = request.Android.IconSmallName;
             }
@@ -600,7 +599,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

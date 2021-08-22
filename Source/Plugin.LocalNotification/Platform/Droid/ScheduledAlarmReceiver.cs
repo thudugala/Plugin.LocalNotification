@@ -43,7 +43,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                 if (request.Schedule.NotifyTime.HasValue &&
                     request.Schedule.RepeatType != NotificationRepeat.No)
-                {                   
+                {
                     if (request.Schedule.NotifyAutoCancelTime.HasValue &&
                         request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {

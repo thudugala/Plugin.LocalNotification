@@ -50,7 +50,7 @@ namespace Plugin.LocalNotification
             var serializedRequest = JsonSerializer.Serialize(request);
 
             System.Diagnostics.Debug.WriteLine($"Serialized Request [{serializedRequest}]");
-            
+
             dictionary.Add(ReturnRequest, serializedRequest);
 
             return dictionary;

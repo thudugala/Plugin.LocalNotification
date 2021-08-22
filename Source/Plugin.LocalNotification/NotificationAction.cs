@@ -1,6 +1,6 @@
-using System;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
+using System;
 
 namespace Plugin.LocalNotification
 {
@@ -29,7 +29,7 @@ namespace Plugin.LocalNotification
         public iOSActionType iOSAction { get; set; } = iOSActionType.None;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidIcon AndroidIconName { get; set; } = new AndroidIcon();
 

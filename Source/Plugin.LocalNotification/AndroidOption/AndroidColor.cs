@@ -6,11 +6,10 @@
     public class AndroidColor
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidColor()
         {
-            
         }
 
         /// <summary>

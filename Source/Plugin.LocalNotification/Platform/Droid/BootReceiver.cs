@@ -18,7 +18,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             var requestList = NotificationRepository.Current.GetPendingList();
-            if(requestList.Any() == false)
+            if (requestList.Any() == false)
             {
                 return;
             }

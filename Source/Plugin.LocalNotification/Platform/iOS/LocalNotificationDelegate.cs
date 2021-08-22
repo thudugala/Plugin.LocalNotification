@@ -1,5 +1,4 @@
-﻿using Foundation;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using UIKit;
@@ -20,7 +19,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     return;
                 }
-                               
+
                 var notificationService = TryGetDefaultIOsNotificationService();
                 var localNotification = notificationService.GetRequest(response?.Notification?.Request?.Content);
 
@@ -60,7 +59,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 Debug.WriteLine(ex);
             }
         }
-                
+
         /// <inheritdoc />
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
@@ -70,7 +69,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 var notificationService = TryGetDefaultIOsNotificationService();
                 var localNotification = notificationService.GetRequest(notification?.Request?.Content);
                 if (localNotification != null)
-                {                    
+                {
                     if (localNotification.Schedule.NotifyAutoCancelTime.HasValue && localNotification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
                         notificationService.Cancel(localNotification.NotificationId);
