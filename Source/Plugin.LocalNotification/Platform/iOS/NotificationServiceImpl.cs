@@ -53,7 +53,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                var itemList = notificationIdList.Cast<string>().ToArray();
+                var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
                 UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
                 UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
