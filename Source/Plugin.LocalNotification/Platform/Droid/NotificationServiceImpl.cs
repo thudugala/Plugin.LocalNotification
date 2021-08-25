@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -90,7 +89,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
             }
         }
 
@@ -123,7 +122,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
                 return false;
             }
         }
@@ -160,7 +159,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
                 return false;
             }
         }
@@ -193,7 +192,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Log(ex.Message);
+                NotificationCenter.Log(ex.Message);
                 return false;
             }
         }
@@ -202,15 +201,16 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <param name="request"></param>
-        protected virtual bool ShowLater(NotificationRequest request)
+        internal virtual bool ShowLater(NotificationRequest request)
         {
-            if (request.Schedule.NotifyTime is null ||
-                request.Schedule.NotifyTime <= DateTime.Now) // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
+            // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
+            if (request.Schedule.AndroidIsValidNotifyTime == false)
             {
+                NotificationCenter.Log($"NotificationServiceImpl.ShowLater: NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
                 return false;
             }
 
-            var dictionaryRequest = NotificationCenter.GetRequestSerialize(request);
+            var dictionaryRequest = NotificationCenter.GetRequestSerializeDictionary(request);
 
             var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
             foreach (var item in dictionaryRequest)
@@ -245,7 +245,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <param name="request"></param>
-        protected virtual async Task<bool> ShowNow(NotificationRequest request)
+        internal virtual async Task<bool> ShowNow(NotificationRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
@@ -369,11 +369,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             var notificationIntent = Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ?? string.Empty);
             if (notificationIntent is null)
             {
-                Log($"NotificationServiceImpl.ShowNow: notificationIntent is null");
+                NotificationCenter.Log($"NotificationServiceImpl.ShowNow: notificationIntent is null");
                 return false;
             }
 
-            var serializedRequest = JsonSerializer.Serialize(request);
+            var serializedRequest = NotificationCenter.GetRequestSerialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
 
@@ -570,15 +570,6 @@ namespace Plugin.LocalNotification.Platform.Droid
             return iconId;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="message"></param>
-        protected static void Log(string message)
-        {
-            Android.Util.Log.Info(Application.Context.PackageName, message);
-        }
-
         /// <inheritdoc />
         public void RegisterCategoryList(HashSet<NotificationCategory> categoryList)
         {
@@ -633,7 +624,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Log(ex.Message);
+                NotificationCenter.Log(ex.Message);
                 return false;
             }
 
@@ -650,7 +641,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                Log(ex.Message);
+                NotificationCenter.Log(ex.Message);
                 return false;
             }
 

@@ -36,10 +36,22 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
         /// </summary>
-        public NotificationRequestScheduleBuilder SetNotificationRepeatInterval(NotificationRepeat repeatType, TimeSpanExt? repeatInterval = null)
+        public NotificationRequestScheduleBuilder SetNotificationRepeatInterval(NotificationRepeat repeatType, TimeSpan? repeatInterval = null)
         {
             _schedule.RepeatType = repeatType;
             _schedule.NotifyRepeatInterval = repeatInterval;
+            return this;
+        }
+
+        /// <summary>
+        /// In Android, do not Schedule or show notification if NotifyTime is earlier than DateTime.Now and this time delay.
+        /// Defualt is 1 min
+        /// </summary>
+        /// <param name="delay"></param>
+        /// <returns></returns>
+        public NotificationRequestScheduleBuilder SetAndroidAllowedDelay(TimeSpan delay)
+        {
+            _schedule.AndroidAllowedDelay = delay;
             return this;
         }
     }

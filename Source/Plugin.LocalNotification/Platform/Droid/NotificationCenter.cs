@@ -61,7 +61,7 @@ namespace Plugin.LocalNotification
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                Log(ex);
                 return false;
             }
         }
@@ -200,6 +200,21 @@ namespace Plugin.LocalNotification
                 $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
 
             return Android.Net.Uri.Parse(soundFileName);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="message"></param>
+        internal static void Log(string message)
+        {
+            Android.Util.Log.Info(Application.Context.PackageName, message);
+        }
+
+        internal static void Log(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex);
+            Android.Util.Log.Error(Application.Context.PackageName, ex.Message);
         }
     }
 }

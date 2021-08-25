@@ -114,7 +114,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var userInfoDictionary = new NSMutableDictionary();
-                var dictionary = NotificationCenter.GetRequestSerialize(request);
+                var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
                 foreach (var item in dictionary)
                 {
                     userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
@@ -155,7 +155,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
                         request.Schedule.NotifyRepeatInterval.HasValue)
                     {
-                        TimeSpan interval = request.Schedule.NotifyRepeatInterval.Value;
+                        var interval = request.Schedule.NotifyRepeatInterval.Value;
 
                         // Cannot delay and repeat in when TimeInterval
                         trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);

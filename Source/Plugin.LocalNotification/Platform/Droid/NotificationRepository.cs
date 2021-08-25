@@ -3,7 +3,6 @@ using Android.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -62,7 +61,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             var itemList = GetPendingList();
             itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
-            itemList.RemoveAll(r => request.Schedule.NotifyTime.HasValue && request.Schedule.NotifyTime.Value <= DateTime.Now);
+            itemList.RemoveAll(r => request.Schedule.NotifyTime.HasValue && request.Schedule.AndroidIsValidNotifyTime == false);
             itemList.Add(request);
             SetPendingList(itemList);
         }
@@ -145,7 +144,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     var jsonText = sharedPreferences.GetString(key, string.Empty);
                     return string.IsNullOrWhiteSpace(jsonText)
                         ? new List<NotificationRequest>()
-                        : JsonSerializer.Deserialize<List<NotificationRequest>>(jsonText);
+                        : NotificationCenter.GetRequestList(jsonText);
                 }
             }
         }
@@ -159,9 +158,9 @@ namespace Plugin.LocalNotification.Platform.Droid
                     using (var editor = sharedPreferences.Edit())
                     {
                         string jsonText = null;
-                        if (list is null || list.Any() == false)
+                        if (list != null && list.Any())
                         {
-                            jsonText = JsonSerializer.Serialize(list);
+                            jsonText = NotificationCenter.GetRequestListSerialize(list);
                         }
                         editor.PutString(key, jsonText);
                         editor?.Apply();

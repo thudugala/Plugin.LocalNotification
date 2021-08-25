@@ -10,7 +10,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         Categories = new[] { Intent.CategoryHome })]
     internal class BootReceiver : BroadcastReceiver
     {
-        public override async void OnReceive(Context context, Intent intent)
+        public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action != Intent.ActionBootCompleted)
             {
@@ -34,12 +34,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                 request.Schedule.NotifyTime = request.GetNextNotifyTime();
 
                 // re schedule again.
-                await notificationService.Show(request);
+                notificationService.ShowLater(request);
             }
 
-            Android.Util.Log.Info(
-                Application.Context.PackageName,
-                $"{nameof(BootReceiver)}-{nameof(OnReceive)}");
+            NotificationCenter.Log($"{nameof(BootReceiver)}-{nameof(OnReceive)}");
         }
 
         private static NotificationServiceImpl TryGetDefaultDroidNotificationService()

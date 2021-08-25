@@ -28,14 +28,14 @@ namespace Plugin.LocalNotification.Platform.Droid
 
                 if (string.IsNullOrWhiteSpace(requestSerialize))
                 {
-                    System.Diagnostics.Debug.WriteLine("Request Json Not Found");
+                    NotificationCenter.Log("ScheduledAlarmReceiver.OnReceive: Request Json Not Found");
                     return;
                 }
 
                 var request = NotificationCenter.GetRequest(requestSerialize);
                 if (request is null)
                 {
-                    System.Diagnostics.Debug.WriteLine("Request Not Found");
+                    NotificationCenter.Log("ScheduledAlarmReceiver.OnReceive: Request Not Found");
                     return;
                 }
 
@@ -48,7 +48,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                         request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
                         notificationService.Cancel(request.NotificationId);
-                        System.Diagnostics.Debug.WriteLine("Notification Auto Canceled");
+                        NotificationCenter.Log("ScheduledAlarmReceiver.OnReceive: Notification Auto Canceled");
                         return;
                     }
 
@@ -56,25 +56,22 @@ namespace Plugin.LocalNotification.Platform.Droid
                     if (request.Schedule.NotifyTime.HasValue)
                     {
                         // schedule again.
-                        await notificationService.Show(request);
-                        // Show now
-                        request.Schedule.NotifyTime = null;
+                        notificationService.ShowLater(request);
                     }
                 }
 
                 // To be consistent with iOS, Do not show notification if NotifyTime is earlier than DateTime.Now
-                if (request.Schedule.NotifyTime.HasValue &&
-                    request.Schedule.NotifyTime.Value <= DateTime.Now)
+                if (request.Schedule.AndroidIsValidNotifyTime == false)
                 {
-                    System.Diagnostics.Debug.WriteLine("NotifyTime is earlier than DateTime.Now, notification ignored");
+                    NotificationCenter.Log("ScheduledAlarmReceiver.OnReceive: NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
                     return;
                 }
 
-                await notificationService.Show(request);
+                await notificationService.ShowNow(request);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
             }
         }
 

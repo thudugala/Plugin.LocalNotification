@@ -9,7 +9,7 @@ namespace LocalNotification.Sample
         public NotificationPage(int id, string message, int tabCount)
         {
             InitializeComponent();
-            
+
             IdLabel.Text = $"Id {id}";
             MessageLabel.Text = $"Message {message}";
             TapCountLabel.Text = $"Tap Count {tabCount}";
@@ -17,7 +17,7 @@ namespace LocalNotification.Sample
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            var deliveredNotificationList = await NotificationCenter.Current.DeliveredNotificationList();
+            var deliveredNotificationList = await NotificationCenter.Current.GetDeliveredNotificationList();
 
             if (deliveredNotificationList != null)
             {
