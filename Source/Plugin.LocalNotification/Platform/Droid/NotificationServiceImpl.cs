@@ -264,7 +264,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
             }
 
-            using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
+            using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);           
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
@@ -322,7 +322,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     builder.SetSound(soundUri);
                 }
             }
-
+                       
             if (request.Android.VibrationPattern != null)
             {
                 builder.SetVibrate(request.Android.VibrationPattern);
@@ -411,9 +411,15 @@ namespace Plugin.LocalNotification.Platform.Droid
                 string.IsNullOrWhiteSpace(request.Sound))
             {
 #pragma warning disable 618
-                notification.Defaults = NotificationDefaults.All;
+                notification.Defaults = NotificationDefaults.All;                                
 #pragma warning restore 618
             }
+
+            if (request.Silent)
+            {
+                builder.SetNotificationSilent();
+            }
+
             MyNotificationManager?.Notify(request.NotificationId, notification);
 
             var args = new NotificationEventArgs

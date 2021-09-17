@@ -150,6 +150,11 @@ namespace Plugin.LocalNotification.Platform.iOS
                         content.Sound = UNNotificationSound.GetSound(request.Sound);
                     }
 
+                    if(request.Silent)
+                    {
+                        content.Sound = null;
+                    }
+
                     var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
 
                     if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&

@@ -58,6 +58,11 @@ namespace Plugin.LocalNotification
         public NotificationRequestSchedule Schedule { get; set; } = new NotificationRequestSchedule();
 
         /// <summary>
+        /// Silences this instance of the notification, regardless of the sounds or vibrations set on the notification or notification channel.
+        /// </summary>
+        public bool Silent { get; set; }
+
+        /// <summary>
         /// Sound file name for the notification.
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
@@ -73,7 +78,6 @@ namespace Plugin.LocalNotification
         /// Title for the notification.
         /// </summary>
         public string Title { get; set; } = string.Empty;
-
         /// <summary>
         /// Creates a NotificationRequestBuilder instance with specified notificationId.
         /// </summary>
