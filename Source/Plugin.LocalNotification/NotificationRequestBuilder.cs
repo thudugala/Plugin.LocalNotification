@@ -151,6 +151,17 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Silences this instance of the notification, regardless of the sounds or vibrations set on the notification or notification channel.
+        /// </summary>
+        /// <param name="silent"></param>
+        /// <returns></returns>
+        public NotificationRequestBuilder WithSilent(bool silent)
+        {
+            _request.Silent = silent;
+            return this;
+        }
+
+        /// <summary>
         /// Sound file name for the notification.
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
@@ -158,6 +169,15 @@ namespace Plugin.LocalNotification
         public NotificationRequestBuilder WithSound(string fileName)
         {
             _request.Sound = fileName;
+            return this;
+        }
+
+        /// <summary>
+        /// Title for the notification.
+        /// </summary>
+        public NotificationRequestBuilder WithSubtitle(string subtitle)
+        {
+            _request.Subtitle = subtitle;
             return this;
         }
 
@@ -176,15 +196,6 @@ namespace Plugin.LocalNotification
         public NotificationRequestBuilder WithTitle(string title)
         {
             _request.Title = title;
-            return this;
-        }
-
-        /// <summary>
-        /// Title for the notification.
-        /// </summary>
-        public NotificationRequestBuilder WithSubtitle(string subtitle)
-        {
-            _request.Subtitle = subtitle;
             return this;
         }
     }
