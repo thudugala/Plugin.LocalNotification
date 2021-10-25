@@ -417,7 +417,9 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (request.Silent)
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 builder.SetNotificationSilent();
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             MyNotificationManager?.Notify(request.NotificationId, notification);
