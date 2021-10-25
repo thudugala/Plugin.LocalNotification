@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
+﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.38">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;MonoAndroid10.0;MonoAndroid11.0;Xamarin.iOS10</TargetFrameworks>
@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>9.0.0</Version>
+    <Version>9.0.1</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

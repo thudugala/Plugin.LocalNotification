@@ -4,12 +4,21 @@ using System.Linq;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
-    [BroadcastReceiver(Enabled = true, Label = "Plugin LocalNotification Reboot complete Receiver")]
+    [BroadcastReceiver(
+        Name = ReceiverName,
+        Enabled = true,
+        Exported = false,
+        Label = "Plugin LocalNotification Reboot complete Receiver")]
     [IntentFilter(
         new[] { Intent.ActionBootCompleted },
         Categories = new[] { Intent.CategoryHome })]
     internal class BootReceiver : BroadcastReceiver
     {
+        /// <summary>
+        ///
+        /// </summary>
+        public const string ReceiverName = "plugin.LocalNotification." + nameof(BootReceiver);
+
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action != Intent.ActionBootCompleted)
