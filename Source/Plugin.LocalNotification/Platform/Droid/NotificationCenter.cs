@@ -6,6 +6,7 @@ using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
 using System.IO;
+using Plugin.LocalNotification.Json;
 
 namespace Plugin.LocalNotification
 {
@@ -16,6 +17,7 @@ namespace Plugin.LocalNotification
             try
             {
                 Current = new Platform.Droid.NotificationServiceImpl();
+                Serializer = new NotificationSerializer();
             }
             catch (Exception ex)
             {

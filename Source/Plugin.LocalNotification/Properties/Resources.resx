@@ -126,4 +126,7 @@
   <data name="PluginNotFound" xml:space="preserve">
     <value>[Plugin.LocalNotification] No platform plugin found.  Did you install the nuget package in your app project as well?</value>
   </data>
+  <data name="PluginSerializerNotFound" xml:space="preserve">
+    <value>[Plugin.LocalNotification] No Serializer found.</value>
+  </data>
 </root>

@@ -121,6 +121,11 @@ namespace Plugin.LocalNotification
                 return null;
             }
 
+            if (Schedule.NotifyTime.HasValue == false)
+            {
+                return null;
+            }
+
             var newNotifyTime = Schedule.NotifyTime.Value.Add(repeatInterval.Value);
             var nowTime = DateTime.Now.AddSeconds(10);
             while (newNotifyTime <= nowTime)

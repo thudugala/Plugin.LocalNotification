@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Plugin.LocalNotification.Json;
+using System;
 using System.Collections.Generic;
-using System.Text.Json;
 
 namespace Plugin.LocalNotification
 {
@@ -11,6 +11,7 @@ namespace Plugin.LocalNotification
     public static partial class NotificationCenter
     {
         private static INotificationService _current;
+        private static INotificationSerializer _serializer;
 
         /// <summary>
         /// Platform specific INotificationService.
@@ -23,20 +24,18 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        public static INotificationSerializer Serializer
+        {
+            get => _serializer ?? throw new InvalidOperationException(Properties.Resources.PluginSerializerNotFound);
+            set => _serializer = value;
+        }
+
+        /// <summary>
         /// Return Notification Key.
         /// </summary>
         public static string ReturnRequest => "Plugin.LocalNotification.RETURN_REQUEST";
-
-        /// <summary>
-        ///
-        /// </summary>
-        public static JsonSerializerOptions MyJsonSerializerOptions { get; } = new JsonSerializerOptions
-        {
-            Converters =
-            {
-                new JsonValueConverterTimeSpan()
-            }
-        };
 
         internal static NotificationRequest GetRequest(string serializedRequest)
         {
@@ -46,7 +45,7 @@ namespace Plugin.LocalNotification
                 return null;
             }
 
-            var request = JsonSerializer.Deserialize<NotificationRequest>(serializedRequest, MyJsonSerializerOptions);
+            var request = Serializer.Deserialize<NotificationRequest>(serializedRequest);
             return request;
         }
 
@@ -57,7 +56,7 @@ namespace Plugin.LocalNotification
                 return new List<NotificationRequest>();
             }
 
-            var requestList = JsonSerializer.Deserialize<List<NotificationRequest>>(serializedRequestList, MyJsonSerializerOptions);
+            var requestList = Serializer.Deserialize<List<NotificationRequest>>(serializedRequestList);
             return requestList;
         }
 
@@ -70,7 +69,7 @@ namespace Plugin.LocalNotification
                     request.Image.Binary = null;
                 }
             }
-            var serializedRequestList = JsonSerializer.Serialize(requestList, MyJsonSerializerOptions);
+            var serializedRequestList = Serializer.Serialize(requestList);
             return serializedRequestList;
         }
 
@@ -80,7 +79,7 @@ namespace Plugin.LocalNotification
             {
                 request.Image.Binary = null;
             }
-            var serializedRequest = JsonSerializer.Serialize(request, MyJsonSerializerOptions);
+            var serializedRequest = Serializer.Serialize(request);
 
             System.Diagnostics.Debug.WriteLine($"Serialized Request [{serializedRequest}]");
 

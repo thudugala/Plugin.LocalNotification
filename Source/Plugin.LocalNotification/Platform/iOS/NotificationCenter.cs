@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Plugin.LocalNotification.Json;
 using UIKit;
 using UserNotifications;
 
@@ -15,6 +16,7 @@ namespace Plugin.LocalNotification
             try
             {
                 Current = new Platform.iOS.NotificationServiceImpl();
+                Serializer = new NotificationSerializer();
 
                 UNUserNotificationCenter.Current.Delegate = new LocalNotificationDelegate();
             }

@@ -86,5 +86,14 @@ namespace Plugin.LocalNotification.Properties {
                 return ResourceManager.GetString("PluginNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [Plugin.LocalNotification] No Serializer found..
+        /// </summary>
+        internal static string PluginSerializerNotFound {
+            get {
+                return ResourceManager.GetString("PluginSerializerNotFound", resourceCulture);
+            }
+        }
     }
 }
