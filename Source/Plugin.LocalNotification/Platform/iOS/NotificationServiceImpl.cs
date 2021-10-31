@@ -46,50 +46,37 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
-            try
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return false;
-                }
-
-                var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
-
-                UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
-                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
                 return false;
             }
+
+            var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
+
+            UNUserNotificationCenter.Current.RemovePendingNotificationRequests(itemList);
+            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+
+            return true;
         }
 
         /// <inheritdoc />
         public bool CancelAll()
         {
-            try
-            {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return false;
-                }
 
-                UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
-                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-                return true;
-            }
-            catch (Exception ex)
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
-                Debug.WriteLine(ex);
                 return false;
             }
+
+            UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
+            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+            return true;
         }
 
         /// <inheritdoc />
-        public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) => Show(builder.Invoke(new NotificationRequestBuilder()));
+        public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) =>
+            Show(builder.Invoke(new NotificationRequestBuilder()));
 
         /// <inheritdoc />
         public async Task<bool> Show(NotificationRequest request)
@@ -136,7 +123,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                         var nativeImage = await GetNativeImage(request.Image);
                         if (nativeImage != null)
                         {
-                            content.Attachments = new[] { nativeImage };
+                            content.Attachments = new[] {nativeImage};
                         }
                     }
 
@@ -150,7 +137,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                         content.Sound = UNNotificationSound.GetSound(request.Sound);
                     }
 
-                    if(request.Silent)
+                    if (request.Silent)
                     {
                         content.Sound = null;
                     }
@@ -184,11 +171,6 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return true;
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                return false;
-            }
             finally
             {
                 trigger?.Dispose();
@@ -210,8 +192,11 @@ namespace Plugin.LocalNotification.Platform.iOS
             NSUrl imageAttachment = null;
             if (string.IsNullOrWhiteSpace(notificationImage.ResourceName) == false)
             {
-                imageAttachment = NSBundle.MainBundle.GetUrlForResource(Path.GetFileNameWithoutExtension(notificationImage.ResourceName), Path.GetExtension(notificationImage.ResourceName));
+                imageAttachment = NSBundle.MainBundle.GetUrlForResource(
+                    Path.GetFileNameWithoutExtension(notificationImage.ResourceName),
+                    Path.GetExtension(notificationImage.ResourceName));
             }
+
             if (string.IsNullOrWhiteSpace(notificationImage.FilePath) == false)
             {
                 if (File.Exists(notificationImage.FilePath))
@@ -219,6 +204,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     imageAttachment = NSUrl.CreateFileUrl(notificationImage.FilePath, false, null);
                 }
             }
+
             if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
             {
                 using (var stream = new MemoryStream(notificationImage.Binary))
@@ -278,7 +264,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                         // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
                         // .Net: The returned value is an integer between 0 and 6,
                         // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
-                        Weekday = (int)dateTime.DayOfWeek + 1,
+                        Weekday = (int) dateTime.DayOfWeek + 1,
                         Hour = dateTime.Hour,
                         Minute = dateTime.Minute,
                         Second = dateTime.Second
@@ -321,6 +307,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     continue;
                 }
+
                 var nativeCategory = RegisterActionList(category);
                 if (nativeCategory != null)
                 {
@@ -333,7 +320,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                 return;
             }
 
-            UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(nativeCategoryList.ToArray()));
+            UNUserNotificationCenter.Current.SetNotificationCategories(
+                new NSSet<UNNotificationCategory>(nativeCategoryList.ToArray()));
         }
 
         /// <summary>
@@ -356,7 +344,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                     continue;
                 }
 
-                var nativeAction = UNNotificationAction.FromIdentifier(notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
+                var nativeAction = UNNotificationAction.FromIdentifier(
+                    notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
                     ToNativeActionType(notificationAction.iOSAction));
                 nativeActionList.Add(nativeAction);
             }
@@ -367,7 +356,8 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
 
             var notificationCategory = UNNotificationCategory
-                .FromIdentifier(ToNativeCategory(category.CategoryType), nativeActionList.ToArray(), Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+                .FromIdentifier(ToNativeCategory(category.CategoryType), nativeActionList.ToArray(),
+                    Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
 
             return notificationCategory;
         }
@@ -424,45 +414,31 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public bool Clear(params int[] notificationIdList)
         {
-            try
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return false;
-                }
-
-                var itemList = notificationIdList.Cast<string>().ToArray();
-
-                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
                 return false;
             }
+
+            var itemList = notificationIdList.Cast<string>().ToArray();
+
+            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+
+            return true;
         }
 
         /// <inheritdoc />
         public bool ClearAll()
         {
-            try
-            {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return false;
-                }
 
-                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-
-                return true;
-            }
-            catch (Exception ex)
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
-                Debug.WriteLine(ex);
                 return false;
             }
+
+            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+
+            return true;
         }
 
         internal NotificationRequest GetRequest(UNNotificationContent notificationContent)
@@ -471,12 +447,14 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 return null;
             }
+
             var dictionary = notificationContent.UserInfo;
 
             if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
             {
                 return null;
             }
+
             var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
 
             var request = NotificationCenter.GetRequest(requestSerialize);

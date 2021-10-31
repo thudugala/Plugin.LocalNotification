@@ -15,7 +15,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             new Lazy<NotificationRepository>(() => new NotificationRepository(),
                 System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
-        private static readonly object locker = new object();
+        private static readonly object Locker = new object();
 
         /// <summary>
         ///
@@ -137,7 +137,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private List<NotificationRequest> GetList(string key)
         {
-            lock (locker)
+            lock (Locker)
             {
                 using (var sharedPreferences = GetSharedPreferences())
                 {
@@ -151,7 +151,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private void SetList(string key, List<NotificationRequest> list)
         {
-            lock (locker)
+            lock (Locker)
             {
                 using (var sharedPreferences = GetSharedPreferences())
                 {
@@ -162,7 +162,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                         {
                             jsonText = NotificationCenter.GetRequestListSerialize(list);
                         }
-                        editor.PutString(key, jsonText);
+                        editor?.PutString(key, jsonText);
                         editor?.Apply();
                     }
                 }

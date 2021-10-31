@@ -33,9 +33,9 @@ namespace LocalNotification.Sample.iOS
             return base.FinishedLaunching(app, options);
         }
         
-        public override void WillEnterForeground(UIApplication uiApplication)
+        public override async void WillEnterForeground(UIApplication uiApplication)
         {
-            Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
+            await Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
         }
     }
 }

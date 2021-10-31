@@ -40,27 +40,23 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 if (intent.Action != EntryIntentAction)
                 {
-                    NotificationCenter.Log("NotificationActionReceiver.OnReceive: Action Key Not found");
-                    return;
+                    throw new ApplicationException("NotificationActionReceiver.OnReceive: Action Key Not found");
                 }
 
                 if (intent.HasExtra(NotificationActionActionId) == false)
                 {
-                    NotificationCenter.Log("NotificationActionReceiver.OnReceive: Action Id Key Not found");
-                    return;
+                    throw new ApplicationException("NotificationActionReceiver.OnReceive: Action Id Key Not found");
                 }
 
                 if (intent.HasExtra(NotificationCenter.ReturnRequest) == false)
                 {
-                    NotificationCenter.Log("NotificationActionReceiver.OnReceive: Request Key Not found");
-                    return;
+                    throw new ApplicationException("NotificationActionReceiver.OnReceive: Request Key Not found");
                 }
 
                 var actionId = intent.GetIntExtra(NotificationActionActionId, -1000);
                 if (actionId == -1000)
                 {
-                    NotificationCenter.Log("NotificationActionReceiver.OnReceive: Action Id Not found");
-                    return;
+                    throw new ApplicationException("NotificationActionReceiver.OnReceive: Action Id Not found");
                 }
 
                 var requestSerialize = intent.GetStringExtra(NotificationCenter.ReturnRequest);
@@ -76,7 +72,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
             }
         }
 

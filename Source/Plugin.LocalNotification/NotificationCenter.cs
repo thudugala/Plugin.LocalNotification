@@ -1,6 +1,7 @@
 ﻿using Plugin.LocalNotification.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Plugin.LocalNotification
 {
@@ -14,6 +15,11 @@ namespace Plugin.LocalNotification
         private static INotificationSerializer _serializer;
 
         /// <summary>
+        /// Internal Error happened
+        /// </summary>
+        public static event NotificationErrorHandler NotificationError;
+
+        /// <summary>
         /// Platform specific INotificationService.
         /// </summary>
         public static INotificationService Current
@@ -24,6 +30,11 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Return Notification Key.
+        /// </summary>
+        public static string ReturnRequest => "Plugin.LocalNotification.RETURN_REQUEST";
+
+        /// <summary>
         ///
         /// </summary>
         public static INotificationSerializer Serializer
@@ -32,14 +43,9 @@ namespace Plugin.LocalNotification
             set => _serializer = value;
         }
 
-        /// <summary>
-        /// Return Notification Key.
-        /// </summary>
-        public static string ReturnRequest => "Plugin.LocalNotification.RETURN_REQUEST";
-
         internal static NotificationRequest GetRequest(string serializedRequest)
         {
-            System.Diagnostics.Debug.WriteLine($"Serialized Request [{serializedRequest}]");
+            Debug.WriteLine($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
             {
                 return null;
@@ -81,7 +87,7 @@ namespace Plugin.LocalNotification
             }
             var serializedRequest = Serializer.Serialize(request);
 
-            System.Diagnostics.Debug.WriteLine($"Serialized Request [{serializedRequest}]");
+            Debug.WriteLine($"Serialized Request [{serializedRequest}]");
 
             return serializedRequest;
         }

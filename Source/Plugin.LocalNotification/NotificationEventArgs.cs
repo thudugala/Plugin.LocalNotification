@@ -3,6 +3,18 @@
 namespace Plugin.LocalNotification
 {
     /// <summary>
+    /// Returning event when tapped on notification action.
+    /// </summary>
+    /// <param name="e"></param>
+    public delegate void NotificationActionTappedEventHandler(NotificationActionEventArgs e);
+
+    /// <summary>
+    /// Returning error
+    /// </summary>
+    /// <param name="e"></param>
+    public delegate void NotificationErrorHandler(NotificationErrorArgs e);
+
+    /// <summary>
     /// Returning event when a notification is received.
     /// On iOS this event is fired only when the app is in foreground
     /// </summary>
@@ -17,23 +29,6 @@ namespace Plugin.LocalNotification
     public delegate void NotificationTappedEventHandler(NotificationEventArgs e);
 
     /// <summary>
-    /// Returning event when tapped on notification action.
-    /// </summary>
-    /// <param name="e"></param>
-    public delegate void NotificationActionTappedEventHandler(NotificationActionEventArgs e);
-
-    /// <summary>
-    ///
-    /// </summary>
-    public class NotificationEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Returning notification.
-        /// </summary>
-        public NotificationRequest Request { get; internal set; }
-    }
-
-    /// <summary>
     ///
     /// </summary>
     public class NotificationActionEventArgs : EventArgs
@@ -43,6 +38,28 @@ namespace Plugin.LocalNotification
         /// </summary>
         public int ActionId { get; set; }
 
+        /// <summary>
+        /// Returning notification.
+        /// </summary>
+        public NotificationRequest Request { get; internal set; }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public class NotificationErrorArgs : EventArgs
+    {
+        /// <summary>
+        /// Returning notification.
+        /// </summary>
+        public Exception Error { get; internal set; }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public class NotificationEventArgs : EventArgs
+    {
         /// <summary>
         /// Returning notification.
         /// </summary>

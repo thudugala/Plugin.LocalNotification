@@ -29,7 +29,7 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// In Android, do not Schedule or show notification if NotifyTime is earlier than DateTime.Now and this time delay.
-        /// Defualt is 1 min
+        /// Default is 1 min
         /// </summary>
         public TimeSpan AndroidAllowedDelay { get; set; } = TimeSpan.FromMinutes(1);
 

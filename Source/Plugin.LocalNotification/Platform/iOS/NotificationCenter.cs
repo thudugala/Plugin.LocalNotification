@@ -1,9 +1,8 @@
-﻿using Plugin.LocalNotification.Platform.iOS;
+﻿using Plugin.LocalNotification.Json;
+using Plugin.LocalNotification.Platform.iOS;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Plugin.LocalNotification.Json;
 using UIKit;
 using UserNotifications;
 
@@ -22,7 +21,7 @@ namespace Plugin.LocalNotification
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                Log(ex);
             }
         }
 
@@ -41,43 +40,35 @@ namespace Plugin.LocalNotification
         /// </summary>
         public static async Task<bool> AskPermissionAsync()
         {
-            try
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return true;
-                }
-
-                var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
-                var allowed = settings.AlertSetting == UNNotificationSetting.Enabled;
-
-                if (allowed)
-                {
-                    return true;
-                }
-
-                // Ask the user for permission to show notifications on iOS 10.0+
-                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
-                                                                               UNAuthorizationOptions.Alert |
-                                                                               UNAuthorizationOptions.Badge |
-                                                                               UNAuthorizationOptions.Sound)
-                                                                           .ConfigureAwait(false);
-
-                Debug.WriteLine(error?.LocalizedDescription);
-                return alertsAllowed;
+                return true;
             }
-            catch (Exception ex)
+
+            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+            var allowed = settings.AlertSetting == UNNotificationSetting.Enabled;
+
+            if (allowed)
             {
-                Debug.WriteLine(ex);
-                return false;
+                return true;
             }
+
+            // Ask the user for permission to show notifications on iOS 10.0+
+            var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
+                    UNAuthorizationOptions.Alert |
+                    UNAuthorizationOptions.Badge |
+                    UNAuthorizationOptions.Sound)
+                .ConfigureAwait(false);
+
+            Log(error?.LocalizedDescription);
+            return alertsAllowed;
         }
 
         /// <summary>
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
         /// <param name="uiApplication"></param>
-        public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
+        public static async Task ResetApplicationIconBadgeNumber(UIApplication uiApplication)
         {
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
@@ -85,17 +76,29 @@ namespace Plugin.LocalNotification
             }
 
             //Remove badges on app enter foreground if user cleared the notification in the notification panel
-            UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationList) =>
-            {
-                if (notificationList.Any())
-                {
-                    return;
-                }
+            var notificationList = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync().ConfigureAwait(false);
 
-                uiApplication.InvokeOnMainThread(() =>
-                {
-                    uiApplication.ApplicationIconBadgeNumber = 0;
-                });
+            if (notificationList.Any())
+            {
+                return;
+            }
+            uiApplication.InvokeOnMainThread(() =>
+            {
+                uiApplication.ApplicationIconBadgeNumber = 0;
+            });
+        }
+
+        internal static void Log(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        internal static void Log(Exception ex)
+        {
+            Console.WriteLine(ex);
+            NotificationError?.Invoke(new NotificationErrorArgs
+            {
+                Error = ex
             });
         }
     }

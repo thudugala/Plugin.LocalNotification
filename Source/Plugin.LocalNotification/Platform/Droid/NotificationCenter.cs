@@ -21,7 +21,7 @@ namespace Plugin.LocalNotification
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                Log(ex);
             }
         }
 
@@ -31,41 +31,35 @@ namespace Plugin.LocalNotification
         /// <param name="intent"></param>
         public static bool NotifyNotificationTapped(Intent intent)
         {
-            try
+            if (intent is null)
             {
-                if (intent is null)
-                {
-                    return false;
-                }
-
-                if (intent.HasExtra(ReturnRequest) == false)
-                {
-                    return false;
-                }
-                var requestSerialize = intent.GetStringExtra(ReturnRequest);
-                if (string.IsNullOrWhiteSpace(requestSerialize))
-                {
-                    return false;
-                }
-                var notification = GetRequest(requestSerialize);
-                if (notification is null)
-                {
-                    return false;
-                }
-
-                var subscribeItem = new NotificationEventArgs
-                {
-                    Request = notification
-                };
-
-                Current.OnNotificationTapped(subscribeItem);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
                 return false;
             }
+
+            if (intent.HasExtra(ReturnRequest) == false)
+            {
+                return false;
+            }
+
+            var requestSerialize = intent.GetStringExtra(ReturnRequest);
+            if (string.IsNullOrWhiteSpace(requestSerialize))
+            {
+                return false;
+            }
+
+            var notification = GetRequest(requestSerialize);
+            if (notification is null)
+            {
+                return false;
+            }
+
+            var subscribeItem = new NotificationEventArgs
+            {
+                Request = notification
+            };
+
+            Current.OnNotificationTapped(subscribeItem);
+            return true;
         }
 
         /// <summary>
@@ -217,6 +211,10 @@ namespace Plugin.LocalNotification
         {
             System.Diagnostics.Debug.WriteLine(ex);
             Android.Util.Log.Error(Application.Context.PackageName, ex.Message);
+            NotificationError?.Invoke(new NotificationErrorArgs
+            {
+                Error = ex
+            });
         }
     }
 }

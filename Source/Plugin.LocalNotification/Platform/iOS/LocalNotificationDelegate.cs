@@ -56,7 +56,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                NotificationCenter.Log(ex);
             }
         }
 
