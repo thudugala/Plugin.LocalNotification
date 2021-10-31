@@ -359,7 +359,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                                                                               string.Empty);
             if (notificationIntent is null)
             {
-                NotificationCenter.Log($"NotificationServiceImpl.ShowNow: notificationIntent is null");
+                NotificationCenter.Log("NotificationServiceImpl.ShowNow: notificationIntent is null");
                 return false;
             }
 

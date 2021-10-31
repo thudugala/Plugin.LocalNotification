@@ -2,20 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 using Xamarin.Forms;
+using Plugin.LocalNotification.Json;
 
 namespace LocalNotification.Sample
 {
     public partial class MainPage : ContentPage
     {
         private int _tapCount;
+        private NotificationSerializer notificationSerializer;
 
         public MainPage()
         {
             InitializeComponent();
+
+            notificationSerializer = new NotificationSerializer();
 
             NotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
             {
@@ -79,7 +82,7 @@ namespace LocalNotification.Sample
                 title,
                 _tapCount.ToString()
             };
-            var serializeReturningData = JsonSerializer.Serialize(list);
+            var serializeReturningData = notificationSerializer.Serialize(list);
 
             var request = new NotificationRequest
             {
@@ -174,7 +177,7 @@ namespace LocalNotification.Sample
                 title,
                 _tapCount.ToString()
             };
-            var serializeReturningData = JsonSerializer.Serialize(list);
+            var serializeReturningData = notificationSerializer.Serialize(list);
 
             var notification = new NotificationRequest
             {
@@ -224,7 +227,7 @@ namespace LocalNotification.Sample
             {
                 if (CustomAlert.IsToggled)
                 {
-                    var requestJson = JsonSerializer.Serialize(e.Request);
+                    var requestJson = notificationSerializer.Serialize(e.Request);
 
                     DisplayAlert(e.Request.Title, requestJson, "OK");
                 }

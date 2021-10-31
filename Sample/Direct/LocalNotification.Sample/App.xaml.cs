@@ -1,15 +1,19 @@
 ﻿using Plugin.LocalNotification;
+using Plugin.LocalNotification.Json;
 using System.Collections.Generic;
-using System.Text.Json;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
 {
     public partial class App : Application
     {
+        private NotificationSerializer notificationSerializer;
+
         public App()
         {
             InitializeComponent();
+
+            notificationSerializer = new NotificationSerializer();
 
             MainPage = new NavigationPage(new MainPage());
 
@@ -37,7 +41,7 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
+            var list = notificationSerializer.Deserialize<List<string>>(e.Request.ReturningData);
             if (list is null || list.Count != 4)
             {
                 return;

@@ -1,31 +1,20 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace Plugin.LocalNotification.Json
 {
     /// <inheritdoc />
     public class NotificationSerializer : INotificationSerializer
     {
-        /// <summary>
-        ///
-        /// </summary>
-        public virtual JsonSerializerOptions MyJsonSerializerOptions { get; } = new JsonSerializerOptions
-        {
-            Converters =
-            {
-                new JsonValueConverterTimeSpan()
-            }
-        };
-
         /// <inheritdoc />
         public virtual TValue Deserialize<TValue>(string json)
         {
-            return JsonSerializer.Deserialize<TValue>(json, MyJsonSerializerOptions);
+            return JsonConvert.DeserializeObject<TValue>(json);
         }
 
         /// <inheritdoc />
         public virtual string Serialize<TValue>(TValue value)
         {
-            return JsonSerializer.Serialize(value, MyJsonSerializerOptions);
+            return JsonConvert.SerializeObject(value);
         }
     }
 }
