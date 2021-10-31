@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/thudugala/Plugin.LocalNotification/60c9342ba866b1af1278c273f3d41a168901e4ff/Screenshots/icon.png" alt="icon" width="64px" >
+<img src="https://user-images.githubusercontent.com/4112014/139563041-be826dda-9ebc-4b4f-bf35-fdc0eea51f42.png" alt="icon" width="64px" >
 
 ![CI](https://github.com/thudugala/Plugin.LocalNotification/workflows/CI/badge.svg?branch=master)
 [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.svg)](https://www.nuget.org/packages/Plugin.LocalNotification/) 
