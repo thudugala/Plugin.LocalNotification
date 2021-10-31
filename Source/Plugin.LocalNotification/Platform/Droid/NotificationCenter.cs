@@ -205,13 +205,17 @@ namespace Plugin.LocalNotification
         internal static void Log(string message)
         {
             Android.Util.Log.Info(Application.Context.PackageName, message);
+            NotificationLog?.Invoke(new NotificationLogArgs
+            {
+                Message = message
+            });
         }
 
         internal static void Log(Exception ex)
         {
             System.Diagnostics.Debug.WriteLine(ex);
             Android.Util.Log.Error(Application.Context.PackageName, ex.Message);
-            NotificationError?.Invoke(new NotificationErrorArgs
+            NotificationLog?.Invoke(new NotificationLogArgs
             {
                 Error = ex
             });

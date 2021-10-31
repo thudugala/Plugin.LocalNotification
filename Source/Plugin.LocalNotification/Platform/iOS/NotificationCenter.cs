@@ -91,12 +91,16 @@ namespace Plugin.LocalNotification
         internal static void Log(string message)
         {
             Console.WriteLine(message);
+            NotificationLog?.Invoke(new NotificationLogArgs
+            {
+                Message = message
+            });
         }
 
         internal static void Log(Exception ex)
         {
             Console.WriteLine(ex);
-            NotificationError?.Invoke(new NotificationErrorArgs
+            NotificationLog?.Invoke(new NotificationLogArgs
             {
                 Error = ex
             });

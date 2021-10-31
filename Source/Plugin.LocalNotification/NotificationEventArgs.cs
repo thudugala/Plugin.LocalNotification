@@ -12,7 +12,7 @@ namespace Plugin.LocalNotification
     /// Returning error
     /// </summary>
     /// <param name="e"></param>
-    public delegate void NotificationErrorHandler(NotificationErrorArgs e);
+    public delegate void NotificationLogHandler(NotificationLogArgs e);
 
     /// <summary>
     /// Returning event when a notification is received.
@@ -47,10 +47,15 @@ namespace Plugin.LocalNotification
     /// <summary>
     ///
     /// </summary>
-    public class NotificationErrorArgs : EventArgs
+    public class NotificationLogArgs : EventArgs
     {
         /// <summary>
-        /// Returning notification.
+        /// 
+        /// </summary>
+        public string Message { get; internal set; }
+
+        /// <summary>
+        /// 
         /// </summary>
         public Exception Error { get; internal set; }
     }

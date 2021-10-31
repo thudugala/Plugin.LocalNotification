@@ -17,7 +17,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Internal Error happened
         /// </summary>
-        public static event NotificationErrorHandler NotificationError;
+        public static event NotificationLogHandler NotificationLog;
 
         /// <summary>
         /// Platform specific INotificationService.
