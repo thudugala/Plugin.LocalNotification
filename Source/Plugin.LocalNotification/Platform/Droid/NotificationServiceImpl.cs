@@ -366,10 +366,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             var serializedRequest = NotificationCenter.GetRequestSerialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
-
+                        
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
                 notificationIntent,
-                PendingIntentFlags.CancelCurrent);
+                ToPendingIntentFlags(request.Android.PendingIntentFlags));
             builder.SetContentIntent(pendingIntent);
 
             if (_categoryList.Any())
@@ -505,7 +505,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 Application.Context,
                 action.ActionId,
                 intent,
-                PendingIntentFlags.CancelCurrent
+                ToPendingIntentFlags(action.PendingIntentFlags)
             );
 
             return pendingIntent;
@@ -617,6 +617,21 @@ namespace Plugin.LocalNotification.Platform.Droid
                 NotificationCategoryType.Service => NotificationCompat.CategoryService,
                 _ => NotificationCompat.CategoryStatus
             };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected virtual PendingIntentFlags ToPendingIntentFlags(AndroidPendingIntentFlags type)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S &&
+                type.HasFlag(AndroidPendingIntentFlags.Immutable) == false)
+            {
+                type = type | AndroidPendingIntentFlags.Immutable;
+            }
+            return (PendingIntentFlags)type;
         }
 
         /// <inheritdoc />

@@ -123,5 +123,10 @@ namespace Plugin.LocalNotification.AndroidOption
         /// which affects how and when the SystemUI reveals the notification's presence and contents in untrusted situations (namely, on the secure lockscreen).
         /// </summary>
         public AndroidVisibilityType VisibilityType { get; set; } = AndroidVisibilityType.Private;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
     }
 }
