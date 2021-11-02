@@ -4,12 +4,15 @@
 
   jobs:
     nuget: 
-      runs-on: windows-2022
+      runs-on: macos-latest
 
       steps:
 
       - uses: actions/checkout@v1
-      - uses: microsoft/setup-msbuild@v1.1
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: true
             
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
