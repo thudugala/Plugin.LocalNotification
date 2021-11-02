@@ -7,13 +7,13 @@ namespace LocalNotification.Sample
 {
     public partial class App : Application
     {
-        private NotificationSerializer notificationSerializer;
+        private readonly NotificationSerializer _notificationSerializer;
 
         public App()
         {
             InitializeComponent();
 
-            notificationSerializer = new NotificationSerializer();
+            _notificationSerializer = new NotificationSerializer();
 
             MainPage = new NavigationPage(new MainPage());
 
@@ -41,7 +41,8 @@ namespace LocalNotification.Sample
                 return;
             }
 
-            var list = notificationSerializer.Deserialize<List<string>>(e.Request.ReturningData);
+            // No need to use NotificationSerializer, you can use your own one.
+            var list = _notificationSerializer.Deserialize<List<string>>(e.Request.ReturningData);
             if (list is null || list.Count != 4)
             {
                 return;

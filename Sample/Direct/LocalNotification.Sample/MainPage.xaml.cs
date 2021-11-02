@@ -12,13 +12,13 @@ namespace LocalNotification.Sample
     public partial class MainPage : ContentPage
     {
         private int _tapCount;
-        private NotificationSerializer notificationSerializer;
+        private readonly NotificationSerializer _notificationSerializer;
 
         public MainPage()
         {
             InitializeComponent();
 
-            notificationSerializer = new NotificationSerializer();
+            _notificationSerializer = new NotificationSerializer();
 
             NotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
             {
@@ -82,7 +82,8 @@ namespace LocalNotification.Sample
                 title,
                 _tapCount.ToString()
             };
-            var serializeReturningData = notificationSerializer.Serialize(list);
+            // No need to use NotificationSerializer, you can use your own one.
+            var serializeReturningData = _notificationSerializer.Serialize(list);
 
             var request = new NotificationRequest
             {
@@ -177,7 +178,7 @@ namespace LocalNotification.Sample
                 title,
                 _tapCount.ToString()
             };
-            var serializeReturningData = notificationSerializer.Serialize(list);
+            var serializeReturningData = _notificationSerializer.Serialize(list);
 
             var notification = new NotificationRequest
             {
@@ -227,7 +228,7 @@ namespace LocalNotification.Sample
             {
                 if (CustomAlert.IsToggled)
                 {
-                    var requestJson = notificationSerializer.Serialize(e.Request);
+                    var requestJson = _notificationSerializer.Serialize(e.Request);
 
                     DisplayAlert(e.Request.Title, requestJson, "OK");
                 }
