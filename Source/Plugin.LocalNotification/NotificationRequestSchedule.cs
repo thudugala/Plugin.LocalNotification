@@ -28,6 +28,12 @@ namespace Plugin.LocalNotification
         public NotificationRepeat RepeatType { get; set; } = NotificationRepeat.No;
 
         /// <summary>
+        /// If set this notification will not attempt to create or display a notification, instead it will only invoke NotificationReceived.
+        /// Default is false
+        /// </summary>
+        public bool DataOnly { get; set; } = false;
+
+        /// <summary>
         /// In Android, do not Schedule or show notification if NotifyTime is earlier than DateTime.Now and this time delay.
         /// Default is 1 min
         /// </summary>

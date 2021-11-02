@@ -81,7 +81,14 @@ namespace Plugin.LocalNotification.Platform.iOS
                     {
                         Request = localNotification
                     };
+
                     notificationService.OnNotificationReceived(args);
+
+                    if(localNotification.Schedule.DataOnly)
+                    {
+                        //do not attempt to display a notification to the user directly
+                        return;
+                    }
 
                     if (localNotification.iOS.HideForegroundAlert)
                     {
