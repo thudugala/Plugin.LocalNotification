@@ -626,7 +626,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags ToPendingIntentFlags(AndroidPendingIntentFlags type)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S &&
+            if ((int)Build.VERSION.SdkInt >= 31 &&
                 type.HasFlag(AndroidPendingIntentFlags.Immutable) == false)
             {
                 type = type | AndroidPendingIntentFlags.Immutable;
