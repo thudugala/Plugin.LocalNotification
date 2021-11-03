@@ -92,5 +92,10 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="request"></param>
         Task<bool> Show(NotificationRequest request);
+
+        /// <summary>
+        /// When Notification is about to be shown, this allow it to be modified. 
+        /// </summary>
+        Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get; set; }
     }
 }

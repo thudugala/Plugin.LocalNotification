@@ -21,7 +21,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var localNotification = notificationService.GetRequest(response?.Notification?.Request?.Content);
+                var request = notificationService.GetRequest(response?.Notification?.Request?.Content);
 
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
@@ -34,14 +34,14 @@ namespace Plugin.LocalNotification.Platform.iOS
                             var actionArgs = new NotificationActionEventArgs
                             {
                                 ActionId = actionId,
-                                Request = localNotification
+                                Request = request
                             };
                             notificationService.OnNotificationActionTapped(actionArgs);
                             return;
                         }
                     }
 
-                    if (localNotification != null && response.Notification.Request.Content.Badge != null)
+                    if (request != null && response.Notification.Request.Content.Badge != null)
                     {
                         var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
                                         Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
@@ -49,7 +49,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     }
                     var args = new NotificationEventArgs
                     {
-                        Request = localNotification
+                        Request = request
                     };
                     notificationService.OnNotificationTapped(args);
                 });
@@ -67,28 +67,28 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 var presentationOptions = UNNotificationPresentationOptions.Alert;
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var localNotification = notificationService.GetRequest(notification?.Request?.Content);
-                if (localNotification != null)
+                var request = notificationService.GetRequest(notification?.Request?.Content);
+                if (request != null)
                 {
-                    if (localNotification.Schedule.NotifyAutoCancelTime.HasValue && localNotification.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+                    if (request.Schedule.NotifyAutoCancelTime.HasValue && request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
-                        notificationService.Cancel(localNotification.NotificationId);
+                        notificationService.Cancel(request.NotificationId);
                         Debug.WriteLine("Notification Auto Canceled");
                         return;
                     }
 
                     var args = new NotificationEventArgs
                     {
-                        Request = localNotification
+                        Request = request
                     };
                     notificationService.OnNotificationReceived(args);
 
-                    if (localNotification.iOS.HideForegroundAlert)
+                    if (request.iOS.HideForegroundAlert)
                     {
                         presentationOptions = UNNotificationPresentationOptions.None;
                     }
 
-                    if (localNotification.iOS.PlayForegroundSound)
+                    if (request.iOS.PlayForegroundSound)
                     {
                         presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ?
                             UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert :

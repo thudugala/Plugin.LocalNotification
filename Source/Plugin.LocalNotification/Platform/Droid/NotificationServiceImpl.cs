@@ -17,6 +17,9 @@ namespace Plugin.LocalNotification.Platform.Droid
     {
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
+        /// <inheritdoc />
+        public Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get; set; }
+
         /// <summary>
         ///
         /// </summary>
@@ -206,7 +209,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
                 .TotalMilliseconds;
-            var triggerTime = (long) utcAlarmTimeInMillis;
+            var triggerTime = (long)utcAlarmTimeInMillis;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
@@ -230,6 +233,11 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <param name="request"></param>
         internal virtual async Task<bool> ShowNow(NotificationRequest request)
         {
+            if (NotificationReceiving != null)
+            {
+                request = await NotificationReceiving(request);
+            }
+
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
             {
                 request.Android.ChannelId = AndroidOptions.DefaultChannelId;
@@ -298,7 +306,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                builder.SetPriority((int) request.Android.Priority);
+                builder.SetPriority((int)request.Android.Priority);
 
                 var soundUri = NotificationCenter.GetSoundUri(request.Sound);
                 if (soundUri != null)
@@ -351,7 +359,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (request.Android.TimeoutAfter.HasValue)
             {
-                builder.SetTimeoutAfter((long) request.Android.TimeoutAfter.Value.TotalMilliseconds);
+                builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
 
             var notificationIntent =
@@ -366,7 +374,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             var serializedRequest = NotificationCenter.GetRequestSerialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
-                        
+
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
                 notificationIntent,
                 ToPendingIntentFlags(request.Android.PendingIntentFlags));
@@ -537,9 +545,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             return type switch
             {
-                AndroidVisibilityType.Private => (int) NotificationVisibility.Private,
-                AndroidVisibilityType.Public => (int) NotificationVisibility.Public,
-                AndroidVisibilityType.Secret => (int) NotificationVisibility.Secret,
+                AndroidVisibilityType.Private => (int)NotificationVisibility.Private,
+                AndroidVisibilityType.Public => (int)NotificationVisibility.Public,
+                AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
@@ -643,7 +651,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
-            
+
             return true;
         }
 

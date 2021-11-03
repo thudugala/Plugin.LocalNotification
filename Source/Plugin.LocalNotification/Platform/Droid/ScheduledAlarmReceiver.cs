@@ -66,7 +66,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     NotificationCenter.Log("ScheduledAlarmReceiver.OnReceive: NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
                     return;
                 }
-
+                                
                 await notificationService.ShowNow(request);
             }
             catch (Exception ex)

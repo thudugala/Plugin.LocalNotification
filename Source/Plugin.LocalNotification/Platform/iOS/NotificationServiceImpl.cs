@@ -2,7 +2,6 @@
 using Plugin.LocalNotification.iOSOption;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -13,9 +12,12 @@ using UserNotifications;
 
 namespace Plugin.LocalNotification.Platform.iOS
 {
-    /// <inheritdoc />
+    /// <inheritdoc />   
     public class NotificationServiceImpl : INotificationService
     {
+        /// <inheritdoc />
+        public Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get ; set; }
+
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
 
@@ -99,49 +101,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     return false;
                 }
-
-                var userInfoDictionary = new NSMutableDictionary();
-                var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
-                foreach (var item in dictionary)
-                {
-                    userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
-                }
-
-                using (var content = new UNMutableNotificationContent
-                {
-                    Title = request.Title,
-                    Subtitle = request.Subtitle,
-                    Body = request.Description,
-                    Badge = request.BadgeNumber,
-                    UserInfo = userInfoDictionary,
-                    Sound = UNNotificationSound.Default,
-                })
-                {
-                    // Image Attachment
-                    if (request.Image != null)
-                    {
-                        var nativeImage = await GetNativeImage(request.Image);
-                        if (nativeImage != null)
-                        {
-                            content.Attachments = new[] {nativeImage};
-                        }
-                    }
-
-                    if (request.CategoryType != NotificationCategoryType.None)
-                    {
-                        content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
-                    }
-
-                    if (string.IsNullOrWhiteSpace(request.Sound) == false)
-                    {
-                        content.Sound = UNNotificationSound.GetSound(request.Sound);
-                    }
-
-                    if (request.Silent)
-                    {
-                        content.Sound = null;
-                    }
-
+                                
+                using (var content = await GetNotificationContent(request))
+                {                    
                     var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
 
                     if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
@@ -175,6 +137,55 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 trigger?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
+        {
+            var userInfoDictionary = new NSMutableDictionary();
+            var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
+            foreach (var item in dictionary)
+            {
+                userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
+            }
+            var content = new UNMutableNotificationContent
+            {
+                Title = request.Title,
+                Subtitle = request.Subtitle,
+                Body = request.Description,
+                Badge = request.BadgeNumber,
+                UserInfo = userInfoDictionary,
+                Sound = UNNotificationSound.Default,
+            };
+            // Image Attachment
+            if (request.Image != null)
+            {
+                var nativeImage = await GetNativeImage(request.Image);
+                if (nativeImage != null)
+                {
+                    content.Attachments = new[] { nativeImage };
+                }
+            }
+
+            if (request.CategoryType != NotificationCategoryType.None)
+            {
+                content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Sound) == false)
+            {
+                content.Sound = UNNotificationSound.GetSound(request.Sound);
+            }
+
+            if (request.Silent)
+            {
+                content.Sound = null;
+            }
+            return content;
         }
 
         /// <summary>
