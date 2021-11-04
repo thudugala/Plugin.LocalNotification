@@ -16,7 +16,10 @@ namespace Plugin.LocalNotification.Platform.iOS
     public class NotificationServiceImpl : INotificationService
     {
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get ; set; }
+        public Func<NotificationRequest, Task<bool>> FilterNotification { get; set; }
+
+        /// <inheritdoc />
+        public Func<NotificationRequest, Task<NotificationRequest>> CustomizeNotification { get ; set; }
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -96,8 +99,18 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                var allowed = await NotificationCenter.AskPermissionAsync().ConfigureAwait(false);
-                if (allowed == false)
+                if(FilterNotification != null)
+                {
+                    var allowed = await FilterNotification(request);
+                    if (!allowed)
+                    {
+                        NotificationCenter.Log("NotificationServiceImpl.Show: request has been filtered");
+                        return false;
+                    }
+                }
+
+                var hasPermissions = await NotificationCenter.AskPermissionAsync().ConfigureAwait(false);
+                if (hasPermissions == false)
                 {
                     return false;
                 }
@@ -152,6 +165,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
             }
+
             var content = new UNMutableNotificationContent
             {
                 Title = request.Title,
@@ -161,6 +175,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 UserInfo = userInfoDictionary,
                 Sound = UNNotificationSound.Default,
             };
+
             // Image Attachment
             if (request.Image != null)
             {
@@ -185,6 +200,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 content.Sound = null;
             }
+
             return content;
         }
 

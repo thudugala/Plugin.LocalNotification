@@ -18,7 +18,10 @@ namespace Plugin.LocalNotification.Platform.Droid
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get; set; }
+        public Func<NotificationRequest, Task<bool>> FilterNotification { get; set; }
+
+        /// <inheritdoc />
+        public Func<NotificationRequest, Task<NotificationRequest>> CustomizeNotification { get; set; }
 
         /// <summary>
         ///
@@ -233,9 +236,19 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <param name="request"></param>
         internal virtual async Task<bool> ShowNow(NotificationRequest request)
         {
-            if (NotificationReceiving != null)
+            if (FilterNotification != null)
             {
-                request = await NotificationReceiving(request);
+                bool allowed = await FilterNotification(request);
+                if (!allowed)
+                {
+                    NotificationCenter.Log("NotificationServiceImpl.ShowNow: request has been filtered");
+                    return false;
+                }
+            }
+
+            if (CustomizeNotification != null)
+            {
+                request = await CustomizeNotification(request);
             }
 
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
@@ -428,6 +441,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 Request = request
             };
+
             NotificationCenter.Current.OnNotificationReceived(args);
 
             NotificationRepository.Current.AddDeliveredRequest(request);

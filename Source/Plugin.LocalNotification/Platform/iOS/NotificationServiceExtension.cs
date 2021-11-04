@@ -36,34 +36,35 @@ namespace Plugin.LocalNotification.Platform.iOS
         #region Override Methods
 
         /// <inheritdoc />
-        public override async void DidReceiveNotificationRequest(UNNotificationRequest request, Action<UNNotificationContent> contentHandler)
+        public override async void DidReceiveNotificationRequest(UNNotificationRequest notificationRequest, Action<UNNotificationContent> contentHandler)
         {
             try
             {
                 ContentHandler = contentHandler;
 
-                BestAttemptContent = (UNMutableNotificationContent)request.Content.MutableCopy();
+                BestAttemptContent = (UNMutableNotificationContent)notificationRequest.Content.MutableCopy();
 
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var notificationRequest = notificationService.GetRequest(request?.Content);
+                var request = notificationService.GetRequest(notificationRequest?.Content);
 
-                if (notificationService.NotificationReceiving != null)
+                if (notificationService.CustomizeNotification != null)
                 {
-                    var newLocalNotification = await notificationService.NotificationReceiving(notificationRequest);
-                    if (newLocalNotification != null)
+                    request = await notificationService.CustomizeNotification(request);
+                    if (request != null)
                     {
-                        var newtContent = await notificationService.GetNotificationContent(newLocalNotification);
+                        var newContent = await notificationService.GetNotificationContent(request);
 
-                        BestAttemptContent.Title = newtContent.Title;
-                        BestAttemptContent.Subtitle = newtContent.Subtitle;
-                        BestAttemptContent.Body = newtContent.Body;
-                        BestAttemptContent.Badge = newtContent.Badge;
-                        BestAttemptContent.UserInfo = newtContent.UserInfo;
-                        BestAttemptContent.Sound = newtContent.Sound;
-                        BestAttemptContent.Attachments = newtContent.Attachments;
-                        BestAttemptContent.CategoryIdentifier = newtContent.CategoryIdentifier;
+                        BestAttemptContent.Title = newContent.Title;
+                        BestAttemptContent.Subtitle = newContent.Subtitle;
+                        BestAttemptContent.Body = newContent.Body;
+                        BestAttemptContent.Badge = newContent.Badge;
+                        BestAttemptContent.UserInfo = newContent.UserInfo;
+                        BestAttemptContent.Sound = newContent.Sound;
+                        BestAttemptContent.Attachments = newContent.Attachments;
+                        BestAttemptContent.CategoryIdentifier = newContent.CategoryIdentifier;
                     }
                 }
+
                 ContentHandler(BestAttemptContent);
             }
             catch (Exception ex)

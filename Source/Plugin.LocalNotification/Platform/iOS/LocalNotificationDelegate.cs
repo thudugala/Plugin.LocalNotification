@@ -47,10 +47,12 @@ namespace Plugin.LocalNotification.Platform.iOS
                                         Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
                         UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
                     }
+
                     var args = new NotificationEventArgs
                     {
                         Request = request
                     };
+
                     notificationService.OnNotificationTapped(args);
                 });
             }

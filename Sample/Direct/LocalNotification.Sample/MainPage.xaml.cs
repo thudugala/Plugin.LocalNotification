@@ -49,7 +49,8 @@ namespace LocalNotification.Sample
                 },
             }));
 
-            NotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
+            NotificationCenter.Current.CustomizeNotification = OnCustomizeNotification;
+            NotificationCenter.Current.FilterNotification = OnFilterNotification;
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
             NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
 
@@ -61,7 +62,19 @@ namespace LocalNotification.Sample
             //ScheduleNotification("second", 20);
         }
 
-        private Task<NotificationRequest> OnNotificationReceiving(NotificationRequest request)
+        private Task<bool> OnFilterNotification(NotificationRequest request)
+        {
+            //return true to show the notification, false to suppress it
+            //this is only really useful for dealing with (recurring) scheduled notifications
+            if(_tapCount == 16)
+            {
+                return Task.FromResult(false);
+            }
+
+            return Task.FromResult(true);
+        }
+
+        private Task<NotificationRequest> OnCustomizeNotification(NotificationRequest request)
         {
             request.Title = $"{request.Title} Modified";
 

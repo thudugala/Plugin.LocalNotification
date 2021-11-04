@@ -94,8 +94,13 @@ namespace Plugin.LocalNotification
         Task<bool> Show(NotificationRequest request);
 
         /// <summary>
-        /// When Notification is about to be shown, this allow it to be modified. 
+        /// When Notification is about to be shown, this allows it to be modified. 
         /// </summary>
-        Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get; set; }
+        Func<NotificationRequest, Task<NotificationRequest>> CustomizeNotification { get; set; }
+
+        /// <summary>
+        /// When Notification is about to be shown, this allows it to be suppressed. 
+        /// </summary>
+        Func<NotificationRequest, Task<bool>> FilterNotification { get; set; }
     }
 }
