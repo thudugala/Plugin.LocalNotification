@@ -66,22 +66,9 @@ namespace Plugin.LocalNotification.Platform.Droid
                     NotificationCenter.Log("ScheduledAlarmReceiver.OnReceive: NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
                     return;
                 }
-
-                if(!request.Schedule.DataOnly)
-                {
-                    //this call invokes OnNotificationReceived, but after the notification is shown, while iOS is _before_
-                    await notificationService.ShowNow(request);
-                }
-                else
-                {
-                    //this scheduled notification should not attempt to directly display a notification, instead it defers to the user
-                    var args = new NotificationEventArgs
-                    {
-                        Request = request
-                    };
-
-                    NotificationCenter.Current.OnNotificationReceived(args);
-                }
+                
+				//this call invokes OnNotificationReceived, but after the notification is shown, while iOS is _before_
+				await notificationService.ShowNow(request);
             }
             catch (Exception ex)
             {

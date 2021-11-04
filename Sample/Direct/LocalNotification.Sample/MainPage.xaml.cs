@@ -6,6 +6,7 @@ using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 using Xamarin.Forms;
 using Plugin.LocalNotification.Json;
+using System.Threading.Tasks;
 
 namespace LocalNotification.Sample
 {
@@ -48,6 +49,7 @@ namespace LocalNotification.Sample
                 },
             }));
 
+            NotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
             NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
             NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
 
@@ -57,6 +59,13 @@ namespace LocalNotification.Sample
             //ScheduleNotificationGroup();
             //ScheduleNotification("first", 10);
             //ScheduleNotification("second", 20);
+        }
+
+        private Task<NotificationRequest> OnNotificationReceiving(NotificationRequest request)
+        {
+            request.Title = $"{request.Title} Modified";
+
+            return Task.FromResult(request);
         }
 
         private void Button_Clicked(object sender, EventArgs e)
