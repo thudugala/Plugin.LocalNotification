@@ -9,7 +9,9 @@
       steps:      
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
-                
+        with:
+          vs-version: "[16.4,16.9)"
+
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
 
