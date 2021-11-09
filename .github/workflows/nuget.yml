@@ -28,11 +28,11 @@
       - name: build Plugin.LocalNotification.csproj
         run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
       
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2.2.4
         with:
           name: Plugin.LocalNotification
           path: Source/Plugin.LocalNotification/bin/Debug/ 
 
       - name: Push generated package to GitHub registry
-        run: nuget push Source/Plugin.LocalNotification/bin/Debug/*.nupkg -Source "GitHub" -SkipDuplicate
+        run: nuget push .\Source\Plugin.LocalNotification\bin\Debug\*.nupkg -Source "GitHub" -SkipDuplicate
 
