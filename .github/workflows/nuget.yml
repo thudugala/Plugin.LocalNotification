@@ -4,24 +4,19 @@
 
   jobs:
     nuget: 
-      runs-on: windows-latest
+      runs-on: windows-2022
 
-      steps:
-
-      - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-          
+      steps:      
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
-        with:     
-          vs-version: '17.0'
-          msbuild-architecture: x64
+        with:
+           vs-version: '17.0'
         
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
+
+      - name: checkout
+        uses: actions/checkout@v1
                   
       - name: Add private GitHub registry to NuGet
         run: nuget sources add -name "GitHub" -source "https://nuget.pkg.github.com/thudugala/index.json" -userName thudugala -password ${{ secrets.Elvin_Package_Registry }}
