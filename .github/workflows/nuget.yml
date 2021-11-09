@@ -4,7 +4,7 @@
 
   jobs:
     nuget: 
-      runs-on: macos-latest
+      runs-on: windows-latest
 
       steps:
 
