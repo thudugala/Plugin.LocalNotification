@@ -61,11 +61,15 @@ namespace LocalNotification.Sample
             //ScheduleNotification("second", 20);
         }
 
-        private Task<NotificationRequest> OnNotificationReceiving(NotificationRequest request)
+        private Task<NotificationEventReceivingArgs> OnNotificationReceiving(NotificationRequest request)
         {
             request.Title = $"{request.Title} Modified";
 
-            return Task.FromResult(request);
+            return Task.FromResult(new NotificationEventReceivingArgs
+            {
+                Handled = false,
+                Request = request
+            });
         }
 
         private void Button_Clicked(object sender, EventArgs e)

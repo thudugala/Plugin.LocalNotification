@@ -1,5 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Foundation;
+using System;
 using System.Globalization;
 using UIKit;
 using UserNotifications;
@@ -67,14 +67,50 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 var presentationOptions = UNNotificationPresentationOptions.Alert;
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var request = notificationService.GetRequest(notification?.Request?.Content);
+                var request = notificationService.GetRequest(notification?.Request.Content);
                 if (request != null)
                 {
                     if (request.Schedule.NotifyAutoCancelTime.HasValue && request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                     {
                         notificationService.Cancel(request.NotificationId);
-                        Debug.WriteLine("Notification Auto Canceled");
+                        if (completionHandler != null)
+                        {
+                            presentationOptions = UNNotificationPresentationOptions.None;
+                            completionHandler(presentationOptions);
+                        }
+                        NotificationCenter.Log("Notification Auto Canceled");
                         return;
+                    }
+
+                    var requestHandled = false;
+                    var dictionary = notification?.Request.Content.UserInfo;
+                    if (dictionary != null)
+                    {
+                        if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestHandled)))
+                        {
+                            var handled = bool.Parse(dictionary[NotificationCenter.ReturnRequestHandled].ToString());
+                            if (handled)
+                            {
+                                presentationOptions = UNNotificationPresentationOptions.None;
+                                NotificationCenter.Log("Notification handled");
+                                requestHandled = true;
+                            }
+                        }
+                    }
+
+                    if (requestHandled == false)
+                    {
+                        if (request.iOS.HideForegroundAlert)
+                        {
+                            presentationOptions = UNNotificationPresentationOptions.None;
+                        }
+
+                        if (request.iOS.PlayForegroundSound)
+                        {
+                            presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert
+                                ? UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert
+                                : UNNotificationPresentationOptions.Sound;
+                        }
                     }
 
                     var args = new NotificationEventArgs
@@ -82,25 +118,16 @@ namespace Plugin.LocalNotification.Platform.iOS
                         Request = request
                     };
                     notificationService.OnNotificationReceived(args);
-
-                    if (request.iOS.HideForegroundAlert)
-                    {
-                        presentationOptions = UNNotificationPresentationOptions.None;
-                    }
-
-                    if (request.iOS.PlayForegroundSound)
-                    {
-                        presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert ?
-                            UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert :
-                            UNNotificationPresentationOptions.Sound;
-                    }
+                }
+                else
+                {
+                    NotificationCenter.Log("Notification request not found");
                 }
 
                 if (completionHandler is null)
                 {
                     return;
                 }
-
                 completionHandler(presentationOptions);
             }
             catch (Exception ex)

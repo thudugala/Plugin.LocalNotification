@@ -96,6 +96,6 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// When Notification is about to be shown, this allow it to be modified. 
         /// </summary>
-        Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get; set; }
+        Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
     }
 }

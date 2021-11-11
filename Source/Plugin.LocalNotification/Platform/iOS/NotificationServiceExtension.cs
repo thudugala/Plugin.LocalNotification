@@ -4,18 +4,21 @@ using UserNotifications;
 
 namespace Plugin.LocalNotification.Platform.iOS
 {
-    /// <inheritdoc />   
+    /// <inheritdoc />
     [Register(nameof(NotificationServiceExtension))]
     public class NotificationServiceExtension : UNNotificationServiceExtension
     {
         #region Computed Properties
+
         private Action<UNNotificationContent> ContentHandler { get; set; }
         private UNMutableNotificationContent BestAttemptContent { get; set; }
-        #endregion
+
+        #endregion Computed Properties
 
         #region Constructors
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="t"></param>
         protected NotificationServiceExtension(NSObjectFlag t) : base(t)
@@ -24,14 +27,15 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="handle"></param>
         protected internal NotificationServiceExtension(IntPtr handle) : base(handle)
         {
             // Note: this .ctor should not contain any initialization logic.
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Override Methods
 
@@ -45,14 +49,14 @@ namespace Plugin.LocalNotification.Platform.iOS
                 BestAttemptContent = (UNMutableNotificationContent)request.Content.MutableCopy();
 
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var notificationRequest = notificationService.GetRequest(request?.Content);
+                var notificationRequest = notificationService.GetRequest(request.Content);
 
                 if (notificationService.NotificationReceiving != null)
                 {
-                    var newLocalNotification = await notificationService.NotificationReceiving(notificationRequest);
-                    if (newLocalNotification != null)
+                    var requestArg = await notificationService.NotificationReceiving(notificationRequest);
+                    if (requestArg != null)
                     {
-                        var newtContent = await notificationService.GetNotificationContent(newLocalNotification);
+                        var newtContent = await notificationService.GetNotificationContent(requestArg.Request);
 
                         BestAttemptContent.Title = newtContent.Title;
                         BestAttemptContent.Subtitle = newtContent.Subtitle;
@@ -62,6 +66,12 @@ namespace Plugin.LocalNotification.Platform.iOS
                         BestAttemptContent.Sound = newtContent.Sound;
                         BestAttemptContent.Attachments = newtContent.Attachments;
                         BestAttemptContent.CategoryIdentifier = newtContent.CategoryIdentifier;
+
+                        BestAttemptContent.UserInfo = GetUserInfo(requestArg.Request, requestArg.Handled);
+                    }
+                    else
+                    {
+                        BestAttemptContent.UserInfo = GetUserInfo(notificationRequest, true);
                     }
                 }
                 ContentHandler(BestAttemptContent);
@@ -70,6 +80,18 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 NotificationCenter.Log(ex);
             }
+        }
+
+        private NSMutableDictionary GetUserInfo(NotificationRequest request, bool handled)
+        {
+            var userInfoDictionary = new NSMutableDictionary();
+            var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
+            foreach (var item in dictionary)
+            {
+                userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
+            }
+            userInfoDictionary.SetValueForKey(NSNumber.FromBoolean(true), new NSString(NotificationCenter.ReturnRequestHandled));
+            return userInfoDictionary;
         }
 
         /// <inheritdoc />
@@ -87,7 +109,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                 NotificationCenter.Log(ex);
             }
         }
-        #endregion
+
+        #endregion Override Methods
 
         private static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {

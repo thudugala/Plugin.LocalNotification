@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification.Platform.iOS
     public class NotificationServiceImpl : INotificationService
     {
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get ; set; }
+        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get ; set; }
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;

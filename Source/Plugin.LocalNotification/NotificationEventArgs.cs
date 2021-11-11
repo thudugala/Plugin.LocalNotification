@@ -70,4 +70,20 @@ namespace Plugin.LocalNotification
         /// </summary>
         public NotificationRequest Request { get; internal set; }
     }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public class NotificationEventReceivingArgs : EventArgs
+    {
+        /// <summary>
+        /// If set to true, Notification will not popup
+        /// </summary>
+        public bool Handled { get; set; } = false;
+
+        /// <summary>
+        /// Returning notification.
+        /// </summary>
+        public NotificationRequest Request { get; set; }
+    }
 }

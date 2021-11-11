@@ -35,6 +35,11 @@ namespace Plugin.LocalNotification
         public static string ReturnRequest => "Plugin.LocalNotification.RETURN_REQUEST";
 
         /// <summary>
+        /// Return Notification Handled Key
+        /// </summary>
+        public static string ReturnRequestHandled => "Plugin.LocalNotification.RETURN_Handled";
+
+        /// <summary>
         ///
         /// </summary>
         public static INotificationSerializer Serializer
@@ -91,7 +96,7 @@ namespace Plugin.LocalNotification
 
             return serializedRequest;
         }
-
+        
         internal static Dictionary<string, string> GetRequestSerializeDictionary(NotificationRequest request)
         {
             var dictionary = new Dictionary<string, string>();

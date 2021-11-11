@@ -18,7 +18,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
 
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationRequest>> NotificationReceiving { get; set; }
+        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
 
         /// <summary>
         ///
@@ -233,9 +233,18 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <param name="request"></param>
         internal virtual async Task<bool> ShowNow(NotificationRequest request)
         {
+            var requestHandled = false;
             if (NotificationReceiving != null)
             {
-                request = await NotificationReceiving(request);
+                var requestArg = await NotificationReceiving(request);
+                if (requestArg is null || requestArg.Handled)
+                {
+                    requestHandled = true;
+                }
+                if (requestArg?.Request != null)
+                {
+                    request = requestArg.Request;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(request.Android.ChannelId))
@@ -422,16 +431,21 @@ namespace Plugin.LocalNotification.Platform.Droid
 #pragma warning restore CS0618 // Type or member is obsolete
             }
 
-            MyNotificationManager?.Notify(request.NotificationId, notification);
-
+            if (requestHandled == false)
+            {
+                MyNotificationManager?.Notify(request.NotificationId, notification);
+            }
+            else
+            {
+                NotificationCenter.Log("NotificationServiceImpl.ShowNow: notification is Handled");
+            }
             var args = new NotificationEventArgs
             {
                 Request = request
             };
             NotificationCenter.Current.OnNotificationReceived(args);
-
             NotificationRepository.Current.AddDeliveredRequest(request);
-
+            
             return true;
         }
 
