@@ -33,7 +33,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 ### Android Notes:
 
-Project should [target Android framework 11.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
+Project should [target Android framework 12.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
 
 # Usage
 
@@ -140,7 +140,7 @@ public partial class App : Application
 
 ### Android
 
-Project should [target Android framework 11.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
+Project should [target Android framework 12.0+](https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/android-api-levels?tabs=vswin#framework)
 
 ![image](https://user-images.githubusercontent.com/4112014/120728139-5af46400-c530-11eb-9299-fd9ac9221589.png)
 

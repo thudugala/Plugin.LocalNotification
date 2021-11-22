@@ -1,5 +1,6 @@
 ﻿using Plugin.LocalNotification;
 using Plugin.LocalNotification.Json;
+using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 
@@ -17,7 +18,14 @@ namespace LocalNotification.Sample
 
             MainPage = new NavigationPage(new MainPage());
 
+            NotificationCenter.NotificationLog += NotificationCenter_NotificationLog;
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
+        }
+
+        private void NotificationCenter_NotificationLog(NotificationLogArgs e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.Error);
         }
 
         protected override void OnResume()
