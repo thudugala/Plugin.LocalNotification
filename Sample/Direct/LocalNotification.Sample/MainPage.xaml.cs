@@ -72,7 +72,7 @@ namespace LocalNotification.Sample
             });
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked(object sender, EventArgs e)
         {
             var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.icon.png");
             byte[] imageBytes = null;
@@ -80,7 +80,7 @@ namespace LocalNotification.Sample
             {
                 using (var ms = new MemoryStream())
                 {
-                    imageStream.CopyTo(ms);
+                    await imageStream.CopyToAsync(ms);
                     imageBytes = ms.ToArray();
                 }
             }
@@ -160,7 +160,14 @@ namespace LocalNotification.Sample
                 request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
             }
 
-            NotificationCenter.Current.Show(request);
+            try
+            {
+                var ff = await NotificationCenter.Current.Show(request);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
         }
 
         private void Current_NotificationActionTapped(NotificationActionEventArgs e)
