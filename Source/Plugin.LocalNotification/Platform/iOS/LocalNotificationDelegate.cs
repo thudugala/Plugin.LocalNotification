@@ -86,7 +86,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     var dictionary = notification?.Request.Content.UserInfo;
                     if (dictionary != null)
                     {
-                        if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestHandled)))
+                        if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestHandled)))
                         {
                             var handled = bool.Parse(dictionary[NotificationCenter.ReturnRequestHandled].ToString());
                             if (handled)

@@ -71,7 +71,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     }
                     else
                     {
-                        BestAttemptContent.UserInfo = GetUserInfo(notificationRequest, true);
+                        BestAttemptContent.UserInfo = GetUserInfo(notificationRequest, false);
                     }
                 }
                 ContentHandler(BestAttemptContent);
@@ -90,7 +90,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
             }
-            userInfoDictionary.SetValueForKey(NSNumber.FromBoolean(true), new NSString(NotificationCenter.ReturnRequestHandled));
+            userInfoDictionary.SetValueForKey(NSNumber.FromBoolean(handled), new NSString(NotificationCenter.ReturnRequestHandled));
             return userInfoDictionary;
         }
 
