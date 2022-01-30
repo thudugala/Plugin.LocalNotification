@@ -1,3 +1,4 @@
+using System;
 using Android.App;
 using Android.Content;
 using System.Linq;
@@ -21,36 +22,44 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         public override void OnReceive(Context context, Intent intent)
         {
-            if (intent.Action != Intent.ActionBootCompleted)
+            try
             {
-                NotificationCenter.Log("Not ActionBootCompleted");
-                return;
-            }
+                if (intent.Action != Intent.ActionBootCompleted)
+                {
+                    NotificationCenter.Log("Not ActionBootCompleted");
+                    return;
+                }
 
-            var requestList = NotificationRepository.Current.GetPendingList();
-            if (requestList.Any() == false)
+                var requestList = NotificationRepository.Current.GetPendingList();
+                if (requestList.Any() == false)
+                {
+                    NotificationCenter.Log("No Pending Notification Request");
+                    return;
+                }
+
+                var activeForReScheduleRequestList = requestList.Where(r => r.IsStillActiveForReSchedule()).ToList();
+                if (activeForReScheduleRequestList.Any() == false)
+                {
+                    NotificationCenter.Log("No Pending Notification Request that is Still Active For ReSchedule");
+                    return;
+                }
+
+                var notificationService = TryGetDefaultDroidNotificationService();
+                foreach (var request in activeForReScheduleRequestList)
+                {
+                    request.Schedule.NotifyTime = request.GetNextNotifyTime();
+
+                    // re schedule again.
+                    NotificationCenter.Log($"ReScheduled Notification Request {request.NotificationId}");
+                    notificationService.ShowLater(request);
+                }
+
+                NotificationCenter.Log($"{nameof(BootReceiver)}-{nameof(OnReceive)}");
+            }
+            catch (Exception ex)
             {
-                NotificationCenter.Log("No Pending Notification Request");
-                return;
+                NotificationCenter.Log(ex);
             }
-            var activeForReScheduleRequestList = requestList.Where(r => r.IsStillActiveForReSchedule()).ToList();
-            if (activeForReScheduleRequestList.Any() == false)
-            {
-                NotificationCenter.Log("No Pending Notification Request that is Still Active For ReSchedule");
-                return;
-            }
-
-            var notificationService = TryGetDefaultDroidNotificationService();
-            foreach (var request in activeForReScheduleRequestList)
-            {
-                request.Schedule.NotifyTime = request.GetNextNotifyTime();
-
-                // re schedule again.
-                NotificationCenter.Log($"ReScheduled Notification Request {request.NotificationId}");
-                notificationService.ShowLater(request);
-            }
-
-            NotificationCenter.Log($"{nameof(BootReceiver)}-{nameof(OnReceive)}");
         }
 
         private static NotificationServiceImpl TryGetDefaultDroidNotificationService()

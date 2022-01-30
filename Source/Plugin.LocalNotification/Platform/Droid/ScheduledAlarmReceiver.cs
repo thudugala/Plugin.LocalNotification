@@ -8,8 +8,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         Name = ReceiverName,
         Enabled = true,
         Exported = false,
-        Label = "Plugin LocalNotification Scheduled Alarm Receiver"
-    )]
+        Label = "Plugin LocalNotification Scheduled Alarm Receiver")]
     [IntentFilter(
         new[] { Intent.ActionBootCompleted },
         Categories = new[] { Intent.CategoryHome })]
