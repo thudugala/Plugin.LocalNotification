@@ -128,5 +128,10 @@ namespace Plugin.LocalNotification.AndroidOption
         /// 
         /// </summary>
         public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AndroidAlarmType AlarmType { get; set; } = AndroidAlarmType.ElapsedRealtime;
     }
 }

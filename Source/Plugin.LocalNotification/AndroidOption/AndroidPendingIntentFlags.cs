@@ -1,8 +1,11 @@
-﻿namespace Plugin.LocalNotification.AndroidOption
+﻿using System;
+
+namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     /// 
     /// </summary>
+    [Flags]
     public enum AndroidPendingIntentFlags
     {
         /// <summary>

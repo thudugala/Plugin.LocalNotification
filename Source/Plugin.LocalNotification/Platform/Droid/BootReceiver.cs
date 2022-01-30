@@ -23,17 +23,20 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             if (intent.Action != Intent.ActionBootCompleted)
             {
+                NotificationCenter.Log("Not ActionBootCompleted");
                 return;
             }
 
             var requestList = NotificationRepository.Current.GetPendingList();
             if (requestList.Any() == false)
             {
+                NotificationCenter.Log("No Pending Notification Request");
                 return;
             }
             var activeForReScheduleRequestList = requestList.Where(r => r.IsStillActiveForReSchedule()).ToList();
             if (activeForReScheduleRequestList.Any() == false)
             {
+                NotificationCenter.Log("No Pending Notification Request that is Still Active For ReSchedule");
                 return;
             }
 
@@ -43,6 +46,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 request.Schedule.NotifyTime = request.GetNextNotifyTime();
 
                 // re schedule again.
+                NotificationCenter.Log($"ReScheduled Notification Request {request.NotificationId}");
                 notificationService.ShowLater(request);
             }
 

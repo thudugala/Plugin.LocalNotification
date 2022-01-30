@@ -3,12 +3,14 @@ using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
+using Java.Lang;
 using Plugin.LocalNotification.AndroidOption;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Exception = System.Exception;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {
@@ -211,20 +213,38 @@ namespace Plugin.LocalNotification.Platform.Droid
                 .TotalMilliseconds;
             var triggerTime = (long)utcAlarmTimeInMillis;
 
+            var alarmType = ToNativeAlarmType(request.Android.AlarmType);
+            var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
+
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
-                MyAlarmManager.SetExactAndAllowWhileIdle(AlarmType.ElapsedRealtime,
-                    SystemClock.ElapsedRealtime() + triggerTime, pendingIntent);
+                MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, pendingIntent);
             }
             else
             {
-                MyAlarmManager.SetExact(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + triggerTime,
-                    pendingIntent);
+                MyAlarmManager.SetExact(alarmType, triggerAtTime, pendingIntent);
             }
 
             NotificationRepository.Current.AddPendingRequest(request);
 
             return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected virtual long GetBaseCurrentTime(AlarmType type)
+        {
+            return type switch
+            {
+                AlarmType.Rtc => JavaSystem.CurrentTimeMillis(),
+                AlarmType.RtcWakeup => JavaSystem.CurrentTimeMillis(),
+                AlarmType.ElapsedRealtime => SystemClock.ElapsedRealtime(),
+                AlarmType.ElapsedRealtimeWakeup => SystemClock.ElapsedRealtime(),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         /// <summary>
@@ -445,7 +465,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             };
             NotificationCenter.Current.OnNotificationReceived(args);
             NotificationRepository.Current.AddDeliveredRequest(request);
-            
+
             return true;
         }
 
@@ -608,13 +628,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return;
             }
 
-            foreach (var category in categoryList)
+            foreach (var category in categoryList.Where(category => category.CategoryType != NotificationCategoryType.None))
             {
-                if (category.CategoryType == NotificationCategoryType.None)
-                {
-                    continue;
-                }
-
                 _categoryList.Add(category);
             }
         }
@@ -642,7 +657,24 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected virtual AlarmType ToNativeAlarmType(AndroidAlarmType type)
+        {
+            return type switch
+            {
+                AndroidAlarmType.Rtc => AlarmType.Rtc,
+                AndroidAlarmType.RtcWakeup => AlarmType.RtcWakeup,
+                AndroidAlarmType.ElapsedRealtime => AlarmType.ElapsedRealtime,
+                AndroidAlarmType.ElapsedRealtimeWakeup => AlarmType.ElapsedRealtimeWakeup,
+                _ => AlarmType.ElapsedRealtime
+            };
+        }
+
+        /// <summary>
+        ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -651,7 +683,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             if ((int)Build.VERSION.SdkInt >= 31 &&
                 type.HasFlag(AndroidPendingIntentFlags.Immutable) == false)
             {
-                type = type | AndroidPendingIntentFlags.Immutable;
+                type |= AndroidPendingIntentFlags.Immutable;
             }
             return (PendingIntentFlags)type;
         }
