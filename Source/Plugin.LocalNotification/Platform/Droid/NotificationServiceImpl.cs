@@ -113,7 +113,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     Application.Context,
                     notificationId,
                     intent,
-                    PendingIntentFlags.CancelCurrent
+                    ToPendingIntentFlags((AndroidPendingIntentFlags)PendingIntentFlags.CancelCurrent)
                 );
 
                 MyAlarmManager?.Cancel(alarmIntent);
