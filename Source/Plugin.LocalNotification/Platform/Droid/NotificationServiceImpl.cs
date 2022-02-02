@@ -113,7 +113,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     Application.Context,
                     notificationId,
                     intent,
-                    ToPendingIntentFlags((AndroidPendingIntentFlags)PendingIntentFlags.CancelCurrent)
+                    SetImmutableIfNeeded(PendingIntentFlags.CancelCurrent)
                 );
 
                 MyAlarmManager?.Cancel(alarmIntent);
@@ -680,12 +680,23 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags ToPendingIntentFlags(AndroidPendingIntentFlags type)
         {
+            return SetImmutableIfNeeded((PendingIntentFlags)type);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected virtual PendingIntentFlags SetImmutableIfNeeded(PendingIntentFlags type)
+        {
+
             if ((int)Build.VERSION.SdkInt >= 31 &&
-                type.HasFlag(AndroidPendingIntentFlags.Immutable) == false)
+                type.HasFlag(PendingIntentFlags.Immutable) == false)
             {
-                type |= AndroidPendingIntentFlags.Immutable;
+                type |= PendingIntentFlags.Immutable;
             }
-            return (PendingIntentFlags)type;
+            return type;
         }
 
         /// <inheritdoc />
