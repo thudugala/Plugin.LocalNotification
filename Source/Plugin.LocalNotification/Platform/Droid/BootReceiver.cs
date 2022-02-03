@@ -47,7 +47,10 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var notificationService = TryGetDefaultDroidNotificationService();
                 foreach (var request in activeForReScheduleRequestList)
                 {
-                    request.Schedule.NotifyTime = request.GetNextNotifyTime();
+                    if (request.Schedule.NotifyTime < DateTime.Now)
+                    {
+                        request.Schedule.NotifyTime = request.GetNextNotifyTime();
+                    }
 
                     // re schedule again.
                     NotificationCenter.Log($"ReScheduled Notification Request {request.NotificationId}");
