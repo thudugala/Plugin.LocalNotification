@@ -141,7 +141,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     Application.Context,
                     id,
                     intent,
-                    PendingIntentFlags.CancelCurrent
+                    SetImmutableIfNeeded(PendingIntentFlags.CancelCurrent)
                 );
 
                 MyAlarmManager?.Cancel(alarmIntent);
