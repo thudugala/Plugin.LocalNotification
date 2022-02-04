@@ -2,6 +2,7 @@
 using Plugin.LocalNotification.Platform.iOS;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
@@ -88,12 +89,12 @@ namespace Plugin.LocalNotification
             });
         }
 
-        internal static void Log(string message)
+        internal static void Log(string message, [CallerMemberName] string callerName = "")
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"{callerName}: {message}");
             NotificationLog?.Invoke(new NotificationLogArgs
             {
-                Message = message
+                Message = $"{callerName}: {message}"
             });
         }
 

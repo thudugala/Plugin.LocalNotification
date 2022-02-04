@@ -96,7 +96,7 @@ namespace Plugin.LocalNotification
 
             return serializedRequest;
         }
-        
+
         internal static Dictionary<string, string> GetRequestSerializeDictionary(NotificationRequest request)
         {
             var dictionary = new Dictionary<string, string>();

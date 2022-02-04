@@ -155,6 +155,25 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
+        public bool Clear(params int[] notificationIdList)
+        {
+            foreach (var notificationId in notificationIdList)
+            {
+                MyNotificationManager.Cancel(notificationId);
+            }
+            NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool ClearAll()
+        {
+            MyNotificationManager.CancelAll();
+            NotificationRepository.Current.RemoveDeliveredList();
+            return true;
+        }
+
+        /// <inheritdoc />
         public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) =>
             Show(builder.Invoke(new NotificationRequestBuilder()));
 
@@ -189,7 +208,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
             if (request.Schedule.AndroidIsValidNotifyTime == false)
             {
-                NotificationCenter.Log("NotificationServiceImpl.ShowLater: NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
+                NotificationCenter.Log("NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
                 return false;
             }
 
@@ -205,7 +224,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 Application.Context,
                 request.NotificationId,
                 intent,
-                PendingIntentFlags.UpdateCurrent
+                SetImmutableIfNeeded(PendingIntentFlags.UpdateCurrent)
             );
 
             var utcAlarmTimeInMillis =
@@ -459,6 +478,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 NotificationCenter.Log("NotificationServiceImpl.ShowNow: notification is Handled");
             }
+
             var args = new NotificationEventArgs
             {
                 Request = request
@@ -690,35 +710,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags SetImmutableIfNeeded(PendingIntentFlags type)
         {
-
             if ((int)Build.VERSION.SdkInt >= 31 &&
                 type.HasFlag(PendingIntentFlags.Immutable) == false)
             {
                 type |= PendingIntentFlags.Immutable;
             }
             return type;
-        }
-
-        /// <inheritdoc />
-        public bool Clear(params int[] notificationIdList)
-        {
-            foreach (var notificationId in notificationIdList)
-            {
-                MyNotificationManager.Cancel(notificationId);
-            }
-
-            NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool ClearAll()
-        {
-            MyNotificationManager.CancelAll();
-            NotificationRepository.Current.RemoveDeliveredList();
-
-            return true;
         }
     }
 }

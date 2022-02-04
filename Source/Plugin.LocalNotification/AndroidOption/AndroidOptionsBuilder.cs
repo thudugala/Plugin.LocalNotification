@@ -205,7 +205,7 @@ namespace Plugin.LocalNotification.AndroidOption
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="intentFlags"></param>
         /// <returns></returns>
@@ -216,7 +216,7 @@ namespace Plugin.LocalNotification.AndroidOption
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="alarmType"></param>
         /// <returns></returns>

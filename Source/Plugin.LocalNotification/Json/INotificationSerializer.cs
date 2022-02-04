@@ -1,12 +1,12 @@
 ﻿namespace Plugin.LocalNotification.Json
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface INotificationSerializer
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="json"></param>
@@ -14,7 +14,7 @@
         TValue Deserialize<TValue>(string json);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="value"></param>

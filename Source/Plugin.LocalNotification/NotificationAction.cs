@@ -34,7 +34,7 @@ namespace Plugin.LocalNotification
         public AndroidIcon AndroidIconName { get; set; } = new AndroidIcon();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
 

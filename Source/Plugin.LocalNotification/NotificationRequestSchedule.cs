@@ -33,7 +33,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         public TimeSpan AndroidAllowedDelay { get; set; } = TimeSpan.FromMinutes(1);
 
-        internal DateTime? AndroidNotifyTimeWithDelay => NotifyTime.HasValue ? NotifyTime.Value.Add(AndroidAllowedDelay) : (DateTime?)null;
+        internal DateTime? AndroidNotifyTimeWithDelay => NotifyTime?.Add(AndroidAllowedDelay);
 
         internal bool AndroidIsValidNotifyTime => AndroidNotifyTimeWithDelay != null && AndroidNotifyTimeWithDelay > DateTime.Now;
     }

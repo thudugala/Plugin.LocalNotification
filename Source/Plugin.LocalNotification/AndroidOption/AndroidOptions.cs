@@ -125,12 +125,12 @@ namespace Plugin.LocalNotification.AndroidOption
         public AndroidVisibilityType VisibilityType { get; set; } = AndroidVisibilityType.Private;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidAlarmType AlarmType { get; set; } = AndroidAlarmType.ElapsedRealtime;
     }

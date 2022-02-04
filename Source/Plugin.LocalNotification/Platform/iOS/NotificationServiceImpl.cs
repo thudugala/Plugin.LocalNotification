@@ -12,11 +12,11 @@ using UserNotifications;
 
 namespace Plugin.LocalNotification.Platform.iOS
 {
-    /// <inheritdoc />   
+    /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get ; set; }
+        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
 
         /// <inheritdoc />
         public event NotificationTappedEventHandler NotificationTapped;
@@ -48,7 +48,6 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
-
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return false;
@@ -65,13 +64,38 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public bool CancelAll()
         {
-
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return false;
             }
 
             UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
+            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool Clear(params int[] notificationIdList)
+        {
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+            {
+                return false;
+            }
+
+            var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
+
+            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool ClearAll()
+        {
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+            {
+                return false;
+            }
+
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
             return true;
         }
@@ -101,9 +125,9 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     return false;
                 }
-                                
+
                 using (var content = await GetNotificationContent(request))
-                {                    
+                {
                     var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
 
                     if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
@@ -140,7 +164,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -275,7 +299,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                         // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
                         // .Net: The returned value is an integer between 0 and 6,
                         // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
-                        Weekday = (int) dateTime.DayOfWeek + 1,
+                        Weekday = (int)dateTime.DayOfWeek + 1,
                         Hour = dateTime.Hour,
                         Minute = dateTime.Minute,
                         Second = dateTime.Second
@@ -421,37 +445,7 @@ namespace Plugin.LocalNotification.Platform.iOS
 
             return delivered.Select(r => GetRequest(r.Request.Content)).ToList();
         }
-
-        /// <inheritdoc />
-        public bool Clear(params int[] notificationIdList)
-        {
-
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-
-            var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
-
-            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool ClearAll()
-        {
-
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-
-            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-
-            return true;
-        }
-
+        
         internal NotificationRequest GetRequest(UNNotificationContent notificationContent)
         {
             if (notificationContent == null)

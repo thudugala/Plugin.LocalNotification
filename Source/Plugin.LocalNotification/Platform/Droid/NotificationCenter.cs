@@ -3,10 +3,11 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.Json;
 using Plugin.LocalNotification.Platform.Droid;
 using System;
 using System.IO;
-using Plugin.LocalNotification.Json;
+using System.Runtime.CompilerServices;
 
 namespace Plugin.LocalNotification
 {
@@ -202,19 +203,25 @@ namespace Plugin.LocalNotification
         ///
         /// </summary>
         /// <param name="message"></param>
-        internal static void Log(string message)
+        /// <param name="callerName"></param>
+        internal static void Log(string message, [CallerMemberName] string callerName = "")
         {
-            Android.Util.Log.Info(Application.Context.PackageName, message);
+            Android.Util.Log.Info(Application.Context.PackageName, $"{callerName}: {message}");
             NotificationLog?.Invoke(new NotificationLogArgs
             {
-                Message = message
+                Message = $"{callerName}: {message}"
             });
         }
 
-        internal static void Log(Exception ex)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="callerName"></param>
+        internal static void Log(Exception ex, [CallerMemberName] string callerName = "")
         {
             System.Diagnostics.Debug.WriteLine(ex);
-            Android.Util.Log.Error(Application.Context.PackageName, ex.Message);
+            Android.Util.Log.Error(Application.Context.PackageName, $"{callerName}: {ex.Message}");
             NotificationLog?.Invoke(new NotificationLogArgs
             {
                 Error = ex

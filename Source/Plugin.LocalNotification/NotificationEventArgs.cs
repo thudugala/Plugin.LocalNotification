@@ -50,12 +50,12 @@ namespace Plugin.LocalNotification
     public class NotificationLogArgs : EventArgs
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string Message { get; internal set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Exception Error { get; internal set; }
     }

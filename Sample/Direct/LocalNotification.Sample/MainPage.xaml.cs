@@ -146,15 +146,16 @@ namespace LocalNotification.Sample
             // if not specified, notification will show immediately.
             if (UseNotifyTimeSwitch.IsToggled)
             {
-                //var notifyDateTime = NotifyDatePicker.Date.Add(NotifyTimePicker.Time);
-                //if (notifyDateTime <= DateTime.Now)
-                //{
-                //    notifyDateTime = DateTime.Now.AddSeconds(10);
-                //}
-                var notifyDateTime = DateTime.Now.AddSeconds(30);
+                var notifyDateTime = NotifyDatePicker.Date.Add(NotifyTimePicker.Time);
+                if (notifyDateTime <= DateTime.Now)
+                {
+                    notifyDateTime = DateTime.Now.AddSeconds(10);
+                }
+                //var notifyDateTime = DateTime.Now.AddSeconds(30);
 
                 request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
                 request.Schedule.NotifyTime = notifyDateTime;
+                request.Schedule.AndroidAllowedDelay = TimeSpan.FromSeconds(10);
                 //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
                 request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
                 request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
