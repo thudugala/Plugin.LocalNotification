@@ -1,4 +1,5 @@
 ﻿using System;
+using Plugin.LocalNotification.AndroidOption;
 
 namespace Plugin.LocalNotification
 {
@@ -44,14 +45,24 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// In Android, do not Schedule or show notification if NotifyTime is earlier than DateTime.Now and this time delay.
-        /// Defualt is 1 min
+        /// Android specific properties builder.
         /// </summary>
-        /// <param name="delay"></param>
+        /// <param name="builder"></param>
         /// <returns></returns>
-        public NotificationRequestScheduleBuilder SetAndroidAllowedDelay(TimeSpan delay)
+        public NotificationRequestScheduleBuilder WithAndroidOptions(Func<AndroidScheduleOptionsBuilder, AndroidScheduleOptions> builder)
         {
-            _schedule.AndroidAllowedDelay = delay;
+            _schedule.Android = builder.Invoke(new AndroidScheduleOptionsBuilder());
+            return this;
+        }
+
+        /// <summary>
+        /// Android specific properties.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public NotificationRequestScheduleBuilder WithAndroidOptions(AndroidScheduleOptions options)
+        {
+            _schedule.Android = options;
             return this;
         }
     }

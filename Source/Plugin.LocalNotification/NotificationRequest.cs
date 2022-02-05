@@ -1,6 +1,5 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
-using System;
 using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification
@@ -104,72 +103,5 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <returns></returns>
         public Task<bool> Show() => NotificationCenter.Current.Show(this);
-
-        /// <summary>
-        /// internal use, only for Android
-        /// </summary>
-        /// <returns></returns>
-        internal DateTime? GetNextNotifyTime()
-        {
-            // NotifyTime does not change for Repeat request
-            if (Schedule.NotifyTime is null)
-            {
-                return null;
-            }
-
-            if (Schedule.NotifyAutoCancelTime != null &&
-                Schedule.NotifyAutoCancelTime <= DateTime.Now)
-            {
-                return null;
-            }
-
-            if (Schedule.RepeatType == NotificationRepeat.No)
-            {
-                return null;
-            }
-
-            var repeatInterval = GetNotifyRepeatInterval();
-            if (repeatInterval is null)
-            {
-                return null;
-            }
-
-            var newNotifyTime = Schedule.NotifyTime.Value.Add(repeatInterval.Value);
-            var nowTime = DateTime.Now.Add(Schedule.AndroidAllowedDelay);
-            while (newNotifyTime <= nowTime)
-            {
-                newNotifyTime = newNotifyTime.Add(repeatInterval.Value);
-            }
-            return newNotifyTime;
-        }
-
-        /// <summary>
-        /// internal use, only for Android
-        /// </summary>
-        /// <returns></returns>
-        internal TimeSpan? GetNotifyRepeatInterval()
-        {
-            TimeSpan? repeatInterval = null;
-            switch (Schedule.RepeatType)
-            {
-                case NotificationRepeat.Daily:
-                    // To be consistent with iOS, Schedule notification next day same time.
-                    repeatInterval = TimeSpan.FromDays(1);
-                    break;
-
-                case NotificationRepeat.Weekly:
-                    // To be consistent with iOS, Schedule notification next week same day same time.
-                    repeatInterval = TimeSpan.FromDays(7);
-                    break;
-
-                case NotificationRepeat.TimeInterval:
-                    if (Schedule.NotifyRepeatInterval.HasValue)
-                    {
-                        repeatInterval = Schedule.NotifyRepeatInterval.Value;
-                    }
-                    break;
-            }
-            return repeatInterval;
-        }
     }
 }

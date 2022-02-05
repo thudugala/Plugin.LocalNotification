@@ -155,7 +155,6 @@ namespace LocalNotification.Sample
 
                 request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
                 request.Schedule.NotifyTime = notifyDateTime;
-                request.Schedule.AndroidAllowedDelay = TimeSpan.FromSeconds(10);
                 //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
                 request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
                 request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);

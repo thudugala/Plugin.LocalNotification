@@ -70,39 +70,63 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return;
             }
 
-            if (request.Schedule.NotifyAutoCancelTime.HasValue &&
-                request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+            if (request.Schedule.NotifyTime is null)
+            {
+                NotificationCenter.Log($"Notification {request.NotificationId} has no NotifyTime");
+                return;
+            }
+
+            if (request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
             {
                 notificationService.Cancel(request.NotificationId);
                 NotificationCenter.Log($"Notification {request.NotificationId} Auto Canceled");
                 return;
             }
 
-            if (request.Schedule.NotifyTime.HasValue &&
-                request.Schedule.RepeatType != NotificationRepeat.No)
+            var timeNow = DateTime.Now;
+            var wasReScheduled = false;
+            if (request.Schedule.Android.IsValidNotifyTime(timeNow, request.Schedule.NotifyTime))
             {
-                request.Schedule.NotifyTime = request.GetNextNotifyTime();
-                if (request.Schedule.NotifyTime.HasValue)
+                if (request.Schedule.Android.IsValidShowNowTime(timeNow, request.Schedule.NotifyTime))
+                {
+                    await notificationService.ShowNow(request);
+
+                    if (request.Schedule.RepeatType == NotificationRepeat.No)
+                    {
+                        NotificationRepository.Current.RemoveByPendingIdList(request.NotificationId);
+                    }
+                }
+                else if (request.Schedule.Android.IsValidShowLaterTime(timeNow, request.Schedule.NotifyTime))
                 {
                     // schedule again.
+                    wasReScheduled = true;
                     notificationService.ShowLater(request);
                 }
             }
-
-            // To be consistent with iOS, Do not show notification if NotifyTime is earlier than (DateTime.Now + AllowedDelay)
-            if (request.Schedule.AndroidIsValidNotifyTime)
-            {
-                await notificationService.ShowNow(request);
-            }
             else
             {
-                NotificationCenter.Log("NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
+                NotificationCenter.Log(
+                    "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
             }
 
-            if (request.Schedule.NotifyTime.HasValue &&
-                request.Schedule.RepeatType == NotificationRepeat.No)
+            // even if the request is too old to show, if it is a Repeating notification, then reschedule again 
+            if (wasReScheduled == false && request.Schedule.RepeatType != NotificationRepeat.No)
             {
-                NotificationRepository.Current.RemoveByPendingIdList(request.NotificationId);
+                request.Schedule.NotifyTime = request.Schedule.Android.GetNextNotifyTimeForRepeat(
+                    request.Schedule.NotifyTime,
+                    request.Schedule.RepeatType,
+                    request.Schedule.NotifyRepeatInterval);
+
+                if (request.Schedule.NotifyTime.HasValue)
+                {
+                    // reschedule again.
+                    notificationService.ShowLater(request);
+                }
+                else
+                {
+                    NotificationCenter.Log(
+                        $"Notification {request.NotificationId} New NotifyTime is null, no reschedule");
+                }
             }
         }
 

@@ -61,7 +61,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             var itemList = GetPendingList();
             itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
-            itemList.RemoveAll(r => request.Schedule.NotifyTime.HasValue && request.Schedule.AndroidIsValidNotifyTime == false);
+            itemList.RemoveAll(r =>
+                request.Schedule.NotifyTime.HasValue &&
+                request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false);
             itemList.Add(request);
             SetPendingList(itemList);
         }

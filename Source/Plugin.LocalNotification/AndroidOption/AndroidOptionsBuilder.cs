@@ -214,16 +214,5 @@ namespace Plugin.LocalNotification.AndroidOption
             _options.PendingIntentFlags = intentFlags;
             return this;
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="alarmType"></param>
-        /// <returns></returns>
-        public AndroidOptionsBuilder WithAlarmType(AndroidAlarmType alarmType)
-        {
-            _options.AlarmType = alarmType;
-            return this;
-        }
     }
 }

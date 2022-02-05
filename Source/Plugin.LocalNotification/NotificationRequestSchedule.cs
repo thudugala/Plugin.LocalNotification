@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Plugin.LocalNotification.AndroidOption;
+using System;
 
 namespace Plugin.LocalNotification
 {
@@ -7,6 +8,11 @@ namespace Plugin.LocalNotification
     /// </summary>
     public class NotificationRequestSchedule
     {
+        /// <summary>
+        /// Android specific properties.
+        /// </summary>
+        public AndroidScheduleOptions Android { get; set; } = new AndroidScheduleOptions();
+
         /// <summary>
         /// Time to cancel the notification automatically.
         /// </summary>
@@ -26,15 +32,5 @@ namespace Plugin.LocalNotification
         /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval
         /// </summary>
         public NotificationRepeat RepeatType { get; set; } = NotificationRepeat.No;
-
-        /// <summary>
-        /// In Android, do not Schedule or show notification if NotifyTime is earlier than DateTime.Now and this time delay.
-        /// Default is 1 min
-        /// </summary>
-        public TimeSpan AndroidAllowedDelay { get; set; } = TimeSpan.FromMinutes(1);
-
-        internal DateTime? AndroidNotifyTimeWithDelay => NotifyTime?.Add(AndroidAllowedDelay);
-
-        internal bool AndroidIsValidNotifyTime => AndroidNotifyTimeWithDelay != null && AndroidNotifyTimeWithDelay > DateTime.Now;
     }
 }

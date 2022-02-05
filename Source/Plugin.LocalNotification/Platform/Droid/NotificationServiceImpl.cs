@@ -205,10 +205,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <param name="request"></param>
         internal virtual bool ShowLater(NotificationRequest request)
         {
-            // To be consistent with iOS, Do not Schedule notification if NotifyTime is earlier than DateTime.Now
-            if (request.Schedule.AndroidIsValidNotifyTime == false)
+            if (request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false)
             {
-                NotificationCenter.Log("NotifyTime is earlier than DateTime.Now and Allowed Delay, notification ignored");
+                NotificationCenter.Log("NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
                 return false;
             }
 
@@ -232,7 +231,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 .TotalMilliseconds;
             var triggerTime = (long)utcAlarmTimeInMillis;
 
-            var alarmType = ToNativeAlarmType(request.Android.AlarmType);
+            var alarmType = ToNativeAlarmType(request.Schedule.Android.AlarmType);
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
@@ -689,7 +688,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 AndroidAlarmType.RtcWakeup => AlarmType.RtcWakeup,
                 AndroidAlarmType.ElapsedRealtime => AlarmType.ElapsedRealtime,
                 AndroidAlarmType.ElapsedRealtimeWakeup => AlarmType.ElapsedRealtimeWakeup,
-                _ => AlarmType.ElapsedRealtime
+                _ => AlarmType.Rtc
             };
         }
 
