@@ -30,20 +30,24 @@ namespace LocalNotification.Sample
                         new NotificationAction(100)
                         {
                             Title = "Hello",
-                            AndroidIconName =
+                            Android =
                             {
-                                ResourceName = "i2",
-                            },
-                            iOSAction = iOSActionType.None
+                                IconName =
+                                {
+                                    ResourceName = "i2"
+                                }
+                            }
                         },
                         new NotificationAction(101)
                         {
                             Title = "Close",
-                            AndroidIconName =
+                            Android =
                             {
-                                ResourceName = "i3",
-                            },
-                            iOSAction = iOSActionType.None
+                                IconName =
+                                {
+                                    ResourceName = "i3"
+                                }
+                            }
                         }
                     })
                 },

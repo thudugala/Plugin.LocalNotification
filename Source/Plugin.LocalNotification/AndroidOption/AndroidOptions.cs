@@ -92,7 +92,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
         /// </summary>
-        public NotificationPriority Priority { get; set; } = NotificationPriority.Default;
+        public AndroidNotificationPriority Priority { get; set; } = AndroidNotificationPriority.Default;
 
         /// <summary>
         /// Set Upper limit of this progress bar's range

@@ -26,17 +26,12 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public iOSActionType iOSAction { get; set; } = iOSActionType.None;
+        public iOSNotificationAction iOS { get; set; } = new iOSNotificationAction();
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
-        public AndroidIcon AndroidIconName { get; set; } = new AndroidIcon();
-
-        /// <summary>
-        ///
-        /// </summary>
-        public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
+        public AndroidNotificationAction Android { get; set; } = new AndroidNotificationAction();
 
         /// <summary>
         ///

@@ -1,4 +1,4 @@
-﻿namespace Plugin.LocalNotification
+﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     /// Set the relative priority for this notification.
@@ -7,7 +7,7 @@
     /// The system sets a notification's priority based on various factors including the setPriority value.
     /// The effect may differ slightly on different platforms.
     /// </summary>
-    public enum NotificationPriority
+    public enum AndroidNotificationPriority
     {
         /// <summary>
         /// Lowest notification priority, these items might not be shown to the user except under special circumstances, such as detailed notification logs.

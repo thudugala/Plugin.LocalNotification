@@ -538,12 +538,12 @@ namespace Plugin.LocalNotification.Platform.Droid
             NotificationAction action)
         {
             var pendingIntent = CreateActionIntent(serializedRequest, action);
-            if (string.IsNullOrWhiteSpace(action.AndroidIconName.ResourceName))
+            if (string.IsNullOrWhiteSpace(action.Android.IconName.ResourceName))
             {
-                action.AndroidIconName = request.Android.IconSmallName;
+                action.Android.IconName = request.Android.IconSmallName;
             }
 
-            var nativeAction = new NotificationCompat.Action(GetIcon(action.AndroidIconName),
+            var nativeAction = new NotificationCompat.Action(GetIcon(action.Android.IconName),
                 new Java.Lang.String(action.Title), pendingIntent);
 
             return nativeAction;
@@ -566,7 +566,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 Application.Context,
                 action.ActionId,
                 intent,
-                ToPendingIntentFlags(action.PendingIntentFlags)
+                ToPendingIntentFlags(action.Android.PendingIntentFlags)
             );
 
             return pendingIntent;

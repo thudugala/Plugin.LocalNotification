@@ -146,7 +146,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
         /// </summary>
-        public AndroidOptionsBuilder WithPriority(NotificationPriority priority)
+        public AndroidOptionsBuilder WithPriority(AndroidNotificationPriority priority)
         {
             _options.Priority = priority;
             return this;

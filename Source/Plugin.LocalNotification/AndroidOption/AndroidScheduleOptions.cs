@@ -37,7 +37,7 @@ namespace Plugin.LocalNotification.AndroidOption
             }
 
             var newNotifyTime = notifyTime.Value.Add(repeatInterval.Value);
-            var nowTime = DateTime.Now.Add(AllowedDelay);
+            var nowTime = DateTime.Now.AddSeconds(10);
             while (newNotifyTime <= nowTime)
             {
                 newNotifyTime = newNotifyTime.Add(repeatInterval.Value);
@@ -108,7 +108,7 @@ namespace Plugin.LocalNotification.AndroidOption
         private (DateTime StartTime, DateTime EndTime) GetNotifyTimeRange(DateTime timeNow)
         {
             var startTime = timeNow.Subtract(AllowedDelay);
-            var endTime = timeNow.Add(TimeSpan.FromMinutes(1));
+            var endTime = timeNow.AddMinutes(1);
 
             return (startTime, endTime);
         }
