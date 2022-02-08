@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using System;
+using Plugin.LocalNotification.EventArgs;
 
 namespace Plugin.LocalNotification.Platform.Droid
 {

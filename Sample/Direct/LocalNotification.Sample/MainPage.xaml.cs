@@ -7,6 +7,7 @@ using Plugin.LocalNotification.iOSOption;
 using Xamarin.Forms;
 using Plugin.LocalNotification.Json;
 using System.Threading.Tasks;
+using Plugin.LocalNotification.EventArgs;
 
 namespace LocalNotification.Sample
 {

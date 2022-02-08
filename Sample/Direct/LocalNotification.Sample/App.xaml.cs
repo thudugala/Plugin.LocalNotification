@@ -2,6 +2,7 @@
 using Plugin.LocalNotification.Json;
 using System;
 using System.Collections.Generic;
+using Plugin.LocalNotification.EventArgs;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample

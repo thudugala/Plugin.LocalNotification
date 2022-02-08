@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Plugin.LocalNotification.EventArgs;
 using Exception = System.Exception;
 
 namespace Plugin.LocalNotification.Platform.Droid

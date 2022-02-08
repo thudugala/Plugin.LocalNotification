@@ -1,6 +1,7 @@
 ﻿using Foundation;
 using System;
 using System.Globalization;
+using Plugin.LocalNotification.EventArgs;
 using UIKit;
 using UserNotifications;
 

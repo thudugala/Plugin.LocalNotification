@@ -8,6 +8,7 @@ using Plugin.LocalNotification.Platform.Droid;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Plugin.LocalNotification.EventArgs;
 
 namespace Plugin.LocalNotification
 {

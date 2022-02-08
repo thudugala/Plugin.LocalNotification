@@ -8,9 +8,9 @@ namespace Plugin.LocalNotification.AndroidOption
     public class AndroidScheduleOptions
     {
         /// <summary>
-        ///
+        /// Default is RtcWakeup
         /// </summary>
-        public AndroidAlarmType AlarmType { get; set; } = AndroidAlarmType.Rtc;
+        public AndroidAlarmType AlarmType { get; set; } = AndroidAlarmType.RtcWakeup;
 
         /// <summary>
         /// In Android, do not Schedule or show notification if NotifyTime is earlier than DateTime.Now and this time delay.

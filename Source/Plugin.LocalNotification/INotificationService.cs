@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Plugin.LocalNotification.EventArgs;
 
 namespace Plugin.LocalNotification
 {

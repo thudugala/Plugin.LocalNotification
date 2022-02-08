@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Plugin.LocalNotification.EventArgs;
 
 namespace Plugin.LocalNotification
 {
