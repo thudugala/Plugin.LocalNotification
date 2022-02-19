@@ -449,7 +449,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         
         internal NotificationRequest GetRequest(UNNotificationContent notificationContent)
         {
-            if (notificationContent == null)
+            if (notificationContent is null)
             {
                 return null;
             }

@@ -8,14 +8,8 @@ namespace Plugin.LocalNotification.Platform.iOS
     [Register(nameof(NotificationServiceExtension))]
     public class NotificationServiceExtension : UNNotificationServiceExtension
     {
-        #region Computed Properties
-
         private Action<UNNotificationContent> ContentHandler { get; set; }
         private UNMutableNotificationContent BestAttemptContent { get; set; }
-
-        #endregion Computed Properties
-
-        #region Constructors
 
         /// <summary>
         ///
@@ -35,10 +29,6 @@ namespace Plugin.LocalNotification.Platform.iOS
             // Note: this .ctor should not contain any initialization logic.
         }
 
-        #endregion Constructors
-
-        #region Override Methods
-
         /// <inheritdoc />
         public override async void DidReceiveNotificationRequest(UNNotificationRequest request, Action<UNNotificationContent> contentHandler)
         {
@@ -49,31 +39,46 @@ namespace Plugin.LocalNotification.Platform.iOS
                 BestAttemptContent = (UNMutableNotificationContent)request.Content.MutableCopy();
 
                 var notificationService = TryGetDefaultIOsNotificationService();
+                if (notificationService.NotificationReceiving is null)
+                {
+                    ContentHandler(BestAttemptContent);
+
+                    NotificationCenter.Log("Notification Receiving not registered");
+                    return;
+                }
+
                 var notificationRequest = notificationService.GetRequest(request.Content);
 
-                if (notificationService.NotificationReceiving != null)
+                // if notificationRequest is null this maybe not a notification from this plugin.
+                if (notificationRequest is null)
                 {
-                    var requestArg = await notificationService.NotificationReceiving(notificationRequest);
-                    if (requestArg != null)
-                    {
-                        var newtContent = await notificationService.GetNotificationContent(requestArg.Request);
+                    ContentHandler(BestAttemptContent);
 
-                        BestAttemptContent.Title = newtContent.Title;
-                        BestAttemptContent.Subtitle = newtContent.Subtitle;
-                        BestAttemptContent.Body = newtContent.Body;
-                        BestAttemptContent.Badge = newtContent.Badge;
-                        BestAttemptContent.UserInfo = newtContent.UserInfo;
-                        BestAttemptContent.Sound = newtContent.Sound;
-                        BestAttemptContent.Attachments = newtContent.Attachments;
-                        BestAttemptContent.CategoryIdentifier = newtContent.CategoryIdentifier;
-
-                        BestAttemptContent.UserInfo = GetUserInfo(requestArg.Request, requestArg.Handled);
-                    }
-                    else
-                    {
-                        BestAttemptContent.UserInfo = GetUserInfo(notificationRequest, false);
-                    }
+                    NotificationCenter.Log("Notification request not found");
+                    return;
                 }
+
+                var requestArg = await notificationService.NotificationReceiving(notificationRequest);
+                if (requestArg != null)
+                {
+                    var newtContent = await notificationService.GetNotificationContent(requestArg.Request);
+
+                    BestAttemptContent.Title = newtContent.Title;
+                    BestAttemptContent.Subtitle = newtContent.Subtitle;
+                    BestAttemptContent.Body = newtContent.Body;
+                    BestAttemptContent.Badge = newtContent.Badge;
+                    BestAttemptContent.UserInfo = newtContent.UserInfo;
+                    BestAttemptContent.Sound = newtContent.Sound;
+                    BestAttemptContent.Attachments = newtContent.Attachments;
+                    BestAttemptContent.CategoryIdentifier = newtContent.CategoryIdentifier;
+
+                    BestAttemptContent.UserInfo = GetUserInfo(requestArg.Request, requestArg.Handled);
+                }
+                else
+                {
+                    BestAttemptContent.UserInfo = GetUserInfo(notificationRequest, false);
+                }
+
                 ContentHandler(BestAttemptContent);
             }
             catch (Exception ex)
@@ -82,7 +87,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private NSMutableDictionary GetUserInfo(NotificationRequest request, bool handled)
+        private static NSMutableDictionary GetUserInfo(NotificationRequest request, bool handled)
         {
             var userInfoDictionary = new NSMutableDictionary();
             var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
@@ -109,8 +114,6 @@ namespace Plugin.LocalNotification.Platform.iOS
                 NotificationCenter.Log(ex);
             }
         }
-
-        #endregion Override Methods
 
         private static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {
