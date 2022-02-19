@@ -29,6 +29,9 @@ namespace Plugin.LocalNotification.Platform.iOS
         public event NotificationActionTappedEventHandler NotificationActionTapped;
 
         /// <inheritdoc />
+        public event NotificationDisabledEventHandler NotificationsDisabled;
+
+        /// <inheritdoc />
         public void OnNotificationTapped(NotificationEventArgs e)
         {
             NotificationTapped?.Invoke(e);
@@ -44,6 +47,14 @@ namespace Plugin.LocalNotification.Platform.iOS
         public void OnNotificationActionTapped(NotificationActionEventArgs e)
         {
             NotificationActionTapped?.Invoke(e);
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public void OnNotificationsDisabled()
+        {
+            NotificationsDisabled?.Invoke();
         }
 
         /// <inheritdoc />
@@ -124,6 +135,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                 var allowed = await NotificationCenter.AskPermissionAsync().ConfigureAwait(false);
                 if (allowed == false)
                 {
+                    NotificationCenter.Log("User denied permission");
+                    OnNotificationsDisabled();
                     return false;
                 }
 
@@ -162,6 +175,12 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 trigger?.Dispose();
             }
+        }
+
+        /// <inheritdoc />
+        public Task<bool> AreNotificationsEnabled()
+        {
+            return NotificationCenter.AreNotificationsEnabled();
         }
 
         /// <summary>

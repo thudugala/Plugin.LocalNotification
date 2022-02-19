@@ -29,7 +29,6 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
-        /// Returns true if Allowed.
         /// </summary>
         public static async void AskPermission()
         {
@@ -48,10 +47,8 @@ namespace Plugin.LocalNotification
                 {
                     return true;
                 }
-
-                var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
-                var allowed = settings.AlertSetting == UNNotificationSetting.Enabled;
-
+                
+                var allowed = await AreNotificationsEnabled();
                 if (allowed)
                 {
                     return true;
@@ -72,6 +69,12 @@ namespace Plugin.LocalNotification
                 Log(ex);
                 return false;
             }
+        }
+
+        internal static async Task<bool> AreNotificationsEnabled()
+        {
+            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+            return settings.AlertSetting == UNNotificationSetting.Enabled;
         }
 
         /// <summary>

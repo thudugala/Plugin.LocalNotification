@@ -43,9 +43,32 @@ namespace Plugin.LocalNotification.Platform.Droid
         public event NotificationActionTappedEventHandler NotificationActionTapped;
 
         /// <inheritdoc />
+        public event NotificationDisabledEventHandler NotificationsDisabled;
+
+        /// <inheritdoc />
         public void OnNotificationTapped(NotificationEventArgs e)
         {
             NotificationTapped?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationActionTapped(NotificationActionEventArgs e)
+        {
+            NotificationActionTapped?.Invoke(e);
+        }
+
+        /// <inheritdoc />
+        public void OnNotificationReceived(NotificationEventArgs e)
+        {
+            NotificationReceived?.Invoke(e);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void OnNotificationsDisabled()
+        {
+            NotificationsDisabled?.Invoke();
         }
 
         /// <inheritdoc />
@@ -56,22 +79,10 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public void OnNotificationReceived(NotificationEventArgs e)
-        {
-            NotificationReceived?.Invoke(e);
-        }
-
-        /// <inheritdoc />
         public Task<IList<NotificationRequest>> GetDeliveredNotificationList()
         {
             IList<NotificationRequest> itemList = NotificationRepository.Current.GetDeliveredList();
             return Task.FromResult(itemList);
-        }
-
-        /// <inheritdoc />
-        public void OnNotificationActionTapped(NotificationActionEventArgs e)
-        {
-            NotificationActionTapped?.Invoke(e);
         }
 
         /// <summary>
@@ -162,6 +173,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 MyNotificationManager.Cancel(notificationId);
             }
+
             NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
             return true;
         }
@@ -183,6 +195,14 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
             {
+                return false;
+            }
+
+            var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
+            if (allowed == false)
+            {
+                OnNotificationsDisabled();
+                NotificationCenter.Log("Notifications are disabled");
                 return false;
             }
 
@@ -208,7 +228,8 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             if (request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false)
             {
-                NotificationCenter.Log("NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
+                NotificationCenter.Log(
+                    "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
                 return false;
             }
 
@@ -230,7 +251,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
                 .TotalMilliseconds;
-            var triggerTime = (long)utcAlarmTimeInMillis;
+            var triggerTime = (long) utcAlarmTimeInMillis;
 
             var alarmType = ToNativeAlarmType(request.Schedule.Android.AlarmType);
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
@@ -275,11 +296,12 @@ namespace Plugin.LocalNotification.Platform.Droid
             var requestHandled = false;
             if (NotificationReceiving != null)
             {
-                var requestArg = await NotificationReceiving(request);
+                var requestArg = await NotificationReceiving(request).ConfigureAwait(false);
                 if (requestArg is null || requestArg.Handled)
                 {
                     requestHandled = true;
                 }
+
                 if (requestArg?.Request != null)
                 {
                     request = requestArg.Request;
@@ -304,12 +326,13 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
+
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
             if (request.Image != null && request.Image.HasValue)
             {
-                var imageBitmap = await GetNativeImage(request.Image);
+                var imageBitmap = await GetNativeImage(request.Image).ConfigureAwait(false);
                 if (imageBitmap != null)
                 {
                     using var picStyle = new NotificationCompat.BigPictureStyle();
@@ -354,7 +377,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                builder.SetPriority((int)request.Android.Priority);
+                builder.SetPriority((int) request.Android.Priority);
 
                 var soundUri = NotificationCenter.GetSoundUri(request.Sound);
                 if (soundUri != null)
@@ -398,7 +421,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 string.IsNullOrWhiteSpace(request.Android.IconLargeName.ResourceName) == false)
             {
                 var largeIcon = await BitmapFactory.DecodeResourceAsync(Application.Context.Resources,
-                    GetIcon(request.Android.IconLargeName));
+                    GetIcon(request.Android.IconLargeName)).ConfigureAwait(false);
                 if (largeIcon != null)
                 {
                     builder.SetLargeIcon(largeIcon);
@@ -407,7 +430,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (request.Android.TimeoutAfter.HasValue)
             {
-                builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
+                builder.SetTimeoutAfter((long) request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
 
             var notificationIntent =
@@ -415,7 +438,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                                                                               string.Empty);
             if (notificationIntent is null)
             {
-                NotificationCenter.Log("NotificationServiceImpl.ShowNow: notificationIntent is null");
+                NotificationCenter.Log("notificationIntent is null");
                 return false;
             }
 
@@ -489,6 +512,12 @@ namespace Plugin.LocalNotification.Platform.Droid
             return true;
         }
 
+        /// <inheritdoc />
+        public Task<bool> AreNotificationsEnabled()
+        {
+            return Task.FromResult(MyNotificationManager.AreNotificationsEnabled());
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -507,7 +536,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                     AndroidIcon.DefaultType, Application.Context.PackageName);
                 if (imageId != null)
                 {
-                    return await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, imageId.Value);
+                    return await BitmapFactory.DecodeResourceAsync(Application.Context.Resources, imageId.Value)
+                        .ConfigureAwait(false);
                 }
             }
 
@@ -515,14 +545,14 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 if (File.Exists(notificationImage.FilePath))
                 {
-                    return await BitmapFactory.DecodeFileAsync(notificationImage.FilePath);
+                    return await BitmapFactory.DecodeFileAsync(notificationImage.FilePath).ConfigureAwait(false);
                 }
             }
 
             if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
             {
                 return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
-                    notificationImage.Binary.Length);
+                    notificationImage.Binary.Length).ConfigureAwait(false);
             }
 
             return null;
@@ -599,9 +629,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             return type switch
             {
-                AndroidVisibilityType.Private => (int)NotificationVisibility.Private,
-                AndroidVisibilityType.Public => (int)NotificationVisibility.Public,
-                AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
+                AndroidVisibilityType.Private => (int) NotificationVisibility.Private,
+                AndroidVisibilityType.Public => (int) NotificationVisibility.Public,
+                AndroidVisibilityType.Secret => (int) NotificationVisibility.Secret,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
@@ -648,7 +678,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                 return;
             }
 
-            foreach (var category in categoryList.Where(category => category.CategoryType != NotificationCategoryType.None))
+            foreach (var category in categoryList.Where(category =>
+                         category.CategoryType != NotificationCategoryType.None))
             {
                 _categoryList.Add(category);
             }
@@ -700,7 +731,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags ToPendingIntentFlags(AndroidPendingIntentFlags type)
         {
-            return SetImmutableIfNeeded((PendingIntentFlags)type);
+            return SetImmutableIfNeeded((PendingIntentFlags) type);
         }
 
         /// <summary>
@@ -710,11 +741,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags SetImmutableIfNeeded(PendingIntentFlags type)
         {
-            if ((int)Build.VERSION.SdkInt >= 31 &&
+            if ((int) Build.VERSION.SdkInt >= 31 &&
                 type.HasFlag(PendingIntentFlags.Immutable) == false)
             {
                 type |= PendingIntentFlags.Immutable;
             }
+
             return type;
         }
     }

@@ -27,6 +27,11 @@ namespace Plugin.LocalNotification
         event NotificationTappedEventHandler NotificationTapped;
 
         /// <summary>
+        /// fires when notification is disabled.
+        /// </summary>
+        event NotificationDisabledEventHandler NotificationsDisabled;
+
+        /// <summary>
         /// Cancel a notification match with the Id
         /// </summary>
         /// <param name="notificationIdList">A unique identifier for the already displaying local notification.</param>
@@ -98,5 +103,11 @@ namespace Plugin.LocalNotification
         /// When Notification is about to be shown, this allow it to be modified.
         /// </summary>
         Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
+
+        /// <summary>
+        /// Returns whether user as allowed Notifications
+        /// </summary>
+        /// <returns></returns>
+        Task<bool> AreNotificationsEnabled();
     }
 }

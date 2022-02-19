@@ -15,6 +15,11 @@
     public delegate void NotificationTappedEventHandler(NotificationEventArgs e);
 
     /// <summary>
+    /// Returning event when notifications are Disabled.
+    /// </summary>
+    public delegate void NotificationDisabledEventHandler();
+
+    /// <summary>
     ///
     /// </summary>
     public class NotificationEventArgs : System.EventArgs
