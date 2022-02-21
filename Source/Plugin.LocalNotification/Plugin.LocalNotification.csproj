@@ -49,7 +49,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
-    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.5" />
     <Compile Include="**/Platform/Droid/**/*.cs" />
   </ItemGroup>
 
