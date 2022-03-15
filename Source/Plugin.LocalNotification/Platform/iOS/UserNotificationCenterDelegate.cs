@@ -77,7 +77,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification,
+        public override async void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification,
             Action<UNNotificationPresentationOptions> completionHandler)
         {
             try
@@ -109,6 +109,18 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
 
                 var requestHandled = false;
+
+                if(NotificationCenter.Current.NotificationReceiving != null)
+                {
+                    var result = await NotificationCenter.Current.NotificationReceiving.Invoke(notificationRequest);
+
+                    if (result.Handled)
+                    {
+                        requestHandled = true;
+                        presentationOptions = UNNotificationPresentationOptions.None;
+                    }
+                }
+
                 var dictionary = notification?.Request.Content.UserInfo;
                 if (dictionary != null)
                 {

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Plugin.LocalNotification.EventArgs;
 using Xamarin.Forms;
+using System.Threading.Tasks;
 
 namespace LocalNotification.Sample
 {
@@ -21,7 +22,17 @@ namespace LocalNotification.Sample
 
             NotificationCenter.NotificationLog += NotificationCenter_NotificationLog;
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
+            NotificationCenter.Current.NotificationReceiving = (request) =>
+            {
+                return Task.FromResult(new NotificationEventReceivingArgs
+                {
+                    Handled = NotificationHandled,
+                    Request = request //  This is read only on iOS, you can not modify a local notification
+                }); 
+            };
         }
+
+        public static bool NotificationHandled { get; set; }
 
         private void NotificationCenter_NotificationLog(NotificationLogArgs e)
         {
