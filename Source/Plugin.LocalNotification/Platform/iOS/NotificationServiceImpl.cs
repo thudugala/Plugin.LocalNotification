@@ -2,7 +2,6 @@
 using Plugin.LocalNotification.iOSOption;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -204,7 +203,15 @@ namespace Plugin.LocalNotification.Platform.iOS
                 Badge = request.BadgeNumber,
                 UserInfo = userInfoDictionary,
                 Sound = UNNotificationSound.Default,
+                ThreadIdentifier = request.iOS.ThreadIdentifier
             };
+
+            if(UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
+            {
+                content.InterruptionLevel = (UNNotificationInterruptionLevel)request.iOS.Priority;
+                content.RelevanceScore = request.iOS.RelevanceScore;
+            }
+
             // Image Attachment
             if (request.Image != null)
             {
@@ -264,13 +271,11 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 using (var stream = new MemoryStream(notificationImage.Binary))
                 {
-                    var image = Image.FromStream(stream);
-                    var imageExtension = image.RawFormat.ToString();
 
                     var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
                         NSSearchPathDomain.User);
                     var cachesFolder = cache[0];
-                    var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}.{imageExtension}";
+                    var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}";
 
                     if (File.Exists(cacheFile))
                     {

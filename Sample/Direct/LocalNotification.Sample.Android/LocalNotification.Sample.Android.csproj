@@ -15,11 +15,9 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <UseShortFileNames>True</UseShortFileNames>
-    <IntermediateOutputPath>C:\temp\LocalNotification</IntermediateOutputPath>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -66,8 +64,6 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <AndroidLinkSkip>
-    </AndroidLinkSkip>
     <AndroidDexTool>d8</AndroidDexTool>
   </PropertyGroup>
   <ItemGroup>
@@ -121,7 +117,7 @@
       <Name>Plugin.LocalNotification</Name>
     </ProjectReference>
     <ProjectReference Include="..\LocalNotification.Sample\LocalNotification.Sample.csproj">
-      <Project>{DFF878F7-002D-481C-9311-C49B8D150775}</Project>
+      <Project>{1CB8A3CC-A5FB-4D8D-9686-1374FAC0ABC3}</Project>
       <Name>LocalNotification.Sample</Name>
     </ProjectReference>
   </ItemGroup>

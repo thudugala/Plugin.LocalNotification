@@ -5,8 +5,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     xmlns:local="clr-namespace:LocalNotification.Sample"
+    x:DataType="local:MainViewModel"
     Title="Main"
     ios:Page.UseSafeArea="true">
+
+    <ContentPage.BindingContext>
+        <local:MainViewModel />
+    </ContentPage.BindingContext>
 
     <StackLayout>
         <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
@@ -29,6 +34,10 @@
         <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
             <Label Text="Use Custom Sound" />
             <Switch x:Name="CustomSoundSwitch" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Handle Notification Manually (Data only)" />
+            <Switch x:Name="HandleNotification" IsToggled="{Binding NotificationHandled}"  />
         </StackLayout>
         <Label HorizontalOptions="Center" Text="In Android &gt;= 26, Use NotificationChannel to set Sound" />
 

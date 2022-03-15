@@ -129,14 +129,18 @@ namespace LocalNotification.Sample
                     },
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
-                    ProgressBarProgress = _tapCount
+                    ProgressBarProgress = _tapCount,
+                    Group = "test"
                     //AutoCancel = false,
                     //Ongoing = true
                 },
                 iOS =
                 {
                     HideForegroundAlert = CustomAlert.IsToggled,
-                    PlayForegroundSound = ForegroundSound.IsToggled
+                    PlayForegroundSound = ForegroundSound.IsToggled,
+                    ThreadIdentifier = "test",
+                    RelevanceScore = 0.5,
+                    Priority = iOSNotificationPriority.Active
                 }
             };
 
