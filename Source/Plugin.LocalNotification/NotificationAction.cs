@@ -26,12 +26,12 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public iOSNotificationAction iOS { get; set; } = new iOSNotificationAction();
+        public iOSNotificationAction iOS { get; set; } = new ();
 
         /// <summary>
         /// 
         /// </summary>
-        public AndroidNotificationAction Android { get; set; } = new AndroidNotificationAction();
+        public AndroidNotificationAction Android { get; set; } = new ();
 
         /// <summary>
         ///

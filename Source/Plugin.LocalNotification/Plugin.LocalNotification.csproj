@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;MonoAndroid10.0;Xamarin.iOS10</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;MonoAndroid10.0;Xamarin.iOS10;net6.0-android31.0;net6.0-ios15.2</TargetFrameworks>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
@@ -31,7 +31,14 @@
     <CodeAnalysisRuleSet>Plugin.LocalNotification.ruleset</CodeAnalysisRuleSet>
 
 	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<LangVersion>10.0</LangVersion>
   </PropertyGroup>
+
+	<!-- platform version number information -->
+	<PropertyGroup>
+		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-ios'))">10.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">19.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
 
   <ItemGroup>    
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
@@ -56,6 +63,15 @@
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">
     <Compile Include="**/Platform/iOS/**/*.cs" />
   </ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.StartsWith('-android'))">
+		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+		<Compile Include="**/Platform/Droid/**/*.cs" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.StartsWith('-ios'))">
+		<Compile Include="**/Platform/iOS/**/*.cs" />
+	</ItemGroup>
 
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

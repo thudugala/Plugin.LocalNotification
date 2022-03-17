@@ -42,19 +42,19 @@ namespace Plugin.LocalNotification.AndroidOption
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
-        public AndroidColor Color { get; set; } = new AndroidColor();
+        public AndroidColor Color { get; set; } = new ();
         
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidIcon IconLargeName { get; set; } = new AndroidIcon();
+        public AndroidIcon IconLargeName { get; set; } = new ();
 
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidIcon IconSmallName { get; set; } = new AndroidIcon();
+        public AndroidIcon IconSmallName { get; set; } = new ();
 
         /// <summary>
         /// Set this notification to be the group summary for a group of notifications.

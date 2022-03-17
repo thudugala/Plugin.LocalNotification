@@ -5,12 +5,12 @@ using Android.OS;
 using AndroidX.Core.App;
 using Java.Lang;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.EventArgs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Plugin.LocalNotification.EventArgs;
 using Exception = System.Exception;
 
 namespace Plugin.LocalNotification.Platform.Droid
@@ -64,7 +64,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void OnNotificationsDisabled()
         {
@@ -251,7 +251,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
                 .TotalMilliseconds;
-            var triggerTime = (long) utcAlarmTimeInMillis;
+            var triggerTime = (long)utcAlarmTimeInMillis;
 
             var alarmType = ToNativeAlarmType(request.Schedule.Android.AlarmType);
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
@@ -330,7 +330,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            if (request.Image != null && request.Image.HasValue)
+            if (request.Image is {HasValue: true})
             {
                 var imageBitmap = await GetNativeImage(request.Image).ConfigureAwait(false);
                 if (imageBitmap != null)
@@ -377,7 +377,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                builder.SetPriority((int) request.Android.Priority);
+                builder.SetPriority((int)request.Android.Priority);
 
                 var soundUri = NotificationCenter.GetSoundUri(request.Sound);
                 if (soundUri != null)
@@ -430,7 +430,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
             if (request.Android.TimeoutAfter.HasValue)
             {
-                builder.SetTimeoutAfter((long) request.Android.TimeoutAfter.Value.TotalMilliseconds);
+                builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
 
             var notificationIntent =
@@ -549,7 +549,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
             }
 
-            if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
+            if (notificationImage.Binary is {Length: > 0})
             {
                 return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
                     notificationImage.Binary.Length).ConfigureAwait(false);
@@ -629,9 +629,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             return type switch
             {
-                AndroidVisibilityType.Private => (int) NotificationVisibility.Private,
-                AndroidVisibilityType.Public => (int) NotificationVisibility.Public,
-                AndroidVisibilityType.Secret => (int) NotificationVisibility.Secret,
+                AndroidVisibilityType.Private => (int)NotificationVisibility.Private,
+                AndroidVisibilityType.Public => (int)NotificationVisibility.Public,
+                AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
@@ -731,7 +731,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags ToPendingIntentFlags(AndroidPendingIntentFlags type)
         {
-            return SetImmutableIfNeeded((PendingIntentFlags) type);
+            return SetImmutableIfNeeded((PendingIntentFlags)type);
         }
 
         /// <summary>
@@ -741,7 +741,7 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <returns></returns>
         protected virtual PendingIntentFlags SetImmutableIfNeeded(PendingIntentFlags type)
         {
-            if ((int) Build.VERSION.SdkInt >= 31 &&
+            if ((int)Build.VERSION.SdkInt >= 31 &&
                 type.HasFlag(PendingIntentFlags.Immutable) == false)
             {
                 type |= PendingIntentFlags.Immutable;

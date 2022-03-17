@@ -11,7 +11,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidScheduleOptions Android { get; set; } = new AndroidScheduleOptions();
+        public AndroidScheduleOptions Android { get; set; } = new ();
 
         /// <summary>
         /// Time to cancel the notification automatically.

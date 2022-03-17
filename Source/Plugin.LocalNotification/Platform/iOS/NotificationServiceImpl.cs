@@ -139,36 +139,32 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                using (var content = await GetNotificationContent(request))
+                using var content = await GetNotificationContent(request);
+                var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
+
+                if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
+                    request.Schedule.NotifyRepeatInterval.HasValue)
                 {
-                    var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
+                    var interval = request.Schedule.NotifyRepeatInterval.Value;
 
-                    if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
-                        request.Schedule.NotifyRepeatInterval.HasValue)
-                    {
-                        var interval = request.Schedule.NotifyRepeatInterval.Value;
-
-                        // Cannot delay and repeat in when TimeInterval
-                        trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
-                    }
-                    else
-                    {
-                        using (var notifyTime = GetNsDateComponentsFromDateTime(request))
-                        {
-                            trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
-                        }
-                    }
-
-                    var notificationId =
-                        request.NotificationId.ToString(CultureInfo.CurrentCulture);
-
-                    var nativeRequest = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
-
-                    await UNUserNotificationCenter.Current.AddNotificationRequestAsync(nativeRequest)
-                        .ConfigureAwait(false);
-
-                    return true;
+                    // Cannot delay and repeat in when TimeInterval
+                    trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
                 }
+                else
+                {
+                    using var notifyTime = GetNsDateComponentsFromDateTime(request);
+                    trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
+                }
+
+                var notificationId =
+                    request.NotificationId.ToString(CultureInfo.CurrentCulture);
+
+                var nativeRequest = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
+
+                await UNUserNotificationCenter.Current.AddNotificationRequestAsync(nativeRequest)
+                    .ConfigureAwait(false);
+
+                return true;
             }
             finally
             {
@@ -303,7 +299,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
             }
 
-            if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
+            if (notificationImage.Binary is {Length: > 0})
             {
                 var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
                     NSSearchPathDomain.User);
@@ -339,49 +335,37 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTime.Now.AddSeconds(1);
 
-            switch (notificationRequest.Schedule.RepeatType)
+            return notificationRequest.Schedule.RepeatType switch
             {
-                case NotificationRepeat.Daily:
-                    return new NSDateComponents
-                    {
-                        Hour = dateTime.Hour,
-                        Minute = dateTime.Minute,
-                        Second = dateTime.Second
-                    };
-
-                case NotificationRepeat.Weekly:
-                    return new NSDateComponents
-                    {
-                        // iOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
-                        // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
-                        // .Net: The returned value is an integer between 0 and 6,
-                        // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
-                        Weekday = (int)dateTime.DayOfWeek + 1,
-                        Hour = dateTime.Hour,
-                        Minute = dateTime.Minute,
-                        Second = dateTime.Second
-                    };
-
-                case NotificationRepeat.No:
-                    return new NSDateComponents
-                    {
-                        Day = dateTime.Day,
-                        Month = dateTime.Month,
-                        Year = dateTime.Year,
-                        Hour = dateTime.Hour,
-                        Minute = dateTime.Minute,
-                        Second = dateTime.Second
-                    };
-
-                default:
-                    return new NSDateComponents
-                    {
-                        Day = dateTime.Day,
-                        Hour = dateTime.Hour,
-                        Minute = dateTime.Minute,
-                        Second = dateTime.Second
-                    };
-            }
+                NotificationRepeat.Daily => new NSDateComponents
+                {
+                    Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                },
+                NotificationRepeat.Weekly => new NSDateComponents
+                {
+                    // iOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
+                    // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
+                    // .Net: The returned value is an integer between 0 and 6,
+                    // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
+                    Weekday = (int) dateTime.DayOfWeek + 1,
+                    Hour = dateTime.Hour,
+                    Minute = dateTime.Minute,
+                    Second = dateTime.Second
+                },
+                NotificationRepeat.No => new NSDateComponents
+                {
+                    Day = dateTime.Day,
+                    Month = dateTime.Month,
+                    Year = dateTime.Year,
+                    Hour = dateTime.Hour,
+                    Minute = dateTime.Minute,
+                    Second = dateTime.Second
+                },
+                _ => new NSDateComponents
+                {
+                    Day = dateTime.Day, Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                }
+            };
         }
 
         /// <inheritdoc />

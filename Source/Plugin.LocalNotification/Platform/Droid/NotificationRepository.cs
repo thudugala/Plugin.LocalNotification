@@ -12,7 +12,7 @@ namespace Plugin.LocalNotification.Platform.Droid
     internal class NotificationRepository
     {
         private static readonly Lazy<NotificationRepository> MySingleton =
-            new Lazy<NotificationRepository>(() => new NotificationRepository(),
+            new (() => new NotificationRepository(),
                 System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
         private static readonly object Locker = new object();
@@ -36,9 +36,9 @@ namespace Plugin.LocalNotification.Platform.Droid
         ///
         /// </summary>
         /// <returns></returns>
-        private ISharedPreferences GetSharedPreferences()
+        private static ISharedPreferences GetSharedPreferences()
         {
-            var sharedName = "plugin.LocalNotification." + nameof(NotificationRepository);
+            const string sharedName = "plugin.LocalNotification." + nameof(NotificationRepository);
             return Application.Context.GetSharedPreferences(sharedName, FileCreationMode.Private);
         }
 
@@ -62,8 +62,8 @@ namespace Plugin.LocalNotification.Platform.Droid
             var itemList = GetPendingList();
             itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
             itemList.RemoveAll(r =>
-                request.Schedule.NotifyTime.HasValue &&
-                request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false);
+                r.Schedule.NotifyTime.HasValue &&
+                r.Schedule.Android.IsValidNotifyTime(DateTime.Now, r.Schedule.NotifyTime) == false);
             itemList.Add(request);
             SetPendingList(itemList);
         }
@@ -117,7 +117,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             return itemList;
         }
 
-        private void SetPendingList(List<NotificationRequest> list)
+        private static void SetPendingList(List<NotificationRequest> list)
         {
             SetList(PendingListKey, list);
         }
@@ -132,42 +132,36 @@ namespace Plugin.LocalNotification.Platform.Droid
             return itemList;
         }
 
-        private void SetDeliveredList(List<NotificationRequest> list)
+        private static void SetDeliveredList(List<NotificationRequest> list)
         {
             SetList(DeliveredListKey, list);
         }
 
-        private List<NotificationRequest> GetList(string key)
+        private static List<NotificationRequest> GetList(string key)
         {
             lock (Locker)
             {
-                using (var sharedPreferences = GetSharedPreferences())
-                {
-                    var jsonText = sharedPreferences.GetString(key, string.Empty);
-                    return string.IsNullOrWhiteSpace(jsonText)
-                        ? new List<NotificationRequest>()
-                        : NotificationCenter.GetRequestList(jsonText);
-                }
+                using var sharedPreferences = GetSharedPreferences();
+                var jsonText = sharedPreferences.GetString(key, string.Empty);
+                return string.IsNullOrWhiteSpace(jsonText)
+                    ? new List<NotificationRequest>()
+                    : NotificationCenter.GetRequestList(jsonText);
             }
         }
 
-        private void SetList(string key, List<NotificationRequest> list)
+        private static void SetList(string key, List<NotificationRequest> list)
         {
             lock (Locker)
             {
-                using (var sharedPreferences = GetSharedPreferences())
+                using var sharedPreferences = GetSharedPreferences();
+                using var editor = sharedPreferences.Edit();
+                string jsonText = null;
+                if (list != null && list.Any())
                 {
-                    using (var editor = sharedPreferences.Edit())
-                    {
-                        string jsonText = null;
-                        if (list != null && list.Any())
-                        {
-                            jsonText = NotificationCenter.GetRequestListSerialize(list);
-                        }
-                        editor?.PutString(key, jsonText);
-                        editor?.Apply();
-                    }
+                    jsonText = NotificationCenter.GetRequestListSerialize(list);
                 }
+                editor?.PutString(key, jsonText);
+                editor?.Apply();
             }
         }
     }
