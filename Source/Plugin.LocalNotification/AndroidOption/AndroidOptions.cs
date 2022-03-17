@@ -43,13 +43,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
         public AndroidColor Color { get; set; } = new AndroidColor();
-
-        /// <summary>
-        /// Set this notification to be part of a group of notifications sharing the same key.
-        /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
-        /// </summary>
-        public string Group { get; set; }
-
+        
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
@@ -92,7 +86,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
         /// </summary>
-        public AndroidNotificationPriority Priority { get; set; } = AndroidNotificationPriority.Default;
+        public AndroidPriority Priority { get; set; } = AndroidPriority.Default;
 
         /// <summary>
         /// Set Upper limit of this progress bar's range

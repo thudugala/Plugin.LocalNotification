@@ -356,9 +356,9 @@ namespace Plugin.LocalNotification.Platform.Droid
             builder.SetAutoCancel(request.Android.AutoCancel);
             builder.SetOngoing(request.Android.Ongoing);
 
-            if (string.IsNullOrWhiteSpace(request.Android.Group) == false)
+            if (string.IsNullOrWhiteSpace(request.Group) == false)
             {
-                builder.SetGroup(request.Android.Group);
+                builder.SetGroup(request.Group);
                 if (request.Android.IsGroupSummary)
                 {
                     builder.SetGroupSummary(true);

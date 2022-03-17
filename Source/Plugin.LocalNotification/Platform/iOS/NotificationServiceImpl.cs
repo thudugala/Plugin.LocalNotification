@@ -1,13 +1,12 @@
 ﻿using Foundation;
+using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.iOSOption;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Plugin.LocalNotification.EventArgs;
 using UIKit;
 using UserNotifications;
 
@@ -48,9 +47,9 @@ namespace Plugin.LocalNotification.Platform.iOS
         {
             NotificationActionTapped?.Invoke(e);
         }
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void OnNotificationsDisabled()
         {
@@ -203,8 +202,15 @@ namespace Plugin.LocalNotification.Platform.iOS
                 Body = request.Description,
                 Badge = request.BadgeNumber,
                 UserInfo = userInfoDictionary,
-                Sound = UNNotificationSound.Default,
+                Sound = UNNotificationSound.Default
             };
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
+            {
+                content.InterruptionLevel = ToNativePriority(request.iOS.Priority);
+                content.RelevanceScore = request.iOS.RelevanceScore;
+            }
+
             // Image Attachment
             if (request.Image != null)
             {
@@ -220,6 +226,17 @@ namespace Plugin.LocalNotification.Platform.iOS
                 content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
             }
 
+            if (string.IsNullOrWhiteSpace(request.Group) == false)
+            {
+                content.ThreadIdentifier = request.Group;
+            }
+
+            if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
+            {
+                content.SummaryArgument = request.iOS.SummaryArgument;
+                content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+            }
+
             if (string.IsNullOrWhiteSpace(request.Sound) == false)
             {
                 content.Sound = UNNotificationSound.GetSound(request.Sound);
@@ -230,6 +247,32 @@ namespace Plugin.LocalNotification.Platform.iOS
                 content.Sound = null;
             }
             return content;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="priority"></param>
+        /// <returns></returns>
+        protected virtual UNNotificationInterruptionLevel ToNativePriority(iOSPriority priority)
+        {
+            switch (priority)
+            {
+                case iOSPriority.Passive:
+                    return UNNotificationInterruptionLevel.Passive;
+
+                case iOSPriority.Active:
+                    return UNNotificationInterruptionLevel.Active;
+
+                case iOSPriority.TimeSensitive:
+                    return UNNotificationInterruptionLevel.TimeSensitive;
+
+                case iOSPriority.Critical:
+                    return UNNotificationInterruptionLevel.Critical;
+
+                default:
+                    return UNNotificationInterruptionLevel.Active;
+            }
         }
 
         /// <summary>
@@ -262,25 +305,19 @@ namespace Plugin.LocalNotification.Platform.iOS
 
             if (notificationImage.Binary != null && notificationImage.Binary.Length > 0)
             {
-                using (var stream = new MemoryStream(notificationImage.Binary))
+                var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
+                    NSSearchPathDomain.User);
+                var cachesFolder = cache[0];
+                var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}";
+
+                if (File.Exists(cacheFile))
                 {
-                    var image = Image.FromStream(stream);
-                    var imageExtension = image.RawFormat.ToString();
-
-                    var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
-                        NSSearchPathDomain.User);
-                    var cachesFolder = cache[0];
-                    var cacheFile = $"{cachesFolder}{NSProcessInfo.ProcessInfo.GloballyUniqueString}.{imageExtension}";
-
-                    if (File.Exists(cacheFile))
-                    {
-                        File.Delete(cacheFile);
-                    }
-
-                    await File.WriteAllBytesAsync(cacheFile, notificationImage.Binary);
-
-                    imageAttachment = NSUrl.CreateFileUrl(cacheFile, false, null);
+                    File.Delete(cacheFile);
                 }
+
+                await File.WriteAllBytesAsync(cacheFile, notificationImage.Binary);
+
+                imageAttachment = NSUrl.CreateFileUrl(cacheFile, false, null);
             }
 
             if (imageAttachment is null)
@@ -465,8 +502,13 @@ namespace Plugin.LocalNotification.Platform.iOS
 
             return delivered.Select(r => GetRequest(r.Request.Content)).ToList();
         }
-        
-        internal NotificationRequest GetRequest(UNNotificationContent notificationContent)
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="notificationContent"></param>
+        /// <returns></returns>
+        public NotificationRequest GetRequest(UNNotificationContent notificationContent)
         {
             if (notificationContent is null)
             {

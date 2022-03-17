@@ -7,7 +7,7 @@
     /// The system sets a notification's priority based on various factors including the setPriority value.
     /// The effect may differ slightly on different platforms.
     /// </summary>
-    public enum AndroidNotificationPriority
+    public enum AndroidPriority
     {
         /// <summary>
         /// Lowest notification priority, these items might not be shown to the user except under special circumstances, such as detailed notification logs.

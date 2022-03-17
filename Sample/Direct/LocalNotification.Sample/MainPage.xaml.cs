@@ -211,13 +211,10 @@ namespace LocalNotification.Sample
                 Title = title,
                 Description = $"Tap Count: {_tapCount}",
                 ReturningData = serializeReturningData,
+                Group = AndroidOptions.DefaultGroupId,
                 Schedule =
                 {
                     NotifyTime = DateTime.Now.AddSeconds(seconds),
-                },
-                Android =
-                {
-                    Group = AndroidOptions.DefaultGroupId
                 }
             };
             NotificationCenter.Current.Show(notification);
@@ -231,9 +228,9 @@ namespace LocalNotification.Sample
                 NotificationId = notificationId,
                 Title = "Summary",
                 Description = "Summary Desc",
+                Group = AndroidOptions.DefaultGroupId,
                 Android =
                 {
-                    Group = AndroidOptions.DefaultGroupId,
                     IsGroupSummary = true
                 }
             };
@@ -251,12 +248,13 @@ namespace LocalNotification.Sample
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                if (CustomAlert.IsToggled)
+                if (!CustomAlert.IsToggled)
                 {
-                    var requestJson = _notificationSerializer.Serialize(e.Request);
-
-                    DisplayAlert(e.Request.Title, requestJson, "OK");
+                    return;
                 }
+                var requestJson = _notificationSerializer.Serialize(e.Request);
+
+                DisplayAlert(e.Request.Title, requestJson, "OK");
             });
         }
     }

@@ -30,6 +30,12 @@ namespace Plugin.LocalNotification
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
+        /// Set this notification to be part of a group of notifications sharing the same key.
+        /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
+        /// </summary>
+        public string Group { get; set; }
+
+        /// <summary>
         /// Image for notification.
         /// </summary>
         public NotificationImage Image { get; set; } = new NotificationImage();

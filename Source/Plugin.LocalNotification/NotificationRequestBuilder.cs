@@ -87,6 +87,16 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Set this notification to be part of a group of notifications sharing the same key.
+        /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
+        /// </summary>
+        public NotificationRequestBuilder WithGroup(string group)
+        {
+            _request.Group = group;
+            return this;
+        }
+
+        /// <summary>
         /// iOS specific properties builder.
         /// </summary>
         /// <param name="builder"></param>

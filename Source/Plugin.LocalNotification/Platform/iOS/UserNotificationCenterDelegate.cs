@@ -153,7 +153,11 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
         }
 
-        private static NotificationServiceImpl TryGetDefaultIOsNotificationService()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {
             return NotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService

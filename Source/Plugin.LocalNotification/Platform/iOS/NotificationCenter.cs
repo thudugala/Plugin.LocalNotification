@@ -28,6 +28,18 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// This allow developer to change UNUserNotificationCenterDelegate,
+        /// extend Plugin.LocalNotification.Platform.iOS.UserNotificationCenterDelegate
+        /// Create custom IUNUserNotificationCenterDelegate
+        /// and set it using this method
+        /// </summary>
+        /// <param name="notificationDelegate"></param>
+        public static void SetCustomUserNotificationCenterDelegate(IUNUserNotificationCenterDelegate notificationDelegate)
+        {
+            UNUserNotificationCenter.Current.Delegate = notificationDelegate;
+        }
+
+        /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// </summary>
         public static async void AskPermission()
