@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
-    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.7.0" />
     <Compile Include="**/Platform/Droid/**/*.cs" />
   </ItemGroup>
 
@@ -65,7 +65,7 @@
   </ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.StartsWith('-android'))">
-		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.7.0" />
 		<Compile Include="**/Platform/Droid/**/*.cs" />
 	</ItemGroup>
 
