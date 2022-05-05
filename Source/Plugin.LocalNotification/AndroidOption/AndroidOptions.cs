@@ -121,6 +121,6 @@ namespace Plugin.LocalNotification.AndroidOption
         /// <summary>
         ///
         /// </summary>
-        public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
+        public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.UpdateCurrent;
     }
 }

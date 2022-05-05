@@ -96,7 +96,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     return;
                 }
-
+                
                 MyNotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
                     throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
@@ -326,7 +326,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
-
+           
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);

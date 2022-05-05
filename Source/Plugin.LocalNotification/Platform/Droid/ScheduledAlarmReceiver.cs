@@ -12,8 +12,17 @@ namespace Plugin.LocalNotification.Platform.Droid
         Exported = false,
         Label = "Plugin LocalNotification Scheduled Alarm Receiver")]
     [IntentFilter(
-        new[] { Intent.ActionBootCompleted },
-        Categories = new[] { Intent.CategoryHome })]
+        new[] 
+        { 
+            Intent.ActionBootCompleted, 
+            Intent.ActionMyPackageReplaced, 
+            "android.intent.action.QUICKBOOT_POWERON", 
+            "com.htc.intent.action.QUICKBOOT_POWERON" 
+        },
+        Categories = new[] 
+        { 
+            Intent.CategoryHome 
+        })]
     internal class ScheduledAlarmReceiver : BroadcastReceiver
     {
         /// <summary>
