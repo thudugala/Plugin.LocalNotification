@@ -27,7 +27,10 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 var notificationService = TryGetDefaultDroidNotificationService();
 
-                if (intent.Action == Intent.ActionBootCompleted)
+                if (intent.Action == Intent.ActionBootCompleted ||
+                    intent.Action == Intent.ActionMyPackageReplaced ||
+                    intent.Action == "android.intent.action.QUICKBOOT_POWERON" ||
+                    intent.Action == "com.htc.intent.action.QUICKBOOT_POWERON")
                 {
                     NotificationCenter.Log("ActionBootCompleted");
 
