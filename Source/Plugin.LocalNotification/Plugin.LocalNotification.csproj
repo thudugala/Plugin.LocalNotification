@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
 	<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>9.2.1-preview02</Version>
+    <Version>9.2.1-preview03</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -55,23 +55,14 @@
     <None Include="**/Platform/**/*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) Or $(TargetFramework.Contains('-android'))">
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
     <Compile Include="**/Platform/Droid/**/*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) Or $(TargetFramework.Contains('-ios'))">
     <Compile Include="**/Platform/iOS/**/*.cs" />
   </ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.StartsWith('-android'))">
-		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
-		<Compile Include="**/Platform/Droid/**/*.cs" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.StartsWith('-ios'))">
-		<Compile Include="**/Platform/iOS/**/*.cs" />
-	</ItemGroup>
 
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
