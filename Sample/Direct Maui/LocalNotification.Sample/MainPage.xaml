@@ -2,40 +2,39 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LocalNotification.Sample.MainPage">
-			 
-    <ScrollView>
-        <VerticalStackLayout 
-            Spacing="25" 
-            Padding="30,0" 
-            VerticalOptions="Center">
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
-                
-            <Label 
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
-            
-            <Label 
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
+    <StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <DatePicker x:Name="NotifyDatePicker" Format="d" />
+            <TimePicker x:Name="NotifyTimePicker" Format="t" />
+            <Switch x:Name="UseNotifyTimeSwitch" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Repeat next day at same time" />
+            <Switch x:Name="RepeatSwitch" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Display Alert on notification received " />
+            <Switch x:Name="CustomAlert" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Play Sound when app is in Foreground" />
+            <Switch x:Name="ForegroundSound" IsToggled="false" />
+        </StackLayout>
+        <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+            <Label Text="Use Custom Sound" />
+            <Switch x:Name="CustomSoundSwitch" IsToggled="false" />
+        </StackLayout>
+        <Label HorizontalOptions="Center" Text="In Android &gt;= 26, Use NotificationChannel to set Sound" />
 
-            <Button 
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+        <!--  Place new controls here  -->
+        <StackLayout VerticalOptions="CenterAndExpand">
+            <Button
+            Clicked="Button_Clicked"
+            HorizontalOptions="Center"
+            Text="Send Local Notification"
+            VerticalOptions="Center" />
+        </StackLayout>
+    </StackLayout>
 
-        </VerticalStackLayout>
-    </ScrollView>
- 
 </ContentPage>
