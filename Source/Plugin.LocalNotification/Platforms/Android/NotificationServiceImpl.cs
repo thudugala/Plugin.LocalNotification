@@ -442,10 +442,20 @@ namespace Plugin.LocalNotification.Platforms.Android
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
             notificationIntent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
+            var contentIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
                 notificationIntent,
                 ToPendingIntentFlags(request.Android.PendingIntentFlags));
-            builder.SetContentIntent(pendingIntent);
+
+            var deleteIntent = CreateActionIntent(serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
+            {
+                Android =
+                {
+                    PendingIntentFlags = AndroidPendingIntentFlags.CancelCurrent
+                }
+            });
+
+            builder.SetContentIntent(contentIntent);
+            builder.SetDeleteIntent(deleteIntent);
 
             if (_categoryList.Any())
             {

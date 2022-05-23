@@ -33,6 +33,17 @@ namespace Plugin.LocalNotification.Platforms.iOS
                     return;
                 }
 
+                if (response.Notification.Request.Content.Badge != null)
+                {
+                    UIApplication.SharedApplication.InvokeOnMainThread(() =>
+                    {
+                        var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
+                                        Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(),
+                                            CultureInfo.CurrentCulture);
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
+                    });
+                }
+
                 // Take action based on identifier
                 if (!response.IsDefaultAction)
                 {
@@ -51,15 +62,17 @@ namespace Plugin.LocalNotification.Platforms.iOS
                     }
                 }
 
-                if (response.Notification.Request.Content.Badge != null)
+                if (response.IsDismissAction)
                 {
-                    UIApplication.SharedApplication.InvokeOnMainThread(() =>
+                    var actionArgs = new NotificationActionEventArgs
                     {
-                        var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
-                                        Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(),
-                                            CultureInfo.CurrentCulture);
-                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
-                    });
+                        ActionId = NotificationActionEventArgs.DismissedActionId,
+                        Request = notificationRequest
+                    };
+                    notificationService.OnNotificationActionTapped(actionArgs);
+
+                    completionHandler?.Invoke();
+                    return;
                 }
 
                 var args = new NotificationEventArgs

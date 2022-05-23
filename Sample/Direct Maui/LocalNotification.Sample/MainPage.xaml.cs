@@ -183,6 +183,13 @@ public partial class MainPage : ContentPage
             case 101:
                 LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
                 break;
+
+            case NotificationActionEventArgs.DismissedActionId:
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    DisplayAlert(e.Request.Title, "User Dismissed Notification", "OK");
+                });
+                break;
         }
     }
 
