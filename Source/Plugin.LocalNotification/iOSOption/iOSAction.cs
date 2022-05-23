@@ -3,7 +3,7 @@
     /// <summary>
     ///
     /// </summary>
-    public class iOSNotificationAction
+    public class iOSAction
     {
         /// <summary>
         ///

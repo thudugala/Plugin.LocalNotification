@@ -11,16 +11,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Elvin (Tharindu) Thudugala</Authors>
-    <PackageTags>android, ios, xamarin, xamarin.forms, local, notification, local.notification</PackageTags>
+    <PackageTags>android, ios, xamarin, xamarin.forms, local, notification, local.notification, Maui</PackageTags>
     <PackageProjectUrl>https://github.com/thudugala/Plugin.LocalNotification</PackageProjectUrl>
     <RepositoryUrl>https://github.com/thudugala/Plugin.LocalNotification</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>The local notification plugin provides a way to show local notifications from Xamarin apps.</Description>
+    <Description>The local notification plugin provides a way to show local notifications from Xamarin and Maui apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
 	<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>9.2.1-preview03</Version>
+    <Version>9.2.1-preview04</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -47,21 +47,21 @@
 
   <ItemGroup>
 	  <None Include="..\..\Screenshots\icon.png" Pack="True" PackagePath="\" Link="Properties\icon.png" />
-	  <None Include="..\..\README.md" Pack="True" PackagePath="\" Link="Properties\README.md" />
+	  <None Include="..\..\README.md" Pack="True" PackagePath="\" Link="Properties\README.md" />	 
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="**/Platform/**/*.cs" />
-    <None Include="**/Platform/**/*.cs" />
+    <Compile Remove="**/Platforms/**/*.cs" />
+    <None Include="**/Platforms/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) Or $(TargetFramework.Contains('-android'))">
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
-    <Compile Include="**/Platform/Droid/**/*.cs" />
+    <Compile Include="**/Platforms/Android/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) Or $(TargetFramework.Contains('-ios'))">
-    <Compile Include="**/Platform/iOS/**/*.cs" />
+    <Compile Include="**/Platforms/iOS/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>

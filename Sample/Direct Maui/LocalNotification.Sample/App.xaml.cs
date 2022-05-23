@@ -18,8 +18,8 @@ public partial class App : Application
 
         MainPage = new NavigationPage(new MainPage());
 
-        NotificationCenter.NotificationLog += NotificationCenter_NotificationLog;
-        NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
+        LocalNotificationCenter.NotificationLog += NotificationCenter_NotificationLog;
+        LocalNotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
     }
 
     private void NotificationCenter_NotificationLog(NotificationLogArgs e)

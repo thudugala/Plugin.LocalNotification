@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Plugin.LocalNotification.Platform.Droid
+namespace Plugin.LocalNotification.Platforms.Android
 {
     [BroadcastReceiver(
         Name = ReceiverName,
@@ -12,16 +12,16 @@ namespace Plugin.LocalNotification.Platform.Droid
         Exported = false,
         Label = "Plugin LocalNotification Scheduled Alarm Receiver")]
     [IntentFilter(
-        new[] 
-        { 
-            Intent.ActionBootCompleted, 
-            Intent.ActionMyPackageReplaced, 
-            "android.intent.action.QUICKBOOT_POWERON", 
-            "com.htc.intent.action.QUICKBOOT_POWERON" 
+        new[]
+        {
+            Intent.ActionBootCompleted,
+            Intent.ActionMyPackageReplaced,
+            "android.intent.action.QUICKBOOT_POWERON",
+            "com.htc.intent.action.QUICKBOOT_POWERON"
         },
-        Categories = new[] 
-        { 
-            Intent.CategoryHome 
+        Categories = new[]
+        {
+            Intent.CategoryHome
         })]
     internal class ScheduledAlarmReceiver : BroadcastReceiver
     {
@@ -41,12 +41,12 @@ namespace Plugin.LocalNotification.Platform.Droid
                     intent.Action == "android.intent.action.QUICKBOOT_POWERON" ||
                     intent.Action == "com.htc.intent.action.QUICKBOOT_POWERON")
                 {
-                    NotificationCenter.Log("ActionBootCompleted");
+                    LocalNotificationCenter.Log("ActionBootCompleted");
 
                     var requestList = NotificationRepository.Current.GetPendingList();
                     if (requestList.Any() == false)
                     {
-                        NotificationCenter.Log("No Pending Notification Request");
+                        LocalNotificationCenter.Log("No Pending Notification Request");
                         return;
                     }
 
@@ -57,20 +57,20 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
                 else
                 {
-                    var requestSerialize = intent.GetStringExtra(NotificationCenter.ReturnRequest);
+                    var requestSerialize = intent.GetStringExtra(LocalNotificationCenter.ReturnRequest);
                     if (string.IsNullOrWhiteSpace(requestSerialize))
                     {
-                        NotificationCenter.Log("Request Json Not Found");
+                        LocalNotificationCenter.Log("Request Json Not Found");
                         return;
                     }
-                    var request = NotificationCenter.GetRequest(requestSerialize);
+                    var request = LocalNotificationCenter.GetRequest(requestSerialize);
 
                     await SendNotification(notificationService, request);
                 }
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
@@ -78,20 +78,20 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             if (request is null)
             {
-                NotificationCenter.Log("Request Not Found");
+                LocalNotificationCenter.Log("Request Not Found");
                 return;
             }
 
             if (request.Schedule.NotifyTime is null)
             {
-                NotificationCenter.Log($"Notification {request.NotificationId} has no NotifyTime");
+                LocalNotificationCenter.Log($"Notification {request.NotificationId} has no NotifyTime");
                 return;
             }
 
             if (request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
             {
                 notificationService.Cancel(request.NotificationId);
-                NotificationCenter.Log($"Notification {request.NotificationId} Auto Canceled");
+                LocalNotificationCenter.Log($"Notification {request.NotificationId} Auto Canceled");
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             else
             {
-                NotificationCenter.Log(
+                LocalNotificationCenter.Log(
                     "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
             }
 
@@ -136,7 +136,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
                 else
                 {
-                    NotificationCenter.Log(
+                    LocalNotificationCenter.Log(
                         $"Notification {request.NotificationId} New NotifyTime is null, no reschedule");
                 }
             }
@@ -144,7 +144,7 @@ namespace Plugin.LocalNotification.Platform.Droid
 
         private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
         {
-            return NotificationCenter.Current is NotificationServiceImpl notificationService
+            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
         }

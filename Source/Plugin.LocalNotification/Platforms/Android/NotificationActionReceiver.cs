@@ -2,7 +2,7 @@
 using System;
 using Plugin.LocalNotification.EventArgs;
 
-namespace Plugin.LocalNotification.Platform.Droid
+namespace Plugin.LocalNotification.Platforms.Android
 {
     /// <summary>
     ///
@@ -49,7 +49,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                     throw new ApplicationException("NotificationActionReceiver.OnReceive: Action Id Key Not found");
                 }
 
-                if (intent.HasExtra(NotificationCenter.ReturnRequest) == false)
+                if (intent.HasExtra(LocalNotificationCenter.ReturnRequest) == false)
                 {
                     throw new ApplicationException("NotificationActionReceiver.OnReceive: Request Key Not found");
                 }
@@ -60,8 +60,8 @@ namespace Plugin.LocalNotification.Platform.Droid
                     throw new ApplicationException("NotificationActionReceiver.OnReceive: Action Id Not found");
                 }
 
-                var requestSerialize = intent.GetStringExtra(NotificationCenter.ReturnRequest);
-                var request = NotificationCenter.GetRequest(requestSerialize);
+                var requestSerialize = intent.GetStringExtra(LocalNotificationCenter.ReturnRequest);
+                var request = LocalNotificationCenter.GetRequest(requestSerialize);
 
                 var actionArgs = new NotificationActionEventArgs
                 {
@@ -73,13 +73,13 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
         private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
         {
-            return NotificationCenter.Current is NotificationServiceImpl notificationService
+            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
         }

@@ -12,7 +12,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidOptions Android { get; set; } = new ();
+        public AndroidOptions Android { get; set; } = new();
 
         /// <summary>
         /// Number of the badge displays on the Home Screen.
@@ -43,7 +43,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// iOS specific properties.
         /// </summary>
-        public iOSOptions iOS { get; set; } = new ();
+        public iOSOptions iOS { get; set; } = new();
 
         /// <summary>
         /// A unique identifier for the request
@@ -60,7 +60,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Schedule notification
         /// </summary>
-        public NotificationRequestSchedule Schedule { get; set; } = new ();
+        public NotificationRequestSchedule Schedule { get; set; } = new();
 
         /// <summary>
         /// Silences this instance of the notification, regardless of the sounds or vibrations set on the notification or notification channel.
@@ -85,29 +85,16 @@ namespace Plugin.LocalNotification
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
-        /// Creates a NotificationRequestBuilder instance with specified notificationId.
-        /// </summary>
-        /// <param name="notificationId"></param>
-        /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder(int notificationId) => new (notificationId);
-
-        /// <summary>
-        /// Creates a NotificationRequestBuilder instance with default values.
-        /// </summary>
-        /// <returns></returns>
-        public static NotificationRequestBuilder CreateBuilder() => new ();
-
-        /// <summary>
         /// Directly call Cancel(...) on this <see cref="NotificationRequest"/> instance.
         /// <para>Notification Id set for this instance will be used to cancel this notification.</para>
         /// </summary>
         /// <returns></returns>
-        public bool Cancel() => NotificationCenter.Current.Cancel(NotificationId);
+        public bool Cancel() => LocalNotificationCenter.Current.Cancel(NotificationId);
 
         /// <summary>
         /// Directly call Show() on this <see cref="NotificationRequest"/> instance.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> Show() => NotificationCenter.Current.Show(this);
+        public Task<bool> Show() => LocalNotificationCenter.Current.Show(this);
     }
 }

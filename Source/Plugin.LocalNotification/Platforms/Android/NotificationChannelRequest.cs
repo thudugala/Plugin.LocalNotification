@@ -2,7 +2,7 @@
 using Android.Graphics;
 using Plugin.LocalNotification.AndroidOption;
 
-namespace Plugin.LocalNotification.Platform.Droid
+namespace Plugin.LocalNotification.Platforms.Android
 {
     /// <summary>
     /// Notification Channel Request
@@ -74,18 +74,6 @@ namespace Plugin.LocalNotification.Platform.Droid
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
         /// </summary>
-        public bool CanBypassDnd { get; set; } = false;
-
-        /// <summary>
-        /// Creates a ChannelRequestBuilder with default values.
-        /// </summary>
-        /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder() => new ();
-
-        /// <summary>
-        /// Creates a ChannelRequestBuilder with specified channelId.
-        /// </summary>
-        /// <returns></returns>
-        public static NotificationChannelRequestBuilder CreateBuilder(string channelId) => new (channelId);
+        public bool CanBypassDnd { get; set; } = false;        
     }
 }

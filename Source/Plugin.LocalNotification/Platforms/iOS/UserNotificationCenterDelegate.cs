@@ -5,7 +5,7 @@ using System.Globalization;
 using UIKit;
 using UserNotifications;
 
-namespace Plugin.LocalNotification.Platform.iOS
+namespace Plugin.LocalNotification.Platforms.iOS
 {
     /// <inheritdoc />
     public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
@@ -29,7 +29,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     completionHandler?.Invoke();
 
-                    NotificationCenter.Log("Notification request not found");
+                    LocalNotificationCenter.Log("Notification request not found");
                     return;
                 }
 
@@ -72,7 +72,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     presentationOptions = UNNotificationPresentationOptions.None;
                     completionHandler?.Invoke(presentationOptions);
 
-                    NotificationCenter.Log("Notification request not found");
+                    LocalNotificationCenter.Log("Notification request not found");
                     return;
                 }
 
@@ -104,7 +104,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     presentationOptions = UNNotificationPresentationOptions.None;
                     completionHandler?.Invoke(presentationOptions);
 
-                    NotificationCenter.Log("Notification Auto Canceled");
+                    LocalNotificationCenter.Log("Notification Auto Canceled");
                     return;
                 }
 
@@ -112,13 +112,13 @@ namespace Plugin.LocalNotification.Platform.iOS
                 var dictionary = notification?.Request.Content.UserInfo;
                 if (dictionary != null)
                 {
-                    if (dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequestHandled)))
+                    if (dictionary.ContainsKey(new NSString(LocalNotificationCenter.ReturnRequestHandled)))
                     {
-                        var handled = bool.Parse(dictionary[NotificationCenter.ReturnRequestHandled].ToString());
+                        var handled = bool.Parse(dictionary[LocalNotificationCenter.ReturnRequestHandled].ToString());
                         if (handled)
                         {
                             presentationOptions = UNNotificationPresentationOptions.None;
-                            NotificationCenter.Log("Notification handled");
+                            LocalNotificationCenter.Log("Notification handled");
                             requestHandled = true;
                         }
                     }
@@ -149,7 +149,7 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
@@ -159,7 +159,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <returns></returns>
         public static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {
-            return NotificationCenter.Current is NotificationServiceImpl notificationService
+            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
         }

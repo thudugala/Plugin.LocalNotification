@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Plugin.LocalNotification.Platform.Droid
+namespace Plugin.LocalNotification.Platforms.Android
 {
     /// <summary>
     ///
@@ -12,7 +12,7 @@ namespace Plugin.LocalNotification.Platform.Droid
     internal class NotificationRepository
     {
         private static readonly Lazy<NotificationRepository> MySingleton =
-            new (() => new NotificationRepository(),
+            new(() => new NotificationRepository(),
                 System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
         private static readonly object Locker = new object();
@@ -145,7 +145,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var jsonText = sharedPreferences.GetString(key, string.Empty);
                 return string.IsNullOrWhiteSpace(jsonText)
                     ? new List<NotificationRequest>()
-                    : NotificationCenter.GetRequestList(jsonText);
+                    : LocalNotificationCenter.GetRequestList(jsonText);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 string jsonText = null;
                 if (list != null && list.Any())
                 {
-                    jsonText = NotificationCenter.GetRequestListSerialize(list);
+                    jsonText = LocalNotificationCenter.GetRequestListSerialize(list);
                 }
                 editor?.PutString(key, jsonText);
                 editor?.Apply();

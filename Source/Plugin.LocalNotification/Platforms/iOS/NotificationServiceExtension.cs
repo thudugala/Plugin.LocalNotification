@@ -2,7 +2,7 @@
 using System;
 using UserNotifications;
 
-namespace Plugin.LocalNotification.Platform.iOS
+namespace Plugin.LocalNotification.Platforms.iOS
 {
     /// <inheritdoc />
     [Register(nameof(NotificationServiceExtension))]
@@ -43,7 +43,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     ContentHandler(BestAttemptContent);
 
-                    NotificationCenter.Log("Notification Receiving not registered");
+                    LocalNotificationCenter.Log("Notification Receiving not registered");
                     return;
                 }
 
@@ -54,7 +54,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 {
                     ContentHandler(BestAttemptContent);
 
-                    NotificationCenter.Log("Notification request not found");
+                    LocalNotificationCenter.Log("Notification request not found");
                     return;
                 }
 
@@ -83,19 +83,19 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
         private static NSMutableDictionary GetUserInfo(NotificationRequest request, bool handled)
         {
             var userInfoDictionary = new NSMutableDictionary();
-            var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
+            var dictionary = LocalNotificationCenter.GetRequestSerializeDictionary(request);
             foreach (var item in dictionary)
             {
                 userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
             }
-            userInfoDictionary.SetValueForKey(NSNumber.FromBoolean(handled), new NSString(NotificationCenter.ReturnRequestHandled));
+            userInfoDictionary.SetValueForKey(NSNumber.FromBoolean(handled), new NSString(LocalNotificationCenter.ReturnRequestHandled));
             return userInfoDictionary;
         }
 
@@ -111,13 +111,13 @@ namespace Plugin.LocalNotification.Platform.iOS
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
         private static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {
-            return NotificationCenter.Current is NotificationServiceImpl notificationService
+            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
         }

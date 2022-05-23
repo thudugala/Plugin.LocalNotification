@@ -10,7 +10,7 @@ namespace Plugin.LocalNotification
     /// Cross platform INotificationService Resolver.
     /// </summary>
 
-    public static partial class NotificationCenter
+    public static partial class LocalNotificationCenter
     {
         private static INotificationService _current;
         private static INotificationSerializer _serializer;

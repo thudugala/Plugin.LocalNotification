@@ -91,11 +91,6 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Send a local notification to the device.
         /// </summary>
-        Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder);
-
-        /// <summary>
-        /// Send a local notification to the device.
-        /// </summary>
         /// <param name="request"></param>
         Task<bool> Show(NotificationRequest request);
 

@@ -3,7 +3,7 @@
     /// <summary>
     ///
     /// </summary>
-    public class AndroidNotificationAction
+    public class AndroidAction
     {
         /// <summary>
         ///

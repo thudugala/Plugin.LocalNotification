@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
 
-namespace Plugin.LocalNotification.Platform.iOS
+namespace Plugin.LocalNotification.Platforms.iOS
 {
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
@@ -112,10 +112,6 @@ namespace Plugin.LocalNotification.Platform.iOS
         }
 
         /// <inheritdoc />
-        public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) =>
-            Show(builder.Invoke(new NotificationRequestBuilder()));
-
-        /// <inheritdoc />
         public async Task<bool> Show(NotificationRequest request)
         {
             UNNotificationTrigger trigger = null;
@@ -131,10 +127,10 @@ namespace Plugin.LocalNotification.Platform.iOS
                     return false;
                 }
 
-                var allowed = await NotificationCenter.AskPermissionAsync().ConfigureAwait(false);
+                var allowed = await LocalNotificationCenter.AskPermissionAsync().ConfigureAwait(false);
                 if (allowed == false)
                 {
-                    NotificationCenter.Log("User denied permission");
+                    LocalNotificationCenter.Log("User denied permission");
                     OnNotificationsDisabled();
                     return false;
                 }
@@ -175,7 +171,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         /// <inheritdoc />
         public Task<bool> AreNotificationsEnabled()
         {
-            return NotificationCenter.AreNotificationsEnabled();
+            return LocalNotificationCenter.AreNotificationsEnabled();
         }
 
         /// <summary>
@@ -186,7 +182,7 @@ namespace Plugin.LocalNotification.Platform.iOS
         public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
         {
             var userInfoDictionary = new NSMutableDictionary();
-            var dictionary = NotificationCenter.GetRequestSerializeDictionary(request);
+            var dictionary = LocalNotificationCenter.GetRequestSerializeDictionary(request);
             foreach (var item in dictionary)
             {
                 userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
@@ -227,7 +223,8 @@ namespace Plugin.LocalNotification.Platform.iOS
                 content.ThreadIdentifier = request.Group;
             }
 
-            if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
+            if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0) && 
+                string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
             {
                 content.SummaryArgument = request.iOS.SummaryArgument;
                 content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
@@ -299,7 +296,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                 }
             }
 
-            if (notificationImage.Binary is {Length: > 0})
+            if (notificationImage.Binary is { Length: > 0 })
             {
                 var cache = NSSearchPath.GetDirectories(NSSearchPathDirectory.CachesDirectory,
                     NSSearchPathDomain.User);
@@ -339,7 +336,9 @@ namespace Plugin.LocalNotification.Platform.iOS
             {
                 NotificationRepeat.Daily => new NSDateComponents
                 {
-                    Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                    Hour = dateTime.Hour,
+                    Minute = dateTime.Minute,
+                    Second = dateTime.Second
                 },
                 NotificationRepeat.Weekly => new NSDateComponents
                 {
@@ -347,7 +346,7 @@ namespace Plugin.LocalNotification.Platform.iOS
                     // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
                     // .Net: The returned value is an integer between 0 and 6,
                     // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
-                    Weekday = (int) dateTime.DayOfWeek + 1,
+                    Weekday = (int)dateTime.DayOfWeek + 1,
                     Hour = dateTime.Hour,
                     Minute = dateTime.Minute,
                     Second = dateTime.Second
@@ -363,7 +362,10 @@ namespace Plugin.LocalNotification.Platform.iOS
                 },
                 _ => new NSDateComponents
                 {
-                    Day = dateTime.Day, Hour = dateTime.Hour, Minute = dateTime.Minute, Second = dateTime.Second
+                    Day = dateTime.Day,
+                    Hour = dateTime.Hour,
+                    Minute = dateTime.Minute,
+                    Second = dateTime.Second
                 }
             };
         }
@@ -501,14 +503,14 @@ namespace Plugin.LocalNotification.Platform.iOS
 
             var dictionary = notificationContent.UserInfo;
 
-            if (!dictionary.ContainsKey(new NSString(NotificationCenter.ReturnRequest)))
+            if (!dictionary.ContainsKey(new NSString(LocalNotificationCenter.ReturnRequest)))
             {
                 return null;
             }
 
-            var requestSerialize = dictionary[NotificationCenter.ReturnRequest].ToString();
+            var requestSerialize = dictionary[LocalNotificationCenter.ReturnRequest].ToString();
 
-            var request = NotificationCenter.GetRequest(requestSerialize);
+            var request = LocalNotificationCenter.GetRequest(requestSerialize);
 
             return request;
         }

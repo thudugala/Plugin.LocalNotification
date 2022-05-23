@@ -16,7 +16,7 @@ public partial class MainPage : ContentPage
 
         _notificationSerializer = new NotificationSerializer();
 
-        NotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
+        LocalNotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
             {
                 new NotificationCategory(NotificationCategoryType.Status)
                 {
@@ -48,9 +48,9 @@ public partial class MainPage : ContentPage
                 },
             }));
 
-        NotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
-        NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
-        NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
+        LocalNotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
+        LocalNotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+        LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
 
         NotifyDatePicker.MinimumDate = DateTime.Today;
         NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
@@ -161,7 +161,7 @@ public partial class MainPage : ContentPage
 
         try
         {
-            var ff = await NotificationCenter.Current.Show(request);
+            var ff = await LocalNotificationCenter.Current.Show(request);
         }
         catch (Exception exception)
         {
@@ -181,7 +181,7 @@ public partial class MainPage : ContentPage
                 break;
 
             case 101:
-                NotificationCenter.Current.Cancel(e.Request.NotificationId);
+                LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
                 break;
         }
     }
@@ -211,7 +211,7 @@ public partial class MainPage : ContentPage
                     NotifyTime = DateTime.Now.AddSeconds(seconds),
                 }
         };
-        NotificationCenter.Current.Show(notification);
+        LocalNotificationCenter.Current.Show(notification);
     }
 
     private void ScheduleNotificationGroup()
@@ -228,7 +228,7 @@ public partial class MainPage : ContentPage
                     IsGroupSummary = true
                 }
         };
-        NotificationCenter.Current.Show(notification);
+        LocalNotificationCenter.Current.Show(notification);
     }
 
     private void ShowCustomAlertFromNotification(NotificationEventArgs e)

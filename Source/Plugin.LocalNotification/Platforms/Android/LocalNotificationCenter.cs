@@ -4,21 +4,21 @@ using Android.Media;
 using Android.OS;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Json;
-using Plugin.LocalNotification.Platform.Droid;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Plugin.LocalNotification.EventArgs;
+using Plugin.LocalNotification.Platforms.Android;
 
 namespace Plugin.LocalNotification
 {
-    public static partial class NotificationCenter
+    public static partial class LocalNotificationCenter
     {
-        static NotificationCenter()
+        static LocalNotificationCenter()
         {
             try
             {
-                Current = new Platform.Droid.NotificationServiceImpl();
+                Current = new Platforms.Android.NotificationServiceImpl();
                 Serializer = new NotificationSerializer();
             }
             catch (Exception ex)
@@ -65,16 +65,6 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// Create Notification Channel Group with builder when API >= 26.
-        /// If you'd like to further organize the appearance of your channels in the settings UI, you can create channel groups.
-        /// This is a good idea when your app supports multiple user accounts (such as for work profiles),
-        /// so you can create a notification channel group for each account.
-        /// This way, users can easily identify and control multiple notification channels that have identical names.
-        /// </summary>
-        /// <param name="builder"></param>
-        public static bool CreateNotificationChannelGroup(Func<NotificationChannelGroupRequestBuilder, NotificationChannelGroupRequest> builder) => CreateNotificationChannelGroup(builder.Invoke(new NotificationChannelGroupRequestBuilder()));
-
-        /// <summary>
         /// Create Notification Channel Group when API >= 26.
         /// If you'd like to further organize the appearance of your channels in the settings UI, you can create channel groups.
         /// This is a good idea when your app supports multiple user accounts (such as for work profiles),
@@ -111,12 +101,6 @@ namespace Plugin.LocalNotification
             notificationManager.CreateNotificationChannelGroup(channelGroup);
             return true;
         }
-
-        /// <summary>
-        /// Create Notification Channel with builder when API >= 26.
-        /// </summary>
-        /// <param name="builder"></param>
-        public static bool CreateNotificationChannel(Func<NotificationChannelRequestBuilder, NotificationChannelRequest> builder) => CreateNotificationChannel(builder.Invoke(new NotificationChannelRequestBuilder()));
 
         /// <summary>
         /// Create Notification Channel when API >= 26.

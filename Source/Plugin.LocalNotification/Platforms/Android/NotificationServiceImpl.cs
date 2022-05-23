@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Exception = System.Exception;
 
-namespace Plugin.LocalNotification.Platform.Droid
+namespace Plugin.LocalNotification.Platforms.Android
 {
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
@@ -96,7 +96,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 {
                     return;
                 }
-                
+
                 MyNotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
                     throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
@@ -106,7 +106,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             catch (Exception ex)
             {
-                NotificationCenter.Log(ex);
+                LocalNotificationCenter.Log(ex);
             }
         }
 
@@ -187,10 +187,6 @@ namespace Plugin.LocalNotification.Platform.Droid
         }
 
         /// <inheritdoc />
-        public Task<bool> Show(Func<NotificationRequestBuilder, NotificationRequest> builder) =>
-            Show(builder.Invoke(new NotificationRequestBuilder()));
-
-        /// <inheritdoc />
         public async Task<bool> Show(NotificationRequest notificationRequest)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
@@ -202,7 +198,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             if (allowed == false)
             {
                 OnNotificationsDisabled();
-                NotificationCenter.Log("Notifications are disabled");
+                LocalNotificationCenter.Log("Notifications are disabled");
                 return false;
             }
 
@@ -228,12 +224,12 @@ namespace Plugin.LocalNotification.Platform.Droid
         {
             if (request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false)
             {
-                NotificationCenter.Log(
+                LocalNotificationCenter.Log(
                     "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
                 return false;
             }
 
-            var dictionaryRequest = NotificationCenter.GetRequestSerializeDictionary(request);
+            var dictionaryRequest = LocalNotificationCenter.GetRequestSerializeDictionary(request);
 
             var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
             foreach (var item in dictionaryRequest)
@@ -318,7 +314,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 var channel = MyNotificationManager.GetNotificationChannel(request.Android.ChannelId);
                 if (channel is null)
                 {
-                    NotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
+                    LocalNotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
                     {
                         Id = request.Android.ChannelId
                     });
@@ -326,11 +322,11 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
 
             using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
-           
+
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
-            if (request.Image is {HasValue: true})
+            if (request.Image is { HasValue: true })
             {
                 var imageBitmap = await GetNativeImage(request.Image).ConfigureAwait(false);
                 if (imageBitmap != null)
@@ -379,7 +375,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             {
                 builder.SetPriority((int)request.Android.Priority);
 
-                var soundUri = NotificationCenter.GetSoundUri(request.Sound);
+                var soundUri = LocalNotificationCenter.GetSoundUri(request.Sound);
                 if (soundUri != null)
                 {
                     builder.SetSound(soundUri);
@@ -438,13 +434,13 @@ namespace Plugin.LocalNotification.Platform.Droid
                                                                               string.Empty);
             if (notificationIntent is null)
             {
-                NotificationCenter.Log("notificationIntent is null");
+                LocalNotificationCenter.Log("notificationIntent is null");
                 return false;
             }
 
-            var serializedRequest = NotificationCenter.GetRequestSerialize(request);
+            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
             notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
+            notificationIntent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
             var pendingIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
                 notificationIntent,
@@ -499,14 +495,14 @@ namespace Plugin.LocalNotification.Platform.Droid
             }
             else
             {
-                NotificationCenter.Log("NotificationServiceImpl.ShowNow: notification is Handled");
+                LocalNotificationCenter.Log("NotificationServiceImpl.ShowNow: notification is Handled");
             }
 
             var args = new NotificationEventArgs
             {
                 Request = request
             };
-            NotificationCenter.Current.OnNotificationReceived(args);
+            LocalNotificationCenter.Current.OnNotificationReceived(args);
             NotificationRepository.Current.AddDeliveredRequest(request);
 
             return true;
@@ -549,7 +545,7 @@ namespace Plugin.LocalNotification.Platform.Droid
                 }
             }
 
-            if (notificationImage.Binary is {Length: > 0})
+            if (notificationImage.Binary is { Length: > 0 })
             {
                 return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
                     notificationImage.Binary.Length).ConfigureAwait(false);
@@ -591,7 +587,7 @@ namespace Plugin.LocalNotification.Platform.Droid
             var intent = new Intent(Application.Context, typeof(NotificationActionReceiver));
             intent.SetAction(NotificationActionReceiver.EntryIntentAction)
                 .PutExtra(NotificationActionReceiver.NotificationActionActionId, action.ActionId)
-                .PutExtra(NotificationCenter.ReturnRequest, serializedRequest);
+                .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
             var pendingIntent = PendingIntent.GetBroadcast(
                 Application.Context,
