@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Exception = System.Exception;
 
-namespace Plugin.LocalNotification.Platforms.Android
+namespace Plugin.LocalNotification.Platforms
 {
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService

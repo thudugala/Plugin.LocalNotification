@@ -1,29 +1,27 @@
-﻿using Plugin.LocalNotification.Json;
-using Plugin.LocalNotification.Platforms.iOS;
-using System;
+﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Plugin.LocalNotification.EventArgs;
 using UIKit;
 using UserNotifications;
+using Plugin.LocalNotification.Platforms;
 
 namespace Plugin.LocalNotification
 {
-    public static partial class LocalNotificationCenter
+    public partial class LocalNotificationCenter
     {
-        static LocalNotificationCenter()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="notificationDelegate">This allow developer to change UNUserNotificationCenterDelegate</param>
+        /// <param name="askPermission">Ask the user for permission to show notifications on iOS 10.0+</param>
+        public static void Setup(IUNUserNotificationCenterDelegate notificationDelegate = null, bool askPermission = true)
         {
-            try
+            SetCustomUserNotificationCenterDelegate(notificationDelegate);
+            if (askPermission)
             {
-                Current = new Platforms.iOS.NotificationServiceImpl();
-                Serializer = new NotificationSerializer();
-
-                UNUserNotificationCenter.Current.Delegate = new UserNotificationCenterDelegate();
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
+                AskPermission();
             }
         }
 
@@ -34,9 +32,9 @@ namespace Plugin.LocalNotification
         /// and set it using this method
         /// </summary>
         /// <param name="notificationDelegate"></param>
-        public static void SetCustomUserNotificationCenterDelegate(IUNUserNotificationCenterDelegate notificationDelegate)
+        public static void SetCustomUserNotificationCenterDelegate(IUNUserNotificationCenterDelegate notificationDelegate = null)
         {
-            UNUserNotificationCenter.Current.Delegate = notificationDelegate;
+            UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
 
         /// <summary>
@@ -59,7 +57,7 @@ namespace Plugin.LocalNotification
                 {
                     return true;
                 }
-                
+
                 var allowed = await AreNotificationsEnabled();
                 if (allowed)
                 {

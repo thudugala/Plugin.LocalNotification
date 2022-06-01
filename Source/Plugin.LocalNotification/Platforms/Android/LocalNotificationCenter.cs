@@ -3,28 +3,25 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Plugin.LocalNotification.AndroidOption;
-using Plugin.LocalNotification.Json;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.Platforms.Android;
+using Plugin.LocalNotification.Platforms;
 
 namespace Plugin.LocalNotification
 {
-    public static partial class LocalNotificationCenter
+    public partial class LocalNotificationCenter
     {
-        static LocalNotificationCenter()
+        /// <summary>
+        /// Create Notification Channel and Group when API >= 26.
+        /// </summary>
+        /// <param name="channelRequest"></param>
+        /// <param name="groupChannelRequest"></param>
+        public static void Setup(NotificationChannelRequest channelRequest = null, NotificationChannelGroupRequest groupChannelRequest = null)
         {
-            try
-            {
-                Current = new Platforms.Android.NotificationServiceImpl();
-                Serializer = new NotificationSerializer();
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-            }
+            CreateNotificationChannel(channelRequest);
+            CreateNotificationChannelGroup(groupChannelRequest);
         }
 
         /// <summary>
@@ -71,8 +68,8 @@ namespace Plugin.LocalNotification
         /// so you can create a notification channel group for each account.
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
-        /// <param name="request"></param>
-        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest request = null)
+        /// <param name="groupChannelRequest"></param>
+        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -85,19 +82,19 @@ namespace Plugin.LocalNotification
                 return false;
             }
 
-            request ??= new NotificationChannelGroupRequest();
+            groupChannelRequest ??= new NotificationChannelGroupRequest();
 
-            if (string.IsNullOrWhiteSpace(request.Group))
+            if (string.IsNullOrWhiteSpace(groupChannelRequest.Group))
             {
-                request.Group = AndroidOptions.DefaultGroupId;
+                groupChannelRequest.Group = AndroidOptions.DefaultGroupId;
             }
 
-            if (string.IsNullOrWhiteSpace(request.Name))
+            if (string.IsNullOrWhiteSpace(groupChannelRequest.Name))
             {
-                request.Name = AndroidOptions.DefaultGroupName;
+                groupChannelRequest.Name = AndroidOptions.DefaultGroupName;
             }
 
-            using var channelGroup = new NotificationChannelGroup(request.Group, request.Name);
+            using var channelGroup = new NotificationChannelGroup(groupChannelRequest.Group, groupChannelRequest.Name);
             notificationManager.CreateNotificationChannelGroup(channelGroup);
             return true;
         }
@@ -105,8 +102,8 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Create Notification Channel when API >= 26.
         /// </summary>
-        /// <param name="request"></param>
-        public static bool CreateNotificationChannel(NotificationChannelRequest request = null)
+        /// <param name="channelRequest"></param>
+        public static bool CreateNotificationChannel(NotificationChannelRequest channelRequest = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -118,29 +115,29 @@ namespace Plugin.LocalNotification
                 return false;
             }
 
-            request ??= new NotificationChannelRequest();
+            channelRequest ??= new NotificationChannelRequest();
 
-            if (string.IsNullOrWhiteSpace(request.Id))
+            if (string.IsNullOrWhiteSpace(channelRequest.Id))
             {
-                request.Id = AndroidOptions.DefaultChannelId;
+                channelRequest.Id = AndroidOptions.DefaultChannelId;
             }
 
-            if (string.IsNullOrWhiteSpace(request.Name))
+            if (string.IsNullOrWhiteSpace(channelRequest.Name))
             {
-                request.Name = AndroidOptions.DefaultChannelName;
+                channelRequest.Name = AndroidOptions.DefaultChannelName;
             }
 
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            using var channel = new NotificationChannel(request.Id, request.Name, request.Importance)
+            using var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance)
             {
-                Description = request.Description,
-                Group = request.Group,
-                LightColor = request.LightColor,
-                LockscreenVisibility = request.LockScreenVisibility,
+                Description = channelRequest.Description,
+                Group = channelRequest.Group,
+                LightColor = channelRequest.LightColor,
+                LockscreenVisibility = channelRequest.LockScreenVisibility,
             };
-            var soundUri = GetSoundUri(request.Sound);
+            var soundUri = GetSoundUri(channelRequest.Sound);
             if (soundUri != null)
             {
                 using var audioAttributesBuilder = new AudioAttributes.Builder();
@@ -150,15 +147,15 @@ namespace Plugin.LocalNotification
                 channel.SetSound(soundUri, audioAttributes);
             }
 
-            if (request.VibrationPattern != null)
+            if (channelRequest.VibrationPattern != null)
             {
-                channel.SetVibrationPattern(request.VibrationPattern);
+                channel.SetVibrationPattern(channelRequest.VibrationPattern);
             }
 
-            channel.SetShowBadge(request.ShowBadge);
-            channel.EnableLights(request.EnableLights);
-            channel.EnableVibration(request.EnableVibration);
-            channel.SetBypassDnd(request.CanBypassDnd);
+            channel.SetShowBadge(channelRequest.ShowBadge);
+            channel.EnableLights(channelRequest.EnableLights);
+            channel.EnableVibration(channelRequest.EnableVibration);
+            channel.SetBypassDnd(channelRequest.CanBypassDnd);
 
             notificationManager.CreateNotificationChannel(channel);
 

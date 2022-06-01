@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Plugin.LocalNotification.Platforms.Android
+namespace Plugin.LocalNotification.Platforms
 {
     [BroadcastReceiver(
         Name = ReceiverName,

@@ -55,10 +55,15 @@
     <None Include="**/Platforms/**/*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) Or $(TargetFramework.Contains('-android'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
     <Compile Include="**/Platforms/Android/**/*.cs" />
   </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+	<PackageReference Include="Xamarin.AndroidX.Core" Version="1.7.0.2" />
+	<Compile Include="**/Platforms/Android/**/*.cs" />
+   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) Or $(TargetFramework.Contains('-ios'))">
     <Compile Include="**/Platforms/iOS/**/*.cs" />

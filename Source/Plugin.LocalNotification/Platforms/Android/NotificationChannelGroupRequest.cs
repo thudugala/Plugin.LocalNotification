@@ -1,6 +1,6 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 
-namespace Plugin.LocalNotification.Platforms.Android
+namespace Plugin.LocalNotification.Platforms
 {
     /// <summary>
     /// A grouping of related notification channels

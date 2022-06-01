@@ -2,7 +2,7 @@
 using System;
 using Plugin.LocalNotification.EventArgs;
 
-namespace Plugin.LocalNotification.Platforms.Android
+namespace Plugin.LocalNotification.Platforms
 {
     /// <summary>
     ///

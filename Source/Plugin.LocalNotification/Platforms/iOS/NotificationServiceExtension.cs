@@ -2,7 +2,7 @@
 using System;
 using UserNotifications;
 
-namespace Plugin.LocalNotification.Platforms.iOS
+namespace Plugin.LocalNotification.Platforms
 {
     /// <inheritdoc />
     [Register(nameof(NotificationServiceExtension))]

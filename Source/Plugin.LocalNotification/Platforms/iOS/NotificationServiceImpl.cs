@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
 
-namespace Plugin.LocalNotification.Platforms.iOS
+namespace Plugin.LocalNotification.Platforms
 {
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService

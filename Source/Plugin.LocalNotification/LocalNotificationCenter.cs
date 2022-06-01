@@ -3,6 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Plugin.LocalNotification.EventArgs;
+using System.Threading;
+#if !NETSTANDARD2_0
+using Plugin.LocalNotification.Platforms;
+#endif
 
 namespace Plugin.LocalNotification
 {
@@ -10,10 +14,20 @@ namespace Plugin.LocalNotification
     /// Cross platform INotificationService Resolver.
     /// </summary>
 
-    public static partial class LocalNotificationCenter
+    public partial class LocalNotificationCenter
     {
-        private static INotificationService _current;
-        private static INotificationSerializer _serializer;
+        private static readonly Lazy<INotificationService> implementation = new (() => CreateNotificationService(), LazyThreadSafetyMode.PublicationOnly);
+
+        private static INotificationService CreateNotificationService()
+        {
+            Serializer = new NotificationSerializer();
+#if NETSTANDARD2_0
+            return null;
+#else
+			return new NotificationServiceImpl();
+#endif
+            
+        }
 
         /// <summary>
         /// Internal Error happened
@@ -25,9 +39,15 @@ namespace Plugin.LocalNotification
         /// </summary>
         public static INotificationService Current
         {
-            get =>
-                _current ?? throw new InvalidOperationException(Properties.Resources.PluginNotFound);
-            set => _current = value;
+            get
+            {
+                var ret = implementation.Value;
+                if (ret == null)
+                {
+                    throw new NotImplementedException(Properties.Resources.PluginNotFound);
+                }
+                return ret;
+            }
         }
 
         /// <summary>
@@ -43,11 +63,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public static INotificationSerializer Serializer
-        {
-            get => _serializer ?? throw new InvalidOperationException(Properties.Resources.PluginSerializerNotFound);
-            set => _serializer = value;
-        }
+        public static INotificationSerializer Serializer { get; private set; }
 
         internal static NotificationRequest GetRequest(string serializedRequest)
         {

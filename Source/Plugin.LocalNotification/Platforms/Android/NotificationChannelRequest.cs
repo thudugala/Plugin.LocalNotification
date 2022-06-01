@@ -2,7 +2,7 @@
 using Android.Graphics;
 using Plugin.LocalNotification.AndroidOption;
 
-namespace Plugin.LocalNotification.Platforms.Android
+namespace Plugin.LocalNotification.Platforms
 {
     /// <summary>
     /// Notification Channel Request
