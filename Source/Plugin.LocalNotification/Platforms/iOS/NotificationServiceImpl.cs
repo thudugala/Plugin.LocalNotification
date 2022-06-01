@@ -59,10 +59,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
+#if XAMARINIOS
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return false;
             }
+#elif IOS
+            if (!OperatingSystem.IsAndroidVersionAtLeast(10))
+            {
+                return false;
+            }
+#endif
 
             var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
@@ -75,10 +82,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool CancelAll()
         {
+#if XAMARINIOS
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return false;
             }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(10))
+            {
+                return false;
+            }
+#endif
 
             UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
@@ -88,10 +102,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Clear(params int[] notificationIdList)
         {
+#if XAMARINIOS
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return false;
             }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(10))
+            {
+                return false;
+            }
+#endif
 
             var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
@@ -102,10 +123,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool ClearAll()
         {
+#if XAMARINIOS
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
             {
                 return false;
             }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(10))
+            {
+                return false;
+            }
+#endif
 
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
             return true;
@@ -117,10 +145,17 @@ namespace Plugin.LocalNotification.Platforms
             UNNotificationTrigger trigger = null;
             try
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+#if XAMARINIOS
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+            {
+                return false;
+            }
+#elif IOS
+                if (!OperatingSystem.IsIOSVersionAtLeast(10))
                 {
                     return false;
                 }
+#endif
 
                 if (request is null)
                 {
@@ -197,12 +232,18 @@ namespace Plugin.LocalNotification.Platforms
                 Sound = UNNotificationSound.Default
             };
 
-            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
+            if (
+#if XAMARINIOS
+                UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
+#elif IOS
+                OperatingSystem.IsIOSVersionAtLeast(15)
+#endif
+                )
             {
                 content.InterruptionLevel = ToNativePriority(request.iOS.Priority);
                 content.RelevanceScore = request.iOS.RelevanceScore;
             }
-
+          
             // Image Attachment
             if (request.Image != null)
             {
@@ -223,11 +264,20 @@ namespace Plugin.LocalNotification.Platforms
                 content.ThreadIdentifier = request.Group;
             }
 
-            if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0) && 
-                string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
+
+            if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
             {
-                content.SummaryArgument = request.iOS.SummaryArgument;
-                content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+                if (
+#if XAMARINIOS
+                     UIDevice.CurrentDevice.CheckSystemVersion(12, 0)
+#elif IOS
+                     OperatingSystem.IsIOSVersionAtLeast(12)
+#endif                
+                   )
+                {
+                    content.SummaryArgument = request.iOS.SummaryArgument;
+                    content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(request.Sound) == false)
@@ -249,6 +299,18 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual UNNotificationInterruptionLevel ToNativePriority(iOSPriority priority)
         {
+#if XAMARINIOS
+            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0) == false)
+            {
+                return default;
+            }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(15))
+            {
+                return default;
+            }
+#endif
+
             switch (priority)
             {
                 case iOSPriority.Passive:

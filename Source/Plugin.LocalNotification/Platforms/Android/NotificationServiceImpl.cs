@@ -92,10 +92,17 @@ namespace Plugin.LocalNotification.Platforms
         {
             try
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
+#if MONOANDROID
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 {
                     return;
                 }
+#elif ANDROID
+                if (!OperatingSystem.IsAndroidVersionAtLeast(21))
+                {
+                    return;
+                }
+#endif
 
                 MyNotificationManager =
                     Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
@@ -113,10 +120,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
+#if MONOANDROID
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
             {
                 return false;
             }
+#elif ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(21))
+            {
+                return false;
+            }
+#endif
 
             foreach (var notificationId in notificationIdList)
             {
@@ -140,10 +154,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool CancelAll()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
+#if MONOANDROID
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
             {
                 return false;
             }
+#elif ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(21))
+            {
+                return false;
+            }
+#endif
 
             var idList = NotificationRepository.Current.GetPendingList().Select(r => r.NotificationId).ToList();
             foreach (var id in idList)
@@ -189,10 +210,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public async Task<bool> Show(NotificationRequest notificationRequest)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.IceCreamSandwich)
+#if MONOANDROID
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
             {
                 return false;
             }
+#elif ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(21))
+            {
+                return false;
+            }
+#endif
 
             var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
             if (allowed == false)
@@ -252,7 +280,16 @@ namespace Plugin.LocalNotification.Platforms
             var alarmType = ToNativeAlarmType(request.Schedule.Android.AlarmType);
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+
+
+
+            if (
+#if MONOANDROID
+                Build.VERSION.SdkInt >= BuildVersionCodes.M
+#elif ANDROID
+                OperatingSystem.IsAndroidVersionAtLeast(23)
+#endif
+            )
             {
                 MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, pendingIntent);
             }
@@ -309,7 +346,13 @@ namespace Plugin.LocalNotification.Platforms
                 request.Android.ChannelId = AndroidOptions.DefaultChannelId;
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (
+#if MONOANDROID
+                Build.VERSION.SdkInt >= BuildVersionCodes.O
+#elif ANDROID
+                OperatingSystem.IsAndroidVersionAtLeast(26)
+#endif
+                )
             {
                 var channel = MyNotificationManager.GetNotificationChannel(request.Android.ChannelId);
                 if (channel is null)
@@ -404,11 +447,22 @@ namespace Plugin.LocalNotification.Platforms
                 }
                 else if (string.IsNullOrWhiteSpace(request.Android.Color.ResourceName) == false)
                 {
-                    var colorResourceId =
+                    if (
+#if MONOANDROID
+                Build.VERSION.SdkInt >= BuildVersionCodes.M
+#elif ANDROID
+                OperatingSystem.IsAndroidVersionAtLeast(23)
+#endif
+                )
+                    {
+                        var colorResourceId =
                         Application.Context.Resources?.GetIdentifier(request.Android.Color.ResourceName, "color",
                             Application.Context.PackageName) ?? 0;
-                    var colorId = Application.Context.GetColor(colorResourceId);
-                    builder.SetColor(colorId);
+
+                        var colorId = Application.Context.GetColor(colorResourceId);
+
+                        builder.SetColor(colorId);
+                    }
                 }
             }
 
@@ -521,6 +575,17 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public Task<bool> AreNotificationsEnabled()
         {
+#if MONOANDROID
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+            {
+                return Task.FromResult(true);
+            }
+#elif ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(24))
+            {
+                return Task.FromResult(true);
+            }
+#endif
             return Task.FromResult(MyNotificationManager.AreNotificationsEnabled());
         }
 

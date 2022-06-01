@@ -35,10 +35,10 @@
   </PropertyGroup>
 
 	<!-- platform version number information -->
-	<PropertyGroup>
-		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-ios'))">10.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">19.0</SupportedOSPlatformVersion>
-	</PropertyGroup>
+  <PropertyGroup>
+	<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-ios'))">10.0</SupportedOSPlatformVersion>
+	<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">21.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
 
   <ItemGroup>    
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />

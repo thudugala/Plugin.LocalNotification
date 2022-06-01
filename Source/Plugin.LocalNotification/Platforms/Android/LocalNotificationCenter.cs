@@ -71,13 +71,20 @@ namespace Plugin.LocalNotification
         /// <param name="groupChannelRequest"></param>
         public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest = null)
         {
+#if MONOANDROID
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 return false;
             }
+#elif ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(26))
+            {
+                return false;
+            }
+#endif
 
             if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager
-                notificationManager))
+            notificationManager))
             {
                 return false;
             }
@@ -105,10 +112,17 @@ namespace Plugin.LocalNotification
         /// <param name="channelRequest"></param>
         public static bool CreateNotificationChannel(NotificationChannelRequest channelRequest = null)
         {
+#if MONOANDROID
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 return false;
             }
+#elif ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(26))
+            {
+                return false;
+            }
+#endif
 
             if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager notificationManager))
             {

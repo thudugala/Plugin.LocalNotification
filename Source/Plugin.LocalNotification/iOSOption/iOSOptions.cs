@@ -13,9 +13,27 @@
 
         /// <summary>
         /// Setting this flag will enable iOS to play the default notification sound even if the app is in foreground
-        /// Default is false
+        /// Default is true
         /// </summary>
-        public bool PlayForegroundSound { get; set; }
+        public bool PlayForegroundSound { get; set; } = true;
+
+        /// <summary>
+        /// Setting this flag will enable iOS to Present the notification as a banner
+        /// Default is true
+        /// </summary>
+        public bool PresentAsBanner { get; set; } = true;
+
+        /// <summary>
+        /// Setting this flag will enable iOS to Show the notification in Notification Center
+        /// Default is true
+        /// </summary>
+        public bool ShowInNotificationCenter { get; set; } = true;
+
+        /// <summary>
+        /// Setting this flag will enable iOS to Apply the notification's badge value to the app’s icon
+        /// Default is true
+        /// </summary>
+        public bool ApplyBadgeValue { get; set; } = true;
 
         /// <summary>
         /// The Priority determines the degree of Priority associated with the notification.

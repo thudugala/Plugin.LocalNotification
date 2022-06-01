@@ -95,14 +95,14 @@ namespace Plugin.LocalNotification.Platforms
         {
             try
             {
-                var presentationOptions = UNNotificationPresentationOptions.Alert;
+                var presentationOptions = UNNotificationPresentationOptions.None;
+
                 var notificationService = TryGetDefaultIOsNotificationService();
                 var notificationRequest = notificationService.GetRequest(notification?.Request.Content);
 
                 // if notificationRequest is null this maybe not a notification from this plugin.
                 if (notificationRequest is null)
                 {
-                    presentationOptions = UNNotificationPresentationOptions.None;
                     completionHandler?.Invoke(presentationOptions);
 
                     LocalNotificationCenter.Log("Notification request not found");
@@ -114,7 +114,6 @@ namespace Plugin.LocalNotification.Platforms
                 {
                     notificationService.Cancel(notificationRequest.NotificationId);
 
-                    presentationOptions = UNNotificationPresentationOptions.None;
                     completionHandler?.Invoke(presentationOptions);
 
                     LocalNotificationCenter.Log("Notification Auto Canceled");
@@ -130,7 +129,6 @@ namespace Plugin.LocalNotification.Platforms
                         var handled = bool.Parse(dictionary[LocalNotificationCenter.ReturnRequestHandled].ToString());
                         if (handled)
                         {
-                            presentationOptions = UNNotificationPresentationOptions.None;
                             LocalNotificationCenter.Log("Notification handled");
                             requestHandled = true;
                         }
@@ -139,16 +137,41 @@ namespace Plugin.LocalNotification.Platforms
 
                 if (requestHandled == false)
                 {
+                    if (
+#if XAMARINIOS
+                        UIDevice.CurrentDevice.CheckSystemVersion(14, 0)
+#elif IOS
+                        OperatingSystem.IsIOSVersionAtLeast(14)
+#endif
+                        )
+                    {
+                        if (notificationRequest.iOS.PresentAsBanner)
+                        {
+                            presentationOptions |= UNNotificationPresentationOptions.Banner;
+                        }
+
+                        if (notificationRequest.iOS.ShowInNotificationCenter)
+                        {
+                            presentationOptions |= UNNotificationPresentationOptions.List;
+                        }
+                    }
+                    else
+                    {
+                        presentationOptions |= UNNotificationPresentationOptions.Alert;
+                    }
+
+                    if (notificationRequest.iOS.ApplyBadgeValue)
+                    {
+                        presentationOptions |= UNNotificationPresentationOptions.Badge;
+                    }
+                    if (notificationRequest.iOS.PlayForegroundSound)
+                    {
+                        presentationOptions |= UNNotificationPresentationOptions.Sound;
+                    }
+
                     if (notificationRequest.iOS.HideForegroundAlert)
                     {
                         presentationOptions = UNNotificationPresentationOptions.None;
-                    }
-
-                    if (notificationRequest.iOS.PlayForegroundSound)
-                    {
-                        presentationOptions = presentationOptions == UNNotificationPresentationOptions.Alert
-                            ? UNNotificationPresentationOptions.Sound | UNNotificationPresentationOptions.Alert
-                            : UNNotificationPresentationOptions.Sound;
                     }
                 }
 
