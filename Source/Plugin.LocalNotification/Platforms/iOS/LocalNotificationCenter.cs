@@ -40,16 +40,22 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// </summary>
-        public static async void AskPermission()
+        public static async void AskPermission(UNAuthorizationOptions options = 
+            UNAuthorizationOptions.Alert |
+            UNAuthorizationOptions.Badge |
+            UNAuthorizationOptions.Sound)
         {
-            await AskPermissionAsync().ConfigureAwait(false);
+            await AskPermissionAsync(options).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// Returns true if Allowed.
         /// </summary>
-        public static async Task<bool> AskPermissionAsync()
+        public static async Task<bool> AskPermissionAsync(UNAuthorizationOptions options = 
+            UNAuthorizationOptions.Alert |
+            UNAuthorizationOptions.Badge |
+            UNAuthorizationOptions.Sound)
         {
             try
             {
@@ -65,11 +71,7 @@ namespace Plugin.LocalNotification
                 }
 
                 // Ask the user for permission to show notifications on iOS 10.0+
-                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(
-                        UNAuthorizationOptions.Alert |
-                        UNAuthorizationOptions.Badge |
-                        UNAuthorizationOptions.Sound)
-                    .ConfigureAwait(false);
+                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(options).ConfigureAwait(false);
 
                 Log(error?.LocalizedDescription);
                 return alertsAllowed;

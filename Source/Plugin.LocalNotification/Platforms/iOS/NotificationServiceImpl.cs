@@ -1,6 +1,6 @@
-﻿using Foundation;
+﻿using CoreLocation;
+using Foundation;
 using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.iOSOption;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -137,10 +137,10 @@ namespace Plugin.LocalNotification.Platforms
             try
             {
 #if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    return false;
+                }
 #elif IOS
                 if (!OperatingSystem.IsIOSVersionAtLeast(10))
                 {
@@ -162,24 +162,36 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 using var content = await GetNotificationContent(request);
-                var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
-
-                if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
-                    request.Schedule.NotifyRepeatInterval.HasValue)
-                {
-                    var interval = request.Schedule.NotifyRepeatInterval.Value;
-
-                    // Cannot delay and repeat in when TimeInterval
-                    trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
-                }
-                else
-                {
-                    using var notifyTime = GetNsDateComponentsFromDateTime(request);
-                    trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
-                }
 
                 var notificationId =
                     request.NotificationId.ToString(CultureInfo.CurrentCulture);
+
+                if (request.Geofence.Center != null && request.Geofence.Radius != null)
+                {
+                    trigger = UNLocationNotificationTrigger.CreateTrigger(
+                        new CLRegion(new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude),
+                                     request.Geofence.Radius.TotalMeters,
+                                     notificationId),
+                        request.Geofence.Repeat);
+                }
+                else
+                {
+                    var repeats = request.Schedule.RepeatType != NotificationRepeat.No;
+
+                    if (repeats && request.Schedule.RepeatType == NotificationRepeat.TimeInterval &&
+                        request.Schedule.NotifyRepeatInterval.HasValue)
+                    {
+                        var interval = request.Schedule.NotifyRepeatInterval.Value;
+
+                        // Cannot delay and repeat in when TimeInterval
+                        trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(interval.TotalSeconds, true);
+                    }
+                    else
+                    {
+                        using var notifyTime = GetNsDateComponentsFromDateTime(request);
+                        trigger = UNCalendarNotificationTrigger.CreateTrigger(notifyTime, repeats);
+                    }
+                }
 
                 var nativeRequest = UNNotificationRequest.FromIdentifier(notificationId, content, trigger);
 
@@ -231,7 +243,7 @@ namespace Plugin.LocalNotification.Platforms
 #endif
                 )
             {
-                content.InterruptionLevel = ToNativePriority(request.iOS.Priority);
+                content.InterruptionLevel = request.iOS.Priority.ToNative();
                 content.RelevanceScore = request.iOS.RelevanceScore;
             }
           
@@ -247,7 +259,7 @@ namespace Plugin.LocalNotification.Platforms
 
             if (request.CategoryType != NotificationCategoryType.None)
             {
-                content.CategoryIdentifier = ToNativeCategory(request.CategoryType);
+                content.CategoryIdentifier = request.CategoryType.ToNative();
             }
 
             if (string.IsNullOrWhiteSpace(request.Group) == false)
@@ -281,44 +293,6 @@ namespace Plugin.LocalNotification.Platforms
                 content.Sound = null;
             }
             return content;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="priority"></param>
-        /// <returns></returns>
-        protected virtual UNNotificationInterruptionLevel ToNativePriority(iOSPriority priority)
-        {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0) == false)
-            {
-                return default;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(15))
-            {
-                return default;
-            }
-#endif
-
-            switch (priority)
-            {
-                case iOSPriority.Passive:
-                    return UNNotificationInterruptionLevel.Passive;
-
-                case iOSPriority.Active:
-                    return UNNotificationInterruptionLevel.Active;
-
-                case iOSPriority.TimeSensitive:
-                    return UNNotificationInterruptionLevel.TimeSensitive;
-
-                case iOSPriority.Critical:
-                    return UNNotificationInterruptionLevel.Critical;
-
-                default:
-                    return UNNotificationInterruptionLevel.Active;
-            }
         }
 
         /// <summary>
@@ -477,7 +451,7 @@ namespace Plugin.LocalNotification.Platforms
 
                 var nativeAction = UNNotificationAction.FromIdentifier(
                     notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
-                    ToNativeActionType(notificationAction.iOS.Action));
+                    notificationAction.iOS.Action.ToNative());
                 nativeActionList.Add(nativeAction);
             }
 
@@ -487,45 +461,12 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var notificationCategory = UNNotificationCategory
-                .FromIdentifier(ToNativeCategory(category.CategoryType), nativeActionList.ToArray(),
+                .FromIdentifier(category.CategoryType.ToNative(), nativeActionList.ToArray(),
                     Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
 
             return notificationCategory;
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected static UNNotificationActionOptions ToNativeActionType(iOSActionType type)
-        {
-            switch (type)
-            {
-                case iOSActionType.Foreground:
-                    return UNNotificationActionOptions.Foreground;
-
-                case iOSActionType.Destructive:
-                    return UNNotificationActionOptions.Destructive;
-
-                case iOSActionType.AuthenticationRequired:
-                    return UNNotificationActionOptions.AuthenticationRequired;
-
-                default:
-                    return UNNotificationActionOptions.None;
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected static string ToNativeCategory(NotificationCategoryType type)
-        {
-            return type.ToString();
-        }
-
+                        
         /// <inheritdoc />
         public async Task<IList<NotificationRequest>> GetPendingNotificationList()
         {

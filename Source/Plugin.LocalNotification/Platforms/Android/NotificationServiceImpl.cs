@@ -130,7 +130,7 @@ namespace Plugin.LocalNotification.Platforms
                     Application.Context,
                     notificationId,
                     intent,
-                    SetImmutableIfNeeded(PendingIntentFlags.CancelCurrent)
+                    PendingIntentFlags.CancelCurrent.SetImmutableIfNeeded()
                 );
 
                 MyAlarmManager?.Cancel(alarmIntent);
@@ -165,7 +165,7 @@ namespace Plugin.LocalNotification.Platforms
                     Application.Context,
                     id,
                     intent,
-                    SetImmutableIfNeeded(PendingIntentFlags.CancelCurrent)
+                    PendingIntentFlags.CancelCurrent.SetImmutableIfNeeded()
                 );
 
                 MyAlarmManager?.Cancel(alarmIntent);
@@ -260,7 +260,7 @@ namespace Plugin.LocalNotification.Platforms
                 Application.Context,
                 request.NotificationId,
                 intent,
-                SetImmutableIfNeeded(PendingIntentFlags.UpdateCurrent)
+                PendingIntentFlags.UpdateCurrent.SetImmutableIfNeeded()
             );
 
             var utcAlarmTimeInMillis =
@@ -268,7 +268,7 @@ namespace Plugin.LocalNotification.Platforms
                 .TotalMilliseconds;
             var triggerTime = (long)utcAlarmTimeInMillis;
 
-            var alarmType = ToNativeAlarmType(request.Schedule.Android.AlarmType);
+            var alarmType = request.Schedule.Android.AlarmType.ToNative();
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
 
 
@@ -399,10 +399,10 @@ namespace Plugin.LocalNotification.Platforms
             {
                 if (request.CategoryType != NotificationCategoryType.None)
                 {
-                    builder.SetCategory(ToNativeCategory(request.CategoryType));
+                    builder.SetCategory(request.CategoryType.ToNative());
                 }
 
-                builder.SetVisibility(ToNativeVisibilityType(request.Android.VisibilityType));
+                builder.SetVisibility(request.Android.VisibilityType.ToNative());
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -489,7 +489,7 @@ namespace Plugin.LocalNotification.Platforms
 
             var contentIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
                 notificationIntent,
-                ToPendingIntentFlags(request.Android.PendingIntentFlags));
+                request.Android.PendingIntentFlags.ToNative());
 
             var deleteIntent = CreateActionIntent(serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
             {
@@ -659,7 +659,7 @@ namespace Plugin.LocalNotification.Platforms
                 Application.Context,
                 action.ActionId,
                 intent,
-                ToPendingIntentFlags(action.Android.PendingIntentFlags)
+                action.Android.PendingIntentFlags.ToNative()
             );
 
             return pendingIntent;
@@ -682,21 +682,7 @@ namespace Plugin.LocalNotification.Platforms
         //    return nativeAction;
         //}
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected static int ToNativeVisibilityType(AndroidVisibilityType type)
-        {
-            return type switch
-            {
-                AndroidVisibilityType.Private => (int)NotificationVisibility.Private,
-                AndroidVisibilityType.Public => (int)NotificationVisibility.Public,
-                AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
-        }
+        
 
         /// <summary>
         ///
@@ -745,71 +731,6 @@ namespace Plugin.LocalNotification.Platforms
             {
                 _categoryList.Add(category);
             }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected virtual string ToNativeCategory(NotificationCategoryType type)
-        {
-            return type switch
-            {
-                NotificationCategoryType.Alarm => NotificationCompat.CategoryAlarm,
-                NotificationCategoryType.Status => NotificationCompat.CategoryStatus,
-                NotificationCategoryType.Reminder => NotificationCompat.CategoryReminder,
-                NotificationCategoryType.Event => NotificationCompat.CategoryEvent,
-                NotificationCategoryType.Error => NotificationCompat.CategoryError,
-                NotificationCategoryType.Progress => NotificationCompat.CategoryProgress,
-                NotificationCategoryType.Promo => NotificationCompat.CategoryPromo,
-                NotificationCategoryType.Recommendation => NotificationCompat.CategoryRecommendation,
-                NotificationCategoryType.Service => NotificationCompat.CategoryService,
-                _ => NotificationCompat.CategoryStatus
-            };
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected virtual AlarmType ToNativeAlarmType(AndroidAlarmType type)
-        {
-            return type switch
-            {
-                AndroidAlarmType.Rtc => AlarmType.Rtc,
-                AndroidAlarmType.RtcWakeup => AlarmType.RtcWakeup,
-                AndroidAlarmType.ElapsedRealtime => AlarmType.ElapsedRealtime,
-                AndroidAlarmType.ElapsedRealtimeWakeup => AlarmType.ElapsedRealtimeWakeup,
-                _ => AlarmType.Rtc
-            };
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected virtual PendingIntentFlags ToPendingIntentFlags(AndroidPendingIntentFlags type)
-        {
-            return SetImmutableIfNeeded((PendingIntentFlags)type);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        protected virtual PendingIntentFlags SetImmutableIfNeeded(PendingIntentFlags type)
-        {
-            if ((int)Build.VERSION.SdkInt >= 31 &&
-                type.HasFlag(PendingIntentFlags.Immutable) == false)
-            {
-                type |= PendingIntentFlags.Immutable;
-            }
-
-            return type;
         }
     }
 }

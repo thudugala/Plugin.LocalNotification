@@ -58,9 +58,14 @@ namespace Plugin.LocalNotification
         public string ReturningData { get; set; } = string.Empty;
 
         /// <summary>
-        /// Schedule notification
+        /// Schedule notification (canot be mixed with geofence)
         /// </summary>
         public NotificationRequestSchedule Schedule { get; set; } = new();
+
+        /// <summary>
+        /// Set the location aware geofence (cannot be mixed with schedule)
+        /// </summary>
+        public NotificationRequestGeofence Geofence { get; set; } = new();
 
         /// <summary>
         /// Silences this instance of the notification, regardless of the sounds or vibrations set on the notification or notification channel.
