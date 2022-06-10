@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using Plugin.LocalNotification;
 using UIKit;
 
 namespace LocalNotification.Sample.iOS
@@ -20,12 +21,9 @@ namespace LocalNotification.Sample.iOS
         {
             global::Xamarin.Forms.Forms.Init();
 
-            // only call this method if you want to handel push notifications
-            // Plugin.LocalNotification.NotificationCenter.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
-
-            // Ask the user for permission to show notifications on iOS 10.0+ at startup.
-            // If not asked at startup, user will be asked when showing the first notification.
-            Plugin.LocalNotification.NotificationCenter.AskPermission();
+            // if you want to handel push notifications
+            //LocalNotificationCenter.Setup(new CustomUserNotificationCenterDelegate());
+            LocalNotificationCenter.Setup();
 
             LoadApplication(new App());
 
@@ -34,7 +32,8 @@ namespace LocalNotification.Sample.iOS
 
         public override async void WillEnterForeground(UIApplication uiApplication)
         {
-            await Plugin.LocalNotification.NotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
+            await LocalNotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
+            base.WillEnterForeground(uiApplication);
         }
     }
 }

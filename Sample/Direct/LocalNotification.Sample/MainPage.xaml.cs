@@ -22,7 +22,7 @@ namespace LocalNotification.Sample
 
             _notificationSerializer = new NotificationSerializer();
 
-            NotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
+            LocalNotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
             {
                 new NotificationCategory(NotificationCategoryType.Status)
                 {
@@ -54,9 +54,9 @@ namespace LocalNotification.Sample
                 },
             }));
 
-            NotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
-            NotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
-            NotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
+            LocalNotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
+            LocalNotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
+            LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
 
             NotifyDatePicker.MinimumDate = DateTime.Today;
             NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
@@ -167,7 +167,7 @@ namespace LocalNotification.Sample
 
             try
             {
-                var ff = await NotificationCenter.Current.Show(request);
+                var ff = await LocalNotificationCenter.Current.Show(request);
             }
             catch (Exception exception)
             {
@@ -175,8 +175,45 @@ namespace LocalNotification.Sample
             }
         }
 
-        private void Current_NotificationActionTapped(NotificationActionEventArgs e)
+        private async void Current_NotificationActionTapped(NotificationActionEventArgs e)
         {
+            if (e.IsDismissed)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    DisplayAlert(e.Request.Title, "User Dismissed Notification", "OK");
+                });
+                return;
+            }
+
+            if (e.IsTapped)
+            {
+                if (e.Request is null)
+                {
+                    return;
+                }
+
+                // No need to use NotificationSerializer, you can use your own one.
+                var list = _notificationSerializer.Deserialize<List<string>>(e.Request.ReturningData);
+                if (list is null || list.Count != 4)
+                {
+                    return;
+                }
+
+                if (list[0] != typeof(NotificationPage).FullName)
+                {
+                    return;
+                }
+
+                var id = list[1];
+                var message = list[2];
+                var tapCount = list[3];
+
+                await((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(new NotificationPage(int.Parse(id), message,
+                    int.Parse(tapCount)));
+                return;
+            }
+
             switch (e.ActionId)
             {
                 case 100:
@@ -187,7 +224,7 @@ namespace LocalNotification.Sample
                     break;
 
                 case 101:
-                    NotificationCenter.Current.Cancel(e.Request.NotificationId);
+                    LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
                     break;
             }
         }
@@ -217,7 +254,7 @@ namespace LocalNotification.Sample
                     NotifyTime = DateTime.Now.AddSeconds(seconds),
                 }
             };
-            NotificationCenter.Current.Show(notification);
+            LocalNotificationCenter.Current.Show(notification);
         }
 
         private void ScheduleNotificationGroup()
@@ -234,7 +271,7 @@ namespace LocalNotification.Sample
                     IsGroupSummary = true
                 }
             };
-            NotificationCenter.Current.Show(notification);
+            LocalNotificationCenter.Current.Show(notification);
         }
 
         private void ShowCustomAlertFromNotification(NotificationEventArgs e)

@@ -17,7 +17,7 @@ namespace LocalNotification.Sample
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            var deliveredNotificationList = await NotificationCenter.Current.GetDeliveredNotificationList();
+            var deliveredNotificationList = await LocalNotificationCenter.Current.GetDeliveredNotificationList();
 
             if (deliveredNotificationList != null)
             {

@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Plugin.LocalNotification;
+using Plugin.LocalNotification.Platforms;
 
 namespace LocalNotification.Sample.Droid
 {
@@ -16,12 +17,9 @@ namespace LocalNotification.Sample.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             // Must create a Notification Channel when API >= 26
-            // you can created multiple Notification Channel Groups with different names.
-            //NotificationCenter.CreateNotificationChannelGroup();
-
-            // Must create a Notification Channel when API >= 26
             // you can created multiple Notification Channels with different names.
-            NotificationCenter.CreateNotificationChannel(new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequest
+            // you can created multiple Notification Channel Groups with different names.
+            LocalNotificationCenter.Setup(new NotificationChannelRequest
             {
                 //Group = AndroidOptions.DefaultGroupId,
                 Sound = Resource.Raw.good_things_happen.ToString()
@@ -29,12 +27,12 @@ namespace LocalNotification.Sample.Droid
             
             LoadApplication(new App());
 
-            NotificationCenter.NotifyNotificationTapped(Intent);
+            LocalNotificationCenter.NotifyNotificationTapped(Intent);
         }
 
         protected override void OnNewIntent(Intent intent)
         {
-            NotificationCenter.NotifyNotificationTapped(intent);
+            LocalNotificationCenter.NotifyNotificationTapped(intent);
             base.OnNewIntent(intent);
         }
     }

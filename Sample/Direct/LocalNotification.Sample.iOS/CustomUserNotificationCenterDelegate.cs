@@ -1,5 +1,5 @@
-﻿using Plugin.LocalNotification.Platform.iOS;
-using System;
+﻿using System;
+using Plugin.LocalNotification.Platforms;
 using UserNotifications;
 
 namespace LocalNotification.Sample.iOS
