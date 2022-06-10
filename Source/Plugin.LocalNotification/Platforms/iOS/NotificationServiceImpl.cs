@@ -166,7 +166,7 @@ namespace Plugin.LocalNotification.Platforms
                 var notificationId =
                     request.NotificationId.ToString(CultureInfo.CurrentCulture);
 
-                if (request.Geofence.Center != null && request.Geofence.Radius != null)
+                if (request.Geofence.IsGeofence)
                 {
                     trigger = UNLocationNotificationTrigger.CreateTrigger(
                         new CLRegion(new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude),

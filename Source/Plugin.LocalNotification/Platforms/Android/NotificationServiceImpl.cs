@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Gms.Location;
 using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
@@ -32,6 +33,11 @@ namespace Plugin.LocalNotification.Platforms
         ///
         /// </summary>
         protected readonly AlarmManager MyAlarmManager;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected readonly GeofencingClient MyGeofencingClient;
 
         /// <inheritdoc />
         public event NotificationReceivedEventHandler NotificationReceived;
@@ -95,12 +101,9 @@ namespace Plugin.LocalNotification.Platforms
                 }
 #endif
 
-                MyNotificationManager =
-                    Application.Context.GetSystemService(Context.NotificationService) as NotificationManager ??
-                    throw new ApplicationException(Properties.Resources.AndroidNotificationServiceNotFound);
-
-                MyAlarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager ??
-                                 throw new ApplicationException(Properties.Resources.AndroidAlarmServiceNotFound);
+                MyNotificationManager = NotificationManager.FromContext(Application.Context);
+                MyAlarmManager = AlarmManager.FromContext(Application.Context);
+                MyGeofencingClient = LocationServices.GetGeofencingClient(Application.Context);
             }
             catch (Exception ex)
             {
@@ -125,16 +128,14 @@ namespace Plugin.LocalNotification.Platforms
 
             foreach (var notificationId in notificationIdList)
             {
-                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-                var alarmIntent = PendingIntent.GetBroadcast(
-                    Application.Context,
-                    notificationId,
-                    intent,
-                    PendingIntentFlags.CancelCurrent.SetImmutableIfNeeded()
-                );
+                var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
+                MyAlarmManager?.Cancel(alarmPendingIntent);
+                alarmPendingIntent?.Cancel();
 
-                MyAlarmManager?.Cancel(alarmIntent);
                 MyNotificationManager?.Cancel(notificationId);
+
+                var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
+                MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
             }
 
             NotificationRepository.Current.RemoveByPendingIdList(notificationIdList);
@@ -157,19 +158,15 @@ namespace Plugin.LocalNotification.Platforms
             }
 #endif
 
-            var idList = NotificationRepository.Current.GetPendingList().Select(r => r.NotificationId).ToList();
-            foreach (var id in idList)
+            var notificationIdList = NotificationRepository.Current.GetPendingList().Select(r => r.NotificationId).ToList();
+            foreach (var notificationId in notificationIdList)
             {
-                var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-                var alarmIntent = PendingIntent.GetBroadcast(
-                    Application.Context,
-                    id,
-                    intent,
-                    PendingIntentFlags.CancelCurrent.SetImmutableIfNeeded()
-                );
+                var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
+                MyAlarmManager?.Cancel(alarmPendingIntent);
+                alarmPendingIntent?.Cancel();
 
-                MyAlarmManager?.Cancel(alarmIntent);
-                alarmIntent?.Cancel();
+                var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
+                MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
             }
 
             MyNotificationManager?.CancelAll();
@@ -199,7 +196,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public async Task<bool> Show(NotificationRequest notificationRequest)
+        public async Task<bool> Show(NotificationRequest request)
         {
 #if MONOANDROID
             if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
@@ -221,18 +218,77 @@ namespace Plugin.LocalNotification.Platforms
                 return false;
             }
 
-            if (notificationRequest is null)
+            if (request is null)
             {
                 return false;
             }
 
-            if (notificationRequest.Schedule.NotifyTime.HasValue)
+            if (request.Geofence.IsGeofence)
             {
-                return ShowLater(notificationRequest);
+                var geoResult = await ShowGeofence(request);
+                return geoResult;
             }
 
-            var result = await ShowNow(notificationRequest);
+            if (request.Schedule.NotifyTime.HasValue)
+            {
+                return ShowLater(request);
+            }
+
+            var result = await ShowNow(request);
             return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        internal virtual async Task<bool> ShowGeofence(NotificationRequest request)
+        {
+            var builder = new GeofenceBuilder()
+            .SetRequestId(request.NotificationId.ToString())
+            .SetExpirationDuration(Geofence.NeverExpire)
+            .SetCircularRegion(
+                request.Geofence.Center.Latitude,
+                request.Geofence.Center.Longitude,
+                Convert.ToSingle(request.Geofence.Radius.TotalMeters)
+            )
+            .SetTransitionTypes(Geofence.GeofenceTransitionEnter)
+            .Build();
+
+            var geoRequest = new GeofencingRequest.Builder()
+                .SetInitialTrigger(0)
+                .AddGeofence(builder)
+                .Build();
+
+            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
+            var pendingIntent = CreateGeofenceIntent(request.NotificationId, serializedRequest);
+
+            await MyGeofencingClient
+                .AddGeofencesAsync(
+                    geoRequest,
+                    pendingIntent
+                )
+                .ConfigureAwait(false);
+
+            return true;
+        }
+
+        protected virtual PendingIntent CreateGeofenceIntent(int notificationId, string serializedRequest)
+        {
+            var intent = new Intent(Application.Context, typeof(GeofenceTransitionsIntentReceiver));
+            intent.SetAction(GeofenceTransitionsIntentReceiver.EntryIntentAction);
+            if (!string.IsNullOrWhiteSpace(serializedRequest))
+            {
+                intent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
+            }
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context,
+                notificationId,
+                intent,
+                PendingIntentFlags.UpdateCurrent.SetImmutableIfNeeded()
+            );
+            return pendingIntent;
         }
 
         /// <summary>
@@ -248,20 +304,8 @@ namespace Plugin.LocalNotification.Platforms
                 return false;
             }
 
-            var dictionaryRequest = LocalNotificationCenter.GetRequestSerializeDictionary(request);
-
-            var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-            foreach (var item in dictionaryRequest)
-            {
-                intent.PutExtra(item.Key, item.Value);
-            }
-
-            var pendingIntent = PendingIntent.GetBroadcast(
-                Application.Context,
-                request.NotificationId,
-                intent,
-                PendingIntentFlags.UpdateCurrent.SetImmutableIfNeeded()
-            );
+            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
+            var pendingIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);
 
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
@@ -270,9 +314,6 @@ namespace Plugin.LocalNotification.Platforms
 
             var alarmType = request.Schedule.Android.AlarmType.ToNative();
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
-
-
-
 
             if (
 #if MONOANDROID
@@ -292,6 +333,22 @@ namespace Plugin.LocalNotification.Platforms
             NotificationRepository.Current.AddPendingRequest(request);
 
             return true;
+        }
+
+        protected virtual PendingIntent CreateAlarmIntent(int notificationId, string serializedRequest)
+        {
+            var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
+            if (!string.IsNullOrWhiteSpace(serializedRequest))
+            {
+                intent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
+            }
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context,
+                notificationId,
+                intent,
+                PendingIntentFlags.UpdateCurrent.SetImmutableIfNeeded()
+            );
+            return pendingIntent;
         }
 
         /// <summary>
@@ -682,7 +739,7 @@ namespace Plugin.LocalNotification.Platforms
         //    return nativeAction;
         //}
 
-        
+
 
         /// <summary>
         ///

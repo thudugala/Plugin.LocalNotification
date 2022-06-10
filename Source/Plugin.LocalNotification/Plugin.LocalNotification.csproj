@@ -61,12 +61,14 @@
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+	<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="118.0.0.3" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <Compile Include="**/Platforms/Android/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
 	<PackageReference Include="Xamarin.AndroidX.Core" Version="1.8.0.1" />
+	<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.1" />
 	<Compile Include="**/Platforms/Android/**/*.cs" />
    </ItemGroup>
 

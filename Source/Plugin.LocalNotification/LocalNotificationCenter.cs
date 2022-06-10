@@ -113,18 +113,5 @@ namespace Plugin.LocalNotification
 
             return serializedRequest;
         }
-
-        internal static Dictionary<string, string> GetRequestSerializeDictionary(NotificationRequest request)
-        {
-            var dictionary = new Dictionary<string, string>();
-
-            if (request.Image.Binary != null && request.Image.Binary.Length > 90000)
-            {
-                request.Image.Binary = null;
-            }
-            var serializedRequest = GetRequestSerialize(request);
-            dictionary.Add(ReturnRequest, serializedRequest);
-            return dictionary;
-        }
     }
 }

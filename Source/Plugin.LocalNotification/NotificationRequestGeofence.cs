@@ -23,6 +23,11 @@
         /// <summary>
         /// 
         /// </summary>
+        public bool IsGeofence => Center != null && Radius != null;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public class Position
         {
             /// <summary>
@@ -46,5 +51,5 @@
             /// </summary>
             public double TotalMeters { get; set; }
         }
-    }    
+    }
 }
