@@ -9,12 +9,6 @@
     public delegate void NotificationReceivedEventHandler(NotificationEventArgs e);
 
     /// <summary>
-    /// Returning event when tapped on notification.
-    /// </summary>
-    /// <param name="e"></param>
-    public delegate void NotificationTappedEventHandler(NotificationEventArgs e);
-
-    /// <summary>
     /// Returning event when notifications are Disabled.
     /// </summary>
     public delegate void NotificationDisabledEventHandler();

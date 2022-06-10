@@ -3,11 +3,11 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.EventArgs;
+using Plugin.LocalNotification.Platforms;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.Platforms;
 
 namespace Plugin.LocalNotification
 {
@@ -46,18 +46,18 @@ namespace Plugin.LocalNotification
                 return false;
             }
 
-            var notification = GetRequest(requestSerialize);
-            if (notification is null)
+            var notificationRequest = GetRequest(requestSerialize);
+            if (notificationRequest is null)
             {
                 return false;
             }
 
-            var subscribeItem = new NotificationEventArgs
+            var args = new NotificationActionEventArgs
             {
-                Request = notification
+                ActionId = NotificationActionEventArgs.TapActionId,
+                Request = notificationRequest
             };
-
-            Current.OnNotificationTapped(subscribeItem);
+            Current.OnNotificationActionTapped(args);
             return true;
         }
 

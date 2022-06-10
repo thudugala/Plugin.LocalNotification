@@ -22,11 +22,6 @@ namespace Plugin.LocalNotification
         event NotificationReceivedEventHandler NotificationReceived;
 
         /// <summary>
-        /// fires when notification popup is tapped.
-        /// </summary>
-        event NotificationTappedEventHandler NotificationTapped;
-
-        /// <summary>
         /// fires when notification is disabled.
         /// </summary>
         event NotificationDisabledEventHandler NotificationsDisabled;
@@ -70,12 +65,6 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="e"></param>
         void OnNotificationReceived(NotificationEventArgs e);
-
-        /// <summary>
-        /// Internal use Only
-        /// </summary>
-        /// <param name="e"></param>
-        void OnNotificationTapped(NotificationEventArgs e);
 
         /// <summary>
         /// Get pending notifications

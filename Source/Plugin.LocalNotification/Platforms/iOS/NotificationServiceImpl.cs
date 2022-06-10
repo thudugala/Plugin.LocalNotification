@@ -19,9 +19,6 @@ namespace Plugin.LocalNotification.Platforms
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
 
         /// <inheritdoc />
-        public event NotificationTappedEventHandler NotificationTapped;
-
-        /// <inheritdoc />
         public event NotificationReceivedEventHandler NotificationReceived;
 
         /// <inheritdoc />
@@ -29,12 +26,6 @@ namespace Plugin.LocalNotification.Platforms
 
         /// <inheritdoc />
         public event NotificationDisabledEventHandler NotificationsDisabled;
-
-        /// <inheritdoc />
-        public void OnNotificationTapped(NotificationEventArgs e)
-        {
-            NotificationTapped?.Invoke(e);
-        }
 
         /// <inheritdoc />
         public void OnNotificationReceived(NotificationEventArgs e)

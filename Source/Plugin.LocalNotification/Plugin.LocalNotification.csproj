@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin and Maui apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
 	<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>9.2.1-preview04</Version>
+    <Version>9.2.1-preview05</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -41,8 +41,7 @@
   </PropertyGroup>
 
   <ItemGroup>    
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />   
   </ItemGroup>
 
   <ItemGroup>
@@ -55,18 +54,29 @@
     <None Include="**/Platforms/**/*.cs" />
   </ItemGroup>
 
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <Compile Include="**/Platforms/Android/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
-	<PackageReference Include="Xamarin.AndroidX.Core" Version="1.7.0.2" />
+	<PackageReference Include="Xamarin.AndroidX.Core" Version="1.8.0.1" />
 	<Compile Include="**/Platforms/Android/**/*.cs" />
    </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) Or $(TargetFramework.Contains('-ios'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">
     <Compile Include="**/Platforms/iOS/**/*.cs" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
+	<Compile Include="**/Platforms/iOS/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>

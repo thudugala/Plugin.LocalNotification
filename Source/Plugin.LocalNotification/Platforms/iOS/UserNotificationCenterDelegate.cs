@@ -75,11 +75,12 @@ namespace Plugin.LocalNotification.Platforms
                     return;
                 }
 
-                var args = new NotificationEventArgs
+                var args = new NotificationActionEventArgs
                 {
+                    ActionId = NotificationActionEventArgs.TapActionId,
                     Request = notificationRequest
                 };
-                notificationService.OnNotificationTapped(args);
+                notificationService.OnNotificationActionTapped(args);
 
                 completionHandler?.Invoke();
             }
