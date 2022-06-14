@@ -245,20 +245,32 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         internal virtual async Task<bool> ShowGeofence(NotificationRequest request)
         {
-            var builder = new GeofenceBuilder()
+            var geofenceBuilder = new GeofenceBuilder()
             .SetRequestId(request.NotificationId.ToString())
-            .SetExpirationDuration(Geofence.NeverExpire)
+            .SetExpirationDuration(request.Geofence.Android.ExpirationDurationInMilliseconds)
+            .SetNotificationResponsiveness(request.Geofence.Android.ResponsivenessMilliseconds)
             .SetCircularRegion(
                 request.Geofence.Center.Latitude,
                 request.Geofence.Center.Longitude,
-                Convert.ToSingle(request.Geofence.Radius.TotalMeters)
-            )
-            .SetTransitionTypes(Geofence.GeofenceTransitionEnter)
-            .Build();
+                Convert.ToSingle(request.Geofence.RadiusInMeters)
+            );
+
+            var transitionType = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry ? 
+                Geofence.GeofenceTransitionEnter : 
+                Geofence.GeofenceTransitionExit;
+
+            if (request.Geofence.Android.LoiteringDelayMilliseconds > 0)
+            {
+                transitionType = Geofence.GeofenceTransitionDwell;
+                geofenceBuilder.SetLoiteringDelay(request.Geofence.Android.LoiteringDelayMilliseconds);
+            }
+            geofenceBuilder.SetTransitionTypes(transitionType);
+
+            var geofence = geofenceBuilder.Build();
 
             var geoRequest = new GeofencingRequest.Builder()
                 .SetInitialTrigger(0)
-                .AddGeofence(builder)
+                .AddGeofence(geofence)
                 .Build();
 
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);

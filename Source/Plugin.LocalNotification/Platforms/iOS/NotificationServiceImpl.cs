@@ -168,11 +168,15 @@ namespace Plugin.LocalNotification.Platforms
 
                 if (request.Geofence.IsGeofence)
                 {
-                    trigger = UNLocationNotificationTrigger.CreateTrigger(
-                        new CLRegion(new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude),
-                                     request.Geofence.Radius.TotalMeters,
-                                     notificationId),
-                        request.Geofence.Repeat);
+                    var center = new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude);
+                    var regin = new CLCircularRegion(center,
+                                     request.Geofence.RadiusInMeters,
+                                     notificationId)
+                    {                        
+                        NotifyOnEntry = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
+                        NotifyOnExit = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnExit
+                    };                   
+                    trigger = UNLocationNotificationTrigger.CreateTrigger(regin, false);
                 }
                 else
                 {

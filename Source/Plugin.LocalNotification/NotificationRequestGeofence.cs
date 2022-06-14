@@ -1,4 +1,6 @@
-﻿namespace Plugin.LocalNotification
+﻿using Plugin.LocalNotification.AndroidOption;
+
+namespace Plugin.LocalNotification
 {
     /// <summary>
     /// 
@@ -8,7 +10,12 @@
         /// <summary>
         /// 
         /// </summary>
-        public bool Repeat { get; set; }
+        public GeofenceNotifyOn NotifyOn { get; set; } = GeofenceNotifyOn.OnEntry;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AndroidGeofenceOptions Android { get; set; } = new();
 
         /// <summary>
         /// The center of the geofence
@@ -17,13 +24,14 @@
 
         /// <summary>
         /// The radius of the region.
+        /// Default 5m
         /// </summary>
-        public Distance Radius { get; set; }
+        public double RadiusInMeters { get; set; } = 5;
 
         /// <summary>
         /// 
         /// </summary>
-        public bool IsGeofence => Center != null && Radius != null;
+        public bool IsGeofence => Center != null;
 
         /// <summary>
         /// 
@@ -44,12 +52,16 @@
         /// <summary>
         /// 
         /// </summary>
-        public class Distance
+        public enum GeofenceNotifyOn
         {
             /// <summary>
             /// 
             /// </summary>
-            public double TotalMeters { get; set; }
+            OnEntry,
+            /// <summary>
+            /// 
+            /// </summary>
+            OnExit
         }
     }
 }
