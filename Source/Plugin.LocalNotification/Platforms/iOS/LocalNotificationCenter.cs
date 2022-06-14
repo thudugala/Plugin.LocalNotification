@@ -6,6 +6,7 @@ using Plugin.LocalNotification.EventArgs;
 using UIKit;
 using UserNotifications;
 using Plugin.LocalNotification.Platforms;
+using CoreLocation;
 
 namespace Plugin.LocalNotification
 {
@@ -15,13 +16,15 @@ namespace Plugin.LocalNotification
         /// 
         /// </summary>
         /// <param name="notificationDelegate">This allow developer to change UNUserNotificationCenterDelegate</param>
-        /// <param name="askPermission">Ask the user for permission to show notifications on iOS 10.0+</param>
-        public static void Setup(IUNUserNotificationCenterDelegate notificationDelegate = null, bool askPermission = true)
+        /// <param name="askNotificationPermission">Ask the user for notification permission to show notifications on iOS 10.0+</param>
+        /// <param name="askLocationPermission">Ask the user for location permission to show notifications on iOS 10.0+</param>
+        public static void Setup(IUNUserNotificationCenterDelegate notificationDelegate = null, bool askNotificationPermission = true, LocationAuthorization askLocationPermission = LocationAuthorization.No)
         {
             SetCustomUserNotificationCenterDelegate(notificationDelegate);
-            if (askPermission)
+            if (askNotificationPermission)
             {
-                AskPermission();
+                RequestNotificationPermission();
+                RequestLocationPermission(askLocationPermission);
             }
         }
 
@@ -40,19 +43,19 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// </summary>
-        public static async void AskPermission(UNAuthorizationOptions options = 
+        public static async void RequestNotificationPermission(UNAuthorizationOptions options =
             UNAuthorizationOptions.Alert |
             UNAuthorizationOptions.Badge |
             UNAuthorizationOptions.Sound)
         {
-            await AskPermissionAsync(options).ConfigureAwait(false);
+            await RequestNotificationPermissionAsync(options).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// Returns true if Allowed.
         /// </summary>
-        public static async Task<bool> AskPermissionAsync(UNAuthorizationOptions options = 
+        public static async Task<bool> RequestNotificationPermissionAsync(UNAuthorizationOptions options =
             UNAuthorizationOptions.Alert |
             UNAuthorizationOptions.Badge |
             UNAuthorizationOptions.Sound)
@@ -80,6 +83,41 @@ namespace Plugin.LocalNotification
             {
                 Log(ex);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="authorization"></param>
+        /// <returns></returns>
+        public static void RequestLocationPermission(LocationAuthorization authorization = LocationAuthorization.No)
+        {
+            try
+            {
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    return;
+                }
+                if(authorization == LocationAuthorization.No)
+                {
+                    return;
+                }
+
+                var locationManager = new CLLocationManager();
+
+                if (authorization == LocationAuthorization.Always)
+                {
+                    locationManager.RequestAlwaysAuthorization();
+                }
+                else if (authorization == LocationAuthorization.WhenInUse)
+                {
+                    locationManager.RequestWhenInUseAuthorization();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
             }
         }
 
