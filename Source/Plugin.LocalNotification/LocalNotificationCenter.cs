@@ -63,7 +63,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public static INotificationSerializer Serializer { get; private set; }
+        public static INotificationSerializer Serializer { get; set; }
 
         internal static NotificationRequest GetRequest(string serializedRequest)
         {
