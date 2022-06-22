@@ -153,7 +153,7 @@ namespace Plugin.LocalNotification.Platforms
                     return false;
                 }
 
-                var allowed = await LocalNotificationCenter.AskPermissionAsync().ConfigureAwait(false);
+                var allowed = await LocalNotificationCenter.RequestNotificationPermission().ConfigureAwait(false);
                 if (allowed == false)
                 {
                     LocalNotificationCenter.Log("User denied permission");

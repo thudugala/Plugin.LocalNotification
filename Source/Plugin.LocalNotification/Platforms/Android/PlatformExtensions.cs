@@ -6,6 +6,9 @@ using System;
 
 namespace Plugin.LocalNotification.Platforms
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class PlatformExtensions
     {
 
