@@ -143,7 +143,7 @@ namespace Plugin.LocalNotification
             {
                 using var audioAttributesBuilder = new AudioAttributes.Builder();
                 var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
-                        ?.SetContentType(AudioContentType.Music)
+                        ?.SetContentType(AudioContentType.Sonification)
                         ?.Build();
                 channel.SetSound(soundUri, audioAttributes);
             }
@@ -173,7 +173,7 @@ namespace Plugin.LocalNotification
             {
                 return Android.Net.Uri.Parse(soundFileName);
             }
-
+           
             soundFileName = Path.GetFileNameWithoutExtension(soundFileName);
             soundFileName =
                 $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";

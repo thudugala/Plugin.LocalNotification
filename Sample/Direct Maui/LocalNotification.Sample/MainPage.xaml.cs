@@ -115,7 +115,7 @@ public partial class MainPage : ContentPage
                 {
                     IconSmallName =
                     {
-                        ResourceName = "icon1",
+                        ResourceName = "i2",
                     },
                     Color =
                     {
