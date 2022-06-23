@@ -1,9 +1,9 @@
-﻿namespace Plugin.LocalNotification
+﻿namespace Plugin.LocalNotification.iOSOption
 {
     /// <summary>
     /// 
     /// </summary>
-    public enum LocationAuthorization
+    public enum iOSLocationAuthorization
     {
         /// <summary>
         /// 

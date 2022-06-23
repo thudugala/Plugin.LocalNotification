@@ -1,8 +1,4 @@
-﻿using Android.App;
-using Android.Graphics;
-using Plugin.LocalNotification.AndroidOption;
-
-namespace Plugin.LocalNotification.Platforms
+﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     /// Notification Channel Request
@@ -12,7 +8,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <summary>
         /// Sets or gets, the level of interruption of this notification channel.
         /// </summary>
-        public NotificationImportance Importance { get; set; } = NotificationImportance.Default;
+        public AndroidImportance Importance { get; set; } = AndroidImportance.Default;
 
         /// <summary>
         /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
@@ -39,7 +35,7 @@ namespace Plugin.LocalNotification.Platforms
         /// Sets or gets, the notification light color for notifications posted to this channel,
         /// if the device supports that feature
         /// </summary>
-        public Color LightColor { get; set; }
+        public AndroidColor LightColor { get; set; }
 
         /// <summary>
         /// Sound file name for the notification.
@@ -54,7 +50,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <summary>
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lock Screen in full or redacted form.
         /// </summary>
-        public NotificationVisibility LockScreenVisibility { get; set; } = NotificationVisibility.Secret;
+        public AndroidVisibilityType LockScreenVisibility { get; set; } = AndroidVisibilityType.Private;
 
         /// <summary>
         /// Sets or gets, Sets whether notifications posted to this channel can appear as application icon badges in a Launcher.
@@ -74,6 +70,6 @@ namespace Plugin.LocalNotification.Platforms
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
         /// </summary>
-        public bool CanBypassDnd { get; set; } = false;        
+        public bool CanBypassDnd { get; set; } = false;            
     }
 }

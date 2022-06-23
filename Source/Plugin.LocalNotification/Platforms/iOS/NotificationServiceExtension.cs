@@ -90,11 +90,8 @@ namespace Plugin.LocalNotification.Platforms
         private static NSMutableDictionary GetUserInfo(NotificationRequest request, bool handled)
         {
             var userInfoDictionary = new NSMutableDictionary();
-            var dictionary = LocalNotificationCenter.GetRequestSerializeDictionary(request);
-            foreach (var item in dictionary)
-            {
-                userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
-            }
+            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
+            userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(LocalNotificationCenter.ReturnRequest));            
             userInfoDictionary.SetValueForKey(NSNumber.FromBoolean(handled), new NSString(LocalNotificationCenter.ReturnRequestHandled));
             return userInfoDictionary;
         }

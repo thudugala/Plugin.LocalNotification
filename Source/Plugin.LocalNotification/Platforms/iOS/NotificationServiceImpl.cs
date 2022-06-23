@@ -153,7 +153,7 @@ namespace Plugin.LocalNotification.Platforms
                     return false;
                 }
 
-                var allowed = await LocalNotificationCenter.RequestNotificationPermission().ConfigureAwait(false);
+                var allowed = await LocalNotificationCenter.RequestNotificationPermissionAsync().ConfigureAwait(false);
                 if (allowed == false)
                 {
                     LocalNotificationCenter.Log("User denied permission");
@@ -224,11 +224,9 @@ namespace Plugin.LocalNotification.Platforms
         public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
         {
             var userInfoDictionary = new NSMutableDictionary();
-            var dictionary = LocalNotificationCenter.GetRequestSerializeDictionary(request);
-            foreach (var item in dictionary)
-            {
-                userInfoDictionary.SetValueForKey(new NSString(item.Value), new NSString(item.Key));
-            }
+            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
+            userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(LocalNotificationCenter.ReturnRequest));
+            
             var content = new UNMutableNotificationContent
             {
                 Title = request.Title,

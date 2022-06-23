@@ -54,22 +54,101 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static UNNotificationActionOptions ToNative(this iOSActionType type)
+        public static UNAuthorizationOptions ToNative(this iOSAuthorizationOptions type)
         {
             switch (type)
             {
-                case iOSActionType.Foreground:
-                    return UNNotificationActionOptions.Foreground;
+                case iOSAuthorizationOptions.None:
+                    return UNAuthorizationOptions.None;
 
-                case iOSActionType.Destructive:
-                    return UNNotificationActionOptions.Destructive;
+                case iOSAuthorizationOptions.Badge:
+                    return UNAuthorizationOptions.Badge;
 
-                case iOSActionType.AuthenticationRequired:
-                    return UNNotificationActionOptions.AuthenticationRequired;
+                case iOSAuthorizationOptions.Sound:
+                    return UNAuthorizationOptions.Sound;
+
+                case iOSAuthorizationOptions.Alert:
+                    return UNAuthorizationOptions.Alert;
+
+                case iOSAuthorizationOptions.CarPlay:
+                    return UNAuthorizationOptions.CarPlay;
+            }
+
+#if XAMARINIOS
+            if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0) == false)
+            {
+                return UNAuthorizationOptions.None;
+            }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(12))
+            {
+                return UNAuthorizationOptions.None;
+            }
+#endif
+            switch (type)
+            {
+                case iOSAuthorizationOptions.CriticalAlert:
+                    return UNAuthorizationOptions.CriticalAlert;
+
+                case iOSAuthorizationOptions.ProvidesAppNotificationSettings:
+                    return UNAuthorizationOptions.ProvidesAppNotificationSettings;
+
+                case iOSAuthorizationOptions.Provisional:
+                    return UNAuthorizationOptions.Provisional;
+            }
+
+#if XAMARINIOS
+            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0) == false)
+            {
+                return UNAuthorizationOptions.None;
+            }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(13))
+            {
+                return UNAuthorizationOptions.None;
+            }
+#endif
+            switch (type)
+            {
+                case iOSAuthorizationOptions.Announcement:
+                    return UNAuthorizationOptions.Announcement;
+            }
+
+#if XAMARINIOS
+            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0) == false)
+            {
+                return UNAuthorizationOptions.None;
+            }
+#elif IOS
+            if (!OperatingSystem.IsIOSVersionAtLeast(15))
+            {
+                return UNAuthorizationOptions.None;
+            }
+#endif
+            switch (type)
+            {
+                case iOSAuthorizationOptions.TimeSensitive:
+                    return UNAuthorizationOptions.TimeSensitive;
 
                 default:
-                    return UNNotificationActionOptions.None;
+                    return UNAuthorizationOptions.None;
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static UNNotificationActionOptions ToNative(this iOSActionType type)
+        {
+            return type switch
+            {
+                iOSActionType.Foreground => UNNotificationActionOptions.Foreground,
+                iOSActionType.Destructive => UNNotificationActionOptions.Destructive,
+                iOSActionType.AuthenticationRequired => UNNotificationActionOptions.AuthenticationRequired,
+                _ => UNNotificationActionOptions.None,
+            };
         }
 
         /// <summary>

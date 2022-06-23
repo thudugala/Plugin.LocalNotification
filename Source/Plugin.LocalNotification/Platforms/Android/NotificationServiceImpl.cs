@@ -286,6 +286,12 @@ namespace Plugin.LocalNotification.Platforms
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="notificationId"></param>
+        /// <param name="serializedRequest"></param>
+        /// <returns></returns>
         protected virtual PendingIntent CreateGeofenceIntent(int notificationId, string serializedRequest)
         {
             var intent = new Intent(Application.Context, typeof(GeofenceTransitionsIntentReceiver));
@@ -347,6 +353,12 @@ namespace Plugin.LocalNotification.Platforms
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="notificationId"></param>
+        /// <param name="serializedRequest"></param>
+        /// <returns></returns>
         protected virtual PendingIntent CreateAlarmIntent(int notificationId, string serializedRequest)
         {
             var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
@@ -471,7 +483,7 @@ namespace Plugin.LocalNotification.Platforms
                     builder.SetCategory(request.CategoryType.ToNative());
                 }
 
-                builder.SetVisibility(request.Android.VisibilityType.ToNative());
+                builder.SetVisibility((int)request.Android.VisibilityType.ToNative());
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -501,29 +513,7 @@ namespace Plugin.LocalNotification.Platforms
 
             if (request.Android.Color != null)
             {
-                if (request.Android.Color.Argb.HasValue)
-                {
-                    builder.SetColor(request.Android.Color.Argb.Value);
-                }
-                else if (string.IsNullOrWhiteSpace(request.Android.Color.ResourceName) == false)
-                {
-                    if (
-#if MONOANDROID
-                Build.VERSION.SdkInt >= BuildVersionCodes.M
-#elif ANDROID
-                OperatingSystem.IsAndroidVersionAtLeast(23)
-#endif
-                )
-                    {
-                        var colorResourceId =
-                        Application.Context.Resources?.GetIdentifier(request.Android.Color.ResourceName, "color",
-                            Application.Context.PackageName) ?? 0;
-
-                        var colorId = Application.Context.GetColor(colorResourceId);
-
-                        builder.SetColor(colorId);
-                    }
-                }
+                builder.SetColor(request.Android.Color.ToNative());
             }
 
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));

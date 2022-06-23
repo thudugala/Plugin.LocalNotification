@@ -11,19 +11,78 @@ namespace Plugin.LocalNotification.Platforms
     /// </summary>
     public static class PlatformExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static int ToNative(this AndroidColor color)
+        {
+            if (color is null)
+            {
+                return 0;
+            }
+
+            if (color.Argb.HasValue)
+            {
+               return color.Argb.Value;
+            }
+
+            if (string.IsNullOrWhiteSpace(color.ResourceName) == false)
+            {
+                if (
+#if MONOANDROID
+            Build.VERSION.SdkInt >= BuildVersionCodes.M
+#elif ANDROID
+                OperatingSystem.IsAndroidVersionAtLeast(23)
+#endif
+            )
+                {
+                    var colorResourceId =
+                    Application.Context.Resources?.GetIdentifier(color.ResourceName, "color",
+                        Application.Context.PackageName) ?? 0;
+
+                    var colorId = Application.Context.GetColor(colorResourceId);
+
+                    return colorId;
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static NotificationImportance ToNative(this AndroidImportance type)
+        {
+            return type switch
+            {
+                AndroidImportance.Unspecified => NotificationImportance.Unspecified,
+                AndroidImportance.None => NotificationImportance.None,
+                AndroidImportance.Min => NotificationImportance.Min,
+                AndroidImportance.Low => NotificationImportance.Low,
+                AndroidImportance.Default => NotificationImportance.Default,
+                AndroidImportance.High => NotificationImportance.High,
+                AndroidImportance.Max => NotificationImportance.Max,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+        }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static int ToNative(this AndroidVisibilityType type)
+        public static NotificationVisibility ToNative(this AndroidVisibilityType type)
         {
             return type switch
             {
-                AndroidVisibilityType.Private => (int)NotificationVisibility.Private,
-                AndroidVisibilityType.Public => (int)NotificationVisibility.Public,
-                AndroidVisibilityType.Secret => (int)NotificationVisibility.Secret,
+                AndroidVisibilityType.Private => NotificationVisibility.Private,
+                AndroidVisibilityType.Public => NotificationVisibility.Public,
+                AndroidVisibilityType.Secret => NotificationVisibility.Secret,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }

@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Plugin.LocalNotification;
-using Plugin.LocalNotification.Platforms;
+using Plugin.LocalNotification.AndroidOption;
 
 namespace LocalNotification.Sample;
 
@@ -11,25 +11,4 @@ namespace LocalNotification.Sample;
 public class MainActivity : MauiAppCompatActivity
 {
 
-    protected override void OnCreate(Bundle savedInstanceState)
-    {
-        base.OnCreate(savedInstanceState);
-
-        // Must create a Notification Channel when API >= 26
-        // you can created multiple Notification Channels with different names.
-        // you can created multiple Notification Channel Groups with different names.
-        LocalNotificationCenter.Setup(new NotificationChannelRequest
-        {
-            //Group = AndroidOptions.DefaultGroupId,
-            Sound = Resource.Raw.good_things_happen.ToString()
-        });
-
-        LocalNotificationCenter.NotifyNotificationTapped(Intent);
-    }
-
-    protected override void OnNewIntent(Intent intent)
-    {
-        LocalNotificationCenter.NotifyNotificationTapped(intent);
-        base.OnNewIntent(intent);
-    }
 }

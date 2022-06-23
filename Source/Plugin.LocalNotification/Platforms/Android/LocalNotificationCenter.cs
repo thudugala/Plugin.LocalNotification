@@ -12,18 +12,7 @@ using System.Runtime.CompilerServices;
 namespace Plugin.LocalNotification
 {
     public partial class LocalNotificationCenter
-    {
-        /// <summary>
-        /// Create Notification Channel and Group when API >= 26.
-        /// </summary>
-        /// <param name="channelRequest"></param>
-        /// <param name="groupChannelRequest"></param>
-        public static void Setup(NotificationChannelRequest channelRequest = null, NotificationChannelGroupRequest groupChannelRequest = null)
-        {
-            CreateNotificationChannel(channelRequest);
-            CreateNotificationChannelGroup(groupChannelRequest);
-        }
-
+    {        
         /// <summary>
         /// Notify Local Notification Tapped.
         /// </summary>
@@ -69,7 +58,7 @@ namespace Plugin.LocalNotification
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
         /// <param name="groupChannelRequest"></param>
-        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest = null)
+        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest)
         {
 #if MONOANDROID
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -88,8 +77,6 @@ namespace Plugin.LocalNotification
             {
                 return false;
             }
-
-            groupChannelRequest ??= new NotificationChannelGroupRequest();
 
             if (string.IsNullOrWhiteSpace(groupChannelRequest.Group))
             {
@@ -144,12 +131,12 @@ namespace Plugin.LocalNotification
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            using var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance)
+            using var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance.ToNative())
             {
                 Description = channelRequest.Description,
                 Group = channelRequest.Group,
-                LightColor = channelRequest.LightColor,
-                LockscreenVisibility = channelRequest.LockScreenVisibility,
+                LightColor = channelRequest.LightColor.ToNative(),
+                LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
             };
             var soundUri = GetSoundUri(channelRequest.Sound);
             if (soundUri != null)
@@ -172,7 +159,6 @@ namespace Plugin.LocalNotification
             channel.SetBypassDnd(channelRequest.CanBypassDnd);
 
             notificationManager.CreateNotificationChannel(channel);
-
             return true;
         }
 

@@ -3,6 +3,9 @@ using System;
 
 namespace Plugin.LocalNotification.Platforms
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [BroadcastReceiver(
         Name = ReceiverName,
         Enabled = true,
