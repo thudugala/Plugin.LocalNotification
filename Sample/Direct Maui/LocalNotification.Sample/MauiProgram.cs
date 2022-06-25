@@ -18,12 +18,22 @@ public static class MauiProgram
 			//.UseLocalNotification();
 			.UseLocalNotification(config =>
 			{
-				config.AddAndroidChannel(new NotificationChannelRequest
+				config.AddAndroid(android =>
 				{
-					Sound = "good_things_happen"
+					android.AddChannel(new NotificationChannelRequest
+					{
+						Sound = "good_things_happen"
+					});
 				});
+//				config.AddiOS(iOS =>
+//				{
+//#if IOS
+//					iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
+//#endif
+//				});
+
 			});
 
-		return builder.Build();
+        return builder.Build();
 	}
 }

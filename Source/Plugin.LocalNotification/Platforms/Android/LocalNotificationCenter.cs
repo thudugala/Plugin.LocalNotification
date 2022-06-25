@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.Platforms;
@@ -188,26 +189,22 @@ namespace Plugin.LocalNotification
         /// <param name="callerName"></param>
         internal static void Log(string message, [CallerMemberName] string callerName = "")
         {
-            Android.Util.Log.Info(Application.Context.PackageName, $"{callerName}: {message}");
-            NotificationLog?.Invoke(new NotificationLogArgs
-            {
-                Message = $"{callerName}: {message}"
-            });
+            var logMessage = $"{callerName}: {message}";
+            Logger?.LogInformation(logMessage);
+            Android.Util.Log.Info(Application.Context.PackageName, logMessage);
         }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="ex"></param>
+        /// <param name="message"></param>
         /// <param name="callerName"></param>
-        internal static void Log(Exception ex, [CallerMemberName] string callerName = "")
+        internal static void Log(Exception ex, string message = null, [CallerMemberName] string callerName = "")
         {
-            System.Diagnostics.Debug.WriteLine(ex);
-            Android.Util.Log.Error(Application.Context.PackageName, $"{callerName}: {ex.Message}");
-            NotificationLog?.Invoke(new NotificationLogArgs
-            {
-                Error = ex
-            });
+            var logMessage = $"{callerName}: {message}";
+            Logger?.LogError(ex, logMessage);
+            Android.Util.Log.Error(Application.Context.PackageName, $"{logMessage}: {ex.Message}");            
         }
     }
 }

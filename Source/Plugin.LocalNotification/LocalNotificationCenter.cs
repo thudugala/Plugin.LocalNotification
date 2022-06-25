@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Plugin.LocalNotification.EventArgs;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 #if !NETSTANDARD2_0
 using Plugin.LocalNotification.Platforms;
 #endif
@@ -30,9 +30,9 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// Internal Error happened
+        /// Internal  Logger
         /// </summary>
-        public static event NotificationLogHandler NotificationLog;
+        public static ILogger Logger { get; set; }
 
         /// <summary>
         /// Platform specific INotificationService.

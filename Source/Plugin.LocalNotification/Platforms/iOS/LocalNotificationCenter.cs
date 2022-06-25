@@ -1,4 +1,5 @@
 ﻿using CoreLocation;
+using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.iOSOption;
 using Plugin.LocalNotification.Platforms;
@@ -20,7 +21,7 @@ namespace Plugin.LocalNotification
         /// and set it using this method
         /// </summary>
         /// <param name="notificationDelegate"></param>
-        public static void SetCustomUserNotificationCenterDelegate(IUNUserNotificationCenterDelegate notificationDelegate = null)
+        public static void SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate notificationDelegate = null)
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
@@ -150,22 +151,27 @@ namespace Plugin.LocalNotification
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="callerName"></param>
         internal static void Log(string message, [CallerMemberName] string callerName = "")
         {
-            Console.WriteLine($"{callerName}: {message}");
-            NotificationLog?.Invoke(new NotificationLogArgs
-            {
-                Message = $"{callerName}: {message}"
-            });
+            var logMessage = $"{callerName}: {message}";
+            Logger?.LogInformation(logMessage);
         }
 
-        internal static void Log(Exception ex)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="message"></param>
+        /// <param name="callerName"></param>
+        internal static void Log(Exception ex, string message = null, [CallerMemberName] string callerName = "")
         {
-            Console.WriteLine(ex);
-            NotificationLog?.Invoke(new NotificationLogArgs
-            {
-                Error = ex
-            });
+            var logMessage = $"{callerName}: {message}";
+            Logger?.LogError(ex, logMessage);
         }
     }
 }
