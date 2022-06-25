@@ -72,17 +72,16 @@
 	<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
-	  <Compile Include="**/Platforms/Android/**/*.cs" />
-	  <PackageReference Include="Xamarin.AndroidX.Core" Version="1.8.0.1" />
-	  <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.1" />
-  </ItemGroup>
-
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">
     <Compile Include="**/Platforms/iOS/**/*.cs" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+		<Compile Include="**/Platforms/Android/**/*.cs" />
+		<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.1" />
+	</ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
 	<Compile Include="**/Platforms/iOS/**/*.cs" />
