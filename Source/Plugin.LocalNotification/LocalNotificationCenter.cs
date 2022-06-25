@@ -16,17 +16,16 @@ namespace Plugin.LocalNotification
 
     public partial class LocalNotificationCenter
     {
-        private static readonly Lazy<INotificationService> implementation = new (() => CreateNotificationService(), LazyThreadSafetyMode.PublicationOnly);
+        private static readonly Lazy<INotificationService> implementation = new(() => CreateNotificationService(), LazyThreadSafetyMode.PublicationOnly);
+        private static INotificationSerializer _serializer;
 
         private static INotificationService CreateNotificationService()
         {
-            Serializer = new NotificationSerializer();
 #if NETSTANDARD2_0
             return null;
 #else
-			return new NotificationServiceImpl();
+            return new NotificationServiceImpl();
 #endif
-            
         }
 
         /// <summary>
@@ -63,7 +62,18 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public static INotificationSerializer Serializer { get; set; }
+        public static INotificationSerializer Serializer 
+        { 
+            get
+            {
+                if(_serializer is null)
+                {
+                    _serializer = new NotificationSerializer();
+                }
+                return _serializer;
+            }
+            set => _serializer = value;
+        }
 
         internal static NotificationRequest GetRequest(string serializedRequest)
         {

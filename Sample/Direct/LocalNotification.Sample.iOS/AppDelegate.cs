@@ -1,5 +1,6 @@
 ﻿using Foundation;
 using Plugin.LocalNotification;
+using Plugin.LocalNotification.iOSOption;
 using UIKit;
 
 namespace LocalNotification.Sample.iOS
@@ -22,17 +23,22 @@ namespace LocalNotification.Sample.iOS
             global::Xamarin.Forms.Forms.Init();
 
             // if you want to handel push notifications
-            //LocalNotificationCenter.Setup(new CustomUserNotificationCenterDelegate());
-            LocalNotificationCenter.Setup();
+            //LocalNotificationCenter.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
+
+            // Ask the user for permission to show notifications on iOS 10.0+ at startup.
+            // If not asked at startup, user will be asked when showing the first notification.
+            LocalNotificationCenter.RequestNotificationPermissionAsync().GetAwaiter().GetResult();
+
+            //LocalNotificationCenter.RequestLocationPermission(iOSLocationAuthorization.WhenInUse);
 
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
         }
 
-        public override async void WillEnterForeground(UIApplication uiApplication)
+        public override void WillEnterForeground(UIApplication uiApplication)
         {
-            await LocalNotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
+            LocalNotificationCenter.ResetApplicationIconBadgeNumber(uiApplication).GetAwaiter().GetResult();
             base.WillEnterForeground(uiApplication);
         }
     }

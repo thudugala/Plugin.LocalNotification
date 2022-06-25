@@ -25,6 +25,8 @@ namespace Plugin.LocalNotification
             var localNotificationBuilder = new LocalNotificationBuilder();
             configureDelegate?.Invoke(localNotificationBuilder);
 
+            builder.Services.AddSingleton(localNotificationBuilder);
+            builder.Services.AddSingleton(LocalNotificationCenter.Current);
             builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IMauiInitializeService, LocalNotificationInitializeService>());
 
             builder.ConfigureLifecycleEvents(life =>

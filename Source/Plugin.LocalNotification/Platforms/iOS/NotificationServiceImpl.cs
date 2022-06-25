@@ -172,10 +172,11 @@ namespace Plugin.LocalNotification.Platforms
                     var regin = new CLCircularRegion(center,
                                      request.Geofence.RadiusInMeters,
                                      notificationId)
-                    {                        
+                    {
                         NotifyOnEntry = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
                         NotifyOnExit = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnExit
-                    };                   
+                    };
+
                     trigger = UNLocationNotificationTrigger.CreateTrigger(regin, false);
                 }
                 else
@@ -274,9 +275,9 @@ namespace Plugin.LocalNotification.Platforms
             {
                 if (
 #if XAMARINIOS
-                     UIDevice.CurrentDevice.CheckSystemVersion(12, 0)
+                     UIDevice.CurrentDevice.CheckSystemVersion(12, 0) && !UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
 #elif IOS
-                     OperatingSystem.IsIOSVersionAtLeast(12)
+                     OperatingSystem.IsIOSVersionAtLeast(12) && !OperatingSystem.IsIOSVersionAtLeast(15)
 #endif                
                    )
                 {

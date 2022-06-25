@@ -29,6 +29,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Ask the user for permission to show notifications on iOS 10.0+.
         /// Returns true if Allowed.
+        /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
         public static async Task<bool> RequestNotificationPermissionAsync(iOSNotificationPermission permission = null)
         {

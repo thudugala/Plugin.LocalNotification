@@ -1,5 +1,6 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
+using Plugin.LocalNotification.Json;
 using System;
 
 namespace Plugin.LocalNotification
@@ -9,6 +10,20 @@ namespace Plugin.LocalNotification
     /// </summary>
     public interface ILocalNotificationBuilder
     {
+        /// <summary>
+        /// Register notification categories and their corresponding actions
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        ILocalNotificationBuilder AddCategory(NotificationCategory category);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serializer"></param>
+        /// <returns></returns>
+        ILocalNotificationBuilder SetSerializer(INotificationSerializer serializer);
+
         /// <summary>
         /// 
         /// </summary>

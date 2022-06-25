@@ -21,39 +21,7 @@ namespace LocalNotification.Sample
             InitializeComponent();
 
             _notificationSerializer = new NotificationSerializer();
-
-            LocalNotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
-            {
-                new NotificationCategory(NotificationCategoryType.Status)
-                {
-                    ActionList = new HashSet<NotificationAction>( new List<NotificationAction>()
-                    {
-                        new NotificationAction(100)
-                        {
-                            Title = "Hello",
-                            Android =
-                            {
-                                IconName =
-                                {
-                                    ResourceName = "i2"
-                                }
-                            }
-                        },
-                        new NotificationAction(101)
-                        {
-                            Title = "Close",
-                            Android =
-                            {
-                                IconName =
-                                {
-                                    ResourceName = "i3"
-                                }
-                            }
-                        }
-                    })
-                },
-            }));
-
+                        
             LocalNotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
             LocalNotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
             LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;

@@ -1,52 +1,17 @@
 ﻿using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.Json;
+using System.Text.Json;
 
 namespace LocalNotification.Sample;
 
 public partial class MainPage : ContentPage
 {
     private int _tapCount;
-    private readonly NotificationSerializer _notificationSerializer;
 
     public MainPage()
     {
         InitializeComponent();
-
-        _notificationSerializer = new NotificationSerializer();
-
-        LocalNotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
-            {
-                new NotificationCategory(NotificationCategoryType.Status)
-                {
-                    ActionList = new HashSet<NotificationAction>( new List<NotificationAction>()
-                    {
-                        new NotificationAction(100)
-                        {
-                            Title = "Hello",
-                            Android =
-                            {
-                                IconName =
-                                {
-                                    ResourceName = "i2"
-                                }
-                            }
-                        },
-                        new NotificationAction(101)
-                        {
-                            Title = "Close",
-                            Android =
-                            {
-                                IconName =
-                                {
-                                    ResourceName = "i3"
-                                }
-                            }
-                        }
-                    })
-                },
-            }));
 
         LocalNotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
         LocalNotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
@@ -95,7 +60,7 @@ public partial class MainPage : ContentPage
                 _tapCount.ToString()
             };
         // No need to use NotificationSerializer, you can use your own one.
-        var serializeReturningData = _notificationSerializer.Serialize(list);
+        var serializeReturningData = JsonSerializer.Serialize(list);
 
         var request = new NotificationRequest
         {
@@ -171,7 +136,7 @@ public partial class MainPage : ContentPage
 
     private async void Current_NotificationActionTapped(NotificationActionEventArgs e)
     {
-        if(e.IsDismissed)
+        if (e.IsDismissed)
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -188,7 +153,7 @@ public partial class MainPage : ContentPage
             }
 
             // No need to use NotificationSerializer, you can use your own one.
-            var list = _notificationSerializer.Deserialize<List<string>>(e.Request.ReturningData);
+            var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
             if (list is null || list.Count != 4)
             {
                 return;
@@ -203,7 +168,7 @@ public partial class MainPage : ContentPage
             var message = list[2];
             var tapCount = list[3];
 
-            await((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(new NotificationPage(int.Parse(id), message,
+            await ((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(new NotificationPage(int.Parse(id), message,
                 int.Parse(tapCount)));
             return;
         }
@@ -234,7 +199,7 @@ public partial class MainPage : ContentPage
                 title,
                 _tapCount.ToString()
             };
-        var serializeReturningData = _notificationSerializer.Serialize(list);
+        var serializeReturningData = JsonSerializer.Serialize(list);
 
         var notification = new NotificationRequest
         {
@@ -283,7 +248,7 @@ public partial class MainPage : ContentPage
             {
                 return;
             }
-            var requestJson = _notificationSerializer.Serialize(e.Request);
+            var requestJson = JsonSerializer.Serialize(e.Request);
 
             DisplayAlert(e.Request.Title, requestJson, "OK");
         });

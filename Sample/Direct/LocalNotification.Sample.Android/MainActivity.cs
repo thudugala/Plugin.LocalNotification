@@ -4,7 +4,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Plugin.LocalNotification;
-using Plugin.LocalNotification.Platforms;
+using Plugin.LocalNotification.AndroidOption;
 
 namespace LocalNotification.Sample.Droid
 {
@@ -19,7 +19,7 @@ namespace LocalNotification.Sample.Droid
             // Must create a Notification Channel when API >= 26
             // you can created multiple Notification Channels with different names.
             // you can created multiple Notification Channel Groups with different names.
-            LocalNotificationCenter.Setup(new NotificationChannelRequest
+            LocalNotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
             {
                 //Group = AndroidOptions.DefaultGroupId,
                 Sound = Resource.Raw.good_things_happen.ToString()

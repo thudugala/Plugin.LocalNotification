@@ -1,7 +1,6 @@
-﻿using Plugin.LocalNotification;
-using Plugin.LocalNotification.Json;
-using System;
-using Plugin.LocalNotification.EventArgs;
+﻿using Microsoft.Extensions.Logging.Debug;
+using Plugin.LocalNotification;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace LocalNotification.Sample
@@ -14,13 +13,38 @@ namespace LocalNotification.Sample
 
             MainPage = new NavigationPage(new MainPage());
 
-            LocalNotificationCenter.NotificationLog += NotificationCenter_NotificationLog;
-        }
-
-        private void NotificationCenter_NotificationLog(NotificationLogArgs e)
-        {
-            Console.WriteLine(e.Message);
-            Console.WriteLine(e.Error);
+            LocalNotificationCenter.Logger = new DebugLoggerProvider().CreateLogger("LocalNotification.Sample");
+            LocalNotificationCenter.Current.RegisterCategoryList(new HashSet<NotificationCategory>(new List<NotificationCategory>()
+            {
+                new NotificationCategory(NotificationCategoryType.Status)
+                {
+                    ActionList = new HashSet<NotificationAction>( new List<NotificationAction>()
+                    {
+                        new NotificationAction(100)
+                        {
+                            Title = "Hello",
+                            Android =
+                            {
+                                IconName =
+                                {
+                                    ResourceName = "i2"
+                                }
+                            }
+                        },
+                        new NotificationAction(101)
+                        {
+                            Title = "Close",
+                            Android =
+                            {
+                                IconName =
+                                {
+                                    ResourceName = "i3"
+                                }
+                            }
+                        }
+                    })
+                },
+            }));
         }
 
         protected override void OnResume()

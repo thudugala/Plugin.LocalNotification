@@ -19,7 +19,35 @@ public static class MauiProgram
 			//.UseLocalNotification();
 			.UseLocalNotification(config =>
 			{
-				config.AddAndroid(android =>
+                config.AddCategory(new NotificationCategory(NotificationCategoryType.Status)
+                {
+                    ActionList = new HashSet<NotificationAction>(new List<NotificationAction>()
+                    {
+                        new NotificationAction(100)
+                        {
+                            Title = "Hello",
+                            Android =
+                            {
+                                IconName =
+                                {
+                                    ResourceName = "i2"
+                                }
+                            }
+                        },
+                        new NotificationAction(101)
+                        {
+                            Title = "Close",
+                            Android =
+                            {
+                                IconName =
+                                {
+                                    ResourceName = "i3"
+                                }
+                            }
+                        }
+                    })
+                });
+                config.AddAndroid(android =>
 				{
 					android.AddChannel(new NotificationChannelRequest
 					{
