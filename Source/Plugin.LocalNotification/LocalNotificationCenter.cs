@@ -67,7 +67,7 @@ namespace Plugin.LocalNotification
 
         internal static NotificationRequest GetRequest(string serializedRequest)
         {
-            Debug.WriteLine($"Serialized Request [{serializedRequest}]");
+            Logger?.LogInformation($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
             {
                 return null;
@@ -109,7 +109,7 @@ namespace Plugin.LocalNotification
             }
             var serializedRequest = Serializer.Serialize(request);
 
-            Debug.WriteLine($"Serialized Request [{serializedRequest}]");
+            Logger?.LogInformation($"Serialized Request [{serializedRequest}]");
 
             return serializedRequest;
         }

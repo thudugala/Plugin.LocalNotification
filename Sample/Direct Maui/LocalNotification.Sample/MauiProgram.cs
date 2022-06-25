@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification;
+﻿using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 
 namespace LocalNotification.Sample;
@@ -33,6 +34,12 @@ public static class MauiProgram
 //				});
 
 			});
+
+        builder.Services.AddLogging(logging =>
+        {
+            logging.AddDebug();
+            //logging.AddConsole();
+        });
 
         return builder.Build();
 	}

@@ -204,7 +204,7 @@ namespace Plugin.LocalNotification
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.LogError(ex, logMessage);
-            Android.Util.Log.Error(Application.Context.PackageName, $"{logMessage}: {ex.Message}");            
+            Android.Util.Log.Error(Application.Context.PackageName, $"{logMessage}: {ex.Message}");
         }
     }
 }
