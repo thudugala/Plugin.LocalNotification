@@ -25,6 +25,7 @@ namespace LocalNotification.Sample
                             Title = "Hello",
                             Android =
                             {
+                                LaunchAppWhenTapped = true,
                                 IconName =
                                 {
                                     ResourceName = "i2"
@@ -36,6 +37,7 @@ namespace LocalNotification.Sample
                             Title = "Close",
                             Android =
                             {
+                                LaunchAppWhenTapped = false,
                                 IconName =
                                 {
                                     ResourceName = "i3"

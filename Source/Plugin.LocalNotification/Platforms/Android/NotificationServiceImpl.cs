@@ -690,10 +690,11 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="serializedRequest"></param>
         /// <param name="action"></param>
+        /// <param name="broadcastReceiverType"></param>
         /// <returns></returns>
         protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action, Type broadcastReceiverType)
         {
