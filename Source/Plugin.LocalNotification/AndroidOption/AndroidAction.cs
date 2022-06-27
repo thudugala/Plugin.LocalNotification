@@ -11,6 +11,11 @@
         public AndroidIcon IconName { get; set; } = new AndroidIcon();
 
         /// <summary>
+        /// Default is false
+        /// </summary>
+        public bool LaunchAppWhenTapped { get; set; } = false;
+
+        /// <summary>
         ///
         /// </summary>
         public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;

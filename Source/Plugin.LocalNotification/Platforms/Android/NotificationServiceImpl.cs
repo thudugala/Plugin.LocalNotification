@@ -294,18 +294,14 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual PendingIntent CreateGeofenceIntent(int notificationId, string serializedRequest)
         {
-            var intent = new Intent(Application.Context, typeof(GeofenceTransitionsIntentReceiver));
-            intent.SetAction(GeofenceTransitionsIntentReceiver.EntryIntentAction);
-            if (!string.IsNullOrWhiteSpace(serializedRequest))
+            var pendingIntent = CreateActionIntent(serializedRequest, new NotificationAction(notificationId)
             {
-                intent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
-            }
-            var pendingIntent = PendingIntent.GetBroadcast(
-                Application.Context,
-                notificationId,
-                intent,
-                PendingIntentFlags.UpdateCurrent.SetImmutableIfNeeded()
-            );
+                Android =
+                {
+                    LaunchAppWhenTapped = false,
+                    PendingIntentFlags = AndroidPendingIntentFlags.UpdateCurrent
+                }
+            }, typeof(GeofenceTransitionsIntentReceiver));
             return pendingIntent;
         }
 
@@ -323,7 +319,7 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-            var pendingIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);
+            var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);            
 
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
@@ -341,11 +337,11 @@ namespace Plugin.LocalNotification.Platforms
 #endif
             )
             {
-                MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, pendingIntent);
+                MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
             }
             else
             {
-                MyAlarmManager.SetExact(alarmType, triggerAtTime, pendingIntent);
+                MyAlarmManager.SetExact(alarmType, triggerAtTime, alarmIntent);
             }
 
             NotificationRepository.Current.AddPendingRequest(request);
@@ -361,17 +357,14 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual PendingIntent CreateAlarmIntent(int notificationId, string serializedRequest)
         {
-            var intent = new Intent(Application.Context, typeof(ScheduledAlarmReceiver));
-            if (!string.IsNullOrWhiteSpace(serializedRequest))
+            var pendingIntent = CreateActionIntent(serializedRequest, new NotificationAction(notificationId)
             {
-                intent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
-            }
-            var pendingIntent = PendingIntent.GetBroadcast(
-                Application.Context,
-                notificationId,
-                intent,
-                PendingIntentFlags.UpdateCurrent.SetImmutableIfNeeded()
-            );
+                Android =
+                {
+                    LaunchAppWhenTapped = false,
+                    PendingIntentFlags = AndroidPendingIntentFlags.UpdateCurrent
+                }
+            }, typeof(ScheduledAlarmReceiver));
             return pendingIntent;
         }
 
@@ -533,30 +526,25 @@ namespace Plugin.LocalNotification.Platforms
                 builder.SetTimeoutAfter((long)request.Android.TimeoutAfter.Value.TotalMilliseconds);
             }
 
-            var notificationIntent =
-                Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
-                                                                              string.Empty);
-            if (notificationIntent is null)
-            {
-                LocalNotificationCenter.Log("notificationIntent is null");
-                return false;
-            }
-
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-            notificationIntent.SetFlags(ActivityFlags.SingleTop);
-            notificationIntent.PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            var contentIntent = PendingIntent.GetActivity(Application.Context, request.NotificationId,
-                notificationIntent,
-                request.Android.PendingIntentFlags.ToNative());
+            var contentIntent = CreateActionIntent(serializedRequest, new NotificationAction(NotificationActionEventArgs.TapActionId)
+            {
+                Android =
+                {
+                    LaunchAppWhenTapped = request.Android.LaunchAppWhenTapped,
+                    PendingIntentFlags = request.Android.PendingIntentFlags
+                }
+            }, typeof(NotificationActionReceiver));
 
             var deleteIntent = CreateActionIntent(serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
             {
                 Android =
                 {
+                    LaunchAppWhenTapped = false,
                     PendingIntentFlags = AndroidPendingIntentFlags.CancelCurrent
                 }
-            });
+            }, typeof(NotificationActionReceiver));
 
             builder.SetContentIntent(contentIntent);
             builder.SetDeleteIntent(deleteIntent);
@@ -689,7 +677,7 @@ namespace Plugin.LocalNotification.Platforms
         protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest,
             NotificationAction action)
         {
-            var pendingIntent = CreateActionIntent(serializedRequest, action);
+            var pendingIntent = CreateActionIntent(serializedRequest, action, typeof(NotificationActionReceiver));
             if (string.IsNullOrWhiteSpace(action.Android.IconName.ResourceName))
             {
                 action.Android.IconName = request.Android.IconSmallName;
@@ -707,20 +695,43 @@ namespace Plugin.LocalNotification.Platforms
         /// <param name="serializedRequest"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action)
+        protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action, Type broadcastReceiverType)
         {
-            var intent = new Intent(Application.Context, typeof(NotificationActionReceiver));
-            intent.SetAction(NotificationActionReceiver.EntryIntentAction)
-                .PutExtra(NotificationActionReceiver.NotificationActionActionId, action.ActionId)
+            Intent notificationIntent;
+            if (action.Android.LaunchAppWhenTapped)
+            {
+                notificationIntent =
+                Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
+                                                                              string.Empty);
+            }
+            else
+            {
+                notificationIntent = new Intent(Application.Context, broadcastReceiverType);
+            }
+            //var 
+            notificationIntent.AddFlags(ActivityFlags.SingleTop)
+                .AddFlags(ActivityFlags.IncludeStoppedPackages)
+                .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            var pendingIntent = PendingIntent.GetBroadcast(
-                Application.Context,
-                action.ActionId,
-                intent,
-                action.Android.PendingIntentFlags.ToNative()
-            );
-
+            PendingIntent pendingIntent;
+            if (action.Android.LaunchAppWhenTapped)
+            {
+                pendingIntent = PendingIntent.GetActivity(
+                    Application.Context,
+                    action.ActionId,
+                    notificationIntent,
+                    action.Android.PendingIntentFlags.ToNative());
+            }
+            else
+            {
+                pendingIntent = PendingIntent.GetBroadcast(
+                    Application.Context,
+                    action.ActionId,
+                    notificationIntent,
+                    action.Android.PendingIntentFlags.ToNative()
+                );
+            }
             return pendingIntent;
         }
 

@@ -28,6 +28,7 @@ public static class MauiProgram
                             Title = "Hello",
                             Android =
                             {
+                                LaunchAppWhenTapped = true,
                                 IconName =
                                 {
                                     ResourceName = "i2"
@@ -39,6 +40,7 @@ public static class MauiProgram
                             Title = "Close",
                             Android =
                             {
+                                LaunchAppWhenTapped = false,
                                 IconName =
                                 {
                                     ResourceName = "i3"

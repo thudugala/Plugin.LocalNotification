@@ -18,37 +18,30 @@ namespace Plugin.LocalNotification
         /// Notify Local Notification Tapped.
         /// </summary>
         /// <param name="intent"></param>
-        public static bool NotifyNotificationTapped(Intent intent)
+        public static void NotifyNotificationTapped(Intent intent)
         {
-            if (intent is null)
+            try
             {
-                return false;
-            }
+                var actionId = intent.GetIntExtra(ReturnRequestActionId, -1000);
+                if (actionId == -1000)
+                {
+                    return;
+                }
 
-            if (intent.HasExtra(ReturnRequest) == false)
-            {
-                return false;
+                var requestSerialize = intent.GetStringExtra(ReturnRequest);
+                var request = GetRequest(requestSerialize);
+                
+                var actionArgs = new NotificationActionEventArgs
+                {
+                    ActionId = actionId,
+                    Request = request
+                };
+                Current.OnNotificationActionTapped(actionArgs); 
             }
-
-            var requestSerialize = intent.GetStringExtra(ReturnRequest);
-            if (string.IsNullOrWhiteSpace(requestSerialize))
+            catch (Exception ex)
             {
-                return false;
+                Log(ex);
             }
-
-            var notificationRequest = GetRequest(requestSerialize);
-            if (notificationRequest is null)
-            {
-                return false;
-            }
-
-            var args = new NotificationActionEventArgs
-            {
-                ActionId = NotificationActionEventArgs.TapActionId,
-                Request = notificationRequest
-            };
-            Current.OnNotificationActionTapped(args);
-            return true;
         }
 
         /// <summary>

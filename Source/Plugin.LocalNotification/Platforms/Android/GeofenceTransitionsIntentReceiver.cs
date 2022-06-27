@@ -22,11 +22,6 @@ namespace Plugin.LocalNotification.Platforms
         /// <summary>
         ///
         /// </summary>
-        public const string EntryIntentAction = ReceiverName + ".EntryAction";
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="context"></param>
         /// <param name="intent"></param>
         public override async void OnReceive(Context context, Intent intent)
@@ -34,11 +29,6 @@ namespace Plugin.LocalNotification.Platforms
             try
             {
                 var notificationService = TryGetDefaultDroidNotificationService();
-
-                if (intent.Action != EntryIntentAction)
-                {
-                    throw new ApplicationException("GeofenceTransitionsIntentReceiver.OnReceive: Action Key Not found");
-                }
 
                 var requestSerialize = intent.GetStringExtra(LocalNotificationCenter.ReturnRequest);
                 if (string.IsNullOrWhiteSpace(requestSerialize))

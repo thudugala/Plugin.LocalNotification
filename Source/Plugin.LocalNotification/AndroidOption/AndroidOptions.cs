@@ -119,6 +119,11 @@ namespace Plugin.LocalNotification.AndroidOption
         public AndroidVisibilityType VisibilityType { get; set; } = AndroidVisibilityType.Private;
 
         /// <summary>
+        /// Default is true
+        /// </summary>
+        public bool LaunchAppWhenTapped { get; set; } = true;
+
+        /// <summary>
         ///
         /// </summary>
         public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.UpdateCurrent;

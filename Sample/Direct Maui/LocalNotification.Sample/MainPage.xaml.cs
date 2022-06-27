@@ -8,6 +8,7 @@ namespace LocalNotification.Sample;
 public partial class MainPage : ContentPage
 {
     private int _tapCount;
+    private string _cacheFilePath;
 
     public MainPage()
     {
@@ -23,6 +24,41 @@ public partial class MainPage : ContentPage
         //ScheduleNotificationGroup();
         //ScheduleNotification("first", 10);
         //ScheduleNotification("second", 20);
+
+        _cacheFilePath = FileSystem.Current.CacheDirectory + $"/testFile.txt";
+
+        this.Appearing += MainPage_Appearing;
+    }
+
+    private async void MainPage_Appearing(object sender, EventArgs e)
+    {
+        await LoadText();
+    }
+
+    private async void ButtonLoadText_Clicked(object sender, EventArgs e)
+    {
+        await LoadText();
+    }
+
+    private async void ButtonClearText_Clicked(object sender, EventArgs e)
+    {
+        await File.WriteAllTextAsync(_cacheFilePath, $"Clear Text {DateTime.Now}");
+        var fileText = await File.ReadAllTextAsync(_cacheFilePath);
+        TestFileText.Text = fileText ?? "No Text";
+    }
+
+    private async Task LoadText()
+    {
+        _cacheFilePath = FileSystem.Current.CacheDirectory + $"/testFile.txt";
+
+        if (!File.Exists(_cacheFilePath))
+        {
+            await File.WriteAllTextAsync(_cacheFilePath, $"Load Text {DateTime.Now}");
+        }
+
+        var fileText = await File.ReadAllTextAsync(_cacheFilePath);
+
+        TestFileText.Text = fileText ?? "No Text";
     }
 
     private Task<NotificationEventReceivingArgs> OnNotificationReceiving(NotificationRequest request)
@@ -136,8 +172,11 @@ public partial class MainPage : ContentPage
 
     private async void Current_NotificationActionTapped(NotificationActionEventArgs e)
     {
+        await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}ActionId {e.ActionId} {DateTime.Now}");
+
         if (e.IsDismissed)
         {
+            await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Dismissed {DateTime.Now}");
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 DisplayAlert(e.Request.Title, "User Dismissed Notification", "OK");
@@ -147,8 +186,13 @@ public partial class MainPage : ContentPage
 
         if (e.IsTapped)
         {
+            await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Tapped {DateTime.Now}");
             if (e.Request is null)
             {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    DisplayAlert(e.Request.Title, $"No Request", "OK");
+                });
                 return;
             }
 
@@ -156,11 +200,19 @@ public partial class MainPage : ContentPage
             var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
             if (list is null || list.Count != 4)
             {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    DisplayAlert(e.Request.Title, $"No ReturningData {e.Request.ReturningData}", "OK");
+                });
                 return;
             }
 
             if (list[0] != typeof(NotificationPage).FullName)
             {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    DisplayAlert(e.Request.Title, $"Not NotificationPage", "OK");
+                });
                 return;
             }
 
@@ -176,13 +228,18 @@ public partial class MainPage : ContentPage
         switch (e.ActionId)
         {
             case 100:
+                await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Hello {DateTime.Now}");
+
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
                 });
+
+                LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
                 break;
 
             case 101:
+                await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Cancel {DateTime.Now}");
                 LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
                 break;
         }

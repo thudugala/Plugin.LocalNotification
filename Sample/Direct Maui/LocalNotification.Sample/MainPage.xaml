@@ -27,6 +27,18 @@
         </StackLayout>
         <Label HorizontalOptions="Center" Text="In Android &gt;= 26, Use NotificationChannel to set Sound" />
 
+        <Editor x:Name="TestFileText" IsReadOnly="true" AutoSize="TextChanges" HeightRequest="100" />
+        <Button
+            Clicked="ButtonLoadText_Clicked"
+            HorizontalOptions="Center"
+            Text="Load Text"
+            VerticalOptions="Center" />
+        <Button
+            Clicked="ButtonClearText_Clicked"
+            HorizontalOptions="Center"
+            Text="Clear Text"
+            VerticalOptions="Center" />
+
         <!--  Place new controls here  -->
         <StackLayout VerticalOptions="CenterAndExpand">
             <Button
