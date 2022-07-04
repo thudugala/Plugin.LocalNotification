@@ -145,6 +145,7 @@ namespace Plugin.LocalNotification
             if (channelRequest.VibrationPattern != null)
             {
                 channel.SetVibrationPattern(channelRequest.VibrationPattern);
+                channel.ShouldVibrate();
             }
 
             channel.SetShowBadge(channelRequest.ShowBadge);

@@ -567,6 +567,11 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }
 
+            if (request.Silent)
+            {
+                builder.SetSilent(request.Silent);
+            }
+
             var notification = builder.Build();
             if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
                 request.Android.LedColor.HasValue)
@@ -583,14 +588,6 @@ namespace Plugin.LocalNotification.Platforms
                 notification.Defaults = NotificationDefaults.All;
 #pragma warning restore 618
             }
-
-            if (request.Silent)
-            {
-#pragma warning disable CS0618 // Type or member is obsolete
-                builder.SetNotificationSilent();
-#pragma warning restore CS0618 // Type or member is obsolete
-            }
-
             if (requestHandled == false)
             {
                 MyNotificationManager?.Notify(request.NotificationId, notification);
