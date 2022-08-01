@@ -10,7 +10,7 @@ The local notification plugin provides a way to show local notifications from Xa
 # Setup
 
 - `Plugin.LocalNotification` Available on NuGet: https://www.nuget.org/packages/Plugin.LocalNotification
-- #### .Net Maui
+- #### .Net MAUI
   - Install Version 10.0.0 above 
   - Install into your project
 - #### Xamarin.Forms
@@ -36,7 +36,7 @@ The local notification plugin provides a way to show local notifications from Xa
 # Usage 
 
 - [Xamarin.Forms](https://github.com/thudugala/Plugin.LocalNotification/wiki/Usage-9.2.0)
-- [.Net Maui](https://github.com/thudugala/Plugin.LocalNotification/wiki/Usage-Maui-(Preview))
+- [.Net MAUI](https://github.com/thudugala/Plugin.LocalNotification/wiki/Usage-Maui-(Preview))
 
 # Screen Record
 
