@@ -11,16 +11,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Elvin (Tharindu) Thudugala</Authors>
-    <PackageTags>android, ios, xamarin, xamarin.forms, local, notification, local.notification, Maui</PackageTags>
+    <PackageTags>android, ios, xamarin, xamarin.forms, local, notification, local.notification, .Net MAUI</PackageTags>
     <PackageProjectUrl>https://github.com/thudugala/Plugin.LocalNotification</PackageProjectUrl>
     <RepositoryUrl>https://github.com/thudugala/Plugin.LocalNotification</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>The local notification plugin provides a way to show local notifications from Xamarin and Maui apps.</Description>
+    <Description>The local notification plugin provides a way to show local notifications from Xamarin and MAUI apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
-	<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>10.0.0-preview02</Version>
+    <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
+    <Version>10.0.0</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -30,27 +30,27 @@
 
     <CodeAnalysisRuleSet>Plugin.LocalNotification.ruleset</CodeAnalysisRuleSet>
 
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<LangVersion>10.0</LangVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
-	<!-- platform version number information -->
+    <!-- platform version number information -->
   <PropertyGroup>
-	<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-ios'))">10.0</SupportedOSPlatformVersion>
-	<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-ios'))">10.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">21.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
-	<PropertyGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios'))">
-		<UseMaui>true</UseMaui>
-	</PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios'))">
+    <UseMaui>true</UseMaui>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-	  <None Include="..\..\Screenshots\icon.png" Pack="True" PackagePath="\" Link="Properties\icon.png" />
-	  <None Include="..\..\README.md" Pack="True" PackagePath="\" Link="Properties\README.md" />
+    <None Include="..\..\Screenshots\icon.png" Pack="True" PackagePath="\" Link="Properties\icon.png" />
+    <None Include="..\..\README.md" Pack="True" PackagePath="\" Link="Properties\README.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,31 +60,32 @@
 
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">   
-	<Compile Include="**/Platforms/Android/**/*.cs" />
-	<PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
-	<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="118.0.0.3" />
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+  <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
+    <Compile Include="**/Platforms/Android/**/*.cs" />
+    <PackageReference Include="Xamarin.Build.Download" Version="0.11.3" PrivateAssets="All"/>  
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="118.0.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">
     <Compile Include="**/Platforms/iOS/**/*.cs" />
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
-		<Compile Include="**/Platforms/Android/**/*.cs" />
-		<PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.1" />
-	</ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+    <Compile Include="**/Platforms/Android/**/*.cs" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.1" />
+  </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
-	<Compile Include="**/Platforms/iOS/**/*.cs" />
+    <Compile Include="**/Platforms/iOS/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>
