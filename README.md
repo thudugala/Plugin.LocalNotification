@@ -32,6 +32,7 @@ The local notification plugin provides a way to show local notifications from Xa
 | Clear Delivered Notifications | ✅          | ✅             | ✅         | ✅            |
 | Get Pending Notifications     | ✅          | ✅             | ✅         | ✅            |
 | Get Delivered Notifications   | ✅          | ✅             | ✅         | ✅            |
+| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)  | ✅  | ✅  | ✅   | ✅    |
 
 # Usage 
 
