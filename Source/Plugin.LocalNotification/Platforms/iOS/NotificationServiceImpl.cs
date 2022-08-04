@@ -173,11 +173,11 @@ namespace Plugin.LocalNotification.Platforms
                                      request.Geofence.RadiusInMeters,
                                      notificationId)
                     {
-                        NotifyOnEntry = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
-                        NotifyOnExit = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnExit
+                        NotifyOnEntry = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
+                        NotifyOnExit = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit,                        
                     };
 
-                    trigger = UNLocationNotificationTrigger.CreateTrigger(regin, false);
+                    trigger = UNLocationNotificationTrigger.CreateTrigger(regin, request.Geofence.iOS.Repeats);
                 }
                 else
                 {

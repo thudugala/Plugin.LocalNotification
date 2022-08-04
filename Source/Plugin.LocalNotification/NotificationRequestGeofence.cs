@@ -1,4 +1,6 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
+using System;
 
 namespace Plugin.LocalNotification
 {
@@ -16,6 +18,11 @@ namespace Plugin.LocalNotification
         /// 
         /// </summary>
         public AndroidGeofenceOptions Android { get; set; } = new();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public iOSGeofenceOptions iOS { get; set; } = new();
 
         /// <summary>
         /// The center of the geofence
@@ -39,12 +46,12 @@ namespace Plugin.LocalNotification
         public class Position
         {
             /// <summary>
-            /// 
+            /// Latitude in degrees, between -90 and +90 inclusive
             /// </summary>
             public double Latitude { get; set; }
 
             /// <summary>
-            /// 
+            /// Longitude in degrees, between -180 and +180 inclusive.
             /// </summary>
             public double Longitude { get; set; }
         }
@@ -52,16 +59,18 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// 
         /// </summary>
+        [Flags]
         public enum GeofenceNotifyOn
         {
             /// <summary>
-            /// 
+            /// User enters the geofence
             /// </summary>
-            OnEntry,
+            OnEntry = 1,
+
             /// <summary>
-            /// 
+            /// user exits the geofence
             /// </summary>
-            OnExit
+            OnExit = 2
         }
     }
 }

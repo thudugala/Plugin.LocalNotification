@@ -255,9 +255,15 @@ namespace Plugin.LocalNotification.Platforms
                 Convert.ToSingle(request.Geofence.RadiusInMeters)
             );
 
-            var transitionType = request.Geofence.NotifyOn == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry ? 
-                Geofence.GeofenceTransitionEnter : 
-                Geofence.GeofenceTransitionExit;
+            int transitionType = 0;
+            if((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry)
+            {
+                transitionType |= Geofence.GeofenceTransitionEnter;
+            }
+            if((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit)
+            {
+                transitionType |= Geofence.GeofenceTransitionEnter;
+            }
 
             if (request.Geofence.Android.LoiteringDelayMilliseconds > 0)
             {
