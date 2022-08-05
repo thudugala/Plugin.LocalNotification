@@ -1,24 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
 
 namespace LocalNotification.Sample;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-			})
-			//.UseLocalNotification();
-			.UseLocalNotification(config =>
-			{
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            })
+            //.UseLocalNotification();
+            .UseLocalNotification(config =>
+            {
                 config.AddCategory(new NotificationCategory(NotificationCategoryType.Status)
                 {
                     ActionList = new HashSet<NotificationAction>(new List<NotificationAction>()
@@ -50,20 +51,24 @@ public static class MauiProgram
                     })
                 });
                 config.AddAndroid(android =>
-				{
-					android.AddChannel(new NotificationChannelRequest
-					{
-						Sound = "good_things_happen"
-					});
-				});
-//				config.AddiOS(iOS =>
-//				{
-//#if IOS
-//					iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
-//#endif
-//				});
+                {
+                    android.AddChannel(new NotificationChannelRequest
+                    {
+                        Sound = "good_things_happen"
+                    });
+                });
+                config.AddiOS(iOS =>
+                {
+#if IOS
+                    iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
+#endif
+                    iOS.SetPermission(new iOSNotificationPermission
+                    {
+                        LocationAuthorization = iOSLocationAuthorization.WhenInUse
+                    });
+                });
 
-			});
+            });
 
         builder.Services.AddLogging(logging =>
         {
@@ -72,5 +77,5 @@ public static class MauiProgram
         });
 
         return builder.Build();
-	}
+    }
 }
