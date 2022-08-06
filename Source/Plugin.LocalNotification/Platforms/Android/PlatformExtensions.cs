@@ -32,7 +32,7 @@ namespace Plugin.LocalNotification.Platforms
             {
                 if (
 #if MONOANDROID
-            Build.VERSION.SdkInt >= BuildVersionCodes.M
+                Build.VERSION.SdkInt >= BuildVersionCodes.M
 #elif ANDROID
                 OperatingSystem.IsAndroidVersionAtLeast(23)
 #endif

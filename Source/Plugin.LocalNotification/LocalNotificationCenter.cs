@@ -71,10 +71,7 @@ namespace Plugin.LocalNotification
         { 
             get
             {
-                if(_serializer is null)
-                {
-                    _serializer = new NotificationSerializer();
-                }
+                _serializer ??= new NotificationSerializer();
                 return _serializer;
             }
             set => _serializer = value;

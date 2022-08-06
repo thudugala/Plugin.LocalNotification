@@ -15,12 +15,12 @@ namespace Plugin.LocalNotification
         public GeofenceNotifyOn NotifyOn { get; set; } = GeofenceNotifyOn.OnEntry;
 
         /// <summary>
-        /// 
+        /// Android specific properties.
         /// </summary>
         public AndroidGeofenceOptions Android { get; set; } = new();
 
         /// <summary>
-        /// 
+        /// iOS specific properties.
         /// </summary>
         public iOSGeofenceOptions iOS { get; set; } = new();
 

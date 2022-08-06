@@ -22,12 +22,12 @@ namespace Plugin.LocalNotification
         public INotificationSerializer Serializer { get; private set; }
 
         /// <summary>
-        /// 
+        /// Android specific Builder.
         /// </summary>
         public AndroidLocalNotificationBuilder AndroidBuilder { get; private set; }
 
         /// <summary>
-        /// 
+        /// Android specific Builder.
         /// </summary>
         public iOSLocalNotificationBuilder IOSBuilder { get; private set; }
 

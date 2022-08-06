@@ -712,7 +712,7 @@ namespace Plugin.LocalNotification.Platforms
             {
                 notificationIntent = new Intent(Application.Context, broadcastReceiverType);
             }
-            //var 
+
             notificationIntent.AddFlags(ActivityFlags.SingleTop)
                 .AddFlags(ActivityFlags.IncludeStoppedPackages)
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)

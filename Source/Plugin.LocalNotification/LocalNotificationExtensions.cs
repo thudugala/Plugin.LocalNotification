@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.LifecycleEvents;
 using System;
+using System.Linq;
 #endif
 
 namespace Plugin.LocalNotification
@@ -36,14 +37,14 @@ namespace Plugin.LocalNotification
                 {
                     android.OnCreate((activity, savedInstanceState) =>
                     {
-                        if (localNotificationBuilder.AndroidBuilder.ChannelRequestList.Count > 0)
+                        if (localNotificationBuilder.AndroidBuilder.ChannelRequestList.Any())
                         {
                             foreach(var channelRequest in localNotificationBuilder.AndroidBuilder.ChannelRequestList)
                             {
                                 LocalNotificationCenter.CreateNotificationChannel(channelRequest);
                             }
                         }
-                        if (localNotificationBuilder.AndroidBuilder.GroupChannelRequestList.Count > 0)
+                        if (localNotificationBuilder.AndroidBuilder.GroupChannelRequestList.Any())
                         {
                             foreach (var groupChannelReques in localNotificationBuilder.AndroidBuilder.GroupChannelRequestList)
                             {

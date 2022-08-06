@@ -24,12 +24,12 @@ namespace Plugin.LocalNotification
         public int ActionId { get; }
 
         /// <summary>
-        ///
+        /// iOS specific properties.
         /// </summary>
         public iOSAction iOS { get; set; } = new ();
 
         /// <summary>
-        /// 
+        /// Android specific properties.
         /// </summary>
         public AndroidAction Android { get; set; } = new ();
 
