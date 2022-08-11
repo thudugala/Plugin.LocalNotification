@@ -68,7 +68,7 @@
     <Compile Include="**/Platforms/Android/**/*.cs" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.11.3" PrivateAssets="All"/>  
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="118.0.0.3" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
