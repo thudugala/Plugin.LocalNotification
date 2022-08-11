@@ -81,7 +81,7 @@
 
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
     <Compile Include="**/Platforms/Android/**/*.cs" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.1" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="119.0.1.2" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
