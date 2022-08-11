@@ -1,9 +1,9 @@
 ﻿using CoreLocation;
 using Microsoft.Extensions.Logging;
-using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.iOSOption;
 using Plugin.LocalNotification.Platforms;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -13,7 +13,7 @@ using UserNotifications;
 namespace Plugin.LocalNotification
 {
     public partial class LocalNotificationCenter
-    {        
+    {
         /// <summary>
         /// This allow developer to change UNUserNotificationCenterDelegate,
         /// extend Plugin.LocalNotification.Platform.iOS.UserNotificationCenterDelegate
@@ -24,6 +24,62 @@ namespace Plugin.LocalNotification
         public static void SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate notificationDelegate = null)
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
+        }
+
+        /// <summary>
+        /// Ask the user for permission to show notifications on iOS 10.0+.
+        /// Returns true if Allowed.
+        /// If not asked at startup, user will be asked when showing the first notification.
+        /// </summary>
+        public static bool RequestNotificationPermission(iOSNotificationPermission permission = null)
+        {
+            try
+            {
+                permission ??= new iOSNotificationPermission();
+
+                if (!permission.AskPermission)
+                {
+                    return false;
+                }
+
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    return true;
+                }
+
+                var allowed = AreNotificationsEnabled();
+                if (allowed)
+                {
+                    return true;
+                }
+
+                var alertsAllowed = false;
+
+                // Ask the user for permission to show notifications on iOS 10.0+
+                UNUserNotificationCenter.Current.RequestAuthorization(
+                    permission.NotificationAuthorization.ToNative(),
+                    (approved, error) =>
+                    {
+                        if (error != null)
+                        {
+                            Log(error?.LocalizedDescription);
+                        }
+                        else
+                        {
+                            alertsAllowed = approved;
+                            if (alertsAllowed)
+                            {
+                                RequestLocationPermission(permission.LocationAuthorization);
+                            }
+                        }
+                    });
+                return alertsAllowed;
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+                return false;
+            }
         }
 
         /// <summary>
@@ -47,7 +103,7 @@ namespace Plugin.LocalNotification
                     return true;
                 }
 
-                var allowed = await AreNotificationsEnabled();
+                var allowed = await AreNotificationsEnabledAsync();
                 if (allowed)
                 {
                     return true;
@@ -85,7 +141,7 @@ namespace Plugin.LocalNotification
                 {
                     return;
                 }
-                if(authorization == iOSLocationAuthorization.No)
+                if (authorization == iOSLocationAuthorization.No)
                 {
                     return;
                 }
@@ -107,7 +163,18 @@ namespace Plugin.LocalNotification
             }
         }
 
-        internal static async Task<bool> AreNotificationsEnabled()
+        internal static bool AreNotificationsEnabled()
+        {
+            var isEnabled = false;
+
+            UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
+            {
+                isEnabled = settings.AlertSetting == UNNotificationSetting.Enabled;
+            });
+            return isEnabled;
+        }
+
+        internal static async Task<bool> AreNotificationsEnabledAsync()
         {
             var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
             return settings.AlertSetting == UNNotificationSetting.Enabled;
@@ -117,7 +184,47 @@ namespace Plugin.LocalNotification
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
         /// <param name="uiApplication"></param>
-        public static async Task ResetApplicationIconBadgeNumber(UIApplication uiApplication)
+        public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
+        {
+            try
+            {
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+                {
+                    return;
+                }
+
+                var notificationList = new List<UNNotification>();
+                //Remove badges on app enter foreground if user cleared the notification in the notification panel
+                UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationArray) =>
+                {
+                    notificationList.AddRange(notificationArray);
+                });
+                if (notificationList.Any())
+                {
+                    return;
+                }
+
+                uiApplication.InvokeOnMainThread(() =>
+                {
+                    uiApplication.ApplicationIconBadgeNumber = 0;
+                });
+                UIApplication.SharedApplication.InvokeOnMainThread(() =>
+                {
+                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+                });
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Reset Application Icon Badge Number when there are no notifications.
+        /// </summary>
+        /// <param name="uiApplication"></param>
+        public static async Task ResetApplicationIconBadgeNumberAsync(UIApplication uiApplication)
         {
             try
             {
@@ -138,7 +245,6 @@ namespace Plugin.LocalNotification
                 uiApplication.InvokeOnMainThread(() =>
                 {
                     uiApplication.ApplicationIconBadgeNumber = 0;
-
                 });
                 UIApplication.SharedApplication.InvokeOnMainThread(() =>
                 {
