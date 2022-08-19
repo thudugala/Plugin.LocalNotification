@@ -214,7 +214,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public Task<bool> AreNotificationsEnabled()
         {
-            return LocalNotificationCenter.AreNotificationsEnabled();
+            return LocalNotificationCenter.AreNotificationsEnabledAsync();
         }
 
         /// <summary>
