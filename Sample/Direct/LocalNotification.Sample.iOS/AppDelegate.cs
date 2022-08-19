@@ -27,7 +27,7 @@ namespace LocalNotification.Sample.iOS
 
             // Ask the user for permission to show notifications on iOS 10.0+ at startup.
             // If not asked at startup, user will be asked when showing the first notification.
-            LocalNotificationCenter.RequestNotificationPermissionAsync().GetAwaiter().GetResult();
+            LocalNotificationCenter.RequestNotificationPermission();
 
             //LocalNotificationCenter.RequestLocationPermission(iOSLocationAuthorization.WhenInUse);
 
@@ -38,7 +38,7 @@ namespace LocalNotification.Sample.iOS
 
         public override void WillEnterForeground(UIApplication uiApplication)
         {
-            LocalNotificationCenter.ResetApplicationIconBadgeNumber(uiApplication).GetAwaiter().GetResult();
+            LocalNotificationCenter.ResetApplicationIconBadgeNumber(uiApplication);
             base.WillEnterForeground(uiApplication);
         }
     }

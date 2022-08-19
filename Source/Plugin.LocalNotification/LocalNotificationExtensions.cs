@@ -67,12 +67,12 @@ namespace Plugin.LocalNotification
                         {
                             LocalNotificationCenter.SetCustomUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);
                         }
-                        LocalNotificationCenter.RequestNotificationPermissionAsync(localNotificationBuilder.IOSBuilder.Permission).GetAwaiter().GetResult();
+                        LocalNotificationCenter.RequestNotificationPermission(localNotificationBuilder.IOSBuilder.Permission);
                         return true;
                     });
                     iOS.WillEnterForeground(application =>
                     {
-                        LocalNotificationCenter.ResetApplicationIconBadgeNumber(application).GetAwaiter().GetResult();
+                        LocalNotificationCenter.ResetApplicationIconBadgeNumber(application);
                     });
                 });
 #endif
