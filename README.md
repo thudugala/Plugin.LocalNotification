@@ -45,7 +45,11 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Video
 
+### Xamarin.Forms
 [![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
+
+### .Net MAUI
+[![Local Push Notifications in .Net MAUI](https://img.youtube.com/vi/dWdXXGa1_hI/0.jpg)](https://www.youtube.com/watch?v=dWdXXGa1_hI)
 
 # SourceLink Support
 
