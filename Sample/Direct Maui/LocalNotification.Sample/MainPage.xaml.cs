@@ -74,7 +74,7 @@ public partial class MainPage : ContentPage
 
     private async void Button_Clicked(object sender, EventArgs e)
     {
-        var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.icon.png");
+        var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.Resources.appicon.png");
         byte[] imageBytes = null;
         if (imageStream != null)
         {
