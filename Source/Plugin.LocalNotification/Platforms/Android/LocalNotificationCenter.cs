@@ -132,14 +132,18 @@ namespace Plugin.LocalNotification
                 LightColor = channelRequest.LightColor.ToNative(),
                 LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
             };
-            var soundUri = GetSoundUri(channelRequest.Sound);
-            if (soundUri != null)
+
+            if (channelRequest.EnableSound)
             {
-                using var audioAttributesBuilder = new AudioAttributes.Builder();
-                var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
-                        ?.SetContentType(AudioContentType.Sonification)
-                        ?.Build();
-                channel.SetSound(soundUri, audioAttributes);
+                var soundUri = GetSoundUri(channelRequest.Sound);
+                if (soundUri != null)
+                {
+                    using var audioAttributesBuilder = new AudioAttributes.Builder();
+                    var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
+                            ?.SetContentType(AudioContentType.Sonification)
+                            ?.Build();
+                    channel.SetSound(soundUri, audioAttributes);
+                }
             }
 
             if (channelRequest.VibrationPattern != null)
@@ -161,9 +165,8 @@ namespace Plugin.LocalNotification
         {
             if (string.IsNullOrWhiteSpace(soundFileName))
             {
-                return null;
+                return RingtoneManager.GetDefaultUri(RingtoneType.Notification);
             }
-
             if (soundFileName.Contains("://", StringComparison.InvariantCulture))
             {
                 return Android.Net.Uri.Parse(soundFileName);
