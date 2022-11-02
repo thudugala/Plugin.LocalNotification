@@ -719,11 +719,12 @@ namespace Plugin.LocalNotification.Platforms
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
             PendingIntent pendingIntent;
+            var requestIntent = action.ActionId + new Random().Next();
             if (action.Android.LaunchAppWhenTapped)
             {
                 pendingIntent = PendingIntent.GetActivity(
                     Application.Context,
-                    action.ActionId,
+                    requestIntent,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative());
             }
@@ -731,7 +732,7 @@ namespace Plugin.LocalNotification.Platforms
             {
                 pendingIntent = PendingIntent.GetBroadcast(
                     Application.Context,
-                    action.ActionId,
+                    requestIntent,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative()
                 );
