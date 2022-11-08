@@ -61,7 +61,7 @@
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid'))">
@@ -70,13 +70,13 @@
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.6.0.3" />
     <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="118.0.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS'))">
     <Compile Include="**/Platforms/iOS/**/*.cs" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
