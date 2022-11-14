@@ -661,13 +661,10 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }
 
-            if (notificationImage.Binary is { Length: > 0 })
-            {
-                return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
-                    notificationImage.Binary.Length).ConfigureAwait(false);
-            }
-
-            return null;
+            return notificationImage.Binary is { Length: > 0 }
+                ? await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
+                    notificationImage.Binary.Length).ConfigureAwait(false)
+                : null;
         }
 
         /// <summary>
@@ -701,41 +698,28 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action, Type broadcastReceiverType)
         {
-            Intent notificationIntent;
-            if (action.Android.LaunchAppWhenTapped)
-            {
-                notificationIntent =
-                Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
-                                                                              string.Empty);
-            }
-            else
-            {
-                notificationIntent = new Intent(Application.Context, broadcastReceiverType);
-            }
+            var notificationIntent = action.Android.LaunchAppWhenTapped
+                ? (Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
+                                                                              string.Empty))
+                : new Intent(Application.Context, broadcastReceiverType);
 
             notificationIntent.AddFlags(ActivityFlags.SingleTop)
                 .AddFlags(ActivityFlags.IncludeStoppedPackages)
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            PendingIntent pendingIntent;
-            if (action.Android.LaunchAppWhenTapped)
-            {
-                pendingIntent = PendingIntent.GetActivity(
+            var pendingIntent = action.Android.LaunchAppWhenTapped
+                ? PendingIntent.GetActivity(
                     Application.Context,
                     action.ActionId,
                     notificationIntent,
-                    action.Android.PendingIntentFlags.ToNative());
-            }
-            else
-            {
-                pendingIntent = PendingIntent.GetBroadcast(
+                    action.Android.PendingIntentFlags.ToNative())
+                : PendingIntent.GetBroadcast(
                     Application.Context,
                     action.ActionId,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative()
                 );
-            }
             return pendingIntent;
         }
 

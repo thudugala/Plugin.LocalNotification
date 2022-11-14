@@ -33,19 +33,19 @@ namespace Plugin.LocalNotification.Platforms
             switch (priority)
             {
                 case iOSPriority.Passive:
-                    return UNNotificationInterruptionLevel.Passive;
+                    return UNNotificationInterruptionLevel.Passive2;
 
                 case iOSPriority.Active:
-                    return UNNotificationInterruptionLevel.Active;
+                    return UNNotificationInterruptionLevel.Active2;
 
                 case iOSPriority.TimeSensitive:
-                    return UNNotificationInterruptionLevel.TimeSensitive;
+                    return UNNotificationInterruptionLevel.TimeSensitive2;
 
                 case iOSPriority.Critical:
-                    return UNNotificationInterruptionLevel.Critical;
+                    return UNNotificationInterruptionLevel.Critical2;
 
                 default:
-                    return UNNotificationInterruptionLevel.Active;
+                    return UNNotificationInterruptionLevel.Active2;
             }
         }
 
