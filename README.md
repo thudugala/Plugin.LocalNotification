@@ -18,21 +18,22 @@ The local notification plugin provides a way to show local notifications from Xa
 
 ## Platform Support
 
-| Feature                       | Xamarin.iOS | Xamarin.Android | net6.0-ios | net6.0-android |
-| ----------------------------- | ----------- | --------------- | ---------- | -------------- |
-| Required SDK                  | >= 10       | >= API 19       | >= 10      | >= API 21      |
-| Title                         | ✅          | ✅             | ✅         | ✅            | 
-| Description                   | ✅          | ✅             | ✅         | ✅            |
-| Subtitle                      | ✅          | ✅             | ✅         | ✅            |
-| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/Scheduled-Android-notifications)      | ✅  | ✅   | ✅   | ✅    |
-| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/Repeat-Notification)                    | ✅  | ✅   | ✅   | ✅    |
-| [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)  | ✅  | ✅   | ✅   | ✅    |
-| Images                        | ✅          | ✅             | ✅         | ✅            |
-| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-Action) | ✅  | ✅   | ✅   | ✅    |
-| Clear Delivered Notifications | ✅          | ✅             | ✅         | ✅            |
-| Get Pending Notifications     | ✅          | ✅             | ✅         | ✅            |
-| Get Delivered Notifications   | ✅          | ✅             | ✅         | ✅            |
-| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)  | ✅  | ✅  | ✅   | ✅    |
+| Feature                       | Xamarin.iOS | Xamarin.Android | net6.0-ios | net6.0-android | net7.0-ios | net7.0-android |
+| ----------------------------- | ----------- | --------------- | ---------- | -------------- | ---------- | -------------- |
+| Build SDK                     | >= 10       | >= API 31       | >= 16      | >= API 31      | >= 16      | >= API 33      |
+| Supported OS Version          | >= 10       | >= API 19       | >= 10      | >= API 21      | >= 10      | >= API 21      |
+| Title                         | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            | 
+| Description                   | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            | 
+| Subtitle                      | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            | 
+| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/Scheduled-Android-notifications)      | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/Repeat-Notification)                    | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)  | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| Images                        | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
+| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-Action) | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| Clear Delivered Notifications | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
+| Get Pending Notifications     | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
+| Get Delivered Notifications   | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
+| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)  | ✅  | ✅  | ✅   | ✅    | ✅   | ✅    |
 
 # Usage 
 
