@@ -54,10 +54,10 @@ namespace Plugin.LocalNotification
                 }
 
                 var alertsAllowed = false;
-
+                var authorizationOptions = permission.NotificationAuthorization.ToNative();
                 // Ask the user for permission to show notifications on iOS 10.0+
                 UNUserNotificationCenter.Current.RequestAuthorization(
-                    permission.NotificationAuthorization.ToNative(),
+                    authorizationOptions,
                     (approved, error) =>
                     {
                         if (error != null)
@@ -110,7 +110,8 @@ namespace Plugin.LocalNotification
                 }
 
                 // Ask the user for permission to show notifications on iOS 10.0+
-                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(permission.NotificationAuthorization.ToNative()).ConfigureAwait(false);
+                var authorizationOptions = permission.NotificationAuthorization.ToNative();
+                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
 
                 Log(error?.LocalizedDescription);
 
@@ -166,11 +167,13 @@ namespace Plugin.LocalNotification
         internal static bool AreNotificationsEnabled()
         {
             var isEnabled = false;
-
+            var completionSource = new TaskCompletionSource<bool>();
             UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
             {
                 isEnabled = settings.AlertSetting == UNNotificationSetting.Enabled;
+                completionSource.SetResult(true);
             });
+            completionSource.Task.Wait();
             return isEnabled;
         }
 
@@ -195,10 +198,13 @@ namespace Plugin.LocalNotification
 
                 var notificationList = new List<UNNotification>();
                 //Remove badges on app enter foreground if user cleared the notification in the notification panel
+                var completionSource = new TaskCompletionSource<bool>();
                 UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationArray) =>
                 {
                     notificationList.AddRange(notificationArray);
+                    completionSource.SetResult(true);
                 });
+                completionSource.Task.Wait();
                 if (notificationList.Any())
                 {
                     return;
