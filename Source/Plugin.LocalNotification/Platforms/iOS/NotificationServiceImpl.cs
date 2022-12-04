@@ -234,8 +234,7 @@ namespace Plugin.LocalNotification.Platforms
                 Subtitle = request.Subtitle,
                 Body = request.Description,
                 Badge = request.BadgeNumber,
-                UserInfo = userInfoDictionary,
-                Sound = UNNotificationSound.Default
+                UserInfo = userInfoDictionary
             };
 
             if (
@@ -286,15 +285,12 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(request.Sound) == false)
-            {
-                content.Sound = UNNotificationSound.GetSound(request.Sound);
-            }
+            content.Sound = request.Silent ?
+                null :
+                string.IsNullOrWhiteSpace(request.Sound) == false ?
+                    UNNotificationSound.GetSound(request.Sound) : 
+                    UNNotificationSound.Default;
 
-            if (request.Silent)
-            {
-                content.Sound = null;
-            }
             return content;
         }
 

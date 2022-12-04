@@ -156,8 +156,8 @@ public partial class MainPage : ContentPage
             request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
             request.Schedule.NotifyTime = notifyDateTime;
             //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
-            request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
-            request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
+            //request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
+            //request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
         }
 
         try
