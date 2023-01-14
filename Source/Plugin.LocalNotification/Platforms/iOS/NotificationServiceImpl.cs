@@ -153,7 +153,7 @@ namespace Plugin.LocalNotification.Platforms
                     return false;
                 }
 
-                var allowed = await LocalNotificationCenter.RequestNotificationPermissionAsync().ConfigureAwait(false);
+                var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
                 if (allowed == false)
                 {
                     LocalNotificationCenter.Log("User denied permission");
@@ -174,7 +174,7 @@ namespace Plugin.LocalNotification.Platforms
                                      notificationId)
                     {
                         NotifyOnEntry = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
-                        NotifyOnExit = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit,                        
+                        NotifyOnExit = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit,
                     };
 
                     trigger = UNLocationNotificationTrigger.CreateTrigger(regin, request.Geofence.iOS.Repeats);
@@ -227,7 +227,7 @@ namespace Plugin.LocalNotification.Platforms
             var userInfoDictionary = new NSMutableDictionary();
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
             userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(LocalNotificationCenter.ReturnRequest));
-            
+
             var content = new UNMutableNotificationContent
             {
                 Title = request.Title,
@@ -248,7 +248,7 @@ namespace Plugin.LocalNotification.Platforms
                 content.InterruptionLevel = request.iOS.Priority.ToNative();
                 content.RelevanceScore = request.iOS.RelevanceScore;
             }
-          
+
             // Image Attachment
             if (request.Image != null)
             {
@@ -269,7 +269,6 @@ namespace Plugin.LocalNotification.Platforms
                 content.ThreadIdentifier = request.Group;
             }
 
-
             if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
             {
                 if (
@@ -277,7 +276,7 @@ namespace Plugin.LocalNotification.Platforms
                      UIDevice.CurrentDevice.CheckSystemVersion(12, 0) && !UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
 #elif IOS
                      OperatingSystem.IsIOSVersionAtLeast(12) && !OperatingSystem.IsIOSVersionAtLeast(15)
-#endif                
+#endif
                    )
                 {
                     content.SummaryArgument = request.iOS.SummaryArgument;
@@ -288,7 +287,7 @@ namespace Plugin.LocalNotification.Platforms
             content.Sound = request.Silent ?
                 null :
                 string.IsNullOrWhiteSpace(request.Sound) == false ?
-                    UNNotificationSound.GetSound(request.Sound) : 
+                    UNNotificationSound.GetSound(request.Sound) :
                     UNNotificationSound.Default;
 
             return content;
@@ -465,7 +464,7 @@ namespace Plugin.LocalNotification.Platforms
 
             return notificationCategory;
         }
-                        
+
         /// <inheritdoc />
         public async Task<IList<NotificationRequest>> GetPendingNotificationList()
         {
@@ -506,6 +505,12 @@ namespace Plugin.LocalNotification.Platforms
             var request = LocalNotificationCenter.GetRequest(requestSerialize);
 
             return request;
+        }
+
+        /// <inheritdoc />
+        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        {
+            return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }
     }
 }

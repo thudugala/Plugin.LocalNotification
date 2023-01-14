@@ -93,5 +93,11 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <returns></returns>
         Task<bool> AreNotificationsEnabled();
+
+        /// <summary>
+        /// Request Notification Permission
+        /// </summary>
+        /// <returns></returns>
+        Task<bool> RequestNotificationPermission(NotificationPermission permission = null);
     }
 }

@@ -35,7 +35,7 @@ namespace Plugin.LocalNotification.Platforms
         protected readonly AlarmManager MyAlarmManager;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected readonly GeofencingClient MyGeofencingClient;
 
@@ -239,7 +239,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -255,12 +255,12 @@ namespace Plugin.LocalNotification.Platforms
                 Convert.ToSingle(request.Geofence.RadiusInMeters)
             );
 
-            int transitionType = 0;
-            if((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry)
+            var transitionType = 0;
+            if ((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry)
             {
                 transitionType |= Geofence.GeofenceTransitionEnter;
             }
-            if((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit)
+            if ((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit)
             {
                 transitionType |= Geofence.GeofenceTransitionEnter;
             }
@@ -293,7 +293,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
@@ -325,7 +325,7 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-            var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);            
+            var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);
 
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
@@ -356,7 +356,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
@@ -690,7 +690,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="serializedRequest"></param>
         /// <param name="action"></param>
@@ -740,8 +740,6 @@ namespace Plugin.LocalNotification.Platforms
         //    return nativeAction;
         //}
 
-
-
         /// <summary>
         ///
         /// </summary>
@@ -789,6 +787,12 @@ namespace Plugin.LocalNotification.Platforms
             {
                 _categoryList.Add(category);
             }
+        }
+
+        /// <inheritdoc />
+        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        {
+            return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }
     }
 }

@@ -32,6 +32,11 @@ namespace Plugin.LocalNotification
         public iOSLocalNotificationBuilder IOSBuilder { get; private set; }
 
         /// <summary>
+        /// Notification Permission
+        /// </summary>
+        public NotificationPermission Permission { get; private set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public LocalNotificationBuilder()
@@ -40,20 +45,21 @@ namespace Plugin.LocalNotification
             IOSBuilder = new iOSLocalNotificationBuilder();
             CategorySet = new HashSet<NotificationCategory>();
             Serializer = new NotificationSerializer();
+            Permission = new NotificationPermission();
         }
 
         /// <inheritdoc/>
-        public IAndroidLocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android)
+        public ILocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android)
         {
             android?.Invoke(AndroidBuilder);
-            return AndroidBuilder;
+            return this;
         }
 
         /// <inheritdoc/>
-        public IiOSLocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS)
+        public ILocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS)
         {
             iOS?.Invoke(IOSBuilder);
-            return IOSBuilder;
+            return this;
         }
 
         /// <inheritdoc/>
@@ -67,6 +73,13 @@ namespace Plugin.LocalNotification
         public ILocalNotificationBuilder SetSerializer(INotificationSerializer serializer)
         {
             Serializer = serializer ?? new NotificationSerializer();
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public ILocalNotificationBuilder SetPermission(NotificationPermission permission)
+        {
+            Permission = permission ?? new NotificationPermission();
             return this;
         }
     }

@@ -3,17 +3,48 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Microsoft.Extensions.Logging;
+#if ANDROID
+using Microsoft.Maui.ApplicationModel;
+#endif
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.Platforms;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification
 {
     public partial class LocalNotificationCenter
-    {        
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
+        {
+#if ANDROID
+            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
+            {
+                return false;
+            }
+
+            permission ??= new NotificationPermission();
+
+            if (!permission.AskPermission)
+            {
+                return false;
+            }
+
+            var status = await Permissions.RequestAsync<NotificationPerms>();
+            return status == PermissionStatus.Granted;
+#else
+            var result = await Task.FromResult(true);
+            return result;
+#endif
+        }
+
         /// <summary>
         /// Notify Local Notification Tapped.
         /// </summary>
@@ -30,13 +61,13 @@ namespace Plugin.LocalNotification
 
                 var requestSerialize = intent.GetStringExtra(ReturnRequest);
                 var request = GetRequest(requestSerialize);
-                
+
                 var actionArgs = new NotificationActionEventArgs
                 {
                     ActionId = actionId,
                     Request = request
                 };
-                Current.OnNotificationActionTapped(actionArgs); 
+                Current.OnNotificationActionTapped(actionArgs);
             }
             catch (Exception ex)
             {
@@ -171,7 +202,7 @@ namespace Plugin.LocalNotification
             {
                 return Android.Net.Uri.Parse(soundFileName);
             }
-           
+
             soundFileName = Path.GetFileNameWithoutExtension(soundFileName);
             soundFileName =
                 $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";

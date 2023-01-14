@@ -23,51 +23,54 @@ public static class MauiProgram
                 config.AddCategory(new NotificationCategory(NotificationCategoryType.Status)
                 {
                     ActionList = new HashSet<NotificationAction>(new List<NotificationAction>()
+                        {
+                            new NotificationAction(100)
+                            {
+                                Title = "Hello",
+                                Android =
+                                {
+                                    LaunchAppWhenTapped = true,
+                                    IconName =
+                                    {
+                                        ResourceName = "i2"
+                                    }
+                                }
+                            },
+                            new NotificationAction(101)
+                            {
+                                Title = "Close",
+                                Android =
+                                {
+                                    LaunchAppWhenTapped = false,
+                                    IconName =
+                                    {
+                                        ResourceName = "i3"
+                                    }
+                                }
+                            }
+                        })
+                })
+                .SetPermission(new NotificationPermission
+                {
+                    IOS =
                     {
-                        new NotificationAction(100)
-                        {
-                            Title = "Hello",
-                            Android =
-                            {
-                                LaunchAppWhenTapped = true,
-                                IconName =
-                                {
-                                    ResourceName = "i2"
-                                }
-                            }
-                        },
-                        new NotificationAction(101)
-                        {
-                            Title = "Close",
-                            Android =
-                            {
-                                LaunchAppWhenTapped = false,
-                                IconName =
-                                {
-                                    ResourceName = "i3"
-                                }
-                            }
-                        }
-                    })
-                });
-                config.AddAndroid(android =>
+                        LocationAuthorization = iOSLocationAuthorization.WhenInUse
+                    }
+                })
+                .AddAndroid(android =>
                 {
                     android.AddChannel(new NotificationChannelRequest
                     {
                         Sound = "good_things_happen"
                     });
-                });
-                config.AddiOS(iOS =>
+                })
+                .AddiOS(iOS =>
                 {
 #if IOS
+                    iOS.UseCustomDelegate = true;
                     iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
 #endif
-                    iOS.SetPermission(new iOSNotificationPermission
-                    {
-                        LocationAuthorization = iOSLocationAuthorization.WhenInUse
-                    });
                 });
-
             });
 
         builder.Services.AddLogging(logging =>

@@ -29,13 +29,20 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="android"></param>
         /// <returns></returns>
-        IAndroidLocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android);
+        ILocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="iOS"></param>
         /// <returns></returns>
-        IiOSLocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS);
+        ILocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        ILocalNotificationBuilder SetPermission(NotificationPermission permission);
     }
 }

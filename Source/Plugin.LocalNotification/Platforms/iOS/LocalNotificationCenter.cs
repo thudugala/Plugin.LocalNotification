@@ -31,11 +31,11 @@ namespace Plugin.LocalNotification
         /// Returns true if Allowed.
         /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
-        public static bool RequestNotificationPermission(iOSNotificationPermission permission = null)
+        public static bool RequestNotificationPermission(NotificationPermission permission = null)
         {
             try
             {
-                permission ??= new iOSNotificationPermission();
+                permission ??= new NotificationPermission();
 
                 if (!permission.AskPermission)
                 {
@@ -54,7 +54,7 @@ namespace Plugin.LocalNotification
                 }
 
                 var alertsAllowed = false;
-                var authorizationOptions = permission.NotificationAuthorization.ToNative();
+                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
                 // Ask the user for permission to show notifications on iOS 10.0+
                 UNUserNotificationCenter.Current.RequestAuthorization(
                     authorizationOptions,
@@ -69,7 +69,7 @@ namespace Plugin.LocalNotification
                             alertsAllowed = approved;
                             if (alertsAllowed)
                             {
-                                RequestLocationPermission(permission.LocationAuthorization);
+                                RequestLocationPermission(permission.IOS.LocationAuthorization);
                             }
                         }
                     });
@@ -87,11 +87,11 @@ namespace Plugin.LocalNotification
         /// Returns true if Allowed.
         /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
-        public static async Task<bool> RequestNotificationPermissionAsync(iOSNotificationPermission permission = null)
+        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
         {
             try
             {
-                permission ??= new iOSNotificationPermission();
+                permission ??= new NotificationPermission();
 
                 if (!permission.AskPermission)
                 {
@@ -110,14 +110,14 @@ namespace Plugin.LocalNotification
                 }
 
                 // Ask the user for permission to show notifications on iOS 10.0+
-                var authorizationOptions = permission.NotificationAuthorization.ToNative();
+                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
                 var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
 
                 Log(error?.LocalizedDescription);
 
                 if (alertsAllowed)
                 {
-                    RequestLocationPermission(permission.LocationAuthorization);
+                    RequestLocationPermission(permission.IOS.LocationAuthorization);
                 }
 
                 return alertsAllowed;

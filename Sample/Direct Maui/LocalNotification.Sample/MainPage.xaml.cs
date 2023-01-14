@@ -124,7 +124,8 @@ public partial class MainPage : ContentPage
                     },
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
-                    ProgressBarProgress = _tapCount
+                    ProgressBarProgress = _tapCount,
+                    Priority = AndroidPriority.High
                     //AutoCancel = false,
                     //Ongoing = true
                 },
@@ -162,6 +163,11 @@ public partial class MainPage : ContentPage
 
         try
         {
+            if (await LocalNotificationCenter.Current.AreNotificationsEnabled() == false)
+            {
+                await LocalNotificationCenter.Current.RequestNotificationPermission();
+            }
+
             var ff = await LocalNotificationCenter.Current.Show(request);
         }
         catch (Exception exception)
