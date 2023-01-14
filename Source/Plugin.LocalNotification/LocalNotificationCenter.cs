@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0 && !NET6_0_OR_GREATER
 using Plugin.LocalNotification.Platforms;
 #endif
 
@@ -21,7 +21,7 @@ namespace Plugin.LocalNotification
 
         private static INotificationService CreateNotificationService()
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
             return null;
 #else
             return new NotificationServiceImpl();

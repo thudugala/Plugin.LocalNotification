@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;MonoAndroid12.0;Xamarin.iOS10;net6.0-android;net6.0-ios;net7.0-android;net7.0-ios</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;MonoAndroid12.0;Xamarin.iOS10;net6.0;net6.0-android;net6.0-ios;net7.0;net7.0-android;net7.0-ios</TargetFrameworks>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin and MAUI apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>10.1.1</Version>
+    <Version>10.1.2</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -40,7 +40,7 @@
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">21.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios'))">
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios')) Or $(TargetFramework.StartsWith('net6.0')) Or $(TargetFramework.StartsWith('net7.0'))">
     <UseMaui>true</UseMaui>
   </PropertyGroup>
 

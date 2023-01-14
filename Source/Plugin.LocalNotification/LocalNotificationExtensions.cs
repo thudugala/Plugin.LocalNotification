@@ -1,4 +1,4 @@
-﻿#if ANDROID || IOS
+﻿#if NET6_0_OR_GREATER || ANDROID || IOS
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui.ApplicationModel;
@@ -15,7 +15,7 @@ namespace Plugin.LocalNotification
     /// </summary>
     public static class LocalNotificationExtensions
     {
-#if ANDROID || IOS
+#if NET6_0_OR_GREATER || ANDROID || IOS
         /// <summary>
         ///
         /// </summary>
