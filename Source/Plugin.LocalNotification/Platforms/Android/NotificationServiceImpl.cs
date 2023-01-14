@@ -708,15 +708,17 @@ namespace Plugin.LocalNotification.Platforms
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
+            var requestCode = action.ActionId + new Random().Next();
+
             var pendingIntent = action.Android.LaunchAppWhenTapped
                 ? PendingIntent.GetActivity(
                     Application.Context,
-                    action.ActionId,
+                    requestCode,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative())
                 : PendingIntent.GetBroadcast(
                     Application.Context,
-                    action.ActionId,
+                    requestCode,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative()
                 );
