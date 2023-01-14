@@ -31,11 +31,11 @@ namespace Plugin.LocalNotification
         /// Returns true if Allowed.
         /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
-        public static bool RequestNotificationPermission(iOSNotificationPermission permission = null)
+        public static bool RequestNotificationPermission(NotificationPermission permission = null)
         {
             try
             {
-                permission ??= new iOSNotificationPermission();
+                permission ??= new NotificationPermission();
 
                 if (!permission.AskPermission)
                 {
@@ -54,10 +54,10 @@ namespace Plugin.LocalNotification
                 }
 
                 var alertsAllowed = false;
-
+                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
                 // Ask the user for permission to show notifications on iOS 10.0+
                 UNUserNotificationCenter.Current.RequestAuthorization(
-                    permission.NotificationAuthorization.ToNative(),
+                    authorizationOptions,
                     (approved, error) =>
                     {
                         if (error != null)
@@ -69,7 +69,7 @@ namespace Plugin.LocalNotification
                             alertsAllowed = approved;
                             if (alertsAllowed)
                             {
-                                RequestLocationPermission(permission.LocationAuthorization);
+                                RequestLocationPermission(permission.IOS.LocationAuthorization);
                             }
                         }
                     });
@@ -87,11 +87,11 @@ namespace Plugin.LocalNotification
         /// Returns true if Allowed.
         /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
-        public static async Task<bool> RequestNotificationPermissionAsync(iOSNotificationPermission permission = null)
+        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
         {
             try
             {
-                permission ??= new iOSNotificationPermission();
+                permission ??= new NotificationPermission();
 
                 if (!permission.AskPermission)
                 {
@@ -110,13 +110,14 @@ namespace Plugin.LocalNotification
                 }
 
                 // Ask the user for permission to show notifications on iOS 10.0+
-                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(permission.NotificationAuthorization.ToNative()).ConfigureAwait(false);
+                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
+                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
 
                 Log(error?.LocalizedDescription);
 
                 if (alertsAllowed)
                 {
-                    RequestLocationPermission(permission.LocationAuthorization);
+                    RequestLocationPermission(permission.IOS.LocationAuthorization);
                 }
 
                 return alertsAllowed;
@@ -166,11 +167,13 @@ namespace Plugin.LocalNotification
         internal static bool AreNotificationsEnabled()
         {
             var isEnabled = false;
-
+            var completionSource = new TaskCompletionSource<bool>();
             UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
             {
                 isEnabled = settings.AlertSetting == UNNotificationSetting.Enabled;
+                completionSource.SetResult(true);
             });
+            completionSource.Task.Wait();
             return isEnabled;
         }
 
@@ -195,10 +198,13 @@ namespace Plugin.LocalNotification
 
                 var notificationList = new List<UNNotification>();
                 //Remove badges on app enter foreground if user cleared the notification in the notification panel
+                var completionSource = new TaskCompletionSource<bool>();
                 UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationArray) =>
                 {
                     notificationList.AddRange(notificationArray);
+                    completionSource.SetResult(true);
                 });
+                completionSource.Task.Wait();
                 if (notificationList.Any())
                 {
                     return;

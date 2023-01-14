@@ -74,7 +74,7 @@ public partial class MainPage : ContentPage
 
     private async void Button_Clicked(object sender, EventArgs e)
     {
-        var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.icon.png");
+        var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.Resources.appicon.png");
         byte[] imageBytes = null;
         if (imageStream != null)
         {
@@ -124,7 +124,8 @@ public partial class MainPage : ContentPage
                     },
                     IsProgressBarIndeterminate = false,
                     ProgressBarMax = 20,
-                    ProgressBarProgress = _tapCount
+                    ProgressBarProgress = _tapCount,
+                    Priority = AndroidPriority.High
                     //AutoCancel = false,
                     //Ongoing = true
                 },
@@ -156,12 +157,17 @@ public partial class MainPage : ContentPage
             request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
             request.Schedule.NotifyTime = notifyDateTime;
             //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
-            request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
-            request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
+            //request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
+            //request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
         }
 
         try
         {
+            if (await LocalNotificationCenter.Current.AreNotificationsEnabled() == false)
+            {
+                await LocalNotificationCenter.Current.RequestNotificationPermission();
+            }
+
             var ff = await LocalNotificationCenter.Current.Show(request);
         }
         catch (Exception exception)

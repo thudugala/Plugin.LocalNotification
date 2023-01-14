@@ -35,7 +35,7 @@ namespace Plugin.LocalNotification.Platforms
         protected readonly AlarmManager MyAlarmManager;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected readonly GeofencingClient MyGeofencingClient;
 
@@ -239,7 +239,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -255,12 +255,12 @@ namespace Plugin.LocalNotification.Platforms
                 Convert.ToSingle(request.Geofence.RadiusInMeters)
             );
 
-            int transitionType = 0;
-            if((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry)
+            var transitionType = 0;
+            if ((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry)
             {
                 transitionType |= Geofence.GeofenceTransitionEnter;
             }
-            if((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit)
+            if ((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit)
             {
                 transitionType |= Geofence.GeofenceTransitionEnter;
             }
@@ -293,7 +293,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
@@ -325,7 +325,7 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-            var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);            
+            var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);
 
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
@@ -356,7 +356,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
@@ -661,13 +661,10 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }
 
-            if (notificationImage.Binary is { Length: > 0 })
-            {
-                return await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
-                    notificationImage.Binary.Length).ConfigureAwait(false);
-            }
-
-            return null;
+            return notificationImage.Binary is { Length: > 0 }
+                ? await BitmapFactory.DecodeByteArrayAsync(notificationImage.Binary, 0,
+                    notificationImage.Binary.Length).ConfigureAwait(false)
+                : null;
         }
 
         /// <summary>
@@ -693,7 +690,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="serializedRequest"></param>
         /// <param name="action"></param>
@@ -701,42 +698,30 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action, Type broadcastReceiverType)
         {
-            Intent notificationIntent;
-            if (action.Android.LaunchAppWhenTapped)
-            {
-                notificationIntent =
-                Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
-                                                                              string.Empty);
-            }
-            else
-            {
-                notificationIntent = new Intent(Application.Context, broadcastReceiverType);
-            }
+            var notificationIntent = action.Android.LaunchAppWhenTapped
+                ? (Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
+                                                                              string.Empty))
+                : new Intent(Application.Context, broadcastReceiverType);
 
             notificationIntent.AddFlags(ActivityFlags.SingleTop)
                 .AddFlags(ActivityFlags.IncludeStoppedPackages)
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            PendingIntent pendingIntent;
-            var requestIntent = action.ActionId + new Random().Next();
-            if (action.Android.LaunchAppWhenTapped)
-            {
-                pendingIntent = PendingIntent.GetActivity(
+            var requestCode = action.ActionId + new Random().Next();
+
+            var pendingIntent = action.Android.LaunchAppWhenTapped
+                ? PendingIntent.GetActivity(
                     Application.Context,
-                    requestIntent,
+                    requestCode,
                     notificationIntent,
-                    action.Android.PendingIntentFlags.ToNative());
-            }
-            else
-            {
-                pendingIntent = PendingIntent.GetBroadcast(
+                    action.Android.PendingIntentFlags.ToNative())
+                : PendingIntent.GetBroadcast(
                     Application.Context,
-                    requestIntent,
+                    requestCode,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative()
                 );
-            }
             return pendingIntent;
         }
 
@@ -756,8 +741,6 @@ namespace Plugin.LocalNotification.Platforms
 
         //    return nativeAction;
         //}
-
-
 
         /// <summary>
         ///
@@ -806,6 +789,12 @@ namespace Plugin.LocalNotification.Platforms
             {
                 _categoryList.Add(category);
             }
+        }
+
+        /// <inheritdoc />
+        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        {
+            return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }
     }
 }

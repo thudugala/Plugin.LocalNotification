@@ -43,6 +43,11 @@
         public string Sound { get; set; }
 
         /// <summary>
+        /// Sets or gets, Sets whether notification posted to this channel should play sound.
+        /// </summary>
+        public bool EnableSound { get; set; } = true;
+
+        /// <summary>
         /// Only modifiable before the channel is submitted.
         /// </summary>
         public long[] VibrationPattern { get; set; }

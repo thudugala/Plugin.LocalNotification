@@ -33,19 +33,19 @@ namespace Plugin.LocalNotification.Platforms
             switch (priority)
             {
                 case iOSPriority.Passive:
-                    return UNNotificationInterruptionLevel.Passive;
+                    return UNNotificationInterruptionLevel.Passive2;
 
                 case iOSPriority.Active:
-                    return UNNotificationInterruptionLevel.Active;
+                    return UNNotificationInterruptionLevel.Active2;
 
                 case iOSPriority.TimeSensitive:
-                    return UNNotificationInterruptionLevel.TimeSensitive;
+                    return UNNotificationInterruptionLevel.TimeSensitive2;
 
                 case iOSPriority.Critical:
-                    return UNNotificationInterruptionLevel.Critical;
+                    return UNNotificationInterruptionLevel.Critical2;
 
                 default:
-                    return UNNotificationInterruptionLevel.Active;
+                    return UNNotificationInterruptionLevel.Active2;
             }
         }
 
@@ -56,83 +56,8 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         public static UNAuthorizationOptions ToNative(this iOSAuthorizationOptions type)
         {
-            switch (type)
-            {
-                case iOSAuthorizationOptions.None:
-                    return UNAuthorizationOptions.None;
-
-                case iOSAuthorizationOptions.Badge:
-                    return UNAuthorizationOptions.Badge;
-
-                case iOSAuthorizationOptions.Sound:
-                    return UNAuthorizationOptions.Sound;
-
-                case iOSAuthorizationOptions.Alert:
-                    return UNAuthorizationOptions.Alert;
-
-                case iOSAuthorizationOptions.CarPlay:
-                    return UNAuthorizationOptions.CarPlay;
-            }
-
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0) == false)
-            {
-                return UNAuthorizationOptions.None;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(12))
-            {
-                return UNAuthorizationOptions.None;
-            }
-#endif
-            switch (type)
-            {
-                case iOSAuthorizationOptions.CriticalAlert:
-                    return UNAuthorizationOptions.CriticalAlert;
-
-                case iOSAuthorizationOptions.ProvidesAppNotificationSettings:
-                    return UNAuthorizationOptions.ProvidesAppNotificationSettings;
-
-                case iOSAuthorizationOptions.Provisional:
-                    return UNAuthorizationOptions.Provisional;
-            }
-
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0) == false)
-            {
-                return UNAuthorizationOptions.None;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(13))
-            {
-                return UNAuthorizationOptions.None;
-            }
-#endif
-            switch (type)
-            {
-                case iOSAuthorizationOptions.Announcement:
-                    return UNAuthorizationOptions.Announcement;
-            }
-
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0) == false)
-            {
-                return UNAuthorizationOptions.None;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(15))
-            {
-                return UNAuthorizationOptions.None;
-            }
-#endif
-            switch (type)
-            {
-                case iOSAuthorizationOptions.TimeSensitive:
-                    return UNAuthorizationOptions.TimeSensitive;
-
-                default:
-                    return UNAuthorizationOptions.None;
-            }
+            var nativeEnum = (UNAuthorizationOptions)type;
+            return nativeEnum;
         }
 
         /// <summary>

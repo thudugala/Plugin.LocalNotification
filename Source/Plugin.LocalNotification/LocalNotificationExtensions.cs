@@ -1,6 +1,7 @@
 ﻿#if ANDROID || IOS
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.LifecycleEvents;
 using System;
@@ -10,13 +11,13 @@ using System.Linq;
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// 
-    /// </summary> 
+    ///
+    /// </summary>
     public static class LocalNotificationExtensions
     {
 #if ANDROID || IOS
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="configureDelegate"></param>
@@ -39,7 +40,7 @@ namespace Plugin.LocalNotification
                     {
                         if (localNotificationBuilder.AndroidBuilder.ChannelRequestList.Any())
                         {
-                            foreach(var channelRequest in localNotificationBuilder.AndroidBuilder.ChannelRequestList)
+                            foreach (var channelRequest in localNotificationBuilder.AndroidBuilder.ChannelRequestList)
                             {
                                 LocalNotificationCenter.CreateNotificationChannel(channelRequest);
                             }
@@ -63,11 +64,10 @@ namespace Plugin.LocalNotification
                 {
                     iOS.FinishedLaunching((application, _) =>
                     {
-                        if (localNotificationBuilder.IOSBuilder.Permission.SetUserNotificationCenterDelegate)
+                        if (localNotificationBuilder.IOSBuilder.UseCustomDelegate)
                         {
                             LocalNotificationCenter.SetCustomUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);
                         }
-                        LocalNotificationCenter.RequestNotificationPermission(localNotificationBuilder.IOSBuilder.Permission);
                         return true;
                     });
                     iOS.WillEnterForeground(application =>

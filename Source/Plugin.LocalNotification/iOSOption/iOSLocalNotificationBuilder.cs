@@ -10,7 +10,7 @@ namespace Plugin.LocalNotification.iOSOption
         /// <summary>
         /// 
         /// </summary>
-        public iOSNotificationPermission Permission { get; private set; }
+        public bool UseCustomDelegate { get; set; }
 
 #if IOS
         /// <summary>
@@ -18,14 +18,6 @@ namespace Plugin.LocalNotification.iOSOption
         /// </summary>
         public UserNotificationCenterDelegate CustomUserNotificationCenterDelegate { get; private set; }
 #endif
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public iOSLocalNotificationBuilder()
-        {
-            Permission = new iOSNotificationPermission();
-        }
 
 #if IOS
         /// <inheritdoc/>
@@ -35,12 +27,5 @@ namespace Plugin.LocalNotification.iOSOption
             return this;
         }
 #endif
-
-        /// <inheritdoc/>
-        public IiOSLocalNotificationBuilder SetPermission(iOSNotificationPermission permission)
-        {
-            Permission = permission;
-            return this;
-        }
     }
 }
