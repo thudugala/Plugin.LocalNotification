@@ -708,7 +708,7 @@ namespace Plugin.LocalNotification.Platforms
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            var requestCode = action.ActionId + new Random().Next();
+            var requestCode = new Random(action.ActionId).Next();
 
             var pendingIntent = action.Android.LaunchAppWhenTapped
                 ? PendingIntent.GetActivity(
