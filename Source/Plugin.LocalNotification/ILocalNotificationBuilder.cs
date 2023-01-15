@@ -37,12 +37,5 @@ namespace Plugin.LocalNotification
         /// <param name="iOS"></param>
         /// <returns></returns>
         ILocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="permission"></param>
-        /// <returns></returns>
-        ILocalNotificationBuilder SetPermission(NotificationPermission permission);
     }
 }

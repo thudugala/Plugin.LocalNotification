@@ -32,11 +32,6 @@ namespace Plugin.LocalNotification
         public iOSLocalNotificationBuilder IOSBuilder { get; private set; }
 
         /// <summary>
-        /// Notification Permission
-        /// </summary>
-        public NotificationPermission Permission { get; private set; }
-
-        /// <summary>
         /// 
         /// </summary>
         public LocalNotificationBuilder()
@@ -45,7 +40,6 @@ namespace Plugin.LocalNotification
             IOSBuilder = new iOSLocalNotificationBuilder();
             CategorySet = new HashSet<NotificationCategory>();
             Serializer = new NotificationSerializer();
-            Permission = new NotificationPermission();
         }
 
         /// <inheritdoc/>
@@ -73,13 +67,6 @@ namespace Plugin.LocalNotification
         public ILocalNotificationBuilder SetSerializer(INotificationSerializer serializer)
         {
             Serializer = serializer ?? new NotificationSerializer();
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public ILocalNotificationBuilder SetPermission(NotificationPermission permission)
-        {
-            Permission = permission ?? new NotificationPermission();
             return this;
         }
     }

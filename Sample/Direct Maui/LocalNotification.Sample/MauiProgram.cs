@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
-using Plugin.LocalNotification.iOSOption;
 
 namespace LocalNotification.Sample;
 
@@ -49,13 +48,6 @@ public static class MauiProgram
                                 }
                             }
                         })
-                })
-                .SetPermission(new NotificationPermission
-                {
-                    IOS =
-                    {
-                        LocationAuthorization = iOSLocationAuthorization.WhenInUse
-                    }
                 })
                 .AddAndroid(android =>
                 {
