@@ -9,11 +9,10 @@ using Microsoft.Maui.Controls.PlatformConfiguration;
 [assembly: UsesPermission(Manifest.Permission.WakeLock)]
 [assembly: UsesPermission(Manifest.Permission.ReceiveBootCompleted)]
 [assembly: UsesPermission(Manifest.Permission.Vibrate)]
-[assembly: UsesPermission(Manifest.Permission.AccessFineLocation)]
 
 #if ANDROID
 [assembly: UsesPermission(Manifest.Permission.ScheduleExactAlarm)]
-[assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "False")]
 
 #if NET7_0_OR_GREATER
 [assembly: UsesPermission(Manifest.Permission.PostNotifications)]
