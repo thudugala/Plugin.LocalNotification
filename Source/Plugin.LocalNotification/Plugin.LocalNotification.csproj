@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from Xamarin and MAUI apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>10.1.2</Version>
+    <Version>10.1.3</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -43,7 +43,7 @@
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">21.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) Or $(TargetFramework.Contains('-ios')) Or $(TargetFramework.StartsWith('net6.0')) Or $(TargetFramework.StartsWith('net7.0'))">
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net6')) Or $(TargetFramework.StartsWith('net7'))">
     <UseMaui>true</UseMaui>
   </PropertyGroup>
 

@@ -9,14 +9,17 @@ public partial class MainPage : ContentPage
 {
     private int _tapCount;
     private string _cacheFilePath;
+    private readonly INotificationService _notificationService;
 
-    public MainPage()
+    public MainPage(INotificationService notificationService)
     {
         InitializeComponent();
 
-        LocalNotificationCenter.Current.NotificationReceiving = OnNotificationReceiving;
-        LocalNotificationCenter.Current.NotificationReceived += ShowCustomAlertFromNotification;
-        LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
+        _notificationService = notificationService;
+
+        _notificationService.NotificationReceiving = OnNotificationReceiving;
+        _notificationService.NotificationReceived += ShowCustomAlertFromNotification;
+        _notificationService.NotificationActionTapped += Current_NotificationActionTapped;
 
         NotifyDatePicker.MinimumDate = DateTime.Today;
         NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
@@ -163,12 +166,12 @@ public partial class MainPage : ContentPage
 
         try
         {
-            if (await LocalNotificationCenter.Current.AreNotificationsEnabled() == false)
+            if (await _notificationService.AreNotificationsEnabled() == false)
             {
-                await LocalNotificationCenter.Current.RequestNotificationPermission();
+                await _notificationService.RequestNotificationPermission();
             }
 
-            var ff = await LocalNotificationCenter.Current.Show(request);
+            var ff = await _notificationService.Show(request);
         }
         catch (Exception exception)
         {
@@ -226,7 +229,10 @@ public partial class MainPage : ContentPage
             var message = list[2];
             var tapCount = list[3];
 
-            await ((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(new NotificationPage(int.Parse(id), message,
+            await ((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(
+                new NotificationPage(_notificationService,
+                int.Parse(id), 
+                message,
                 int.Parse(tapCount)));
             return;
         }
@@ -241,12 +247,12 @@ public partial class MainPage : ContentPage
                     DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
                 });
 
-                LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
+                _notificationService.Cancel(e.Request.NotificationId);
                 break;
 
             case 101:
                 await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Cancel {DateTime.Now}");
-                LocalNotificationCenter.Current.Cancel(e.Request.NotificationId);
+                _notificationService.Cancel(e.Request.NotificationId);
                 break;
         }
     }
@@ -276,7 +282,7 @@ public partial class MainPage : ContentPage
                     NotifyTime = DateTime.Now.AddSeconds(seconds),
                 }
         };
-        LocalNotificationCenter.Current.Show(notification);
+        _notificationService.Show(notification);
     }
 
     private void ScheduleNotificationGroup()
@@ -293,7 +299,7 @@ public partial class MainPage : ContentPage
                     IsGroupSummary = true
                 }
         };
-        LocalNotificationCenter.Current.Show(notification);
+        _notificationService.Show(notification);
     }
 
     private void ShowCustomAlertFromNotification(NotificationEventArgs e)

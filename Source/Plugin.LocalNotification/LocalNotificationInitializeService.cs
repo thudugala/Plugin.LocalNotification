@@ -1,4 +1,4 @@
-﻿#if NET6_0_OR_GREATER || ANDROID || IOS
+﻿#if NET6_0_OR_GREATER
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Hosting;
@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Plugin.LocalNotification
 {
-#if NET6_0_OR_GREATER || ANDROID || IOS
+#if NET6_0_OR_GREATER
     /// <summary>
     /// 
     /// </summary>

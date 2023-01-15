@@ -79,6 +79,8 @@ public static class MauiProgram
             //logging.AddConsole();
         });
 
+        builder.Services.AddSingleton<MainPage>();
+
         return builder.Build();
     }
 }

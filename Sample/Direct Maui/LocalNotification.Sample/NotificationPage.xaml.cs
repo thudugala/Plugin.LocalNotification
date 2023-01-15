@@ -4,9 +4,12 @@ namespace LocalNotification.Sample;
 
 public partial class NotificationPage : ContentPage
 {
-    public NotificationPage(int id, string message, int tabCount)
+    private readonly INotificationService _notificationService;
+
+    public NotificationPage(INotificationService notificationService, int id, string message, int tabCount)
     {
         InitializeComponent();
+        _notificationService = notificationService;
 
         IdLabel.Text = $"Id {id}";
         MessageLabel.Text = $"Message {message}";
@@ -15,7 +18,7 @@ public partial class NotificationPage : ContentPage
 
     private async void Button_Clicked(object sender, EventArgs e)
     {
-        var deliveredNotificationList = await LocalNotificationCenter.Current.GetDeliveredNotificationList();
+        var deliveredNotificationList = await _notificationService.GetDeliveredNotificationList();
 
         if (deliveredNotificationList != null)
         {

@@ -1,10 +1,9 @@
 ﻿using Plugin.LocalNotification.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-#if !NETSTANDARD2_0 && !NET6_0_OR_GREATER
+#if ANDROID || IOS || MONOANDROID || XAMARINIOS
 using Plugin.LocalNotification.Platforms;
 #endif
 
@@ -21,10 +20,10 @@ namespace Plugin.LocalNotification
 
         private static INotificationService CreateNotificationService()
         {
-#if NETSTANDARD2_0 || NET6_0_OR_GREATER
-            return null;
-#else
+#if ANDROID || IOS || MONOANDROID || XAMARINIOS
             return new NotificationServiceImpl();
+#else
+            return null;
 #endif
         }
 
@@ -41,11 +40,7 @@ namespace Plugin.LocalNotification
             get
             {
                 var ret = implementation.Value;
-                if (ret == null)
-                {
-                    throw new NotImplementedException(Properties.Resources.PluginNotFound);
-                }
-                return ret;
+                return ret ?? throw new NotImplementedException(Properties.Resources.PluginNotFound);
             }
         }
 
@@ -67,8 +62,8 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public static INotificationSerializer Serializer 
-        { 
+        public static INotificationSerializer Serializer
+        {
             get
             {
                 _serializer ??= new NotificationSerializer();
