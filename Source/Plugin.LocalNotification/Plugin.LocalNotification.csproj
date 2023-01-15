@@ -27,11 +27,14 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
     <CodeAnalysisRuleSet>Plugin.LocalNotification.ruleset</CodeAnalysisRuleSet>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <LangVersion>10.0</LangVersion>
+
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
     <!-- platform version number information -->
