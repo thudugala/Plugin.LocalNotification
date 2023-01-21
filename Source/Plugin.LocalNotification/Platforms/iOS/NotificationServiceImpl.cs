@@ -56,7 +56,7 @@ namespace Plugin.LocalNotification.Platforms
                 return false;
             }
 #elif IOS
-            if (!OperatingSystem.IsAndroidVersionAtLeast(10))
+            if (!OperatingSystem.IsIOSVersionAtLeast(10))
             {
                 return false;
             }
