@@ -587,7 +587,11 @@ namespace Plugin.LocalNotification.Platforms
                 request.Android.LedColor.HasValue)
             {
 #pragma warning disable 618
+#pragma warning disable CA1422
+#pragma warning disable CA1416
                 notification.LedARGB = request.Android.LedColor.Value;
+#pragma warning restore CA1416
+#pragma warning restore CA1422
 #pragma warning restore 618
             }
 
@@ -595,7 +599,11 @@ namespace Plugin.LocalNotification.Platforms
                 string.IsNullOrWhiteSpace(request.Sound))
             {
 #pragma warning disable 618
+#pragma warning disable CA1422
+#pragma warning disable CA1416
                 notification.Defaults = NotificationDefaults.All;
+#pragma warning restore CA1416
+#pragma warning restore CA1422
 #pragma warning restore 618
             }
             if (requestHandled == false)
