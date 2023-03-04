@@ -39,6 +39,8 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         protected readonly GeofencingClient MyGeofencingClient;
 
+        private readonly Random _random;
+
         /// <inheritdoc />
         public event NotificationReceivedEventHandler NotificationReceived;
 
@@ -104,6 +106,8 @@ namespace Plugin.LocalNotification.Platforms
                 MyNotificationManager = NotificationManager.FromContext(Application.Context);
                 MyAlarmManager = AlarmManager.FromContext(Application.Context);
                 MyGeofencingClient = LocationServices.GetGeofencingClient(Application.Context);
+
+                _random = new Random();
             }
             catch (Exception ex)
             {
@@ -708,7 +712,7 @@ namespace Plugin.LocalNotification.Platforms
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            var requestCode = new Random(action.ActionId).Next();
+            var requestCode = _random.Next();
 
             var pendingIntent = action.Android.LaunchAppWhenTapped
                 ? PendingIntent.GetActivity(

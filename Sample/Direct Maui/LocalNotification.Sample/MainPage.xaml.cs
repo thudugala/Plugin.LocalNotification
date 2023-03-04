@@ -89,7 +89,7 @@ public partial class MainPage : ContentPage
         }
 
         _tapCount++;
-        var notificationId = 100;
+        var notificationId = 100 + _tapCount;
         var title = "Test";
         var list = new List<string>
             {

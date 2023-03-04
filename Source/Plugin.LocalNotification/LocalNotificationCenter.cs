@@ -47,7 +47,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Return Notification Key.
         /// </summary>
-        public static string ReturnRequest => "Plugin.LocalNotification.RETURN_REQUEST";
+        public const string ReturnRequest = "Plugin.LocalNotification.RETURN_REQUEST";
 
         /// <summary>
         /// Return Notification Action Id.
@@ -57,7 +57,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Return Notification Handled Key
         /// </summary>
-        public static string ReturnRequestHandled => "Plugin.LocalNotification.RETURN_Handled";
+        public const string ReturnRequestHandled = "Plugin.LocalNotification.RETURN_Handled";
 
         /// <summary>
         ///
