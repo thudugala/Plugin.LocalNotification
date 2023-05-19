@@ -218,8 +218,19 @@ namespace Plugin.LocalNotification
         internal static void Log(string message, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
-            Logger?.LogTrace(logMessage);
-            Android.Util.Log.Info(Application.Context.PackageName, logMessage);
+            Logger?.Log(LogLevel, logMessage);
+            if (LogLevel == LogLevel.Trace)
+            {
+                Android.Util.Log.Debug(Application.Context.PackageName, logMessage);
+            }
+            if (LogLevel == LogLevel.Information)
+            {
+                Android.Util.Log.Info(Application.Context.PackageName, logMessage);
+            }
+            if (LogLevel == LogLevel.Warning)
+            {
+                Android.Util.Log.Warn(Application.Context.PackageName, logMessage);
+            }
         }
 
         /// <summary>

@@ -33,6 +33,11 @@ namespace Plugin.LocalNotification
         public static ILogger Logger { get; set; }
 
         /// <summary>
+        /// Internal  Logger LogLevel
+        /// </summary>
+        public static LogLevel LogLevel { get; set; } = LogLevel.Trace;
+
+        /// <summary>
         /// Platform specific INotificationService.
         /// </summary>
         public static INotificationService Current

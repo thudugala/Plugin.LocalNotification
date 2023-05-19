@@ -272,7 +272,7 @@ namespace Plugin.LocalNotification
         internal static void Log(string message, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
-            Logger?.LogTrace(logMessage);
+            Logger?.Log(LogLevel, logMessage);
         }
 
         /// <summary>
