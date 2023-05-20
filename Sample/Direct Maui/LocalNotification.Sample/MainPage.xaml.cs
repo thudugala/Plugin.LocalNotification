@@ -24,8 +24,8 @@ public partial class MainPage : ContentPage
         NotifyDatePicker.MinimumDate = DateTime.Today;
         NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-        //ScheduleNotificationGroup();
-        //ScheduleNotification("first", 10);
+        ScheduleNotificationGroup();
+        ScheduleNotification("first", 10);
         //ScheduleNotification("second", 20);
 
         _cacheFilePath = FileSystem.Current.CacheDirectory + $"/testFile.txt";
@@ -73,6 +73,11 @@ public partial class MainPage : ContentPage
             Handled = false,
             Request = request
         });
+    }
+
+    private void ButtonCancel_Clicked(object sender, EventArgs e)
+    {
+        _notificationService.CancelAll();
     }
 
     private async void Button_Clicked(object sender, EventArgs e)
@@ -280,6 +285,8 @@ public partial class MainPage : ContentPage
             Schedule =
                 {
                     NotifyTime = DateTime.Now.AddSeconds(seconds),
+                    RepeatType = NotificationRepeat.TimeInterval,
+                    NotifyRepeatInterval = TimeSpan.FromSeconds(10),
                 }
         };
         _notificationService.Show(notification);

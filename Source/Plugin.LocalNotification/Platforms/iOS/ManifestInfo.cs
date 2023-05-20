@@ -3,6 +3,6 @@
 #if XAMARINIOS
 [assembly: LinkerSafe]
 #elif IOS
-[assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "False")]
+[assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "True")]
 #endif
 

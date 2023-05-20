@@ -142,6 +142,10 @@ namespace Plugin.LocalNotification.Platforms
                     return false;
                 }
 #elif IOS
+                if (!OperatingSystem.IsIOS())
+                {
+                    return false;
+                }
                 if (!OperatingSystem.IsIOSVersionAtLeast(10))
                 {
                     return false;

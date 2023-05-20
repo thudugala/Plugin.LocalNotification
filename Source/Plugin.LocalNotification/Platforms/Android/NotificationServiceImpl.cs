@@ -304,7 +304,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual PendingIntent CreateGeofenceIntent(int notificationId, string serializedRequest)
         {
-            var pendingIntent = CreateActionIntent(serializedRequest, new NotificationAction(notificationId)
+            var pendingIntent = CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
             {
                 Android =
                 {
@@ -367,7 +367,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         protected virtual PendingIntent CreateAlarmIntent(int notificationId, string serializedRequest)
         {
-            var pendingIntent = CreateActionIntent(serializedRequest, new NotificationAction(notificationId)
+            var pendingIntent = CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
             {
                 Android =
                 {
@@ -538,7 +538,7 @@ namespace Plugin.LocalNotification.Platforms
 
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
 
-            var contentIntent = CreateActionIntent(serializedRequest, new NotificationAction(NotificationActionEventArgs.TapActionId)
+            var contentIntent = CreateActionIntent(request.NotificationId, serializedRequest, new NotificationAction(NotificationActionEventArgs.TapActionId)
             {
                 Android =
                 {
@@ -547,7 +547,7 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }, typeof(NotificationActionReceiver));
 
-            var deleteIntent = CreateActionIntent(serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
+            var deleteIntent = CreateActionIntent(request.NotificationId, serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
             {
                 Android =
                 {
@@ -689,7 +689,7 @@ namespace Plugin.LocalNotification.Platforms
         protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest,
             NotificationAction action)
         {
-            var pendingIntent = CreateActionIntent(serializedRequest, action, typeof(NotificationActionReceiver));
+            var pendingIntent = CreateActionIntent(request.NotificationId, serializedRequest, action, typeof(NotificationActionReceiver));
             if (string.IsNullOrWhiteSpace(action.Android.IconName.ResourceName))
             {
                 action.Android.IconName = request.Android.IconSmallName;
@@ -704,11 +704,12 @@ namespace Plugin.LocalNotification.Platforms
         /// <summary>
         ///
         /// </summary>
+        /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
         /// <param name="action"></param>
         /// <param name="broadcastReceiverType"></param>
         /// <returns></returns>
-        protected virtual PendingIntent CreateActionIntent(string serializedRequest, NotificationAction action, Type broadcastReceiverType)
+        protected virtual PendingIntent CreateActionIntent(int notificationId, string serializedRequest, NotificationAction action, Type broadcastReceiverType)
         {
             var notificationIntent = action.Android.LaunchAppWhenTapped
                 ? (Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
@@ -720,7 +721,9 @@ namespace Plugin.LocalNotification.Platforms
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
 
-            var requestCode = _random.Next();
+            //var requestCode = _random.Next();
+            // Cannot be random, then you cannot cancel it.
+            var requestCode = notificationId + action.ActionId;
 
             var pendingIntent = action.Android.LaunchAppWhenTapped
                 ? PendingIntent.GetActivity(

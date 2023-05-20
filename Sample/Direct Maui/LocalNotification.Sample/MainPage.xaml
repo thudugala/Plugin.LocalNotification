@@ -38,6 +38,11 @@
             HorizontalOptions="Center"
             Text="Clear Text"
             VerticalOptions="Center" />
+        <Button
+            Clicked="ButtonCancel_Clicked"
+            HorizontalOptions="Center"
+            Text="Cancel Local Notification"
+            VerticalOptions="Center" />
 
         <!--  Place new controls here  -->
         <StackLayout VerticalOptions="CenterAndExpand">
