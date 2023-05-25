@@ -58,7 +58,7 @@ namespace Plugin.LocalNotification
         public string ReturningData { get; set; } = string.Empty;
 
         /// <summary>
-        /// Schedule notification (canot be mixed with geofence)
+        /// Schedule notification (cannot be mixed with geofence)
         /// </summary>
         public NotificationRequestSchedule Schedule { get; set; } = new();
 
