@@ -19,7 +19,7 @@ namespace Plugin.LocalNotification
     public partial class LocalNotificationCenter
     {
         /// <summary>
-        /// 
+        /// Not available for Xamarin.Forms please use Xamarin.Essentials.Permissions.RequestAsync
         /// </summary>
         /// <returns></returns>
         public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
