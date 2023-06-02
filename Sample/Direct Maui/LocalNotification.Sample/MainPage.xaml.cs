@@ -70,7 +70,7 @@ public partial class MainPage : ContentPage
 
         return Task.FromResult(new NotificationEventReceivingArgs
         {
-            Handled = false,
+            Handled = true,
             Request = request
         });
     }

@@ -122,29 +122,19 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 var requestHandled = false;
-                var dictionary = notification?.Request.Content.UserInfo;
-                if (dictionary != null)
+                var requestArg = notificationService.NotificationReceiving(notificationRequest).GetAwaiter().GetResult();
+                if (requestArg != null)
                 {
-                    if (dictionary.ContainsKey(new NSString(LocalNotificationCenter.ReturnRequestHandled)))
-                    {
-                        var handled = bool.Parse(dictionary[LocalNotificationCenter.ReturnRequestHandled].ToString());
-                        if (handled)
-                        {
-                            LocalNotificationCenter.Log("Notification handled");
-                            requestHandled = true;
-                        }
+                    if(requestArg.Handled)
+                    {                        
+                        LocalNotificationCenter.Log("Notification Handled");
+                        requestHandled = true;
                     }
                 }
 
                 if (requestHandled == false)
                 {
-                    if (
-#if XAMARINIOS
-                        UIDevice.CurrentDevice.CheckSystemVersion(14, 0)
-#elif IOS
-                        OperatingSystem.IsIOSVersionAtLeast(14)
-#endif
-                        )
+                    if (OperatingSystem.IsIOSVersionAtLeast(14))
                     {
                         if (notificationRequest.iOS.PresentAsBanner)
                         {

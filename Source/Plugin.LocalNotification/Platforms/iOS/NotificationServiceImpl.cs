@@ -50,17 +50,10 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
             if (!OperatingSystem.IsIOSVersionAtLeast(10))
             {
                 return false;
             }
-#endif
 
             var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
@@ -73,17 +66,10 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool CancelAll()
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
             if (!OperatingSystem.IsIOSVersionAtLeast(10))
             {
                 return false;
             }
-#endif
 
             UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
@@ -93,17 +79,10 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Clear(params int[] notificationIdList)
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
             if (!OperatingSystem.IsIOSVersionAtLeast(10))
             {
                 return false;
             }
-#endif
 
             var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
@@ -114,17 +93,10 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool ClearAll()
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
             if (!OperatingSystem.IsIOSVersionAtLeast(10))
             {
                 return false;
             }
-#endif
 
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
             return true;
@@ -135,22 +107,11 @@ namespace Plugin.LocalNotification.Platforms
         {
             UNNotificationTrigger trigger = null;
             try
-            {
-#if XAMARINIOS
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return false;
-                }
-#elif IOS
-                if (!OperatingSystem.IsIOS())
-                {
-                    return false;
-                }
+            {                
                 if (!OperatingSystem.IsIOSVersionAtLeast(10))
                 {
                     return false;
                 }
-#endif
 
                 if (request is null)
                 {
@@ -241,13 +202,7 @@ namespace Plugin.LocalNotification.Platforms
                 UserInfo = userInfoDictionary
             };
 
-            if (
-#if XAMARINIOS
-                UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
-#elif IOS
-                OperatingSystem.IsIOSVersionAtLeast(15)
-#endif
-                )
+            if (OperatingSystem.IsIOSVersionAtLeast(15))
             {
                 content.InterruptionLevel = request.iOS.Priority.ToNative();
                 content.RelevanceScore = request.iOS.RelevanceScore;
@@ -275,13 +230,7 @@ namespace Plugin.LocalNotification.Platforms
 
             if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
             {
-                if (
-#if XAMARINIOS
-                     UIDevice.CurrentDevice.CheckSystemVersion(12, 0) && !UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
-#elif IOS
-                     OperatingSystem.IsIOSVersionAtLeast(12) && !OperatingSystem.IsIOSVersionAtLeast(15)
-#endif
-                   )
+                if (OperatingSystem.IsIOSVersionAtLeast(12) && !OperatingSystem.IsIOSVersionAtLeast(15))
                 {
                     content.SummaryArgument = request.iOS.SummaryArgument;
                     content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
