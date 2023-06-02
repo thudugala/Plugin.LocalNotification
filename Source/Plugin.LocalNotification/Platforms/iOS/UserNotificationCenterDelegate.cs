@@ -122,17 +122,13 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 var requestHandled = false;
-                var dictionary = notification?.Request.Content.UserInfo;
-                if (dictionary != null)
+                var requestArg = notificationService.NotificationReceiving(notificationRequest).GetAwaiter().GetResult();
+                if (requestArg != null)
                 {
-                    if (dictionary.ContainsKey(new NSString(LocalNotificationCenter.ReturnRequestHandled)))
-                    {
-                        var handled = bool.Parse(dictionary[LocalNotificationCenter.ReturnRequestHandled].ToString());
-                        if (handled)
-                        {
-                            LocalNotificationCenter.Log("Notification handled");
-                            requestHandled = true;
-                        }
+                    if(requestArg.Handled)
+                    {                        
+                        LocalNotificationCenter.Log("Notification Handled");
+                        requestHandled = true;
                     }
                 }
 
