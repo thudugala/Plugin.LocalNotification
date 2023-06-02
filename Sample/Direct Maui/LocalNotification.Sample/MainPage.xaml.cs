@@ -24,8 +24,8 @@ public partial class MainPage : ContentPage
         NotifyDatePicker.MinimumDate = DateTime.Today;
         NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-        ScheduleNotificationGroup();
-        ScheduleNotification("first", 10);
+        //ScheduleNotificationGroup();
+        //ScheduleNotification("first", 10);
         //ScheduleNotification("second", 20);
 
         _cacheFilePath = FileSystem.Current.CacheDirectory + $"/testFile.txt";
@@ -70,7 +70,7 @@ public partial class MainPage : ContentPage
 
         return Task.FromResult(new NotificationEventReceivingArgs
         {
-            Handled = true,
+            Handled = false,
             Request = request
         });
     }
