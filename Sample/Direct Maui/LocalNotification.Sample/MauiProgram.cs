@@ -59,8 +59,7 @@ public static class MauiProgram
                 .AddiOS(iOS =>
                 {
 #if IOS
-                    iOS.UseCustomDelegate = true;
-                    iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
+                    //iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
 #endif
                 });
             });

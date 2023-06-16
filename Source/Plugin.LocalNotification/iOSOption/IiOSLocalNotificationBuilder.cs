@@ -9,11 +9,6 @@ namespace Plugin.LocalNotification.iOSOption
     /// </summary>
     public interface IiOSLocalNotificationBuilder
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        bool UseCustomDelegate { get; set; }
-
 #if IOS    
         /// <summary>
         /// 

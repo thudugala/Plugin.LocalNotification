@@ -64,10 +64,7 @@ namespace Plugin.LocalNotification
                 {
                     iOS.FinishedLaunching((application, _) =>
                     {
-                        if (localNotificationBuilder.IOSBuilder.UseCustomDelegate)
-                        {
-                            LocalNotificationCenter.SetCustomUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);
-                        }
+                        LocalNotificationCenter.SetUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);                        
                         return true;
                     });
                     iOS.WillEnterForeground(application =>

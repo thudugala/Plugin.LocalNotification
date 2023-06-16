@@ -7,11 +7,6 @@ namespace Plugin.LocalNotification.iOSOption
     /// <inheritdoc/>
     public class iOSLocalNotificationBuilder : IiOSLocalNotificationBuilder
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool UseCustomDelegate { get; set; }
-
 #if IOS
         /// <summary>
         /// 

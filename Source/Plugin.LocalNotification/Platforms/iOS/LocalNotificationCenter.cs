@@ -21,7 +21,7 @@ namespace Plugin.LocalNotification
         /// and set it using this method
         /// </summary>
         /// <param name="notificationDelegate"></param>
-        public static void SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate notificationDelegate = null)
+        public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate notificationDelegate = null)
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
