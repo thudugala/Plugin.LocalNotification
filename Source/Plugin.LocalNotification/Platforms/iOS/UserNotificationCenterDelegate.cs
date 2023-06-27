@@ -122,13 +122,16 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 var requestHandled = false;
-                var requestArg = notificationService.NotificationReceiving(notificationRequest).GetAwaiter().GetResult();
-                if (requestArg != null)
+                if (notificationService.NotificationReceiving is not null)
                 {
-                    if(requestArg.Handled)
-                    {                        
-                        LocalNotificationCenter.Log("Notification Handled");
-                        requestHandled = true;
+                    var requestArg = notificationService.NotificationReceiving(notificationRequest).GetAwaiter().GetResult();
+                    if (requestArg is not null)
+                    {
+                        if (requestArg.Handled)
+                        {
+                            LocalNotificationCenter.Log("Notification Handled");
+                            requestHandled = true;
+                        }
                     }
                 }
 
