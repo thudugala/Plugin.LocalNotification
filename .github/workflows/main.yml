@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5   
+      uses: NuGet/setup-nuget@v1.2.0   
         
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1
@@ -32,7 +32,7 @@ jobs:
     - uses: actions/checkout@v1
     
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+      uses: NuGet/setup-nuget@v1.2.0
           
     - name : restore LocalNotification.Sample.sln
       run: nuget restore Sample/NuGet/LocalNotification.Sample.sln

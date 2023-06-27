@@ -10,7 +10,7 @@
       - uses: actions/checkout@v1
       
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5   
+        uses: NuGet/setup-nuget@v1.2.0   
         
       - uses: actions/setup-dotnet@v1
         with:
