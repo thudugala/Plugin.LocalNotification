@@ -23,11 +23,8 @@ namespace LocalNotification.Sample.iOS
             global::Xamarin.Forms.Forms.Init();
 
             // if you want to handel push notifications
-            //LocalNotificationCenter.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
-
-            // Ask the user for permission to show notifications on iOS 10.0+ at startup.
-            // If not asked at startup, user will be asked when showing the first notification.
-            LocalNotificationCenter.RequestNotificationPermission();
+            LocalNotificationCenter.SetUserNotificationCenterDelegate();
+            //LocalNotificationCenter.SetUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
 
             //LocalNotificationCenter.RequestLocationPermission(iOSLocationAuthorization.WhenInUse);
 
