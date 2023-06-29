@@ -71,7 +71,7 @@
     <Compile Include="**/Platforms/Android/**/*.cs" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.11.4" PrivateAssets="All"/>  
     <PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="120.0.0.0" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="120.0.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
@@ -84,7 +84,7 @@
 
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
     <Compile Include="**/Platforms/Android/**/*.cs" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="120.0.0.1" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="120.0.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
