@@ -17,15 +17,15 @@ public partial class MainPage : ContentPage
 
         _notificationService = notificationService;
 
-        _notificationService.NotificationReceiving = OnNotificationReceiving;
+        //_notificationService.NotificationReceiving = OnNotificationReceiving;
         _notificationService.NotificationReceived += ShowCustomAlertFromNotification;
         _notificationService.NotificationActionTapped += Current_NotificationActionTapped;
 
         NotifyDatePicker.MinimumDate = DateTime.Today;
         NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 
-        ScheduleNotificationGroup();
-        ScheduleNotification("first", 10);
+        //ScheduleNotificationGroup();
+        //ScheduleNotification("first", 10);
         //ScheduleNotification("second", 20);
 
         _cacheFilePath = FileSystem.Current.CacheDirectory + $"/testFile.txt";
@@ -64,16 +64,16 @@ public partial class MainPage : ContentPage
         TestFileText.Text = fileText ?? "No Text";
     }
 
-    private Task<NotificationEventReceivingArgs> OnNotificationReceiving(NotificationRequest request)
-    {
-        request.Title = $"{request.Title} Modified";
+    //private Task<NotificationEventReceivingArgs> OnNotificationReceiving(NotificationRequest request)
+    //{
+    //    request.Title = $"{request.Title} Modified";
 
-        return Task.FromResult(new NotificationEventReceivingArgs
-        {
-            Handled = false,
-            Request = request
-        });
-    }
+    //    return Task.FromResult(new NotificationEventReceivingArgs
+    //    {
+    //        Handled = false,
+    //        Request = request
+    //    });
+    //}
 
     private void ButtonCancel_Clicked(object sender, EventArgs e)
     {

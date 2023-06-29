@@ -1,7 +1,11 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Media;
 using Android.OS;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
 using Microsoft.Extensions.Logging;
 #if ANDROID
 using Microsoft.Maui.ApplicationModel;
@@ -10,6 +14,7 @@ using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.Platforms;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -19,18 +24,17 @@ namespace Plugin.LocalNotification
     public partial class LocalNotificationCenter
     {
         /// <summary>
-        /// Not available for Xamarin.Forms please use Xamarin.Essentials.Permissions.RequestAsync
+        /// 
         /// </summary>
         /// <returns></returns>
         public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
         {
+            permission ??= new NotificationPermission();
 #if ANDROID
             if (!OperatingSystem.IsAndroidVersionAtLeast(33))
             {
                 return false;
             }
-
-            permission ??= new NotificationPermission();
 
             if (!permission.AskPermission)
             {
@@ -40,10 +44,28 @@ namespace Plugin.LocalNotification
             var status = await Permissions.RequestAsync<NotificationPerms>();
             return status == PermissionStatus.Granted;
 #else
-            var result = await Task.FromResult(true);
-            return result;
+            if (!permission.AskPermission)
+            {
+                return await Task.FromResult(false);
+            }
+
+            if ((int)Build.VERSION.SdkInt >= 33)
+            {
+                var permissionName = "android.permission.POST_NOTIFICATIONS";
+
+                if (Application.Context.CheckSelfPermission(permissionName) != Permission.Granted)
+                {
+                    ActivityCompat.RequestPermissions(MainActivity, new[] { permissionName }, 0);
+                }
+            }
+            return await Task.FromResult(true);
 #endif
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static Android.App.Activity MainActivity { get; set; }
 
         /// <summary>
         /// Notify Local Notification Tapped.

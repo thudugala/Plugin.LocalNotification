@@ -16,6 +16,8 @@ namespace LocalNotification.Sample.Droid
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
+            LocalNotificationCenter.MainActivity = this;
+
             // Must create a Notification Channel when API >= 26
             // you can created multiple Notification Channels with different names.
             // you can created multiple Notification Channel Groups with different names.

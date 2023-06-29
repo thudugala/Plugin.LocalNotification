@@ -135,6 +135,11 @@ namespace LocalNotification.Sample
 
             try
             {
+                if (await LocalNotificationCenter.Current.AreNotificationsEnabled() == false)
+                {
+                    await LocalNotificationCenter.Current.RequestNotificationPermission();
+                }
+
                 var ff = await LocalNotificationCenter.Current.Show(request);
             }
             catch (Exception exception)
