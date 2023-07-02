@@ -45,5 +45,5 @@
           path: Source/Plugin.LocalNotification/bin/Debug/ 
 
       - name: Push generated package to GitHub registry
-        run: nuget push **/*.nupkg -Source "GitHub" -SkipDuplicate
+        run: nuget push **/*.nupkg -Source "GitHub" -SkipDuplicate -userName thudugala -password ${{ secrets.Elvin_Package_Registry }}
 
