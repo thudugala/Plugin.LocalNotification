@@ -55,6 +55,10 @@ namespace Plugin.LocalNotification
 
                 if (Application.Context.CheckSelfPermission(permissionName) != Permission.Granted)
                 {
+                    if(MainActivity is null)
+                    {
+                        throw new ArgumentNullException(nameof(MainActivity));
+                    }
                     ActivityCompat.RequestPermissions(MainActivity, new[] { permissionName }, 0);
                 }
             }
