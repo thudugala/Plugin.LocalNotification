@@ -339,6 +339,18 @@ namespace Plugin.LocalNotification.Platforms
             var alarmType = request.Schedule.Android.AlarmType.ToNative();
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
 
+            var canScheduleExactAlarms = true;
+            if (
+#if MONOANDROID
+                Build.VERSION.SdkInt >= BuildVersionCodes.S
+#elif ANDROID
+                OperatingSystem.IsAndroidVersionAtLeast(31)
+#endif
+            )
+            {
+                canScheduleExactAlarms = MyAlarmManager.CanScheduleExactAlarms();
+            }
+
             if (
 #if MONOANDROID
                 Build.VERSION.SdkInt >= BuildVersionCodes.M
@@ -347,11 +359,25 @@ namespace Plugin.LocalNotification.Platforms
 #endif
             )
             {
-                MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                if (canScheduleExactAlarms)
+                {
+                    MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                }
+                else
+                {
+                    MyAlarmManager.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                }
             }
             else
             {
-                MyAlarmManager.SetExact(alarmType, triggerAtTime, alarmIntent);
+                if (canScheduleExactAlarms)
+                {
+                    MyAlarmManager.SetExact(alarmType, triggerAtTime, alarmIntent);
+                }
+                else
+                {
+                    MyAlarmManager.Set(alarmType, triggerAtTime, alarmIntent);
+                }
             }
 
             NotificationRepository.Current.AddPendingRequest(request);
