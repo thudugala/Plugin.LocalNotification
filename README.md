@@ -25,11 +25,11 @@ The local notification plugin provides a way to show local notifications from Xa
 | Title                         | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            | 
 | Description                   | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            | 
 | Subtitle                      | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            | 
-| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/Scheduled-Android-notifications)      | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
-| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/Repeat-Notification)                    | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/3.-Scheduled-Android-notifications)      | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/4.-Repeat-Notification)                    | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
 | [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)  | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
 | Images                        | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
-| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-Action) | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
+| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/5.-Notification-with-Action) | ✅  | ✅   | ✅   | ✅    | ✅   | ✅    |
 | Clear Delivered Notifications | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
 | Get Pending Notifications     | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
 | Get Delivered Notifications   | ✅          | ✅             | ✅         | ✅            | ✅         | ✅            |
