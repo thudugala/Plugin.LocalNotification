@@ -49,13 +49,11 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui --ignore-failed-sources
 
-      - task: Bash@3
-        displayName: Set XCode Version
-        inputs:
-          targetType: 'inline'
-          script: |
-            sudo xcode-select -s "/Applications/Xcode_14.3.app"
-            echo "##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]/Applications/Xcode_14.3.app"
+      - name: Set XCode Version
+        shell: bash
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_14.3.app"
+          echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_14.3.app" >> $GITHUB_ENV
 
       - name: Restore Dependencies
         run: dotnet restore 'Sample/NuGet v1000/LocalNotification.Sample/LocalNotification.Sample.csproj'
