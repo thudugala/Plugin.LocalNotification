@@ -34,7 +34,7 @@ jobs:
 
   # MAUI iOS Build
   build-ios:
-    runs-on: macos-12
+    runs-on: macos-latest
     name: iOS Build
     steps:
 
