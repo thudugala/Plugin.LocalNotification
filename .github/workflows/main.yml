@@ -3,40 +3,60 @@ name: CI
 on: [push]
 
 jobs:
-  Android:
-
-    runs-on: windows-latest
-    
+  # MAUI Android Build
+  build-android:
+    runs-on: windows-2022
+    name: Android Build
     steps:
 
-    - uses: actions/checkout@v1
-    
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.2.0   
-        
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1
-      
-    - name : restore LocalNotification.Sample.sln
-      run: nuget restore Sample/NuGet/LocalNotification.Sample.sln
-      
-    - name: build LocalNotification.Sample.Android.csproj
-      run: msbuild Sample/NuGet/LocalNotification.Sample.Android/LocalNotification.Sample.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  iOS:
-
-    runs-on: macos-latest
-    
-    steps:
-
-    - uses: actions/checkout@v1
-    
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.2.0
+      - name: Setup .NET 7
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
           
-    - name : restore LocalNotification.Sample.sln
-      run: nuget restore Sample/NuGet/LocalNotification.Sample.sln
-      
-    - name: build LocalNotification.Sample.iOS.csproj
-      run: msbuild Sample/NuGet/LocalNotification.Sample.iOS/LocalNotification.Sample.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhoneSimulator /p:Configuration=Debug
- 
+      - name: Install MAUI Workload
+        run: dotnet workload install maui --ignore-failed-sources
+
+      - name: Restore Dependencies
+        run: dotnet restore 'Sample/NuGet v1000/LocalNotification.Sample/LocalNotification.Sample.csproj'
+
+      - name: Build MAUI Android
+        run: dotnet publish 'Sample/NuGet v1000/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net7.0-android --no-restore
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: mauibeach-android-ci-build
+          path: 'Sample/NuGet v1000/LocalNotification.Sample/bin/Release/net7.0-android/*Signed.a*'
+
+  # MAUI iOS Build
+  build-ios:
+    runs-on: macos-12
+    name: iOS Build
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 7
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui --ignore-failed-sources
+
+      - name: Restore Dependencies
+        run: dotnet restore 'Sample/NuGet v1000/LocalNotification.Sample/LocalNotification.Sample.csproj'
+
+      - name: Build MAUI iOS
+        run: dotnet build 'Sample/NuGet v1000/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net7.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
+
+      - name: Upload iOS Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: mauibeach-ios-ci-build
+          path: 'Sample/NuGet v1000/LocalNotification.Sample/bin/Release/net7.0-ios/iossimulator-x64/**/*.app'

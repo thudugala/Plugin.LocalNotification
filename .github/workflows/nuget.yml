@@ -7,7 +7,7 @@
       runs-on: windows-latest
 
       steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.2.0   
@@ -39,7 +39,7 @@
       - name: build Plugin.LocalNotification.csproj
         run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
       
-      - uses: actions/upload-artifact@v2.2.4
+      - uses: actions/upload-artifact@v3.1.0
         with:
           name: Plugin.LocalNotification
           path: Source/Plugin.LocalNotification/bin/Debug/ 
