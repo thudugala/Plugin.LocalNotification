@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-#if ANDROID || IOS || MONOANDROID || XAMARINIOS
+#if ANDROID || IOS || MONOANDROID || XAMARINIOS || WINDOWS
 using Plugin.LocalNotification.Platforms;
 #endif
 
@@ -20,7 +20,7 @@ namespace Plugin.LocalNotification
 
         private static INotificationService CreateNotificationService()
         {
-#if ANDROID || IOS || MONOANDROID || XAMARINIOS
+#if ANDROID || IOS || MONOANDROID || XAMARINIOS || WINDOWS
             return new NotificationServiceImpl();
 #else
             return null;

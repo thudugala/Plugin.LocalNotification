@@ -39,9 +39,7 @@ namespace Plugin.LocalNotification.Platforms
             NotificationActionTapped?.Invoke(e);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
+        /// <inheritdoc />
         public void OnNotificationsDisabled()
         {
             NotificationsDisabled?.Invoke();

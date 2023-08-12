@@ -67,6 +67,11 @@ namespace Plugin.LocalNotification
         void OnNotificationReceived(NotificationEventArgs e);
 
         /// <summary>
+        /// Internal use Only
+        /// </summary>
+        void OnNotificationsDisabled();
+
+        /// <summary>
         /// Get pending notifications
         /// </summary>
         /// <returns></returns>

@@ -6,6 +6,9 @@ using Microsoft.Maui.Hosting;
 using Microsoft.Maui.LifecycleEvents;
 using System;
 using System.Linq;
+#if WINDOWS
+using Microsoft.Toolkit.Uwp.Notifications;
+#endif
 #endif
 
 namespace Plugin.LocalNotification
@@ -72,11 +75,27 @@ namespace Plugin.LocalNotification
                         LocalNotificationCenter.ResetApplicationIconBadgeNumber(application);
                     });
                 });
+#elif WINDOWS
+                life.AddWindows(windows =>
+                {
+                    windows.OnActivated((window, args) =>
+                    {
+                        ToastNotificationManagerCompat.OnActivated += (notificationArgs) =>
+                        {
+                            // this will run everytime ToastNotification.Activated is called,
+                            // regardless of what toast is clicked and what element is clicked on.
+                            // Works for all types of ToastActivationType so long as the Windows app manifest
+                            // has been updated to support ToastNotifications. 
+
+                            LocalNotificationCenter.NotifyNotificationTapped(notificationArgs.Argument);
+                        };
+                    });
+                });
 #endif
             });
 
             return builder;
         }
 #endif
-    }
+            }
 }
