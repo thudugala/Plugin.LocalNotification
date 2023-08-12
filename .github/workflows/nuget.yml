@@ -8,14 +8,15 @@
 
       steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.2.0   
-        
-      - uses: actions/setup-dotnet@v1
+        uses: NuGet/setup-nuget@v1.2.0
+
+      - name: Setup .NET 7
+        uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '7.0.x'
-          
+          dotnet-version: 7.0.x
+
       - uses: actions/setup-java@v2
         with:
           distribution: 'microsoft'
@@ -38,11 +39,11 @@
 
       - name: build Plugin.LocalNotification.csproj
         run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
-      
+
       - uses: actions/upload-artifact@v3.1.0
         with:
           name: Plugin.LocalNotification
-          path: Source/Plugin.LocalNotification/bin/Debug/ 
+          path: Source/Plugin.LocalNotification/bin/Debug/
 
       - name: Push generated package to GitHub registry
         run: nuget push **/*.nupkg -Source "GitHub" -SkipDuplicate
