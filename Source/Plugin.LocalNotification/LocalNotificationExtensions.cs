@@ -80,15 +80,7 @@ namespace Plugin.LocalNotification
                 {
                     windows.OnActivated((window, args) =>
                     {
-                        ToastNotificationManagerCompat.OnActivated += (notificationArgs) =>
-                        {
-                            // this will run everytime ToastNotification.Activated is called,
-                            // regardless of what toast is clicked and what element is clicked on.
-                            // Works for all types of ToastActivationType so long as the Windows app manifest
-                            // has been updated to support ToastNotifications. 
-
-                            LocalNotificationCenter.NotifyNotificationTapped(notificationArgs.Argument);
-                        };
+                        LocalNotificationCenter.SetupBackgroundActivation();
                     });
                 });
 #endif

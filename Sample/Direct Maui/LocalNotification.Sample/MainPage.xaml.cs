@@ -1,6 +1,8 @@
-﻿using Plugin.LocalNotification;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
+using System.Text;
 using System.Text.Json;
 
 namespace LocalNotification.Sample;
@@ -141,7 +143,7 @@ public partial class MainPage : ContentPage
                 {
                     HideForegroundAlert = CustomAlert.IsToggled,
                     PlayForegroundSound = ForegroundSound.IsToggled
-                }
+                }            
         };
 
         // if not specified, default sound will be played.
@@ -177,6 +179,12 @@ public partial class MainPage : ContentPage
             }
 
             var ff = await _notificationService.Show(request);
+
+            var sn = ToastNotificationManagerCompat.CreateToastNotifier().GetScheduledToastNotifications();
+            foreach (var notification in sn)
+            {
+                var gg = notification.Content;
+            }
         }
         catch (Exception exception)
         {
@@ -184,81 +192,100 @@ public partial class MainPage : ContentPage
         }
     }
 
+    private bool _inProgress;
+
     private async void Current_NotificationActionTapped(NotificationActionEventArgs e)
     {
-        await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}ActionId {e.ActionId} {DateTime.Now}");
-
-        if (e.IsDismissed)
+        if(_inProgress)
         {
-            await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Dismissed {DateTime.Now}");
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                DisplayAlert(e.Request.Title, "User Dismissed Notification", "OK");
-            });
             return;
         }
-
-        if (e.IsTapped)
+        try
         {
-            await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Tapped {DateTime.Now}");
-            if (e.Request is null)
+            var log = new StringBuilder();
+            log.AppendLine($"{Environment.NewLine}ActionId {e.ActionId} {DateTime.Now}");
+
+            if (e.IsDismissed)
             {
+                log.AppendLine($"{Environment.NewLine}Dismissed {DateTime.Now}");
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    DisplayAlert(e.Request.Title, $"No Request", "OK");
+                    DisplayAlert(e.Request.Title, "User Dismissed Notification", "OK");
                 });
                 return;
             }
 
-            // No need to use NotificationSerializer, you can use your own one.
-            var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
-            if (list is null || list.Count != 4)
+            if (e.IsTapped)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
+                log.AppendLine($"{Environment.NewLine}Tapped {DateTime.Now}");
+                if (e.Request is null)
                 {
-                    DisplayAlert(e.Request.Title, $"No ReturningData {e.Request.ReturningData}", "OK");
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, $"No Request", "OK");
+                    });
+                    return;
+                }
+
+                // No need to use NotificationSerializer, you can use your own one.
+                var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
+                if (list is null || list.Count != 4)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, $"No ReturningData {e.Request.ReturningData}", "OK");
+                    });
+                    return;
+                }
+
+                if (list[0] != typeof(NotificationPage).FullName)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, $"Not NotificationPage", "OK");
+                    });
+                    return;
+                }
+
+                var id = list[1];
+                var message = list[2];
+                var tapCount = list[3];
+
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await ((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(
+                    new NotificationPage(_notificationService,
+                    int.Parse(id),
+                    message,
+                    int.Parse(tapCount)));
                 });
                 return;
             }
 
-            if (list[0] != typeof(NotificationPage).FullName)
+            switch (e.ActionId)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    DisplayAlert(e.Request.Title, $"Not NotificationPage", "OK");
-                });
-                return;
+                case 100:
+                    log.AppendLine($"{Environment.NewLine}Hello {DateTime.Now}");
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
+                    });
+
+                    _notificationService.Cancel(e.Request.NotificationId);
+                    break;
+
+                case 101:
+                    log.AppendLine($"{Environment.NewLine}Cancel {DateTime.Now}");
+                    _notificationService.Cancel(e.Request.NotificationId);
+                    break;
             }
 
-            var id = list[1];
-            var message = list[2];
-            var tapCount = list[3];
-
-            await ((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(
-                new NotificationPage(_notificationService,
-                int.Parse(id), 
-                message,
-                int.Parse(tapCount)));
-            return;
+            await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Cancel {DateTime.Now}");
         }
-
-        switch (e.ActionId)
-        {
-            case 100:
-                await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Hello {DateTime.Now}");
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
-                });
-
-                _notificationService.Cancel(e.Request.NotificationId);
-                break;
-
-            case 101:
-                await File.AppendAllTextAsync(_cacheFilePath, $"{Environment.NewLine}Cancel {DateTime.Now}");
-                _notificationService.Cancel(e.Request.NotificationId);
-                break;
+        finally 
+        { 
+            _inProgress = false;
         }
     }
 

@@ -6,16 +6,16 @@ namespace LocalNotification.Sample;
 
 public static class MauiProgram
 {
-    public static MauiApp CreateMauiApp()
-    {
-        var builder = MauiApp.CreateBuilder();
-        builder
-            .UseMauiApp<App>()
-            .ConfigureFonts(fonts =>
-            {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            })
+	public static MauiApp CreateMauiApp()
+	{
+		var builder = MauiApp.CreateBuilder();
+		builder
+			.UseMauiApp<App>()
+			.ConfigureFonts(fonts =>
+			{
+				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+			})
             //.UseLocalNotification();
             .UseLocalNotification(config =>
             {
@@ -33,6 +33,14 @@ public static class MauiProgram
                                     {
                                         ResourceName = "i2"
                                     }
+                                },
+                                iOS =
+                                {
+                                    Action = Plugin.LocalNotification.iOSOption.iOSActionType.Foreground
+                                },
+                                Windows =
+                                {
+                                    LaunchAppWhenTapped = true
                                 }
                             },
                             new NotificationAction(101)
@@ -45,6 +53,14 @@ public static class MauiProgram
                                     {
                                         ResourceName = "i3"
                                     }
+                                },
+                                iOS =
+                                {
+                                    Action = Plugin.LocalNotification.iOSOption.iOSActionType.Destructive
+                                },
+                                Windows =
+                                {
+                                    LaunchAppWhenTapped = false
                                 }
                             }
                         })
@@ -64,14 +80,13 @@ public static class MauiProgram
                 });
             });
 
-        builder.Services.AddLogging(logging =>
-        {
-            logging.AddDebug();
-            //logging.AddConsole();
-        });
 
-        builder.Services.AddSingleton<MainPage>();
+#if DEBUG
+        builder.Logging.AddDebug();
+#endif
+
+        builder.Services.AddTransient<MainPage>();
 
         return builder.Build();
-    }
+	}
 }

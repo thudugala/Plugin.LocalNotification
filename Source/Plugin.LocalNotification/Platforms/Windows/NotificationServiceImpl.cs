@@ -1,9 +1,10 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using Plugin.LocalNotification.EventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 
@@ -12,6 +13,7 @@ namespace Plugin.LocalNotification.Platforms
     internal class NotificationServiceImpl : INotificationService
     {
         private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
+        private readonly ToastNotifierCompat _notifier;
 
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
 
@@ -19,20 +21,101 @@ namespace Plugin.LocalNotification.Platforms
         public event NotificationReceivedEventHandler NotificationReceived;
         public event NotificationDisabledEventHandler NotificationsDisabled;
 
-        public Task<bool> AreNotificationsEnabled() => throw new NotImplementedException();
+        public NotificationServiceImpl()
+        {
+            _notifier = ToastNotificationManagerCompat.CreateToastNotifier();
+        }
 
-        public bool Cancel(params int[] notificationIdList) => throw new NotImplementedException();
+        public Task<bool> AreNotificationsEnabled()
+        {
+            return _notifier.Setting == NotificationSetting.Enabled ? Task.FromResult(true) : Task.FromResult(false);
+        }
 
-        public bool CancelAll() => throw new NotImplementedException();
+        public bool Cancel(params int[] notificationIdList)
+        {
+            var scheduledToasts = _notifier.GetScheduledToastNotifications();
 
-        public bool Clear(params int[] notificationIdList) => throw new NotImplementedException();
+            var notificationIdSet = new HashSet<string>(notificationIdList.Cast<string>());
+            var toRemove = scheduledToasts.FirstOrDefault(i => notificationIdSet.Contains(i.Tag));
+            if (toRemove != null)
+            {
+                // And remove it from the schedule
+                _notifier.RemoveFromSchedule(toRemove);
+                return true;
+            }
+            return false;
+        }
 
-        public bool ClearAll() => throw new NotImplementedException();
+        public bool CancelAll()
+        {
+            var scheduledToasts = _notifier.GetScheduledToastNotifications();
+            foreach (var notification in scheduledToasts)
+            {
+                _notifier.RemoveFromSchedule(notification);
+            }
+            return true;
+        }
 
-        public Task<IList<NotificationRequest>> GetDeliveredNotificationList() => throw new NotImplementedException();
+        public bool Clear(params int[] notificationIdList)
+        {
+            foreach (var notificationId in notificationIdList)
+            {
+                ToastNotificationManager.History.Remove(notificationId.ToString());
+            }
+            return true;
+        }
 
-        public Task<IList<NotificationRequest>> GetPendingNotificationList() => throw new NotImplementedException();
+        public bool ClearAll()
+        {
+            ToastNotificationManager.History.Clear();
+            return true;
+        }
 
+        public Task<IList<NotificationRequest>> GetDeliveredNotificationList()
+        {
+            var deliveredNotifications = new List<NotificationRequest>();
+
+            var toastNotifications = ToastNotificationManager.History.GetHistory();
+
+            if (toastNotifications is null || !toastNotifications.Any())
+            {
+                return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
+            }
+                       
+            foreach (var toastNotification in toastNotifications)
+            {
+                var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
+                var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+
+                var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
+                deliveredNotifications.Add(request);
+            }
+            return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
+        }
+
+        public Task<IList<NotificationRequest>> GetPendingNotificationList()
+        {
+            var pendingNotifications = new List<NotificationRequest>();
+
+            var scheduledToasts = _notifier.GetScheduledToastNotifications();
+
+            if (scheduledToasts is null || !scheduledToasts.Any())
+            {
+                return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
+            }
+                        
+            foreach (var scheduledToast in scheduledToasts)
+            {
+                var element = scheduledToast.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
+                var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+
+                var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
+                                   
+                pendingNotifications.Add(request);
+            }
+            return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
+        }
+                
         public void OnNotificationActionTapped(NotificationActionEventArgs e)
         {
             NotificationActionTapped?.Invoke(e);
@@ -67,22 +150,50 @@ namespace Plugin.LocalNotification.Platforms
             return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }
 
-        public Task<bool> Show(NotificationRequest request)
+        public async Task<bool> Show(NotificationRequest request)
         {
-            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
+            var ff = new AppNotificationBuilder();
+            var an = ff.BuildNotification();
+            
+            AppNotificationManager.Default.NotificationInvoked += (sender, args) =>
+            {
+               
+            };
+
+            AppNotificationManager.Default.Show(an);
 
             var builder = new ToastContentBuilder()
+                .AddArgument(LocalNotificationCenter.ReturnRequest, request.NotificationId)
                 .AddArgument(LocalNotificationCenter.ReturnRequestActionId, NotificationActionEventArgs.TapActionId)
-                .AddArgument(LocalNotificationCenter.ReturnRequest, serializedRequest)
-                .AddHeader(nameof(request.NotificationId), request.Group, string.Empty)
                 .AddText(request.Title)
                 .AddText(request.Subtitle)
                 .AddText(request.Description);
 
-            if (request.Schedule != null && request.Schedule.NotifyTime != null)
+            if (!request.Windows.LaunchAppWhenTapped)
             {
-                builder.Schedule(new DateTimeOffset(request.Schedule.NotifyTime.Value));
-            };
+                builder.SetBackgroundActivation();
+            }
+
+            if (request.Silent)
+            {
+                builder.AddAudio(new ToastAudio
+                {
+                    Silent = true,
+                });
+            }
+            else if(!string.IsNullOrWhiteSpace(request.Sound))
+            {
+                builder.AddAudio(new ToastAudio
+                {
+                    Src = new Uri(request.Sound),
+                    Silent = false,
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Group))
+            {
+                builder.AddHeader(nameof(request.NotificationId), request.Group, string.Empty);
+            }
 
             if (_categoryList.Any())
             {
@@ -91,31 +202,64 @@ namespace Plugin.LocalNotification.Platforms
                 {
                     foreach (var notificationAction in categoryByType.ActionList)
                     {
-                        builder.AddButton(new ToastButton()
+                        var button = new ToastButton()
                             .SetContent(notificationAction.Title)
-                            .AddArgument(LocalNotificationCenter.ReturnRequestActionId, notificationAction.ActionId)                         
-                            .AddArgument(LocalNotificationCenter.ReturnRequest, serializedRequest));                            
+                            .AddArgument(LocalNotificationCenter.ReturnRequest, request.NotificationId)
+                            .AddArgument(LocalNotificationCenter.ReturnRequestActionId, notificationAction.ActionId);
+
+                        if (!notificationAction.Windows.LaunchAppWhenTapped)
+                        {
+                            button.SetBackgroundActivation();
+                        }
+                        if (notificationAction.Windows.DismissWhenTapped)
+                        {
+                            button.SetDismissActivation();
+                        }
+
+                        builder.AddButton(button);
                     }
                 }
             }
 
-            builder.Show(toast =>
+            if (request.Schedule != null && request.Schedule.NotifyTime != null)
             {
-                toast.Activated += (sender, args) =>
+                builder.Schedule(new DateTimeOffset(request.Schedule.NotifyTime.Value), toast =>
                 {
-                    var toastArgs = args as ToastActivatedEventArgs;
-                    LocalNotificationCenter.NotifyNotificationTapped(toastArgs.Arguments);
-                };
-                toast.Dismissed += (sender, args) =>
-                {
-                    var arguments = $"{LocalNotificationCenter.ReturnRequestActionId}={NotificationActionEventArgs.DismissedActionId};";
-                    arguments += $"{LocalNotificationCenter.ReturnRequest}={serializedRequest}";
-                   
-                    LocalNotificationCenter.NotifyNotificationTapped(arguments);
-                };
-            });
+                    toast.Tag = request.NotificationId.ToString();
+                    if (!string.IsNullOrEmpty(request.Group))
+                    {
+                        toast.Group = request.Group;
+                    }
+                });
+            }
+            else
+            {
+                builder.Show(toast =>
+                {                    
+                    toast.Tag = request.NotificationId.ToString();
+                    if (!string.IsNullOrEmpty(request.Group))
+                    {
+                        toast.Group = request.Group;
+                    }
 
-            return Task.FromResult(true);
+                    toast.Activated += (sender, args) =>
+                    {
+                        var toastArgs = args as ToastActivatedEventArgs;
+                        LocalNotificationCenter.NotifyNotificationTapped(toastArgs.Arguments);
+                    };
+
+                    toast.Dismissed += (sender, args) =>
+                    {
+                        var arguments = $"{LocalNotificationCenter.ReturnRequest}={sender.Tag};";
+                        arguments += $"{LocalNotificationCenter.ReturnRequestActionId}={NotificationActionEventArgs.DismissedActionId}";
+
+                        LocalNotificationCenter.NotifyNotificationTapped(arguments);
+                    };
+                });
+            }
+
+            return await Task.FromResult(true);
         }
+
     }
 }

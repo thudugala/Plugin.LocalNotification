@@ -1,4 +1,6 @@
+using Microsoft.Toolkit.Uwp.Notifications;
 using Plugin.LocalNotification;
+using Windows.UI.Notifications;
 
 namespace LocalNotification.Sample;
 
@@ -17,7 +19,7 @@ public partial class NotificationPage : ContentPage
     }
 
     private async void Button_Clicked(object sender, EventArgs e)
-    {
+    {       
         var deliveredNotificationList = await _notificationService.GetDeliveredNotificationList();
 
         if (deliveredNotificationList != null)

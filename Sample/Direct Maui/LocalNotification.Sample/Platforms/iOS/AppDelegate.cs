@@ -1,7 +1,4 @@
 ﻿using Foundation;
-using Plugin.LocalNotification;
-using Plugin.LocalNotification.iOSOption;
-using UIKit;
 
 namespace LocalNotification.Sample;
 

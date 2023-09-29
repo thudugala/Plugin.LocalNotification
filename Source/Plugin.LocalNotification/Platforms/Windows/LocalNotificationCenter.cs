@@ -2,8 +2,13 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using Plugin.LocalNotification.EventArgs;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using Windows.UI.Notifications;
 
 namespace Plugin.LocalNotification
 {
@@ -20,33 +25,45 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
+        /// Need to add this because otherwise setting background activation does nothing.
+        /// </summary>
+        public static void SetupBackgroundActivation()
+        {
+            ToastNotificationManagerCompat.OnActivated += (notificationArgs) =>
+            {
+                // this will run everytime ToastNotification.Activated is called,
+                // regardless of what toast is clicked and what element is clicked on.
+                // Works for all types of ToastActivationType so long as the Windows app manifest
+                // has been updated to support ToastNotifications. 
+
+                // you can check your args here, however I'll be doing mine below to keep it cleaner.
+                // With so many ToastNotifications it would be messy to check all of them here.
+
+                Debug.WriteLine($"A ToastNotification was just activated! Arguments: {notificationArgs.Argument}");
+
+                NotifyNotificationTapped(notificationArgs.Argument);
+            };
+        }
+
+        /// <summary>
         /// Notify Local Notification Tapped.
         /// </summary>
         /// <param name="arguments"></param>
-        public static void NotifyNotificationTapped(string arguments)
+        internal static void NotifyNotificationTapped(string arguments)
         {
             try
-            {                
-                var args = ToastArguments.Parse(arguments);
-
-                var actionId = args.GetInt(ReturnRequestActionId);
-                if (actionId == -1000)
+            {
+                var (actionId, request) = GetRequestFromArguments(arguments);
+                if (actionId == -1000 || request is null)
                 {
                     return;
                 }
-                if (args.TryGetValue(ReturnRequest, out var requestSerialize))
-                {
-                    return;
-                }
-                var request = GetRequest(requestSerialize);
-
                 var actionArgs = new NotificationActionEventArgs
                 {
                     ActionId = actionId,
                     Request = request
                 };
                 Current.OnNotificationActionTapped(actionArgs);
-
             }
             catch (Exception ex)
             {
@@ -54,6 +71,22 @@ namespace Plugin.LocalNotification
             }
         }
 
+        internal static (int, NotificationRequest) GetRequestFromArguments(string arguments)
+        {
+            var args = ToastArguments.Parse(arguments);
+
+            var actionId = args.GetInt(ReturnRequestActionId); 
+            var notifiactionId = args.Get(ReturnRequest);
+
+            var toastNotification = ToastNotificationManager.History.GetHistory().FirstOrDefault(t => t.Tag == notifiactionId);
+
+            var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
+            var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+
+            var request = GetRequest(requestSerialize);
+            return (actionId, request);
+        }
+              
         /// <summary>
         /// 
         /// </summary>

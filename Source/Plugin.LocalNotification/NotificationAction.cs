@@ -1,5 +1,6 @@
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
+using Plugin.LocalNotification.WindowsOption;
 using System;
 
 namespace Plugin.LocalNotification
@@ -32,6 +33,11 @@ namespace Plugin.LocalNotification
         /// Android specific properties.
         /// </summary>
         public AndroidAction Android { get; set; } = new ();
+
+        /// <summary>
+        /// Windows specific properties.
+        /// </summary>
+        public WindowsAction Windows { get; set; } = new ();
 
         /// <summary>
         ///
