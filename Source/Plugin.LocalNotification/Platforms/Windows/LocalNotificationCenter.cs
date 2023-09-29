@@ -83,7 +83,9 @@ namespace Plugin.LocalNotification
             var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
             var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
 
-            var request = GetRequest(requestSerialize);
+
+            // TODO: get the request
+            var request = GetRequest("");
             return (actionId, request);
         }
               

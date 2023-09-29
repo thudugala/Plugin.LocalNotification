@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
-using Plugin.LocalNotification;
+﻿using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using System.Text;
@@ -180,11 +179,11 @@ public partial class MainPage : ContentPage
 
             var ff = await _notificationService.Show(request);
 
-            var sn = ToastNotificationManagerCompat.CreateToastNotifier().GetScheduledToastNotifications();
-            foreach (var notification in sn)
-            {
-                var gg = notification.Content;
-            }
+            //var sn = ToastNotificationManagerCompat.CreateToastNotifier().GetScheduledToastNotifications();
+            //foreach (var notification in sn)
+            //{
+            //    var gg = notification.Content;
+            //}
         }
         catch (Exception exception)
         {

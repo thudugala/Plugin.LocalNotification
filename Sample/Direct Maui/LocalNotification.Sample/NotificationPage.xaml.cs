@@ -1,6 +1,4 @@
-using Microsoft.Toolkit.Uwp.Notifications;
 using Plugin.LocalNotification;
-using Windows.UI.Notifications;
 
 namespace LocalNotification.Sample;
 
