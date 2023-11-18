@@ -8,14 +8,14 @@ namespace Plugin.LocalNotification.Platforms
 {
     internal class NotificationServiceImpl : INotificationService
     {
-        private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
+        private readonly List<NotificationCategory> _categoryList = [];
         private readonly ToastNotifierCompat _notifier;
 
-        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
+        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
-        public event NotificationActionTappedEventHandler NotificationActionTapped;
-        public event NotificationReceivedEventHandler NotificationReceived;
-        public event NotificationDisabledEventHandler NotificationsDisabled;
+        public event NotificationActionTappedEventHandler? NotificationActionTapped;
+        public event NotificationReceivedEventHandler? NotificationReceived;
+        public event NotificationDisabledEventHandler? NotificationsDisabled;
 
         public NotificationServiceImpl()
         {
@@ -67,49 +67,54 @@ namespace Plugin.LocalNotification.Platforms
             return true;
         }
 
-        public Task<IList<NotificationRequest>> GetDeliveredNotificationList()
+        public Task<IList<NotificationRequest?>> GetDeliveredNotificationList()
         {
-            var deliveredNotifications = new List<NotificationRequest>();
+            var deliveredNotifications = new List<NotificationRequest?>();
 
             var toastNotifications = ToastNotificationManager.History.GetHistory();
 
             if (toastNotifications is null || !toastNotifications.Any())
             {
-                return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
+                return Task.FromResult<IList<NotificationRequest?>>(deliveredNotifications);
             }
 
             foreach (var toastNotification in toastNotifications)
             {
                 var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
-                var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+                var attribute = element?.Attributes.FirstOrDefault(a => a.NodeName == "launch");
 
-                var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
-                deliveredNotifications.Add(request);
+                if (attribute != null)
+                {
+                    var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
+                    deliveredNotifications.Add(request);
+                }                
             }
-            return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
+            return Task.FromResult<IList<NotificationRequest?>>(deliveredNotifications);
         }
 
-        public Task<IList<NotificationRequest>> GetPendingNotificationList()
+        public Task<IList<NotificationRequest?>> GetPendingNotificationList()
         {
-            var pendingNotifications = new List<NotificationRequest>();
+            var pendingNotifications = new List<NotificationRequest?>();
 
             var scheduledToasts = _notifier.GetScheduledToastNotifications();
 
             if (scheduledToasts is null || !scheduledToasts.Any())
             {
-                return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
+                return Task.FromResult<IList<NotificationRequest?>>(pendingNotifications);
             }
 
             foreach (var scheduledToast in scheduledToasts)
             {
                 var element = scheduledToast.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
-                var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+                var attribute = element?.Attributes.FirstOrDefault(a => a.NodeName == "launch");
 
-                var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
-
-                pendingNotifications.Add(request);
+                if (attribute != null)
+                {
+                    var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
+                    pendingNotifications.Add(request);
+                }
             }
-            return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
+            return Task.FromResult<IList<NotificationRequest?>>(pendingNotifications);
         }
 
         public void OnNotificationActionTapped(NotificationActionEventArgs e)
@@ -141,7 +146,7 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
-        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {
             return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }
@@ -240,7 +245,10 @@ namespace Plugin.LocalNotification.Platforms
                     toast.Activated += (sender, args) =>
                     {
                         var toastArgs = args as ToastActivatedEventArgs;
-                        LocalNotificationCenter.NotifyNotificationTapped(toastArgs.Arguments);
+                        if(toastArgs != null)
+                        {
+                            LocalNotificationCenter.NotifyNotificationTapped(toastArgs.Arguments);
+                        }                        
                     };
 
                     toast.Dismissed += (sender, args) =>

@@ -16,9 +16,12 @@ namespace Plugin.LocalNotification
             LocalNotificationCenter.Logger = services.GetService<ILogger<LocalNotificationCenter>>();
 
             var builder = services.GetService<LocalNotificationBuilder>();
-            LocalNotificationCenter.Serializer = builder.Serializer;
+            if(builder is not null)
+            {
+                LocalNotificationCenter.Serializer = builder.Serializer;
+            }           
 
-            if (builder.CategorySet != null && builder.CategorySet.Any())
+            if (builder?.CategorySet != null && builder.CategorySet.Any())
             {
                 LocalNotificationCenter.Current.RegisterCategoryList(builder.CategorySet);
             }

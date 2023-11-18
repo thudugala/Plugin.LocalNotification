@@ -8,10 +8,9 @@ namespace Plugin.LocalNotification.Platforms
     internal class NotificationRepository
     {
         private static readonly Lazy<NotificationRepository> MySingleton =
-            new(() => new NotificationRepository(),
-                System.Threading.LazyThreadSafetyMode.PublicationOnly);
+            new(() => new NotificationRepository(), LazyThreadSafetyMode.PublicationOnly);
 
-        private static readonly object Locker = new object();
+        private static readonly object Locker = new ();
 
         /// <summary>
         ///
@@ -51,7 +50,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <param name="request"></param>
         internal void AddPendingRequest(NotificationRequest request)
         {
-            var itemList = GetPendingList();
+            var itemList = GetPendingList();            
             itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
             itemList.RemoveAll(r =>
                 r.Schedule.NotifyTime.HasValue &&
@@ -95,7 +94,7 @@ namespace Plugin.LocalNotification.Platforms
         internal void RemoveByDeliveredIdList(params int[] notificationIdList)
         {
             var itemList = GetDeliveredList();
-            itemList.RemoveAll(r => notificationIdList.Contains(r.NotificationId));
+            itemList?.RemoveAll(r => notificationIdList.Contains(r.NotificationId));
             SetDeliveredList(itemList);
         }
 
@@ -109,7 +108,7 @@ namespace Plugin.LocalNotification.Platforms
             return itemList;
         }
 
-        private static void SetPendingList(List<NotificationRequest> list)
+        private static void SetPendingList(List<NotificationRequest>? list)
         {
             SetList(PendingListKey, list);
         }
@@ -124,7 +123,7 @@ namespace Plugin.LocalNotification.Platforms
             return itemList;
         }
 
-        private static void SetDeliveredList(List<NotificationRequest> list)
+        private static void SetDeliveredList(List<NotificationRequest>? list)
         {
             SetList(DeliveredListKey, list);
         }
@@ -140,17 +139,17 @@ namespace Plugin.LocalNotification.Platforms
                     jsonText = data.ToString();
                 }
                 return string.IsNullOrWhiteSpace(jsonText)
-                    ? new List<NotificationRequest>()
-                    : LocalNotificationCenter.GetRequestList(jsonText);
+                    ? []
+                    : LocalNotificationCenter.GetRequestList(jsonText) ?? [];
             }
         }
 
-        private static void SetList(string key, List<NotificationRequest> list)
+        private static void SetList(string key, List<NotificationRequest>? list)
         {
             lock (Locker)
             {
                 var appDataContainer = GetApplicationDataContainer();
-                string jsonText = null;
+                var jsonText = string.Empty;
                 if (list != null && list.Any())
                 {
                     jsonText = LocalNotificationCenter.GetRequestListSerialize(list);

@@ -14,7 +14,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="permission"></param>
         /// <returns></returns>
-        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
+        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission? permission = null)
         {
             return await Task.FromResult(true);
         }
@@ -66,7 +66,7 @@ namespace Plugin.LocalNotification
             }
         }
 
-        internal static (int, NotificationRequest) GetRequestFromArguments(string arguments)
+        internal static (int, NotificationRequest?) GetRequestFromArguments(string arguments)
         {
             var args = ToastArguments.Parse(arguments);
 
@@ -75,8 +75,8 @@ namespace Plugin.LocalNotification
 
             var toastNotification = ToastNotificationManager.History.GetHistory().FirstOrDefault(t => t.Tag == notifiactionId);
 
-            var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
-            var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+            var element = toastNotification?.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
+            var attribute = element?.Attributes.FirstOrDefault(a => a.NodeName == "launch");
 
             // TODO: get the request
             var request = GetRequest("");
@@ -88,7 +88,7 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="message"></param>
         /// <param name="callerName"></param>
-        internal static void Log(string message, [CallerMemberName] string callerName = "")
+        internal static void Log(string? message, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.Log(LogLevel, logMessage);
@@ -100,7 +100,7 @@ namespace Plugin.LocalNotification
         /// <param name="ex"></param>
         /// <param name="message"></param>
         /// <param name="callerName"></param>
-        internal static void Log(Exception ex, string message = null, [CallerMemberName] string callerName = "")
+        internal static void Log(Exception? ex, string? message = null, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.LogError(ex, logMessage);

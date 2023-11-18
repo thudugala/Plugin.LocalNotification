@@ -10,18 +10,18 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// fires when notification popup action is tapped.
         /// </summary>
-        event NotificationActionTappedEventHandler NotificationActionTapped;
+        event NotificationActionTappedEventHandler? NotificationActionTapped;
 
         /// <summary>
         /// fires when notification is received.
         /// On iOS this event is fired only when the app is in foreground
         /// </summary>
-        event NotificationReceivedEventHandler NotificationReceived;
+        event NotificationReceivedEventHandler? NotificationReceived;
 
         /// <summary>
         /// fires when notification is disabled.
         /// </summary>
-        event NotificationDisabledEventHandler NotificationsDisabled;
+        event NotificationDisabledEventHandler? NotificationsDisabled;
 
         /// <summary>
         /// Cancel a notification match with the Id
@@ -88,7 +88,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// When Notification is about to be shown, this allow it to be modified.
         /// </summary>
-        Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
+        Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
         /// <summary>
         /// Returns whether user as allowed Notifications

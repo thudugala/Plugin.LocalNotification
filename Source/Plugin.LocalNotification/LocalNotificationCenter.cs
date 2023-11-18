@@ -13,8 +13,8 @@ namespace Plugin.LocalNotification
 
     public partial class LocalNotificationCenter
     {
-        private static readonly Lazy<INotificationService> implementation = new(() => CreateNotificationService(), LazyThreadSafetyMode.PublicationOnly);
-        private static INotificationSerializer _serializer;
+        private static readonly Lazy<INotificationService> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
+        private static INotificationSerializer? _serializer;
 
         private static INotificationService CreateNotificationService()
         {
@@ -28,7 +28,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Internal  Logger
         /// </summary>
-        public static ILogger Logger { get; set; }
+        public static ILogger? Logger { get; set; }
 
         /// <summary>
         /// Internal  Logger LogLevel
@@ -75,7 +75,7 @@ namespace Plugin.LocalNotification
             set => _serializer = value;
         }
 
-        internal static NotificationRequest GetRequest(string? serializedRequest)
+        internal static NotificationRequest? GetRequest(string? serializedRequest)
         {
             Logger?.LogTrace($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
@@ -87,7 +87,7 @@ namespace Plugin.LocalNotification
             return request;
         }
 
-        internal static List<NotificationRequest> GetRequestList(string? serializedRequestList)
+        internal static List<NotificationRequest>? GetRequestList(string? serializedRequestList)
         {
             if (string.IsNullOrWhiteSpace(serializedRequestList))
             {
@@ -115,7 +115,7 @@ namespace Plugin.LocalNotification
         {
             if (request.Image.Binary != null && request.Image.Binary.Length > 90000)
             {
-                request.Image.Binary = null;
+                request.Image.Binary = [];
             }
             var serializedRequest = Serializer.Serialize(request);
 

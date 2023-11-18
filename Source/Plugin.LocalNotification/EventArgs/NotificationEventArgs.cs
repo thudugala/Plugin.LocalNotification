@@ -21,6 +21,6 @@
         /// <summary>
         /// Returning notification.
         /// </summary>
-        public NotificationRequest Request { get; set; }
+        public NotificationRequest Request { get; set; } = new ();
     }
 }

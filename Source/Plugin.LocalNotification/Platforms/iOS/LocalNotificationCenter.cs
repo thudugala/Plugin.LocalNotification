@@ -78,7 +78,7 @@ namespace Plugin.LocalNotification
         /// Returns true if Allowed.
         /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
-        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
+        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission? permission = null)
         {
             try
             {
