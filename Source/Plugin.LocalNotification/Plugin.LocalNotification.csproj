@@ -64,6 +64,11 @@
     <None Include="**/Platforms/**/*.cs" />
   </ItemGroup>
 
+  <!-- .NET (generic) -->
+  <ItemGroup Condition="($(TargetFramework.StartsWith('net')) AND $(TargetFramework.EndsWith('.0')) AND $(TargetFramework.Contains('-')) != true)">
+    <Compile Include="**/Platforms/Generic/**/*.cs" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
     <Compile Include="**/Platforms/Android/**/*.cs" />
     <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="121.0.1.3" />

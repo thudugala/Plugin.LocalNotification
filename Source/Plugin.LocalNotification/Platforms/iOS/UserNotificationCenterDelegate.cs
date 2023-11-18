@@ -197,7 +197,7 @@ namespace Plugin.LocalNotification.Platforms
         ///
         /// </summary>
         /// <returns></returns>
-        public static NotificationServiceImpl TryGetDefaultIOsNotificationService()
+        internal static NotificationServiceImpl TryGetDefaultIOsNotificationService()
         {
             return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService

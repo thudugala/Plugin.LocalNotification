@@ -9,10 +9,12 @@ using UserNotifications;
 namespace Plugin.LocalNotification.Platforms
 {
     /// <inheritdoc />
-    public class NotificationServiceImpl : INotificationService
+    internal class NotificationServiceImpl : INotificationService
     {
         /// <inheritdoc />
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
+
+        public bool IsSupported => true;
 
         /// <inheritdoc />
         public event NotificationReceivedEventHandler? NotificationReceived;
@@ -108,6 +110,7 @@ namespace Plugin.LocalNotification.Platforms
                 if (request.Geofence.IsGeofence)
                 {
                     var center = new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude);
+
                     var regin = new CLCircularRegion(center,
                                      request.Geofence.RadiusInMeters,
                                      notificationId)
@@ -397,19 +400,19 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public async Task<IList<NotificationRequest?>> GetPendingNotificationList()
+        public async Task<IList<NotificationRequest>> GetPendingNotificationList()
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            return pending.Select(r => GetRequest(r.Content)).ToList();
+            return pending.Select(r => GetRequest(r.Content) ?? new NotificationRequest()).ToList();
         }
 
         /// <inheritdoc />
-        public async Task<IList<NotificationRequest?>> GetDeliveredNotificationList()
+        public async Task<IList<NotificationRequest>> GetDeliveredNotificationList()
         {
             var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
 
-            return delivered.Select(r => GetRequest(r.Request.Content)).ToList();
+            return delivered.Select(r => GetRequest(r.Request.Content) ?? new NotificationRequest()).ToList();
         }
 
         /// <summary>

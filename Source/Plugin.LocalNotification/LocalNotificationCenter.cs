@@ -38,14 +38,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Platform specific INotificationService.
         /// </summary>
-        public static INotificationService Current
-        {
-            get
-            {
-                var ret = implementation.Value;
-                return ret ?? throw new NotImplementedException(Properties.Resources.PluginNotFound);
-            }
-        }
+        public static INotificationService Current => implementation.Value;
 
         /// <summary>
         /// Return Notification Key.

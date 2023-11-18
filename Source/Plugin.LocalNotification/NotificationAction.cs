@@ -50,6 +50,11 @@ namespace Plugin.LocalNotification
                    ActionId == other.ActionId;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object? obj) => Equals(obj as NotificationAction);
 
         /// <summary>

@@ -13,12 +13,14 @@ using Exception = System.Exception;
 namespace Plugin.LocalNotification.Platforms
 {
     /// <inheritdoc />
-    public class NotificationServiceImpl : INotificationService
+    internal class NotificationServiceImpl : INotificationService
     {
         private readonly List<NotificationCategory> _categoryList = [];
 
         /// <inheritdoc />
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
+
+        public bool IsSupported => true;
 
         /// <summary>
         ///
@@ -682,18 +684,25 @@ namespace Plugin.LocalNotification.Platforms
             // Cannot be random, then you cannot cancel it.
             var requestCode = notificationId + action.ActionId;
 
-            var pendingIntent = action.Android.LaunchAppWhenTapped
-                ? PendingIntent.GetActivity(
+            PendingIntent? pendingIntent = null;
+            if (action.Android.LaunchAppWhenTapped)
+            {
+                pendingIntent = PendingIntent.GetActivity(
                     Application.Context,
                     requestCode,
                     notificationIntent,
-                    action.Android.PendingIntentFlags.ToNative())
-                : PendingIntent.GetBroadcast(
+                    action.Android.PendingIntentFlags.ToNative());
+            }
+            else if (notificationIntent is not null)
+            {
+                pendingIntent = PendingIntent.GetBroadcast(
                     Application.Context,
                     requestCode,
                     notificationIntent,
                     action.Android.PendingIntentFlags.ToNative()
                 );
+            }
+
             return pendingIntent;
         }
 

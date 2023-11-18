@@ -30,6 +30,11 @@ namespace Plugin.LocalNotification
                    CategoryType == other.CategoryType;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object? obj) => Equals(obj as NotificationCategory);
 
         /// <summary>

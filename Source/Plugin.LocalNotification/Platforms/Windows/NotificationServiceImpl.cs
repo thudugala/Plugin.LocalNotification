@@ -13,6 +13,8 @@ namespace Plugin.LocalNotification.Platforms
 
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
+        public bool IsSupported => true;
+
         public event NotificationActionTappedEventHandler? NotificationActionTapped;
         public event NotificationReceivedEventHandler? NotificationReceived;
         public event NotificationDisabledEventHandler? NotificationsDisabled;
@@ -67,15 +69,15 @@ namespace Plugin.LocalNotification.Platforms
             return true;
         }
 
-        public Task<IList<NotificationRequest?>> GetDeliveredNotificationList()
+        public Task<IList<NotificationRequest>> GetDeliveredNotificationList()
         {
-            var deliveredNotifications = new List<NotificationRequest?>();
+            var deliveredNotifications = new List<NotificationRequest>();
 
             var toastNotifications = ToastNotificationManager.History.GetHistory();
 
             if (toastNotifications is null || !toastNotifications.Any())
             {
-                return Task.FromResult<IList<NotificationRequest?>>(deliveredNotifications);
+                return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
             }
 
             foreach (var toastNotification in toastNotifications)
@@ -86,21 +88,24 @@ namespace Plugin.LocalNotification.Platforms
                 if (attribute != null)
                 {
                     var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
-                    deliveredNotifications.Add(request);
+                    if (request is not null)
+                    {
+                        deliveredNotifications.Add(request);
+                    }
                 }                
             }
-            return Task.FromResult<IList<NotificationRequest?>>(deliveredNotifications);
+            return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
         }
 
-        public Task<IList<NotificationRequest?>> GetPendingNotificationList()
+        public Task<IList<NotificationRequest>> GetPendingNotificationList()
         {
-            var pendingNotifications = new List<NotificationRequest?>();
+            var pendingNotifications = new List<NotificationRequest>();
 
             var scheduledToasts = _notifier.GetScheduledToastNotifications();
 
             if (scheduledToasts is null || !scheduledToasts.Any())
             {
-                return Task.FromResult<IList<NotificationRequest?>>(pendingNotifications);
+                return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
             }
 
             foreach (var scheduledToast in scheduledToasts)
@@ -111,10 +116,13 @@ namespace Plugin.LocalNotification.Platforms
                 if (attribute != null)
                 {
                     var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
-                    pendingNotifications.Add(request);
+                    if (request is not null)
+                    {
+                        pendingNotifications.Add(request);
+                    }
                 }
             }
-            return Task.FromResult<IList<NotificationRequest?>>(pendingNotifications);
+            return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
         }
 
         public void OnNotificationActionTapped(NotificationActionEventArgs e)

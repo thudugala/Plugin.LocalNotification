@@ -8,6 +8,11 @@ namespace Plugin.LocalNotification
     public interface INotificationService
     {
         /// <summary>
+        /// Gets a value indicating whether local notification is supported on this device.
+        /// </summary>
+        bool IsSupported { get; }
+
+        /// <summary>
         /// fires when notification popup action is tapped.
         /// </summary>
         event NotificationActionTappedEventHandler? NotificationActionTapped;
@@ -49,7 +54,7 @@ namespace Plugin.LocalNotification
         /// Get notifications that are currently delivered
         /// </summary>
         /// <returns></returns>
-        Task<IList<NotificationRequest?>> GetDeliveredNotificationList();
+        Task<IList<NotificationRequest>> GetDeliveredNotificationList();
 
         /// <summary>
         /// Internal use Only
@@ -72,7 +77,7 @@ namespace Plugin.LocalNotification
         /// Get pending notifications
         /// </summary>
         /// <returns></returns>
-        Task<IList<NotificationRequest?>> GetPendingNotificationList();
+        Task<IList<NotificationRequest>> GetPendingNotificationList();
 
         /// <summary>
         /// Register notification categories and their corresponding actions
