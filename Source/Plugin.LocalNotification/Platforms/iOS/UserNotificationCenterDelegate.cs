@@ -35,13 +35,25 @@ namespace Plugin.LocalNotification.Platforms
 
                 if (response.Notification.Request.Content.Badge != null)
                 {
-                    UIApplication.SharedApplication.InvokeOnMainThread(() =>
+                    var badgeNumber = Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
+                                                          
+                    center.InvokeOnMainThread(() =>
                     {
-                        var appBadges = UIApplication.SharedApplication.ApplicationIconBadgeNumber -
-                                        Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(),
-                                            CultureInfo.CurrentCulture);
-                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = appBadges;
-                    });
+                        if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
+                        {
+                            center.SetBadgeCount(badgeNumber, (error) =>
+                            {
+                                if (error != null)
+                                {
+                                    LocalNotificationCenter.Log(error.LocalizedDescription);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            UIApplication.SharedApplication.ApplicationIconBadgeNumber -= badgeNumber;
+                        }
+                    });                                      
                 }
 
                 // Take action based on identifier

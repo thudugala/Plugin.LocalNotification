@@ -35,7 +35,7 @@ namespace Plugin.LocalNotification.Platforms
         {
             var scheduledToasts = _notifier.GetScheduledToastNotifications();
 
-            var notificationIdSet = new HashSet<string>(notificationIdList.Cast<string>());
+            var notificationIdSet = new HashSet<string>(Array.ConvertAll(notificationIdList, x => x.ToString()));
             var toRemove = scheduledToasts.FirstOrDefault(i => notificationIdSet.Contains(i.Tag));
             if (toRemove != null)
             {

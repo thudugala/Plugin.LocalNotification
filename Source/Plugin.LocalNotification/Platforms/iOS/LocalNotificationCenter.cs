@@ -212,12 +212,22 @@ namespace Plugin.LocalNotification
 
                 uiApplication.InvokeOnMainThread(() =>
                 {
-                    uiApplication.ApplicationIconBadgeNumber = 0;
-                });
-                UIApplication.SharedApplication.InvokeOnMainThread(() =>
-                {
-                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
-                });
+                    if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
+                    {
+                        UNUserNotificationCenter.Current.SetBadgeCount(0, (error) =>
+                        {
+                            if (error != null)
+                            {
+                                Log(error.LocalizedDescription);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        uiApplication.ApplicationIconBadgeNumber = 0;
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+                    }
+                });               
             }
             catch (Exception ex)
             {
@@ -248,13 +258,17 @@ namespace Plugin.LocalNotification
                     return;
                 }
 
-                uiApplication.InvokeOnMainThread(() =>
+                uiApplication.InvokeOnMainThread(async () =>
                 {
-                    uiApplication.ApplicationIconBadgeNumber = 0;
-                });
-                UIApplication.SharedApplication.InvokeOnMainThread(() =>
-                {
-                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+                    if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
+                    {
+                        await UNUserNotificationCenter.Current.SetBadgeCountAsync(0);
+                    }
+                    else
+                    {
+                        uiApplication.ApplicationIconBadgeNumber = 0;
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+                    }
                 });
             }
             catch (Exception ex)
