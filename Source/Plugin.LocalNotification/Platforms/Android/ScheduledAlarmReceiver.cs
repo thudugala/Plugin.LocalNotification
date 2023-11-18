@@ -1,8 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification.Platforms
 {
@@ -30,11 +27,17 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         public const string ReceiverName = "plugin.LocalNotification." + nameof(ScheduledAlarmReceiver);
 
-        public override async void OnReceive(Context context, Intent intent)
+        public override async void OnReceive(Context? context, Intent? intent)
         {
             try
             {
                 var notificationService = TryGetDefaultDroidNotificationService();
+
+                if (intent is null)
+                {
+                    LocalNotificationCenter.Log("No intent");
+                    return;
+                }
 
                 if (intent.Action == Intent.ActionBootCompleted ||
                     intent.Action == Intent.ActionMyPackageReplaced ||
@@ -44,7 +47,7 @@ namespace Plugin.LocalNotification.Platforms
                     LocalNotificationCenter.Log("ActionBootCompleted");
 
                     var requestList = NotificationRepository.Current.GetPendingList();
-                    if (requestList.Any() == false)
+                    if (!requestList.Any())
                     {
                         LocalNotificationCenter.Log("No Pending Notification Request");
                         return;
@@ -74,7 +77,7 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
-        private async Task SendNotification(NotificationServiceImpl notificationService, NotificationRequest request)
+        private static async Task SendNotification(NotificationServiceImpl notificationService, NotificationRequest request)
         {
             if (request is null)
             {
@@ -121,7 +124,7 @@ namespace Plugin.LocalNotification.Platforms
                     "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
             }
 
-            // even if the request is too old to show, if it is a Repeating notification, then reschedule again 
+            // even if the request is too old to show, if it is a Repeating notification, then reschedule again
             if (wasReScheduled == false && request.Schedule.RepeatType != NotificationRepeat.No)
             {
                 request.Schedule.NotifyTime = request.Schedule.Android.GetNextNotifyTimeForRepeat(

@@ -1,6 +1,4 @@
-﻿using Foundation;
-using Plugin.LocalNotification.EventArgs;
-using System;
+﻿using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
 using UIKit;
 using UserNotifications;
@@ -36,7 +34,7 @@ namespace Plugin.LocalNotification.Platforms
                 if (response.Notification.Request.Content.Badge != null)
                 {
                     var badgeNumber = Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
-                                                          
+
                     center.InvokeOnMainThread(() =>
                     {
                         if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
@@ -53,7 +51,7 @@ namespace Plugin.LocalNotification.Platforms
                         {
                             UIApplication.SharedApplication.ApplicationIconBadgeNumber -= badgeNumber;
                         }
-                    });                                      
+                    });
                 }
 
                 // Take action based on identifier
@@ -149,13 +147,7 @@ namespace Plugin.LocalNotification.Platforms
 
                 if (requestHandled == false)
                 {
-                    if (
-#if XAMARINIOS
-                        UIDevice.CurrentDevice.CheckSystemVersion(14, 0)
-#elif IOS
-                        OperatingSystem.IsIOSVersionAtLeast(14)
-#endif
-                        )
+                    if (OperatingSystem.IsIOSVersionAtLeast(14))
                     {
                         if (notificationRequest.iOS.PresentAsBanner)
                         {
@@ -202,7 +194,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public static NotificationServiceImpl TryGetDefaultIOsNotificationService()

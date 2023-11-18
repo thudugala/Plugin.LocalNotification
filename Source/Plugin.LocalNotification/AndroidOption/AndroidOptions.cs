@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plugin.LocalNotification.AndroidOption
+﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     /// NotificationRequest for Android
@@ -42,19 +40,19 @@ namespace Plugin.LocalNotification.AndroidOption
         /// <summary>
         /// If set, the notification icon and application name will have the provided ARGB color.
         /// </summary>
-        public AndroidColor Color { get; set; } = new ();
-        
+        public AndroidColor Color { get; set; } = new();
+
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Large Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidIcon IconLargeName { get; set; } = new ();
+        public AndroidIcon IconLargeName { get; set; } = new();
 
         /// <summary>
         /// if Set, find the icon by name from drawable and set it has the Small Icon to use in the notification layouts.
         /// if not set, application Icon will we used.
         /// </summary>
-        public AndroidIcon IconSmallName { get; set; } = new ();
+        public AndroidIcon IconSmallName { get; set; } = new();
 
         /// <summary>
         /// Set this notification to be the group summary for a group of notifications.
@@ -110,7 +108,7 @@ namespace Plugin.LocalNotification.AndroidOption
         /// The next value indicates the number of milliseconds for which to keep the vibrator on before turning it off.
         /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
         /// </summary>
-        public long[] VibrationPattern { get; set; }
+        public long[] VibrationPattern { get; set; } = [];
 
         /// <summary>
         /// Sphere of visibility of this notification,

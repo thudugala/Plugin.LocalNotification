@@ -5,13 +5,13 @@ using Plugin.LocalNotification.Platforms;
 namespace Plugin.LocalNotification.iOSOption
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IiOSLocalNotificationBuilder
     {
-#if IOS    
+#if IOS
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="customUserNotificationCenterDelegate"></param>
         /// <returns></returns>

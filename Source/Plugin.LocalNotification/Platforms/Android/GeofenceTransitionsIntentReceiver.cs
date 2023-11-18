@@ -1,10 +1,9 @@
 ﻿using Android.Content;
-using System;
 
 namespace Plugin.LocalNotification.Platforms
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [BroadcastReceiver(
         Name = ReceiverName,
@@ -24,13 +23,13 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="context"></param>
         /// <param name="intent"></param>
-        public override async void OnReceive(Context context, Intent intent)
+        public override async void OnReceive(Context? context, Intent? intent)
         {
             try
             {
                 var notificationService = TryGetDefaultDroidNotificationService();
 
-                var requestSerialize = intent.GetStringExtra(LocalNotificationCenter.ReturnRequest);
+                var requestSerialize = intent?.GetStringExtra(LocalNotificationCenter.ReturnRequest);
                 if (string.IsNullOrWhiteSpace(requestSerialize))
                 {
                     LocalNotificationCenter.Log("Request Json Not Found");

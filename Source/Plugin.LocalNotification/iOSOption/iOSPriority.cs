@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Plugin.LocalNotification.iOSOption
+﻿namespace Plugin.LocalNotification.iOSOption
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum iOSPriority
     {

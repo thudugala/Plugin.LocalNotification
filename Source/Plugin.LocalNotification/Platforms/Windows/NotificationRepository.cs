@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Windows.Storage;
+﻿using Windows.Storage;
 
 namespace Plugin.LocalNotification.Platforms
 {
@@ -33,7 +30,7 @@ namespace Plugin.LocalNotification.Platforms
 
         static ApplicationDataContainer GetApplicationDataContainer()
         {
-            var localSettings = ApplicationData.Current.LocalSettings; 
+            var localSettings = ApplicationData.Current.LocalSettings;
             return localSettings;
         }
 
@@ -140,7 +137,7 @@ namespace Plugin.LocalNotification.Platforms
                 var jsonText = string.Empty;
                 if (appDataContainer.Values.TryGetValue(key, out var data))
                 {
-                   jsonText = data.ToString();
+                    jsonText = data.ToString();
                 }
                 return string.IsNullOrWhiteSpace(jsonText)
                     ? new List<NotificationRequest>()

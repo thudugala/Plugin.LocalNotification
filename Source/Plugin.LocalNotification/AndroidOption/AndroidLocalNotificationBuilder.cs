@@ -1,24 +1,22 @@
-﻿using System.Collections.Generic;
-
-namespace Plugin.LocalNotification.AndroidOption
+﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class AndroidLocalNotificationBuilder : IAndroidLocalNotificationBuilder
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public IList<NotificationChannelRequest> ChannelRequestList { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public IList<NotificationChannelGroupRequest> GroupChannelRequestList { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public AndroidLocalNotificationBuilder()
         {

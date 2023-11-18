@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.WindowsOption
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class WindowsAction
     {

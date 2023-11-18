@@ -1,8 +1,4 @@
-﻿#if NETSTANDARD || MONOANDROID || XAMARINIOS
-using Newtonsoft.Json;
-#else
-using System.Text.Json;
-#endif
+﻿using System.Text.Json;
 
 namespace Plugin.LocalNotification.Json
 {
@@ -10,23 +6,15 @@ namespace Plugin.LocalNotification.Json
     public class NotificationSerializer : INotificationSerializer
     {
         /// <inheritdoc />
-        public virtual TValue Deserialize<TValue>(string json)
+        public virtual TValue? Deserialize<TValue>(string json)
         {
-#if NETSTANDARD || MONOANDROID || XAMARINIOS
-            return JsonConvert.DeserializeObject<TValue>(json);
-#else
             return JsonSerializer.Deserialize<TValue>(json);
-#endif
         }
 
         /// <inheritdoc />
         public virtual string Serialize<TValue>(TValue value)
         {
-#if NETSTANDARD || MONOANDROID || XAMARINIOS
-            return JsonConvert.SerializeObject(value);
-#else
             return JsonSerializer.Serialize(value);
-#endif
         }
     }
 }

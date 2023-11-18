@@ -1,5 +1,4 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
-using System;
 
 namespace Plugin.LocalNotification
 {
@@ -11,7 +10,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidScheduleOptions Android { get; set; } = new ();
+        public AndroidScheduleOptions Android { get; set; } = new();
 
         /// <summary>
         /// Time to cancel the notification automatically.

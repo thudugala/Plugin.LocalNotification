@@ -9,7 +9,7 @@ namespace Plugin.LocalNotification.iOSOption
     {
 #if IOS
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public UserNotificationCenterDelegate CustomUserNotificationCenterDelegate { get; private set; }
 #endif
@@ -18,7 +18,7 @@ namespace Plugin.LocalNotification.iOSOption
         /// <inheritdoc/>
         public IiOSLocalNotificationBuilder SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate customUserNotificationCenterDelegate)
         {
-            CustomUserNotificationCenterDelegate = customUserNotificationCenterDelegate;           
+            CustomUserNotificationCenterDelegate = customUserNotificationCenterDelegate;
             return this;
         }
 #endif

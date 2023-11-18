@@ -1,8 +1,5 @@
-﻿using Android.App;
-using Android.Content;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Android.Content;
+using Application = Android.App.Application;
 
 namespace Plugin.LocalNotification.Platforms
 {
@@ -12,10 +9,9 @@ namespace Plugin.LocalNotification.Platforms
     internal class NotificationRepository
     {
         private static readonly Lazy<NotificationRepository> MySingleton =
-            new(() => new NotificationRepository(),
-                System.Threading.LazyThreadSafetyMode.PublicationOnly);
+            new(() => new NotificationRepository(), LazyThreadSafetyMode.PublicationOnly);
 
-        private static readonly object Locker = new object();
+        private static readonly object Locker = new();
 
         /// <summary>
         ///
@@ -36,7 +32,7 @@ namespace Plugin.LocalNotification.Platforms
         ///
         /// </summary>
         /// <returns></returns>
-        private static ISharedPreferences GetSharedPreferences()
+        private static ISharedPreferences? GetSharedPreferences()
         {
             const string sharedName = "plugin.LocalNotification." + nameof(NotificationRepository);
             return Application.Context.GetSharedPreferences(sharedName, FileCreationMode.Private);
@@ -117,7 +113,7 @@ namespace Plugin.LocalNotification.Platforms
             return itemList;
         }
 
-        private static void SetPendingList(List<NotificationRequest> list)
+        private static void SetPendingList(List<NotificationRequest>? list)
         {
             SetList(PendingListKey, list);
         }
@@ -132,7 +128,7 @@ namespace Plugin.LocalNotification.Platforms
             return itemList;
         }
 
-        private static void SetDeliveredList(List<NotificationRequest> list)
+        private static void SetDeliveredList(List<NotificationRequest>? list)
         {
             SetList(DeliveredListKey, list);
         }
@@ -142,20 +138,20 @@ namespace Plugin.LocalNotification.Platforms
             lock (Locker)
             {
                 using var sharedPreferences = GetSharedPreferences();
-                var jsonText = sharedPreferences.GetString(key, string.Empty);
+                var jsonText = sharedPreferences?.GetString(key, string.Empty);
                 return string.IsNullOrWhiteSpace(jsonText)
-                    ? new List<NotificationRequest>()
+                    ? []
                     : LocalNotificationCenter.GetRequestList(jsonText);
             }
         }
 
-        private static void SetList(string key, List<NotificationRequest> list)
+        private static void SetList(string key, List<NotificationRequest>? list)
         {
             lock (Locker)
             {
                 using var sharedPreferences = GetSharedPreferences();
-                using var editor = sharedPreferences.Edit();
-                string jsonText = null;
+                using var editor = sharedPreferences?.Edit();
+                var jsonText = string.Empty;
                 if (list != null && list.Any())
                 {
                     jsonText = LocalNotificationCenter.GetRequestListSerialize(list);

@@ -1,7 +1,6 @@
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 using Plugin.LocalNotification.WindowsOption;
-using System;
 
 namespace Plugin.LocalNotification
 {
@@ -27,29 +26,29 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// iOS specific properties.
         /// </summary>
-        public iOSAction iOS { get; set; } = new ();
+        public iOSAction iOS { get; set; } = new();
 
         /// <summary>
         /// Android specific properties.
         /// </summary>
-        public AndroidAction Android { get; set; } = new ();
+        public AndroidAction Android { get; set; } = new();
 
         /// <summary>
         /// Windows specific properties.
         /// </summary>
-        public WindowsAction Windows { get; set; } = new ();
+        public WindowsAction Windows { get; set; } = new();
 
         /// <summary>
         ///
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(NotificationAction other)
+        public bool Equals(NotificationAction? other)
         {
             return other != null &&
                    ActionId == other.ActionId;

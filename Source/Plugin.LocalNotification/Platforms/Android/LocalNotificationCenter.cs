@@ -1,36 +1,25 @@
-﻿using Android;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.Media;
-using Android.OS;
-using AndroidX.Core.App;
-using AndroidX.Core.Content;
 using Microsoft.Extensions.Logging;
-#if ANDROID
-using Microsoft.Maui.ApplicationModel;
-#endif
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.Platforms;
-using System;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using Application = Android.App.Application;
 
 namespace Plugin.LocalNotification
 {
     public partial class LocalNotificationCenter
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
-        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission permission = null)
+        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission? permission = null)
         {
             permission ??= new NotificationPermission();
-#if ANDROID
+
             if (!OperatingSystem.IsAndroidVersionAtLeast(33))
             {
                 return false;
@@ -43,54 +32,28 @@ namespace Plugin.LocalNotification
 
             var status = await Permissions.RequestAsync<NotificationPerms>();
             return status == PermissionStatus.Granted;
-#else
-            if (!permission.AskPermission)
-            {
-                return await Task.FromResult(false);
-            }
-
-            if ((int)Build.VERSION.SdkInt >= 33)
-            {
-                var permissionName = "android.permission.POST_NOTIFICATIONS";
-
-                if (Application.Context.CheckSelfPermission(permissionName) != Permission.Granted)
-                {
-                    if(MainActivity is null)
-                    {
-                        throw new ArgumentNullException(nameof(MainActivity));
-                    }
-                    ActivityCompat.RequestPermissions(MainActivity, new[] { permissionName }, 0);
-                }
-            }
-            return await Task.FromResult(true);
-#endif
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static Android.App.Activity MainActivity { get; set; }
 
         /// <summary>
         /// Notify Local Notification Tapped.
         /// </summary>
         /// <param name="intent"></param>
-        public static void NotifyNotificationTapped(Intent intent)
+        public static void NotifyNotificationTapped(Intent? intent)
         {
             try
             {
-                var actionId = intent.GetIntExtra(ReturnRequestActionId, -1000);
-                if (actionId == -1000)
+                var actionId = intent?.GetIntExtra(ReturnRequestActionId, -1000);
+                if (actionId is null || actionId == -1000)
                 {
                     return;
                 }
 
-                var requestSerialize = intent.GetStringExtra(ReturnRequest);
+                var requestSerialize = intent?.GetStringExtra(ReturnRequest);
                 var request = GetRequest(requestSerialize);
 
                 var actionArgs = new NotificationActionEventArgs
                 {
-                    ActionId = actionId,
+                    ActionId = actionId.GetValueOrDefault(),
                     Request = request
                 };
                 Current.OnNotificationActionTapped(actionArgs);
@@ -111,20 +74,12 @@ namespace Plugin.LocalNotification
         /// <param name="groupChannelRequest"></param>
         public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest)
         {
-#if MONOANDROID
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-            {
-                return false;
-            }
-#elif ANDROID
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 return false;
             }
-#endif
 
-            if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager
-            notificationManager))
+            if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager notificationManager)
             {
                 return false;
             }
@@ -148,21 +103,14 @@ namespace Plugin.LocalNotification
         /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="channelRequest"></param>
-        public static bool CreateNotificationChannel(NotificationChannelRequest channelRequest = null)
+        public static bool CreateNotificationChannel(NotificationChannelRequest? channelRequest = null)
         {
-#if MONOANDROID
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-            {
-                return false;
-            }
-#elif ANDROID
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 return false;
             }
-#endif
 
-            if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager notificationManager))
+            if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager notificationManager)
             {
                 return false;
             }
@@ -218,7 +166,7 @@ namespace Plugin.LocalNotification
             return true;
         }
 
-        internal static Android.Net.Uri GetSoundUri(string soundFileName)
+        internal static Android.Net.Uri? GetSoundUri(string soundFileName)
         {
             if (string.IsNullOrWhiteSpace(soundFileName))
             {
@@ -265,7 +213,7 @@ namespace Plugin.LocalNotification
         /// <param name="ex"></param>
         /// <param name="message"></param>
         /// <param name="callerName"></param>
-        internal static void Log(Exception ex, string message = null, [CallerMemberName] string callerName = "")
+        internal static void Log(Exception ex, string? message = null, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.LogError(ex, logMessage);

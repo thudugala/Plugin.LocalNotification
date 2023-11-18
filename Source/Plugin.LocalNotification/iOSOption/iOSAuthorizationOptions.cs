@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plugin.LocalNotification.iOSOption
+﻿namespace Plugin.LocalNotification.iOSOption
 {
     /// <summary>
     ///

@@ -11,7 +11,7 @@
         /// <typeparam name="TValue"></typeparam>
         /// <param name="json"></param>
         /// <returns></returns>
-        TValue Deserialize<TValue>(string json);
+        TValue? Deserialize<TValue>(string json);
 
         /// <summary>
         ///

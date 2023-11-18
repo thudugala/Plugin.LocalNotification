@@ -1,13 +1,10 @@
 ﻿using Plugin.LocalNotification.iOSOption;
-using System;
-using UIKit;
 using UserNotifications;
 
 namespace Plugin.LocalNotification.Platforms
 {
-
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class PlatformExtensions
     {
@@ -18,17 +15,10 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         public static UNNotificationInterruptionLevel ToNative(this iOSPriority priority)
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0) == false)
-            {
-                return default;
-            }
-#elif IOS
             if (!OperatingSystem.IsIOSVersionAtLeast(15))
             {
                 return default;
             }
-#endif
 
             switch (priority)
             {
@@ -87,4 +77,3 @@ namespace Plugin.LocalNotification.Platforms
         }
     }
 }
-

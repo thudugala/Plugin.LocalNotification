@@ -1,12 +1,7 @@
 ﻿using CoreLocation;
 using Foundation;
 using Plugin.LocalNotification.EventArgs;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
 
@@ -16,16 +11,16 @@ namespace Plugin.LocalNotification.Platforms
     public class NotificationServiceImpl : INotificationService
     {
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
+        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
         /// <inheritdoc />
-        public event NotificationReceivedEventHandler NotificationReceived;
+        public event NotificationReceivedEventHandler? NotificationReceived;
 
         /// <inheritdoc />
-        public event NotificationActionTappedEventHandler NotificationActionTapped;
+        public event NotificationActionTappedEventHandler? NotificationActionTapped;
 
         /// <inheritdoc />
-        public event NotificationDisabledEventHandler NotificationsDisabled;
+        public event NotificationDisabledEventHandler? NotificationsDisabled;
 
         /// <inheritdoc />
         public void OnNotificationReceived(NotificationEventArgs e)
@@ -48,17 +43,10 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
+            if (!OperatingSystem.IsIOSVersionAtLeast(11))
             {
                 return false;
             }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(10))
-            {
-                return false;
-            }
-#endif
 
             var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
@@ -71,18 +59,6 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool CancelAll()
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(10))
-            {
-                return false;
-            }
-#endif
-
             UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
             return true;
@@ -91,18 +67,6 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Clear(params int[] notificationIdList)
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(10))
-            {
-                return false;
-            }
-#endif
-
             var itemList = notificationIdList.Select((item) => item.ToString()).ToArray();
 
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(itemList);
@@ -112,18 +76,6 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool ClearAll()
         {
-#if XAMARINIOS
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-            {
-                return false;
-            }
-#elif IOS
-            if (!OperatingSystem.IsIOSVersionAtLeast(10))
-            {
-                return false;
-            }
-#endif
-
             UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
             return true;
         }
@@ -131,25 +83,9 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public async Task<bool> Show(NotificationRequest request)
         {
-            UNNotificationTrigger trigger = null;
+            UNNotificationTrigger? trigger = null;
             try
             {
-#if XAMARINIOS
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return false;
-                }
-#elif IOS
-                if (!OperatingSystem.IsIOS())
-                {
-                    return false;
-                }
-                if (!OperatingSystem.IsIOSVersionAtLeast(10))
-                {
-                    return false;
-                }
-#endif
-
                 if (request is null)
                 {
                     return false;
@@ -239,13 +175,7 @@ namespace Plugin.LocalNotification.Platforms
                 UserInfo = userInfoDictionary
             };
 
-            if (
-#if XAMARINIOS
-                UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
-#elif IOS
-                OperatingSystem.IsIOSVersionAtLeast(15)
-#endif
-                )
+            if (OperatingSystem.IsIOSVersionAtLeast(15))
             {
                 content.InterruptionLevel = request.iOS.Priority.ToNative();
                 content.RelevanceScore = request.iOS.RelevanceScore;
@@ -273,16 +203,13 @@ namespace Plugin.LocalNotification.Platforms
 
             if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
             {
-                if (
-#if XAMARINIOS
-                     UIDevice.CurrentDevice.CheckSystemVersion(12, 0) && !UIDevice.CurrentDevice.CheckSystemVersion(15, 0)
-#elif IOS
-                     OperatingSystem.IsIOSVersionAtLeast(12) && !OperatingSystem.IsIOSVersionAtLeast(15)
-#endif
-                   )
+                if (!OperatingSystem.IsIOSVersionAtLeast(15))
                 {
-                    content.SummaryArgument = request.iOS.SummaryArgument;
-                    content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+                    if (OperatingSystem.IsIOSVersionAtLeast(12))
+                    {
+                        content.SummaryArgument = request.iOS.SummaryArgument;
+                        content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+                    }
                 }
             }
 
@@ -300,14 +227,14 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="notificationImage"></param>
         /// <returns></returns>
-        protected virtual async Task<UNNotificationAttachment> GetNativeImage(NotificationImage notificationImage)
+        protected virtual async Task<UNNotificationAttachment?> GetNativeImage(NotificationImage? notificationImage)
         {
             if (notificationImage is null || notificationImage.HasValue == false)
             {
                 return null;
             }
 
-            NSUrl imageAttachment = null;
+            NSUrl? imageAttachment = null;
             if (string.IsNullOrWhiteSpace(notificationImage.ResourceName) == false)
             {
                 imageAttachment = NSBundle.MainBundle.GetUrlForResource(
@@ -434,7 +361,7 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="category"></param>
         /// <returns></returns>
-        protected static UNNotificationCategory RegisterActionList(NotificationCategory category)
+        protected static UNNotificationCategory? RegisterActionList(NotificationCategory? category)
         {
             if (category is null || category.CategoryType == NotificationCategoryType.None)
             {
@@ -461,14 +388,14 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var notificationCategory = UNNotificationCategory
-                .FromIdentifier(category.CategoryType.ToNative(), nativeActionList.ToArray(),
-                    Array.Empty<string>(), UNNotificationCategoryOptions.CustomDismissAction);
+                .FromIdentifier(category.CategoryType.ToNative(), [.. nativeActionList],
+                    [], UNNotificationCategoryOptions.CustomDismissAction);
 
             return notificationCategory;
         }
 
         /// <inheritdoc />
-        public async Task<IList<NotificationRequest>> GetPendingNotificationList()
+        public async Task<IList<NotificationRequest?>> GetPendingNotificationList()
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
@@ -476,7 +403,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public async Task<IList<NotificationRequest>> GetDeliveredNotificationList()
+        public async Task<IList<NotificationRequest?>> GetDeliveredNotificationList()
         {
             var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
 
@@ -488,7 +415,7 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="notificationContent"></param>
         /// <returns></returns>
-        public NotificationRequest GetRequest(UNNotificationContent notificationContent)
+        public NotificationRequest? GetRequest(UNNotificationContent? notificationContent)
         {
             if (notificationContent is null)
             {
@@ -510,7 +437,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {
             return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }

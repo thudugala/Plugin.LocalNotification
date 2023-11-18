@@ -7,11 +7,7 @@ using AndroidX.Core.App;
 using Java.Lang;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using Application = Android.App.Application;
 using Exception = System.Exception;
 
 namespace Plugin.LocalNotification.Platforms
@@ -19,36 +15,34 @@ namespace Plugin.LocalNotification.Platforms
     /// <inheritdoc />
     public class NotificationServiceImpl : INotificationService
     {
-        private readonly IList<NotificationCategory> _categoryList = new List<NotificationCategory>();
+        private readonly List<NotificationCategory> _categoryList = [];
 
         /// <inheritdoc />
-        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
+        public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
         /// <summary>
         ///
         /// </summary>
-        protected readonly NotificationManager MyNotificationManager;
+        protected readonly NotificationManager? MyNotificationManager;
 
         /// <summary>
         ///
         /// </summary>
-        protected readonly AlarmManager MyAlarmManager;
+        protected readonly AlarmManager? MyAlarmManager;
 
         /// <summary>
         ///
         /// </summary>
-        protected readonly GeofencingClient MyGeofencingClient;
-
-        private readonly Random _random;
+        protected readonly IGeofencingClient? MyGeofencingClient;
 
         /// <inheritdoc />
-        public event NotificationReceivedEventHandler NotificationReceived;
+        public event NotificationReceivedEventHandler? NotificationReceived;
 
         /// <inheritdoc />
-        public event NotificationActionTappedEventHandler NotificationActionTapped;
+        public event NotificationActionTappedEventHandler? NotificationActionTapped;
 
         /// <inheritdoc />
-        public event NotificationDisabledEventHandler NotificationsDisabled;
+        public event NotificationDisabledEventHandler? NotificationsDisabled;
 
         /// <inheritdoc />
         public void OnNotificationActionTapped(NotificationActionEventArgs e)
@@ -89,23 +83,9 @@ namespace Plugin.LocalNotification.Platforms
         {
             try
             {
-#if MONOANDROID
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-                {
-                    return;
-                }
-#elif ANDROID
-                if (!OperatingSystem.IsAndroidVersionAtLeast(21))
-                {
-                    return;
-                }
-#endif
-
                 MyNotificationManager = NotificationManager.FromContext(Application.Context);
                 MyAlarmManager = AlarmManager.FromContext(Application.Context);
                 MyGeofencingClient = LocationServices.GetGeofencingClient(Application.Context);
-
-                _random = new Random();
             }
             catch (Exception ex)
             {
@@ -116,23 +96,14 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
         {
-#if MONOANDROID
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-            {
-                return false;
-            }
-#elif ANDROID
-            if (!OperatingSystem.IsAndroidVersionAtLeast(21))
-            {
-                return false;
-            }
-#endif
-
             foreach (var notificationId in notificationIdList)
             {
                 var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
-                MyAlarmManager?.Cancel(alarmPendingIntent);
-                alarmPendingIntent?.Cancel();
+                if (alarmPendingIntent != null)
+                {
+                    MyAlarmManager?.Cancel(alarmPendingIntent);
+                    alarmPendingIntent.Cancel();
+                }
 
                 MyNotificationManager?.Cancel(notificationId);
 
@@ -148,24 +119,15 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool CancelAll()
         {
-#if MONOANDROID
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-            {
-                return false;
-            }
-#elif ANDROID
-            if (!OperatingSystem.IsAndroidVersionAtLeast(21))
-            {
-                return false;
-            }
-#endif
-
             var notificationIdList = NotificationRepository.Current.GetPendingList().Select(r => r.NotificationId).ToList();
             foreach (var notificationId in notificationIdList)
             {
                 var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
-                MyAlarmManager?.Cancel(alarmPendingIntent);
-                alarmPendingIntent?.Cancel();
+                if (alarmPendingIntent != null)
+                {
+                    MyAlarmManager?.Cancel(alarmPendingIntent);
+                    alarmPendingIntent.Cancel();
+                }
 
                 var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
                 MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
@@ -182,7 +144,7 @@ namespace Plugin.LocalNotification.Platforms
         {
             foreach (var notificationId in notificationIdList)
             {
-                MyNotificationManager.Cancel(notificationId);
+                MyNotificationManager?.Cancel(notificationId);
             }
 
             NotificationRepository.Current.RemoveByDeliveredIdList(notificationIdList);
@@ -192,7 +154,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public bool ClearAll()
         {
-            MyNotificationManager.CancelAll();
+            MyNotificationManager?.CancelAll();
             NotificationRepository.Current.RemoveDeliveredList();
             return true;
         }
@@ -200,18 +162,6 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public async Task<bool> Show(NotificationRequest request)
         {
-#if MONOANDROID
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-            {
-                return false;
-            }
-#elif ANDROID
-            if (!OperatingSystem.IsAndroidVersionAtLeast(21))
-            {
-                return false;
-            }
-#endif
-
             var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
             if (allowed == false)
             {
@@ -284,12 +234,15 @@ namespace Plugin.LocalNotification.Platforms
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
             var pendingIntent = CreateGeofenceIntent(request.NotificationId, serializedRequest);
 
-            await MyGeofencingClient
-                .AddGeofencesAsync(
-                    geoRequest,
-                    pendingIntent
-                )
-                .ConfigureAwait(false);
+            if (MyGeofencingClient != null)
+            {
+                await MyGeofencingClient
+                    .AddGeofencesAsync(
+                        geoRequest,
+                        pendingIntent
+                    )
+                    .ConfigureAwait(false);
+            }
 
             return true;
         }
@@ -300,7 +253,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
         /// <returns></returns>
-        protected virtual PendingIntent CreateGeofenceIntent(int notificationId, string serializedRequest)
+        protected virtual PendingIntent? CreateGeofenceIntent(int notificationId, string? serializedRequest)
         {
             var pendingIntent = CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
             {
@@ -328,6 +281,11 @@ namespace Plugin.LocalNotification.Platforms
 
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
             var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);
+            if (alarmIntent is null)
+            {
+                LocalNotificationCenter.Log("Alarm Intent Not generated");
+                return false;
+            }
 
             var utcAlarmTimeInMillis =
                 (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
@@ -338,43 +296,31 @@ namespace Plugin.LocalNotification.Platforms
             var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
 
             var canScheduleExactAlarms = true;
-            if (
-#if MONOANDROID
-                Build.VERSION.SdkInt >= BuildVersionCodes.S
-#elif ANDROID
-                OperatingSystem.IsAndroidVersionAtLeast(31)
-#endif
-            )
+            if (OperatingSystem.IsAndroidVersionAtLeast(31))
             {
-                canScheduleExactAlarms = MyAlarmManager.CanScheduleExactAlarms();
+                canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
             }
 
-            if (
-#if MONOANDROID
-                Build.VERSION.SdkInt >= BuildVersionCodes.M
-#elif ANDROID
-                OperatingSystem.IsAndroidVersionAtLeast(23)
-#endif
-            )
+            if (OperatingSystem.IsAndroidVersionAtLeast(23))
             {
                 if (canScheduleExactAlarms)
                 {
-                    MyAlarmManager.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                    MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
                 }
                 else
                 {
-                    MyAlarmManager.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                    MyAlarmManager?.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
                 }
             }
             else
             {
                 if (canScheduleExactAlarms)
                 {
-                    MyAlarmManager.SetExact(alarmType, triggerAtTime, alarmIntent);
+                    MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
                 }
                 else
                 {
-                    MyAlarmManager.Set(alarmType, triggerAtTime, alarmIntent);
+                    MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
                 }
             }
 
@@ -389,7 +335,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <param name="notificationId"></param>
         /// <param name="serializedRequest"></param>
         /// <returns></returns>
-        protected virtual PendingIntent CreateAlarmIntent(int notificationId, string serializedRequest)
+        protected virtual PendingIntent? CreateAlarmIntent(int notificationId, string? serializedRequest)
         {
             var pendingIntent = CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
             {
@@ -445,15 +391,9 @@ namespace Plugin.LocalNotification.Platforms
                 request.Android.ChannelId = AndroidOptions.DefaultChannelId;
             }
 
-            if (
-#if MONOANDROID
-                Build.VERSION.SdkInt >= BuildVersionCodes.O
-#elif ANDROID
-                OperatingSystem.IsAndroidVersionAtLeast(26)
-#endif
-                )
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
             {
-                var channel = MyNotificationManager.GetNotificationChannel(request.Android.ChannelId);
+                var channel = MyNotificationManager?.GetNotificationChannel(request.Android.ChannelId);
                 if (channel is null)
                 {
                     LocalNotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
@@ -503,17 +443,14 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            if (request.CategoryType != NotificationCategoryType.None)
             {
-                if (request.CategoryType != NotificationCategoryType.None)
-                {
-                    builder.SetCategory(request.CategoryType.ToNative());
-                }
-
-                builder.SetVisibility((int)request.Android.VisibilityType.ToNative());
+                builder.SetCategory(request.CategoryType.ToNative());
             }
 
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            builder.SetVisibility((int)request.Android.VisibilityType.ToNative());
+
+            if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 builder.SetPriority((int)request.Android.Priority);
 
@@ -607,7 +544,7 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var notification = builder.Build();
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
+            if (!OperatingSystem.IsAndroidVersionAtLeast(26) &&
                 request.Android.LedColor.HasValue)
             {
 #pragma warning disable 618
@@ -619,7 +556,7 @@ namespace Plugin.LocalNotification.Platforms
 #pragma warning restore 618
             }
 
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O &&
+            if (!OperatingSystem.IsAndroidVersionAtLeast(26) &&
                 string.IsNullOrWhiteSpace(request.Sound))
             {
 #pragma warning disable 618
@@ -652,18 +589,11 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public Task<bool> AreNotificationsEnabled()
         {
-#if MONOANDROID
-            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
-            {
-                return Task.FromResult(true);
-            }
-#elif ANDROID
-            if (!OperatingSystem.IsAndroidVersionAtLeast(24))
-            {
-                return Task.FromResult(true);
-            }
-#endif
-            return Task.FromResult(MyNotificationManager.AreNotificationsEnabled());
+            return MyNotificationManager is null
+                ? Task.FromResult(false)
+                : !OperatingSystem.IsAndroidVersionAtLeast(24)
+                ? Task.FromResult(true)
+                : Task.FromResult(MyNotificationManager.AreNotificationsEnabled());
         }
 
         /// <summary>
@@ -671,7 +601,7 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="notificationImage"></param>
         /// <returns></returns>
-        protected virtual async Task<Bitmap> GetNativeImage(NotificationImage notificationImage)
+        protected virtual async Task<Bitmap?> GetNativeImage(NotificationImage? notificationImage)
         {
             if (notificationImage is null || notificationImage.HasValue == false)
             {
@@ -733,14 +663,14 @@ namespace Plugin.LocalNotification.Platforms
         /// <param name="action"></param>
         /// <param name="broadcastReceiverType"></param>
         /// <returns></returns>
-        protected virtual PendingIntent CreateActionIntent(int notificationId, string serializedRequest, NotificationAction action, Type broadcastReceiverType)
+        protected virtual PendingIntent? CreateActionIntent(int notificationId, string? serializedRequest, NotificationAction action, Type broadcastReceiverType)
         {
             var notificationIntent = action.Android.LaunchAppWhenTapped
                 ? (Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
                                                                               string.Empty))
                 : new Intent(Application.Context, broadcastReceiverType);
 
-            notificationIntent.AddFlags(ActivityFlags.SingleTop)
+            notificationIntent?.AddFlags(ActivityFlags.SingleTop)
                 .AddFlags(ActivityFlags.IncludeStoppedPackages)
                 .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
                 .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
@@ -831,7 +761,7 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {
             return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
         }

@@ -1,13 +1,11 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 using Plugin.LocalNotification.Json;
-using System;
-using System.Collections.Generic;
 
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class LocalNotificationBuilder : ILocalNotificationBuilder
     {
@@ -17,7 +15,7 @@ namespace Plugin.LocalNotification
         public HashSet<NotificationCategory> CategorySet { get; private set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public INotificationSerializer Serializer { get; private set; }
 
@@ -32,7 +30,7 @@ namespace Plugin.LocalNotification
         public iOSLocalNotificationBuilder IOSBuilder { get; private set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public LocalNotificationBuilder()
         {

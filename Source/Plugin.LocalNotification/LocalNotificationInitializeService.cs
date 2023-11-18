@@ -1,21 +1,14 @@
-﻿#if NET6_0_OR_GREATER
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Hosting;
-#endif
-using System;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Plugin.LocalNotification
 {
-#if NET6_0_OR_GREATER
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class LocalNotificationInitializeService : IMauiInitializeService
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="services"></param>
         public void Initialize(IServiceProvider services)
@@ -31,5 +24,4 @@ namespace Plugin.LocalNotification
             }
         }
     }
-#endif
 }

@@ -1,5 +1,4 @@
 ﻿using Android.Content;
-using System;
 
 namespace Plugin.LocalNotification.Platforms
 {
@@ -24,7 +23,7 @@ namespace Plugin.LocalNotification.Platforms
         /// </summary>
         /// <param name="context"></param>
         /// <param name="intent"></param>
-        public override void OnReceive(Context context, Intent intent)
+        public override void OnReceive(Context? context, Intent? intent)
         {
             try
             {

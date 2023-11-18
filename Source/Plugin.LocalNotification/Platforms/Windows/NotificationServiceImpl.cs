@@ -2,10 +2,6 @@
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using Plugin.LocalNotification.EventArgs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.UI.Notifications;
 
 namespace Plugin.LocalNotification.Platforms
@@ -81,7 +77,7 @@ namespace Plugin.LocalNotification.Platforms
             {
                 return Task.FromResult<IList<NotificationRequest>>(deliveredNotifications);
             }
-                       
+
             foreach (var toastNotification in toastNotifications)
             {
                 var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
@@ -103,19 +99,19 @@ namespace Plugin.LocalNotification.Platforms
             {
                 return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
             }
-                        
+
             foreach (var scheduledToast in scheduledToasts)
             {
                 var element = scheduledToast.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
                 var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
 
                 var (_, request) = LocalNotificationCenter.GetRequestFromArguments(attribute.InnerText);
-                                   
+
                 pendingNotifications.Add(request);
             }
             return Task.FromResult<IList<NotificationRequest>>(pendingNotifications);
         }
-                
+
         public void OnNotificationActionTapped(NotificationActionEventArgs e)
         {
             NotificationActionTapped?.Invoke(e);
@@ -154,10 +150,9 @@ namespace Plugin.LocalNotification.Platforms
         {
             var ff = new AppNotificationBuilder();
             var an = ff.BuildNotification();
-            
+
             AppNotificationManager.Default.NotificationInvoked += (sender, args) =>
             {
-               
             };
 
             AppNotificationManager.Default.Show(an);
@@ -181,7 +176,7 @@ namespace Plugin.LocalNotification.Platforms
                     Silent = true,
                 });
             }
-            else if(!string.IsNullOrWhiteSpace(request.Sound))
+            else if (!string.IsNullOrWhiteSpace(request.Sound))
             {
                 builder.AddAudio(new ToastAudio
                 {
@@ -235,7 +230,7 @@ namespace Plugin.LocalNotification.Platforms
             else
             {
                 builder.Show(toast =>
-                {                    
+                {
                     toast.Tag = request.NotificationId.ToString();
                     if (!string.IsNullOrEmpty(request.Group))
                     {
@@ -260,6 +255,5 @@ namespace Plugin.LocalNotification.Platforms
 
             return await Task.FromResult(true);
         }
-
     }
 }

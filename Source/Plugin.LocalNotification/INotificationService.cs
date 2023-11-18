@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Plugin.LocalNotification.EventArgs;
+﻿using Plugin.LocalNotification.EventArgs;
 
 namespace Plugin.LocalNotification
 {
@@ -52,7 +49,7 @@ namespace Plugin.LocalNotification
         /// Get notifications that are currently delivered
         /// </summary>
         /// <returns></returns>
-        Task<IList<NotificationRequest>> GetDeliveredNotificationList();
+        Task<IList<NotificationRequest?>> GetDeliveredNotificationList();
 
         /// <summary>
         /// Internal use Only
@@ -75,7 +72,7 @@ namespace Plugin.LocalNotification
         /// Get pending notifications
         /// </summary>
         /// <returns></returns>
-        Task<IList<NotificationRequest>> GetPendingNotificationList();
+        Task<IList<NotificationRequest?>> GetPendingNotificationList();
 
         /// <summary>
         /// Register notification categories and their corresponding actions
@@ -103,6 +100,6 @@ namespace Plugin.LocalNotification
         /// Request Notification Permission
         /// </summary>
         /// <returns></returns>
-        Task<bool> RequestNotificationPermission(NotificationPermission permission = null);
+        Task<bool> RequestNotificationPermission(NotificationPermission? permission = null);
     }
 }

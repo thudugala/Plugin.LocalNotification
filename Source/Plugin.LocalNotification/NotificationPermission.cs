@@ -3,7 +3,7 @@
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class NotificationPermission
     {
@@ -13,7 +13,7 @@ namespace Plugin.LocalNotification
         public bool AskPermission { get; set; } = true;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public iOSNotificationPermission IOS { get; set; } = new();
     }

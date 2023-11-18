@@ -1,9 +1,7 @@
 ﻿using Plugin.LocalNotification.Json;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using Microsoft.Extensions.Logging;
-#if ANDROID || IOS || MONOANDROID || XAMARINIOS || WINDOWS
+
+#if ANDROID || IOS || WINDOWS
 using Plugin.LocalNotification.Platforms;
 #endif
 
@@ -20,7 +18,7 @@ namespace Plugin.LocalNotification
 
         private static INotificationService CreateNotificationService()
         {
-#if ANDROID || IOS || MONOANDROID || XAMARINIOS || WINDOWS
+#if ANDROID || IOS || WINDOWS
             return new NotificationServiceImpl();
 #else
             return null;
@@ -77,23 +75,23 @@ namespace Plugin.LocalNotification
             set => _serializer = value;
         }
 
-        internal static NotificationRequest GetRequest(string serializedRequest)
+        internal static NotificationRequest GetRequest(string? serializedRequest)
         {
             Logger?.LogTrace($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
             {
-                return null;
+                return new NotificationRequest();
             }
 
             var request = Serializer.Deserialize<NotificationRequest>(serializedRequest);
             return request;
         }
 
-        internal static List<NotificationRequest> GetRequestList(string serializedRequestList)
+        internal static List<NotificationRequest> GetRequestList(string? serializedRequestList)
         {
             if (string.IsNullOrWhiteSpace(serializedRequestList))
             {
-                return new List<NotificationRequest>();
+                return [];
             }
 
             var requestList = Serializer.Deserialize<List<NotificationRequest>>(serializedRequestList);
@@ -106,7 +104,7 @@ namespace Plugin.LocalNotification
             {
                 if (request.Image.Binary != null && request.Image.Binary.Length > 90000)
                 {
-                    request.Image.Binary = null;
+                    request.Image.Binary = [];
                 }
             }
             var serializedRequestList = Serializer.Serialize(requestList);

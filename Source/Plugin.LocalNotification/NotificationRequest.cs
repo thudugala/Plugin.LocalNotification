@@ -1,7 +1,6 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 using Plugin.LocalNotification.WindowsOption;
-using System.Threading.Tasks;
 
 namespace Plugin.LocalNotification
 {
@@ -9,7 +8,7 @@ namespace Plugin.LocalNotification
     /// Notification Request
     /// </summary>
     public class NotificationRequest
-    {        
+    {
         /// <summary>
         /// Number of the badge displays on the Home Screen.
         /// </summary>
@@ -29,7 +28,7 @@ namespace Plugin.LocalNotification
         /// Set this notification to be part of a group of notifications sharing the same key.
         /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
         /// </summary>
-        public string Group { get; set; }
+        public string Group { get; set; } = string.Empty;
 
         /// <summary>
         /// Image for notification.

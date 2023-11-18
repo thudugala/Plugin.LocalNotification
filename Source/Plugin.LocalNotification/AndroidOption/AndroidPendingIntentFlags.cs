@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plugin.LocalNotification.AndroidOption
+﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
     ///

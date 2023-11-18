@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Plugin.LocalNotification.EventArgs;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Windows.UI.Notifications;
 
 namespace Plugin.LocalNotification
@@ -15,7 +10,7 @@ namespace Plugin.LocalNotification
     public partial class LocalNotificationCenter
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="permission"></param>
         /// <returns></returns>
@@ -34,7 +29,7 @@ namespace Plugin.LocalNotification
                 // this will run everytime ToastNotification.Activated is called,
                 // regardless of what toast is clicked and what element is clicked on.
                 // Works for all types of ToastActivationType so long as the Windows app manifest
-                // has been updated to support ToastNotifications. 
+                // has been updated to support ToastNotifications.
 
                 // you can check your args here, however I'll be doing mine below to keep it cleaner.
                 // With so many ToastNotifications it would be messy to check all of them here.
@@ -75,7 +70,7 @@ namespace Plugin.LocalNotification
         {
             var args = ToastArguments.Parse(arguments);
 
-            var actionId = args.GetInt(ReturnRequestActionId); 
+            var actionId = args.GetInt(ReturnRequestActionId);
             var notifiactionId = args.Get(ReturnRequest);
 
             var toastNotification = ToastNotificationManager.History.GetHistory().FirstOrDefault(t => t.Tag == notifiactionId);
@@ -83,14 +78,13 @@ namespace Plugin.LocalNotification
             var element = toastNotification.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
             var attribute = element.Attributes.FirstOrDefault(a => a.NodeName == "launch");
 
-
             // TODO: get the request
             var request = GetRequest("");
             return (actionId, request);
         }
-              
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="callerName"></param>
@@ -101,7 +95,7 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="message"></param>

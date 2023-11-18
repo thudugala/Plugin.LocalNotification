@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IAndroidLocalNotificationBuilder
     {

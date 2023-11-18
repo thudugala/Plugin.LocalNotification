@@ -1,16 +1,15 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
-using System;
 
 namespace Plugin.LocalNotification
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class NotificationRequestGeofence
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public GeofenceNotifyOn NotifyOn { get; set; } = GeofenceNotifyOn.OnEntry;
 
@@ -27,7 +26,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// The center of the geofence
         /// </summary>
-        public Position Center { get; set; }
+        public Position Center { get; set; } = new();
 
         /// <summary>
         /// The radius of the region.
@@ -36,12 +35,12 @@ namespace Plugin.LocalNotification
         public double RadiusInMeters { get; set; } = 5;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool IsGeofence => Center != null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public class Position
         {
@@ -57,7 +56,7 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [Flags]
         public enum GeofenceNotifyOn

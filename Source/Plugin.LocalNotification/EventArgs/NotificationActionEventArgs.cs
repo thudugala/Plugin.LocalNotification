@@ -12,8 +12,8 @@
     public class NotificationActionEventArgs : NotificationEventArgs
     {
         /// <summary>
-        /// The Action to execute when the notification is explicitly dismissed by the user, 
-        /// either with the "Clear All" button or by swiping it away individually. 
+        /// The Action to execute when the notification is explicitly dismissed by the user,
+        /// either with the "Clear All" button or by swiping it away individually.
         /// </summary>
         public const int DismissedActionId = 1000000;
 

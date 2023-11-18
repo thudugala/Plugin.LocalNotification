@@ -2,11 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.iOSOption;
 using Plugin.LocalNotification.Platforms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using UIKit;
 using UserNotifications;
 
@@ -21,7 +17,7 @@ namespace Plugin.LocalNotification
         /// and set it using this method
         /// </summary>
         /// <param name="notificationDelegate"></param>
-        public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate notificationDelegate = null)
+        public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null)
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
@@ -31,7 +27,7 @@ namespace Plugin.LocalNotification
         /// Returns true if Allowed.
         /// If not asked at startup, user will be asked when showing the first notification.
         /// </summary>
-        public static bool RequestNotificationPermission(NotificationPermission permission = null)
+        public static bool RequestNotificationPermission(NotificationPermission? permission = null)
         {
             try
             {
@@ -40,11 +36,6 @@ namespace Plugin.LocalNotification
                 if (!permission.AskPermission)
                 {
                     return false;
-                }
-
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return true;
                 }
 
                 var allowed = AreNotificationsEnabled();
@@ -62,7 +53,7 @@ namespace Plugin.LocalNotification
                     {
                         if (error != null)
                         {
-                            Log(error?.LocalizedDescription);
+                            Log(error.LocalizedDescription);
                         }
                         else
                         {
@@ -98,11 +89,6 @@ namespace Plugin.LocalNotification
                     return false;
                 }
 
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return true;
-                }
-
                 var allowed = await AreNotificationsEnabledAsync();
                 if (allowed)
                 {
@@ -113,7 +99,10 @@ namespace Plugin.LocalNotification
                 var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
                 var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
 
-                Log(error?.LocalizedDescription);
+                if (error != null)
+                {
+                    Log(error.LocalizedDescription);
+                }
 
                 if (alertsAllowed)
                 {
@@ -130,7 +119,7 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="authorization"></param>
         /// <returns></returns>
@@ -138,10 +127,6 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return;
-                }
                 if (authorization == iOSLocationAuthorization.No)
                 {
                     return;
@@ -191,11 +176,6 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return;
-                }
-
                 var notificationList = new List<UNNotification>();
                 //Remove badges on app enter foreground if user cleared the notification in the notification panel
                 var completionSource = new TaskCompletionSource<bool>();
@@ -227,7 +207,7 @@ namespace Plugin.LocalNotification
                         uiApplication.ApplicationIconBadgeNumber = 0;
                         UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
                     }
-                });               
+                });
             }
             catch (Exception ex)
             {
@@ -244,11 +224,6 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0) == false)
-                {
-                    return;
-                }
-
                 //Remove badges on app enter foreground if user cleared the notification in the notification panel
                 var notificationList = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync()
                     .ConfigureAwait(false);
@@ -279,23 +254,23 @@ namespace Plugin.LocalNotification
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="callerName"></param>
-        internal static void Log(string message, [CallerMemberName] string callerName = "")
+        internal static void Log(string? message, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.Log(LogLevel, logMessage);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="message"></param>
         /// <param name="callerName"></param>
-        internal static void Log(Exception ex, string message = null, [CallerMemberName] string callerName = "")
+        internal static void Log(Exception? ex, string? message = null, [CallerMemberName] string callerName = "")
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.LogError(ex, logMessage);

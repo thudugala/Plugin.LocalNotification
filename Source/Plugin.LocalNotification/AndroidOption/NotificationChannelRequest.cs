@@ -24,23 +24,23 @@
         /// <summary>
         /// Sets or gets, the user visible description of this channel.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets or gets, what group this channel belongs to.
         /// </summary>
-        public string Group { get; set; }
+        public string Group { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets or gets, the notification light color for notifications posted to this channel,
         /// if the device supports that feature
         /// </summary>
-        public AndroidColor LightColor { get; set; }
+        public AndroidColor LightColor { get; set; } = new();
 
         /// <summary>
         /// Sound file name for the notification.
         /// </summary>
-        public string Sound { get; set; }
+        public string Sound { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel should play sound.
@@ -50,7 +50,7 @@
         /// <summary>
         /// Only modifiable before the channel is submitted.
         /// </summary>
-        public long[] VibrationPattern { get; set; }
+        public long[] VibrationPattern { get; set; } = [];
 
         /// <summary>
         /// Sets or gets, whether or not notifications posted to this channel are shown on the lock Screen in full or redacted form.
@@ -75,6 +75,6 @@
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
         /// </summary>
-        public bool CanBypassDnd { get; set; } = false;            
+        public bool CanBypassDnd { get; set; } = false;
     }
 }

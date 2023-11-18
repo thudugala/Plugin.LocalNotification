@@ -1,18 +1,17 @@
 ﻿using Android.App;
-using Android.OS;
 using AndroidX.Core.App;
 using Plugin.LocalNotification.AndroidOption;
-using System;
+using Application = Android.App.Application;
 
 namespace Plugin.LocalNotification.Platforms
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class PlatformExtensions
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
@@ -25,18 +24,12 @@ namespace Plugin.LocalNotification.Platforms
 
             if (color.Argb.HasValue)
             {
-               return color.Argb.Value;
+                return color.Argb.Value;
             }
 
             if (string.IsNullOrWhiteSpace(color.ResourceName) == false)
             {
-                if (
-#if MONOANDROID
-                Build.VERSION.SdkInt >= BuildVersionCodes.M
-#elif ANDROID
-                OperatingSystem.IsAndroidVersionAtLeast(23)
-#endif
-            )
+                if (OperatingSystem.IsAndroidVersionAtLeast(23))
                 {
                     var colorResourceId =
                     Application.Context.Resources?.GetIdentifier(color.ResourceName, "color",
@@ -51,24 +44,26 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static NotificationImportance ToNative(this AndroidImportance type)
         {
-            return type switch
-            {
-                AndroidImportance.Unspecified => NotificationImportance.Unspecified,
-                AndroidImportance.None => NotificationImportance.None,
-                AndroidImportance.Min => NotificationImportance.Min,
-                AndroidImportance.Low => NotificationImportance.Low,
-                AndroidImportance.Default => NotificationImportance.Default,
-                AndroidImportance.High => NotificationImportance.High,
-                AndroidImportance.Max => NotificationImportance.Max,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
+            return !OperatingSystem.IsAndroidVersionAtLeast(26)
+                ? default
+                : type switch
+                {
+                    AndroidImportance.Unspecified => NotificationImportance.Unspecified,
+                    AndroidImportance.None => NotificationImportance.None,
+                    AndroidImportance.Min => NotificationImportance.Min,
+                    AndroidImportance.Low => NotificationImportance.Low,
+                    AndroidImportance.Default => NotificationImportance.Default,
+                    AndroidImportance.High => NotificationImportance.High,
+                    AndroidImportance.Max => NotificationImportance.Max,
+                    _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+                };
         }
 
         /// <summary>
@@ -143,7 +138,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         public static PendingIntentFlags SetImmutableIfNeeded(this PendingIntentFlags type)
         {
-            if ((int)Build.VERSION.SdkInt >= 31 &&
+            if (OperatingSystem.IsAndroidVersionAtLeast(31) &&
                 type.HasFlag(PendingIntentFlags.Immutable) == false)
             {
                 type |= PendingIntentFlags.Immutable;
