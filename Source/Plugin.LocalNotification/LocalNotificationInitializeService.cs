@@ -19,12 +19,8 @@ namespace Plugin.LocalNotification
             if(builder is not null)
             {
                 LocalNotificationCenter.Serializer = builder.Serializer;
-            }           
-
-            if (builder?.CategorySet != null && builder.CategorySet.Any())
-            {
-                LocalNotificationCenter.Current.RegisterCategoryList(builder.CategorySet);
-            }
+                LocalNotificationCenter.Current.RegisterCategoryList(builder.CategorySet);                
+            } 
         }
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         ///
         /// </summary>
-        public AndroidIcon IconName { get; set; } = new AndroidIcon();
+        public AndroidIcon IconName { get; set; } = new ();
 
         /// <summary>
         /// Default is false

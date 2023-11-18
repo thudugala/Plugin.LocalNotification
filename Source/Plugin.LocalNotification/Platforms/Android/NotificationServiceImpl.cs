@@ -396,9 +396,12 @@ namespace Plugin.LocalNotification.Platforms
                 var channel = MyNotificationManager?.GetNotificationChannel(request.Android.ChannelId);
                 if (channel is null)
                 {
-                    LocalNotificationCenter.CreateNotificationChannel(new NotificationChannelRequest
+                    LocalNotificationCenter.CreateNotificationChannels(new List<NotificationChannelRequest>
                     {
-                        Id = request.Android.ChannelId
+                        new() 
+                        {
+                            Id = request.Android.ChannelId
+                        }
                     });
                 }
             }
@@ -761,9 +764,22 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
+        public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {
-            return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
+            permission ??= new NotificationPermission();
+
+            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
+            {
+                return false;
+            }
+
+            if (!permission.AskPermission)
+            {
+                return false;
+            }
+
+            var status = await Permissions.RequestAsync<NotificationPerms>();
+            return status == PermissionStatus.Granted;
         }
     }
 }

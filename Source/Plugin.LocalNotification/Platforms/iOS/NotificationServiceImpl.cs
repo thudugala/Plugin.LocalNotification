@@ -1,6 +1,7 @@
 ﻿using CoreLocation;
 using Foundation;
 using Plugin.LocalNotification.EventArgs;
+using Plugin.LocalNotification.iOSOption;
 using System.Globalization;
 using UIKit;
 using UserNotifications;
@@ -150,9 +151,10 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public Task<bool> AreNotificationsEnabled()
+        public async Task<bool> AreNotificationsEnabled()
         {
-            return LocalNotificationCenter.AreNotificationsEnabledAsync();
+            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+            return settings.AlertSetting == UNNotificationSetting.Enabled;
         }
 
         /// <summary>
@@ -437,9 +439,58 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
+        public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {
-            return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
+            try
+            {
+                permission ??= new NotificationPermission();
+
+                if (!permission.AskPermission)
+                {
+                    return false;
+                }
+
+                var allowed = await AreNotificationsEnabled();
+                if (allowed)
+                {
+                    return true;
+                }
+
+                // Ask the user for permission to show notifications on iOS 10.0+
+                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
+                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
+
+                if (error != null)
+                {
+                    LocalNotificationCenter.Log(error.LocalizedDescription);
+                }
+
+                if (alertsAllowed)
+                {                    
+                    if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
+                    {
+                        return false;
+                    }
+
+                    var locationManager = new CLLocationManager();
+
+                    if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.Always)
+                    {
+                        locationManager.RequestAlwaysAuthorization();
+                    }
+                    else if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.WhenInUse)
+                    {
+                        locationManager.RequestWhenInUseAuthorization();
+                    }
+                }
+
+                return alertsAllowed;
+            }
+            catch (Exception ex)
+            {
+                LocalNotificationCenter.Log(ex);
+                return false;
+            }
         }
     }
 }

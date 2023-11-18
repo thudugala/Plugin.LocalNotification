@@ -29,16 +29,16 @@
             }
 
             var repeatInterval = GetNotifyRepeatInterval(repeatType, notifyRepeatInterval);
-            if (repeatInterval is null)
+            if (repeatInterval == TimeSpan.Zero)
             {
                 return null;
             }
 
-            var newNotifyTime = notifyTime.Value.Add(repeatInterval.Value);
+            var newNotifyTime = notifyTime.Value.Add(repeatInterval);
             var nowTime = DateTime.Now.AddSeconds(10);
             while (newNotifyTime <= nowTime)
             {
-                newNotifyTime = newNotifyTime.Add(repeatInterval.Value);
+                newNotifyTime = newNotifyTime.Add(repeatInterval);
             }
             return newNotifyTime;
         }
@@ -47,9 +47,9 @@
         /// internal use, only for Android
         /// </summary>
         /// <returns></returns>
-        internal TimeSpan? GetNotifyRepeatInterval(NotificationRepeat repeatType, TimeSpan? notifyRepeatInterval)
+        internal TimeSpan GetNotifyRepeatInterval(NotificationRepeat repeatType, TimeSpan? notifyRepeatInterval)
         {
-            TimeSpan? repeatInterval = null;
+            var repeatInterval = TimeSpan.Zero;
             switch (repeatType)
             {
                 case NotificationRepeat.Daily:

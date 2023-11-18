@@ -4,26 +4,11 @@
     ///
     /// </summary>
     public class AndroidLocalNotificationBuilder : IAndroidLocalNotificationBuilder
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        public IList<NotificationChannelRequest> ChannelRequestList { get; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public IList<NotificationChannelGroupRequest> GroupChannelRequestList { get; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public AndroidLocalNotificationBuilder()
-        {
-            ChannelRequestList = new List<NotificationChannelRequest>();
-            GroupChannelRequestList = new List<NotificationChannelGroupRequest>();
-        }
-
+    {        
+        internal IList<NotificationChannelRequest> ChannelRequestList { get; } = new List<NotificationChannelRequest>();
+               
+        internal IList<NotificationChannelGroupRequest> GroupChannelRequestList { get; } = new List<NotificationChannelGroupRequest>();
+               
         /// <inheritdoc/>
         public IAndroidLocalNotificationBuilder AddChannel(NotificationChannelRequest channelRequest)
         {

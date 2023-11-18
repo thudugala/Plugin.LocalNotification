@@ -5,6 +5,9 @@
     /// </summary>
     public class NotificationChannelRequest
     {
+        private string id = AndroidOptions.DefaultChannelId;
+        private string name = AndroidOptions.DefaultChannelName;
+
         /// <summary>
         /// Sets or gets, the level of interruption of this notification channel.
         /// </summary>
@@ -14,12 +17,20 @@
         /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
         /// Also, NotificationRequest.Android.ChannelId must be set to the same Id to target this channel.
         /// </summary>
-        public string Id { get; set; } = AndroidOptions.DefaultChannelId;
+        public string Id
+        {
+            get => string.IsNullOrWhiteSpace(id) ? AndroidOptions.DefaultChannelId : id;
+            set => id = string.IsNullOrWhiteSpace(value) ? AndroidOptions.DefaultChannelId : value;
+        }
 
         /// <summary>
         /// Sets or gets, the user visible name of this channel, default is General.
-        /// </summary>
-        public string Name { get; set; } = AndroidOptions.DefaultChannelName;
+        /// </summary>       
+        public string Name
+        {
+            get => string.IsNullOrWhiteSpace(name) ? AndroidOptions.DefaultChannelName : name;
+            set => name = string.IsNullOrWhiteSpace(value) ? AndroidOptions.DefaultChannelName : value;
+        }
 
         /// <summary>
         /// Sets or gets, the user visible description of this channel.

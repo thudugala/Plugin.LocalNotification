@@ -1,6 +1,4 @@
-﻿using CoreLocation;
-using Microsoft.Extensions.Logging;
-using Plugin.LocalNotification.iOSOption;
+﻿using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.Platforms;
 using System.Runtime.CompilerServices;
 using UIKit;
@@ -17,162 +15,16 @@ namespace Plugin.LocalNotification
         /// and set it using this method
         /// </summary>
         /// <param name="notificationDelegate"></param>
-        public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null)
+        internal static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null)
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
-
-        /// <summary>
-        /// Ask the user for permission to show notifications on iOS 10.0+.
-        /// Returns true if Allowed.
-        /// If not asked at startup, user will be asked when showing the first notification.
-        /// </summary>
-        public static bool RequestNotificationPermission(NotificationPermission? permission = null)
-        {
-            try
-            {
-                permission ??= new NotificationPermission();
-
-                if (!permission.AskPermission)
-                {
-                    return false;
-                }
-
-                var allowed = AreNotificationsEnabled();
-                if (allowed)
-                {
-                    return true;
-                }
-
-                var alertsAllowed = false;
-                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
-                // Ask the user for permission to show notifications on iOS 10.0+
-                UNUserNotificationCenter.Current.RequestAuthorization(
-                    authorizationOptions,
-                    (approved, error) =>
-                    {
-                        if (error != null)
-                        {
-                            Log(error.LocalizedDescription);
-                        }
-                        else
-                        {
-                            alertsAllowed = approved;
-                            if (alertsAllowed)
-                            {
-                                RequestLocationPermission(permission.IOS.LocationAuthorization);
-                            }
-                        }
-                    });
-                return alertsAllowed;
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Ask the user for permission to show notifications on iOS 10.0+.
-        /// Returns true if Allowed.
-        /// If not asked at startup, user will be asked when showing the first notification.
-        /// </summary>
-        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission? permission = null)
-        {
-            try
-            {
-                permission ??= new NotificationPermission();
-
-                if (!permission.AskPermission)
-                {
-                    return false;
-                }
-
-                var allowed = await AreNotificationsEnabledAsync();
-                if (allowed)
-                {
-                    return true;
-                }
-
-                // Ask the user for permission to show notifications on iOS 10.0+
-                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
-                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
-
-                if (error != null)
-                {
-                    Log(error.LocalizedDescription);
-                }
-
-                if (alertsAllowed)
-                {
-                    RequestLocationPermission(permission.IOS.LocationAuthorization);
-                }
-
-                return alertsAllowed;
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-                return false;
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="authorization"></param>
-        /// <returns></returns>
-        public static void RequestLocationPermission(iOSLocationAuthorization authorization)
-        {
-            try
-            {
-                if (authorization == iOSLocationAuthorization.No)
-                {
-                    return;
-                }
-
-                var locationManager = new CLLocationManager();
-
-                if (authorization == iOSLocationAuthorization.Always)
-                {
-                    locationManager.RequestAlwaysAuthorization();
-                }
-                else if (authorization == iOSLocationAuthorization.WhenInUse)
-                {
-                    locationManager.RequestWhenInUseAuthorization();
-                }
-            }
-            catch (Exception ex)
-            {
-                Log(ex);
-            }
-        }
-
-        internal static bool AreNotificationsEnabled()
-        {
-            var isEnabled = false;
-            var completionSource = new TaskCompletionSource<bool>();
-            UNUserNotificationCenter.Current.GetNotificationSettings((settings) =>
-            {
-                isEnabled = settings.AlertSetting == UNNotificationSetting.Enabled;
-                completionSource.SetResult(true);
-            });
-            completionSource.Task.Wait();
-            return isEnabled;
-        }
-
-        internal static async Task<bool> AreNotificationsEnabledAsync()
-        {
-            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
-            return settings.AlertSetting == UNNotificationSetting.Enabled;
-        }
-
+       
         /// <summary>
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
         /// <param name="uiApplication"></param>
-        public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
+        internal static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
         {
             try
             {

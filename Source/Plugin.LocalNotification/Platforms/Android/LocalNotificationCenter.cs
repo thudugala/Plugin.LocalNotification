@@ -11,34 +11,12 @@ using Application = Android.App.Application;
 namespace Plugin.LocalNotification
 {
     public partial class LocalNotificationCenter
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission? permission = null)
-        {
-            permission ??= new NotificationPermission();
-
-            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
-            {
-                return false;
-            }
-
-            if (!permission.AskPermission)
-            {
-                return false;
-            }
-
-            var status = await Permissions.RequestAsync<NotificationPerms>();
-            return status == PermissionStatus.Granted;
-        }
-
+    {        
         /// <summary>
         /// Notify Local Notification Tapped.
         /// </summary>
         /// <param name="intent"></param>
-        public static void NotifyNotificationTapped(Intent? intent)
+        internal static void NotifyNotificationTapped(Intent? intent)
         {
             try
             {
@@ -71,99 +49,95 @@ namespace Plugin.LocalNotification
         /// so you can create a notification channel group for each account.
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
-        /// <param name="groupChannelRequest"></param>
-        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest)
+        /// <param name="groupChannelRequests"></param>
+        internal static void CreateNotificationChannelGroups(IList<NotificationChannelGroupRequest> groupChannelRequests)
         {
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
-                return false;
+                return;
+            }
+
+            if (!groupChannelRequests.Any())
+            {
+                return;
             }
 
             if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager notificationManager)
             {
-                return false;
+                return;
             }
 
-            if (string.IsNullOrWhiteSpace(groupChannelRequest.Group))
-            {
-                groupChannelRequest.Group = AndroidOptions.DefaultGroupId;
-            }
-
-            if (string.IsNullOrWhiteSpace(groupChannelRequest.Name))
-            {
-                groupChannelRequest.Name = AndroidOptions.DefaultGroupName;
-            }
-
-            using var channelGroup = new NotificationChannelGroup(groupChannelRequest.Group, groupChannelRequest.Name);
-            notificationManager.CreateNotificationChannelGroup(channelGroup);
-            return true;
+#pragma warning disable CA1416 // Validate platform compatibility
+            var channelGroups = groupChannelRequests.Select(gcr => new NotificationChannelGroup(gcr.Group, gcr.Name)).ToList();
+#pragma warning restore CA1416 // Validate platform compatibility
+            notificationManager.CreateNotificationChannelGroups(channelGroups);            
         }
 
         /// <summary>
         /// Create Notification Channel when API >= 26.
         /// </summary>
-        /// <param name="channelRequest"></param>
-        public static bool CreateNotificationChannel(NotificationChannelRequest? channelRequest = null)
+        /// <param name="channelRequests"></param>
+        internal static void CreateNotificationChannels(IList<NotificationChannelRequest> channelRequests)
         {
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
-                return false;
+                return;
+            }
+
+            if (channelRequests.Any())
+            {
+                channelRequests.Add(new NotificationChannelRequest());
             }
 
             if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager notificationManager)
             {
-                return false;
-            }
-
-            channelRequest ??= new NotificationChannelRequest();
-
-            if (string.IsNullOrWhiteSpace(channelRequest.Id))
-            {
-                channelRequest.Id = AndroidOptions.DefaultChannelId;
-            }
-
-            if (string.IsNullOrWhiteSpace(channelRequest.Name))
-            {
-                channelRequest.Name = AndroidOptions.DefaultChannelName;
+                return;
             }
 
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            using var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance.ToNative())
-            {
-                Description = channelRequest.Description,
-                Group = channelRequest.Group,
-                LightColor = channelRequest.LightColor.ToNative(),
-                LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
-            };
+            var channels = new List<NotificationChannel>();
 
-            if (channelRequest.EnableSound)
+            foreach (var channelRequest in channelRequests)
             {
-                var soundUri = GetSoundUri(channelRequest.Sound);
-                if (soundUri != null)
+                var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance.ToNative())
                 {
-                    using var audioAttributesBuilder = new AudioAttributes.Builder();
-                    var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
-                            ?.SetContentType(AudioContentType.Sonification)
-                            ?.Build();
-                    channel.SetSound(soundUri, audioAttributes);
+                    Description = channelRequest.Description,
+                    Group = channelRequest.Group,
+                    LightColor = channelRequest.LightColor.ToNative(),
+                    LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
+                };
+
+                if (channelRequest.EnableSound)
+                {
+                    var soundUri = GetSoundUri(channelRequest.Sound);
+                    if (soundUri != null)
+                    {
+                        using var audioAttributesBuilder = new AudioAttributes.Builder();
+                        var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
+                                ?.SetContentType(AudioContentType.Sonification)
+                                ?.Build();
+                        channel.SetSound(soundUri, audioAttributes);
+                    }
                 }
+
+                if (channelRequest.VibrationPattern != null &&
+                    channelRequest.VibrationPattern.Length != 0)
+                {
+                    channel.SetVibrationPattern(channelRequest.VibrationPattern);
+                    channel.ShouldVibrate();
+                }
+
+                channel.SetShowBadge(channelRequest.ShowBadge);
+                channel.EnableLights(channelRequest.EnableLights);
+                channel.EnableVibration(channelRequest.EnableVibration);
+                channel.SetBypassDnd(channelRequest.CanBypassDnd);
+
+                channels.Add(channel);
             }
 
-            if (channelRequest.VibrationPattern != null)
-            {
-                channel.SetVibrationPattern(channelRequest.VibrationPattern);
-                channel.ShouldVibrate();
-            }
-
-            channel.SetShowBadge(channelRequest.ShowBadge);
-            channel.EnableLights(channelRequest.EnableLights);
-            channel.EnableVibration(channelRequest.EnableVibration);
-            channel.SetBypassDnd(channelRequest.CanBypassDnd);
-
-            notificationManager.CreateNotificationChannel(channel);
-            return true;
+            notificationManager.CreateNotificationChannels(channels);
         }
 
         internal static Android.Net.Uri? GetSoundUri(string soundFileName)

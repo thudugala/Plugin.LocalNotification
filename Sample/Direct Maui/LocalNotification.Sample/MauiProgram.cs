@@ -23,7 +23,7 @@ public static class MauiProgram
                 {
                     ActionList = new HashSet<NotificationAction>(new List<NotificationAction>()
                         {
-                            new NotificationAction(100)
+                            new(100)
                             {
                                 Title = "Hello",
                                 Android =
@@ -43,7 +43,7 @@ public static class MauiProgram
                                     LaunchAppWhenTapped = true
                                 }
                             },
-                            new NotificationAction(101)
+                            new(101)
                             {
                                 Title = "Close",
                                 Android =

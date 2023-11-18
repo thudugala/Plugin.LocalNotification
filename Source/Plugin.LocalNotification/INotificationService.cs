@@ -98,6 +98,8 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Request Notification Permission
+        /// Ask the user for permission to show notifications on iOS 10.0+ and Android 33+.
+        /// Returns true if Allowed.
         /// </summary>
         /// <returns></returns>
         Task<bool> RequestNotificationPermission(NotificationPermission? permission = null);

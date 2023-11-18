@@ -12,34 +12,23 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Register notification categories and their corresponding actions
         /// </summary>
-        public HashSet<NotificationCategory> CategorySet { get; private set; }
+        internal HashSet<NotificationCategory> CategorySet { get; } = new ();
 
         /// <summary>
         ///
         /// </summary>
-        public INotificationSerializer Serializer { get; private set; }
+        internal INotificationSerializer Serializer { get; private set; } = new NotificationSerializer();
 
         /// <summary>
         /// Android specific Builder.
         /// </summary>
-        public AndroidLocalNotificationBuilder AndroidBuilder { get; private set; }
+        internal AndroidLocalNotificationBuilder AndroidBuilder { get; } = new();
 
         /// <summary>
         /// Android specific Builder.
         /// </summary>
-        public iOSLocalNotificationBuilder IOSBuilder { get; private set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public LocalNotificationBuilder()
-        {
-            AndroidBuilder = new AndroidLocalNotificationBuilder();
-            IOSBuilder = new iOSLocalNotificationBuilder();
-            CategorySet = new HashSet<NotificationCategory>();
-            Serializer = new NotificationSerializer();
-        }
-
+        internal iOSLocalNotificationBuilder IOSBuilder { get; } = new();
+                
         /// <inheritdoc/>
         public ILocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android)
         {

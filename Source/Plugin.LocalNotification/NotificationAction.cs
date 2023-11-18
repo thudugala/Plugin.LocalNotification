@@ -7,21 +7,17 @@ namespace Plugin.LocalNotification
     /// <summary>
     ///
     /// </summary>
-    public class NotificationAction : IEquatable<NotificationAction>
+    /// <remarks>
+    /// ActionId is the unique identifier for the Category
+    /// </remarks>
+    /// <param name="actionId">A unique identifier for the Action</param>
+    public class NotificationAction(int actionId) : IEquatable<NotificationAction>
     {
-        /// <summary>
-        /// ActionId is the unique identifier for the Category
-        /// </summary>
-        /// <param name="actionId">A unique identifier for the Action</param>
-        public NotificationAction(int actionId)
-        {
-            ActionId = actionId;
-        }
 
         /// <summary>
         /// A unique identifier for the Action
         /// </summary>
-        public int ActionId { get; }
+        public int ActionId { get; } = actionId;
 
         /// <summary>
         /// iOS specific properties.
@@ -54,6 +50,8 @@ namespace Plugin.LocalNotification
                    ActionId == other.ActionId;
         }
 
+        public override bool Equals(object? obj) => Equals(obj as NotificationAction);
+
         /// <summary>
         ///
         /// </summary>
@@ -61,6 +59,6 @@ namespace Plugin.LocalNotification
         public override int GetHashCode()
         {
             return ActionId.GetHashCode();
-        }
+        }       
     }
 }

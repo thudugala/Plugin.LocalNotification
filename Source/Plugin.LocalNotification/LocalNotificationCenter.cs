@@ -28,7 +28,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Internal  Logger
         /// </summary>
-        public static ILogger? Logger { get; set; }
+        internal static ILogger? Logger { get; set; }
 
         /// <summary>
         /// Internal  Logger LogLevel
@@ -65,7 +65,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public static INotificationSerializer Serializer
+        internal static INotificationSerializer Serializer
         {
             get
             {
@@ -75,7 +75,7 @@ namespace Plugin.LocalNotification
             set => _serializer = value;
         }
 
-        internal static NotificationRequest? GetRequest(string? serializedRequest)
+        internal static NotificationRequest GetRequest(string? serializedRequest)
         {
             Logger?.LogTrace($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
@@ -84,10 +84,10 @@ namespace Plugin.LocalNotification
             }
 
             var request = Serializer.Deserialize<NotificationRequest>(serializedRequest);
-            return request;
+            return request ?? new NotificationRequest();
         }
 
-        internal static List<NotificationRequest>? GetRequestList(string? serializedRequestList)
+        internal static List<NotificationRequest> GetRequestList(string? serializedRequestList)
         {
             if (string.IsNullOrWhiteSpace(serializedRequestList))
             {
@@ -95,7 +95,7 @@ namespace Plugin.LocalNotification
             }
 
             var requestList = Serializer.Deserialize<List<NotificationRequest>>(serializedRequestList);
-            return requestList;
+            return requestList ?? [];
         }
 
         internal static string GetRequestListSerialize(List<NotificationRequest> requestList)

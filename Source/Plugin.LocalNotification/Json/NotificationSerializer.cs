@@ -3,7 +3,7 @@
 namespace Plugin.LocalNotification.Json
 {
     /// <inheritdoc />
-    public class NotificationSerializer : INotificationSerializer
+    internal class NotificationSerializer : INotificationSerializer
     {
         /// <inheritdoc />
         public virtual TValue? Deserialize<TValue>(string json)

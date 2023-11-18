@@ -32,25 +32,15 @@ namespace Plugin.LocalNotification
 #if ANDROID
                 life.AddAndroid(android =>
                 {
-                    android.OnCreate((activity, savedInstanceState) =>
-                    {
-                        if (localNotificationBuilder.AndroidBuilder.ChannelRequestList.Any())
-                        {
-                            foreach (var channelRequest in localNotificationBuilder.AndroidBuilder.ChannelRequestList)
-                            {
-                                LocalNotificationCenter.CreateNotificationChannel(channelRequest);
-                            }
-                        }
-                        if (localNotificationBuilder.AndroidBuilder.GroupChannelRequestList.Any())
-                        {
-                            foreach (var groupChannelReques in localNotificationBuilder.AndroidBuilder.GroupChannelRequestList)
-                            {
-                                LocalNotificationCenter.CreateNotificationChannelGroup(groupChannelReques);
-                            }
-                        }
+                    android.OnCreate((activity, _) =>
+                    {                        
+                        LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);
+
+                        LocalNotificationCenter.CreateNotificationChannelGroups(localNotificationBuilder.AndroidBuilder.GroupChannelRequestList);
+
                         LocalNotificationCenter.NotifyNotificationTapped(activity.Intent);
                     })
-                    .OnNewIntent((activity, intent) =>
+                    .OnNewIntent((_, intent) =>
                     {
                         LocalNotificationCenter.NotifyNotificationTapped(intent);
                     });

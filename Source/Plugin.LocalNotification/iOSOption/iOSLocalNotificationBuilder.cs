@@ -12,9 +12,7 @@ namespace Plugin.LocalNotification.iOSOption
         ///
         /// </summary>
         internal UserNotificationCenterDelegate? CustomUserNotificationCenterDelegate { get; private set; }
-#endif
 
-#if IOS
         /// <inheritdoc/>
         public IiOSLocalNotificationBuilder SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate customUserNotificationCenterDelegate)
         {
