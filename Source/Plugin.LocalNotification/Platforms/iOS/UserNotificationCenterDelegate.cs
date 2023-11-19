@@ -20,7 +20,7 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var notificationRequest = notificationService.GetRequest(response.Notification.Request.Content);
+                var notificationRequest = LocalNotificationCenter.GetRequest(response.Notification.Request.Content);
 
                 // if notificationRequest is null this maybe not a notification from this plugin.
                 if (notificationRequest is null)
@@ -109,7 +109,7 @@ namespace Plugin.LocalNotification.Platforms
                 var presentationOptions = UNNotificationPresentationOptions.None;
 
                 var notificationService = TryGetDefaultIOsNotificationService();
-                var notificationRequest = notificationService.GetRequest(notification?.Request.Content);
+                var notificationRequest = LocalNotificationCenter.GetRequest(notification?.Request.Content);
 
                 // if notificationRequest is null this maybe not a notification from this plugin.
                 if (notificationRequest is null)

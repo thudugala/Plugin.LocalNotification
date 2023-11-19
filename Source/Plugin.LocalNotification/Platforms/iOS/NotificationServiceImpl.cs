@@ -14,6 +14,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <inheritdoc />
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
+        /// <inheritdoc />
         public bool IsSupported => true;
 
         /// <inheritdoc />
@@ -404,7 +405,7 @@ namespace Plugin.LocalNotification.Platforms
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            return pending.Select(r => GetRequest(r.Content) ?? new NotificationRequest()).ToList();
+            return pending.Select(r => LocalNotificationCenter.GetRequest(r.Content) ?? new NotificationRequest()).ToList();
         }
 
         /// <inheritdoc />
@@ -412,35 +413,9 @@ namespace Plugin.LocalNotification.Platforms
         {
             var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
 
-            return delivered.Select(r => GetRequest(r.Request.Content) ?? new NotificationRequest()).ToList();
+            return delivered.Select(r => LocalNotificationCenter.GetRequest(r.Request.Content) ?? new NotificationRequest()).ToList();
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="notificationContent"></param>
-        /// <returns></returns>
-        public NotificationRequest? GetRequest(UNNotificationContent? notificationContent)
-        {
-            if (notificationContent is null)
-            {
-                return null;
-            }
-
-            var dictionary = notificationContent.UserInfo;
-
-            if (!dictionary.ContainsKey(new NSString(LocalNotificationCenter.ReturnRequest)))
-            {
-                return null;
-            }
-
-            var requestSerialize = dictionary[LocalNotificationCenter.ReturnRequest].ToString();
-
-            var request = LocalNotificationCenter.GetRequest(requestSerialize);
-
-            return request;
-        }
-
+                
         /// <inheritdoc />
         public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {

@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui.LifecycleEvents;
 
-#if WINDOWS
-using Microsoft.Toolkit.Uwp.Notifications;
-#endif
-
 namespace Plugin.LocalNotification
 {
     /// <summary>

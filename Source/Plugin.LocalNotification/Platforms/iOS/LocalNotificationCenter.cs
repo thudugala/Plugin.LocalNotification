@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Foundation;
+using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.Platforms;
 using System.Runtime.CompilerServices;
 using UIKit;
@@ -19,7 +20,33 @@ namespace Plugin.LocalNotification
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
-       
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="notificationContent"></param>
+        /// <returns></returns>
+        public static NotificationRequest? GetRequest(UNNotificationContent? notificationContent)
+        {
+            if (notificationContent is null)
+            {
+                return null;
+            }
+
+            var dictionary = notificationContent.UserInfo;
+
+            if (!dictionary.ContainsKey(new NSString(ReturnRequest)))
+            {
+                return null;
+            }
+
+            var requestSerialize = dictionary[ReturnRequest].ToString();
+
+            var request = GetRequest(requestSerialize);
+
+            return request;
+        }
+
         /// <summary>
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
