@@ -3,6 +3,7 @@ using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LocalNotification.Sample;
 
@@ -348,7 +349,10 @@ public partial class MainPage : ContentPage
             {
                 return;
             }
-            var requestJson = JsonSerializer.Serialize(e.Request);
+            var requestJson = JsonSerializer.Serialize(e.Request, new JsonSerializerOptions
+            {
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+            });
 
             DisplayAlert(e.Request.Title, requestJson, "OK");
         });
