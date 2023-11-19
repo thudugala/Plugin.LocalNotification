@@ -37,7 +37,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public bool IsGeofence => Center != null;
+        public bool IsGeofence => Center != null && Center.IsPositionSet;
 
         /// <summary>
         ///
@@ -47,12 +47,14 @@ namespace Plugin.LocalNotification
             /// <summary>
             /// Latitude in degrees, between -90 and +90 inclusive
             /// </summary>
-            public double Latitude { get; set; }
+            public double Latitude { get; set; } = double.NaN;
 
             /// <summary>
             /// Longitude in degrees, between -180 and +180 inclusive.
             /// </summary>
-            public double Longitude { get; set; }
+            public double Longitude { get; set; } = double.NaN;
+
+            public bool IsPositionSet => !double.IsNaN(Latitude) && !double.IsNaN(Longitude);
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace Plugin.LocalNotification
                 var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance.ToNative())
                 {
                     Description = channelRequest.Description,
-                    Group = channelRequest.Group,
+                    Group = string.IsNullOrWhiteSpace(channelRequest.Group) ? null : channelRequest.Group,
                     LightColor = channelRequest.LightColor.ToNative(),
                     LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
                 };

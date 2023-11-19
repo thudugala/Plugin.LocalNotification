@@ -29,10 +29,10 @@ namespace Plugin.LocalNotification
                 life.AddAndroid(android =>
                 {
                     android.OnCreate((activity, _) =>
-                    {                        
-                        LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);
-
+                    {
                         LocalNotificationCenter.CreateNotificationChannelGroups(localNotificationBuilder.AndroidBuilder.GroupChannelRequestList);
+
+                        LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);                        
 
                         LocalNotificationCenter.NotifyNotificationTapped(activity.Intent);
                     })
