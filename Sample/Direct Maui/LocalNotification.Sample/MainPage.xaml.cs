@@ -33,8 +33,8 @@ public partial class MainPage : ContentPage
 
         this.Appearing += MainPage_Appearing;
     }
-
-    private async void MainPage_Appearing(object sender, EventArgs e)
+       
+    private async void MainPage_Appearing(object? sender, EventArgs e)
     {
         await LoadText();
     }
@@ -84,14 +84,12 @@ public partial class MainPage : ContentPage
     private async void Button_Clicked(object sender, EventArgs e)
     {
         var imageStream = GetType().Assembly.GetManifestResourceStream("LocalNotification.Sample.Resources.appicon1.png");
-        byte[] imageBytes = null;
+        byte[] imageBytes = [];
         if (imageStream != null)
         {
-            using (var ms = new MemoryStream())
-            {
-                await imageStream.CopyToAsync(ms);
-                imageBytes = ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            await imageStream.CopyToAsync(ms);
+            imageBytes = ms.ToArray();
         }
 
         _tapCount++;
@@ -99,7 +97,7 @@ public partial class MainPage : ContentPage
         var title = "Test";
         var list = new List<string>
             {
-                typeof(NotificationPage).FullName,
+                typeof(NotificationPage).FullName ?? "NotificationPage",
                 notificationId.ToString(),
                 title,
                 _tapCount.ToString()
@@ -294,7 +292,7 @@ public partial class MainPage : ContentPage
         var notificationId = (int)DateTime.Now.Ticks;
         var list = new List<string>
             {
-                typeof(NotificationPage).FullName,
+                typeof(NotificationPage).FullName ?? "NotificationPage",
                 notificationId.ToString(),
                 title,
                 _tapCount.ToString()
