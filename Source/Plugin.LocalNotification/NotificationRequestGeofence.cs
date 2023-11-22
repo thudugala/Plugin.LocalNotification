@@ -54,6 +54,9 @@ namespace Plugin.LocalNotification
             /// </summary>
             public double Longitude { get; set; } = double.NaN;
 
+            /// <summary>
+            /// 
+            /// </summary>
             public bool IsPositionSet => !double.IsNaN(Latitude) && !double.IsNaN(Longitude);
         }
 

@@ -61,9 +61,20 @@
         public bool IsGroupSummary { get; set; }
 
         /// <summary>
-        /// Set whether this progress bar is in indeterminate mode
+        /// Launch the App instead of posting the notification to the status bar.
+        /// Only for use with extremely high-priority notifications demanding the user's immediate attention,
+        /// such as an incoming phone call or alarm clock that the user has explicitly set to a particular time.
+        /// If this facility is used for something else, please give the user an option to turn it off and use a normal notification, as this can be extremely disruptive.
+        /// The system UI may choose to display a heads-up notification, instead of launching this app, while the user is using the device.
+        /// Apps targeting Android Q 10 (29) and above will have to request a permission (Manifest.permission.USE_FULL_SCREEN_INTENT) in order to use full screen intents.
+        /// To be launched, the notification must also be posted to a channel with importance level set to IMPORTANCE_HIGH or higher.
         /// </summary>
-        public bool? IsProgressBarIndeterminate { get; set; }
+        public AndroidLaunch? LaunchApp { get; set; }
+
+        /// <summary>
+        /// Default is true
+        /// </summary>
+        public bool LaunchAppWhenTapped { get; set; } = true;
 
         /// <summary>
         /// If set, the LED will have the provided ARGB color.
@@ -80,6 +91,11 @@
         public bool Ongoing { get; set; }
 
         /// <summary>
+        ///
+        /// </summary>
+        public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.UpdateCurrent;
+
+        /// <summary>
         /// Set the relative priority for this notification.
         /// In Android, Only used if Android Api below 26.
         /// Use NotificationCenter.CreateNotificationChannel when Android Api equal or above 26
@@ -87,14 +103,9 @@
         public AndroidPriority Priority { get; set; } = AndroidPriority.Default;
 
         /// <summary>
-        /// Set Upper limit of this progress bar's range
+        /// Set the progress this notification represents. The platform template will represent this using a ProgressBar.
         /// </summary>
-        public int? ProgressBarMax { get; set; }
-
-        /// <summary>
-        /// Set progress bar's current level of progress
-        /// </summary>
-        public int? ProgressBarProgress { get; set; }
+        public AndroidProgressBar? ProgressBar { get; set; }
 
         /// <summary>
         /// Specifies the time at which this notification should be canceled, if it is not already canceled.
@@ -117,13 +128,8 @@
         public AndroidVisibilityType VisibilityType { get; set; } = AndroidVisibilityType.Private;
 
         /// <summary>
-        /// Default is true
+        /// DateTime set with When is shown in the content view.
         /// </summary>
-        public bool LaunchAppWhenTapped { get; set; } = true;
-
-        /// <summary>
-        ///
-        /// </summary>
-        public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.UpdateCurrent;
+        public DateTime? When { get; set; }
     }
 }

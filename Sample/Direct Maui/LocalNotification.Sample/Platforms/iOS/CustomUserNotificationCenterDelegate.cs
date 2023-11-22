@@ -26,9 +26,14 @@ public class CustomUserNotificationCenterDelegate : UserNotificationCenterDelega
         // if the Notification is type Plugin.LocalNotification.NotificationRequest
         // call the base method, else handel it by your self.
 
-        var notificationRequest = LocalNotificationCenter.GetRequest(notification?.Request.Content);
+        if(notification is null)
+        {
+            return;
+        }
 
-        if (notificationRequest != null)
+        var notificationRequest = LocalNotificationCenter.GetRequest(notification.Request.Content);
+
+        if (notificationRequest is not null)
         {
             base.WillPresentNotification(center, notification, completionHandler);
         }

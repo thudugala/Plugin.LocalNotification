@@ -130,9 +130,12 @@ public partial class MainPage : ContentPage
                     {
                         ResourceName = "colorPrimary"
                     },
-                    IsProgressBarIndeterminate = false,
-                    ProgressBarMax = 20,
-                    ProgressBarProgress = _tapCount,
+                    ProgressBar = new AndroidProgressBar
+                    {
+                        IsIndeterminate = false,
+                        Max = 20,
+                        Progress = _tapCount,
+                    },                    
                     Priority = AndroidPriority.High
                     //AutoCancel = false,
                     //Ongoing = true

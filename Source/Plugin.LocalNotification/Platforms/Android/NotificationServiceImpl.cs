@@ -413,6 +413,13 @@ namespace Plugin.LocalNotification.Platforms
             builder.SetContentTitle(request.Title);
             builder.SetSubText(request.Subtitle);
             builder.SetContentText(request.Description);
+
+            if(request.Android.When is not null)
+            {
+                builder.SetShowWhen(true);
+                builder.SetWhen(request.Android.When.Value.Ticks);                
+            }
+                       
             if (request.Image is { HasValue: true })
             {
                 var imageBitmap = await GetNativeImage(request.Image).ConfigureAwait(false);
@@ -430,7 +437,7 @@ namespace Plugin.LocalNotification.Platforms
                 {
                     using var bigTextStyle = new NotificationCompat.BigTextStyle();
                     bigTextStyle.BigText(request.Description);
-                    bigTextStyle.SetSummaryText(request.Subtitle);
+                    bigTextStyle.SetSummaryText(request.Subtitle);                   
                     builder.SetStyle(bigTextStyle);
                 }
             }
@@ -460,38 +467,36 @@ namespace Plugin.LocalNotification.Platforms
                 builder.SetPriority((int)request.Android.Priority);
 
                 var soundUri = LocalNotificationCenter.GetSoundUri(request.Sound);
-                if (soundUri != null)
+                if (soundUri is not null)
                 {
                     builder.SetSound(soundUri);
                 }
             }
 
-            if (request.Android.VibrationPattern != null)
+            if (request.Android.VibrationPattern is not null)
             {
                 builder.SetVibrate(request.Android.VibrationPattern);
             }
 
-            if (request.Android.ProgressBarMax.HasValue &&
-                request.Android.ProgressBarProgress.HasValue &&
-                request.Android.IsProgressBarIndeterminate.HasValue)
+            if (request.Android.ProgressBar is not null)
             {
-                builder.SetProgress(request.Android.ProgressBarMax.Value,
-                    request.Android.ProgressBarProgress.Value,
-                    request.Android.IsProgressBarIndeterminate.Value);
+                builder.SetProgress(request.Android.ProgressBar.Max,
+                    request.Android.ProgressBar.Progress,
+                    request.Android.ProgressBar.IsIndeterminate);
             }
 
-            if (request.Android.Color != null)
+            if (request.Android.Color is not null)
             {
                 builder.SetColor(request.Android.Color.ToNative());
             }
 
             builder.SetSmallIcon(GetIcon(request.Android.IconSmallName));
-            if (request.Android.IconLargeName != null &&
+            if (request.Android.IconLargeName is not null &&
                 string.IsNullOrWhiteSpace(request.Android.IconLargeName.ResourceName) == false)
             {
                 var largeIcon = await BitmapFactory.DecodeResourceAsync(Application.Context.Resources,
                     GetIcon(request.Android.IconLargeName)).ConfigureAwait(false);
-                if (largeIcon != null)
+                if (largeIcon is not null)
                 {
                     builder.SetLargeIcon(largeIcon);
                 }
@@ -508,7 +513,7 @@ namespace Plugin.LocalNotification.Platforms
             {
                 Android =
                 {
-                    LaunchAppWhenTapped = request.Android.LaunchAppWhenTapped,
+                    LaunchAppWhenTapped = (request.Android.LaunchApp is not null) ? true : request.Android.LaunchAppWhenTapped,
                     PendingIntentFlags = request.Android.PendingIntentFlags
                 }
             }, typeof(NotificationActionReceiver));
@@ -522,7 +527,14 @@ namespace Plugin.LocalNotification.Platforms
                 }
             }, typeof(NotificationActionReceiver));
 
-            builder.SetContentIntent(contentIntent);
+            if (request.Android.LaunchApp is not null)
+            {
+                builder.SetFullScreenIntent(contentIntent, request.Android.LaunchApp.InHighPriority);
+            }
+            else
+            {
+                builder.SetContentIntent(contentIntent);
+            }
             builder.SetDeleteIntent(deleteIntent);
 
             if (_categoryList.Any())
