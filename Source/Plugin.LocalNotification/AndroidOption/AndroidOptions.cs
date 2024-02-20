@@ -118,6 +118,8 @@
         /// The first value indicates the number of milliseconds to wait before turning the vibrator on.
         /// The next value indicates the number of milliseconds for which to keep the vibrator on before turning it off.
         /// Subsequent values alternate between durations in milliseconds to turn the vibrator off or to turn the vibrator on.
+        /// 
+        /// This method was deprecated in API level 26. use NotificationChannel
         /// </summary>
         public long[] VibrationPattern { get; set; } = [];
 

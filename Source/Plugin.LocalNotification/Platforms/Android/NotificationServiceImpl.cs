@@ -475,7 +475,10 @@ namespace Plugin.LocalNotification.Platforms
 
             if (request.Android.VibrationPattern is not null)
             {
-                builder.SetVibrate(request.Android.VibrationPattern);
+                if (!OperatingSystem.IsAndroidVersionAtLeast(26))
+                {
+                    builder.SetVibrate(request.Android.VibrationPattern);
+                }
             }
 
             if (request.Android.ProgressBar is not null)
