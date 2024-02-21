@@ -38,6 +38,6 @@
         /// <summary>
         ///
         /// </summary>
-        public string ResourceName { get; set; }
+        public string ResourceName { get; set; } = string.Empty;
     }
 }

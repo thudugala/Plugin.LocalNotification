@@ -6,7 +6,7 @@ namespace Plugin.LocalNotification
 {
     /// <summary>
     ///
-    /// </summary>
+    /// </summary>  
     public class NotificationAction : IEquatable<NotificationAction>
     {
         /// <summary>
@@ -36,7 +36,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         ///
@@ -48,6 +48,13 @@ namespace Plugin.LocalNotification
             return other != null &&
                    ActionId == other.ActionId;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj) => Equals(obj as NotificationAction);
 
         /// <summary>
         ///

@@ -15,7 +15,7 @@ namespace Plugin.LocalNotification.Platforms
             new(() => new NotificationRepository(),
                 System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
-        private static readonly object Locker = new object();
+        private static readonly object Locker = new();
 
         /// <summary>
         ///
@@ -154,8 +154,8 @@ namespace Plugin.LocalNotification.Platforms
             lock (Locker)
             {
                 using var sharedPreferences = GetSharedPreferences();
-                using var editor = sharedPreferences.Edit();
-                string jsonText = null;
+                using var editor = sharedPreferences?.Edit();
+                var jsonText = string.Empty;
                 if (list != null && list.Any())
                 {
                     jsonText = LocalNotificationCenter.GetRequestListSerialize(list);

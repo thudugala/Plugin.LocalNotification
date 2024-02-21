@@ -36,6 +36,12 @@ namespace Plugin.LocalNotification.Platforms
             {
                 var notificationService = TryGetDefaultDroidNotificationService();
 
+                if (intent is null)
+                {
+                    LocalNotificationCenter.Log("No intent");
+                    return;
+                }
+
                 if (intent.Action == Intent.ActionBootCompleted ||
                     intent.Action == Intent.ActionMyPackageReplaced ||
                     intent.Action == "android.intent.action.QUICKBOOT_POWERON" ||
@@ -44,7 +50,7 @@ namespace Plugin.LocalNotification.Platforms
                     LocalNotificationCenter.Log("ActionBootCompleted");
 
                     var requestList = NotificationRepository.Current.GetPendingList();
-                    if (requestList.Any() == false)
+                    if (!requestList.Any())
                     {
                         LocalNotificationCenter.Log("No Pending Notification Request");
                         return;
@@ -74,7 +80,7 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
-        private async Task SendNotification(NotificationServiceImpl notificationService, NotificationRequest request)
+        private static async Task SendNotification(NotificationServiceImpl notificationService, NotificationRequest request)
         {
             if (request is null)
             {

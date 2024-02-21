@@ -19,6 +19,9 @@ namespace Plugin.LocalNotification.Platforms
         public Func<NotificationRequest, Task<NotificationEventReceivingArgs>> NotificationReceiving { get; set; }
 
         /// <inheritdoc />
+        public bool IsSupported => true;
+
+        /// <inheritdoc />
         public event NotificationReceivedEventHandler NotificationReceived;
 
         /// <inheritdoc />
@@ -39,9 +42,7 @@ namespace Plugin.LocalNotification.Platforms
             NotificationActionTapped?.Invoke(e);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
+        /// <inheritdoc />
         public void OnNotificationsDisabled()
         {
             NotificationsDisabled?.Invoke();
@@ -216,9 +217,10 @@ namespace Plugin.LocalNotification.Platforms
         }
 
         /// <inheritdoc />
-        public Task<bool> AreNotificationsEnabled()
+        public async Task<bool> AreNotificationsEnabled()
         {
-            return LocalNotificationCenter.AreNotificationsEnabledAsync();
+            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+            return settings.AlertSetting == UNNotificationSetting.Enabled;
         }
 
         /// <summary>
@@ -474,7 +476,7 @@ namespace Plugin.LocalNotification.Platforms
         {
             var pending = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
 
-            return pending.Select(r => GetRequest(r.Content)).ToList();
+            return pending.Select(r => LocalNotificationCenter.GetRequest(r.Content) ?? new NotificationRequest()).ToList();
         }
 
         /// <inheritdoc />
@@ -482,39 +484,62 @@ namespace Plugin.LocalNotification.Platforms
         {
             var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
 
-            return delivered.Select(r => GetRequest(r.Request.Content)).ToList();
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="notificationContent"></param>
-        /// <returns></returns>
-        public NotificationRequest GetRequest(UNNotificationContent notificationContent)
-        {
-            if (notificationContent is null)
-            {
-                return null;
-            }
-
-            var dictionary = notificationContent.UserInfo;
-
-            if (!dictionary.ContainsKey(new NSString(LocalNotificationCenter.ReturnRequest)))
-            {
-                return null;
-            }
-
-            var requestSerialize = dictionary[LocalNotificationCenter.ReturnRequest].ToString();
-
-            var request = LocalNotificationCenter.GetRequest(requestSerialize);
-
-            return request;
+            return delivered.Select(r => LocalNotificationCenter.GetRequest(r.Request.Content) ?? new NotificationRequest()).ToList();
         }
 
         /// <inheritdoc />
-        public Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
+        public async Task<bool> RequestNotificationPermission(NotificationPermission permission = null)
         {
-            return LocalNotificationCenter.RequestNotificationPermissionAsync(permission);
+            try
+            {
+                permission ??= new NotificationPermission();
+
+                if (!permission.AskPermission)
+                {
+                    return false;
+                }
+
+                var allowed = await AreNotificationsEnabled();
+                if (allowed)
+                {
+                    return true;
+                }
+
+                // Ask the user for permission to show notifications on iOS 10.0+
+                var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
+                var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
+
+                if (error != null)
+                {
+                    LocalNotificationCenter.Log(error.LocalizedDescription);
+                }
+
+                if (alertsAllowed)
+                {
+                    if (permission.IOS.LocationAuthorization == iOSOption.iOSLocationAuthorization.No)
+                    {
+                        return false;
+                    }
+
+                    var locationManager = new CLLocationManager();
+
+                    if (permission.IOS.LocationAuthorization == iOSOption.iOSLocationAuthorization.Always)
+                    {
+                        locationManager.RequestAlwaysAuthorization();
+                    }
+                    else if (permission.IOS.LocationAuthorization == iOSOption.iOSLocationAuthorization.WhenInUse)
+                    {
+                        locationManager.RequestWhenInUseAuthorization();
+                    }
+                }
+
+                return alertsAllowed;
+            }
+            catch (Exception ex)
+            {
+                LocalNotificationCenter.Log(ex);
+                return false;
+            }
         }
     }
 }

@@ -1,21 +1,27 @@
 ﻿#if ANDROID
 using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Controls.PlatformConfiguration;
+using Android;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Plugin.LocalNotification.Platforms
 {
 #if ANDROID
     public partial class NotificationPerms : Permissions.BasePlatformPermission
     {
-        public override (string androidPermission, bool isRuntime)[] RequiredPermissions =>
-        new List<(string androidPermission, bool isRuntime)>
+        public override (string androidPermission, bool isRuntime)[] RequiredPermissions
         {
-            ("android.permission.POST_NOTIFICATIONS", true),
-        }.ToArray();
+            get
+            {
+                var result = new List<(string androidPermission, bool isRuntime)>();
+                if (OperatingSystem.IsAndroidVersionAtLeast(33))
+                {
+                    result.Add((Manifest.Permission.PostNotifications, true));
+                }
+                return result.ToArray();
+            }
+        }
     }
 #endif
 }

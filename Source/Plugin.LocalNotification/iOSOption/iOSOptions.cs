@@ -49,7 +49,7 @@
         /// <summary>
         /// The string the notification adds to the category’s summary format string.
         /// </summary>
-        public string SummaryArgument { get; set; }
+        public string SummaryArgument { get; set; } = string.Empty;
 
         /// <summary>
         /// The number of items the notification adds to the category’s summary format string.

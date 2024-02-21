@@ -10,22 +10,13 @@ namespace Plugin.LocalNotification.AndroidOption
         /// <summary>
         /// 
         /// </summary>
-        public IList<NotificationChannelRequest> ChannelRequestList { get; }
+        public IList<NotificationChannelRequest> ChannelRequestList { get; } = new List<NotificationChannelRequest>();
 
         /// <summary>
         /// 
         /// </summary>
-        public IList<NotificationChannelGroupRequest> GroupChannelRequestList { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public AndroidLocalNotificationBuilder()
-        {
-            ChannelRequestList = new List<NotificationChannelRequest>();
-            GroupChannelRequestList = new List<NotificationChannelGroupRequest>();
-        }
-
+        public IList<NotificationChannelGroupRequest> GroupChannelRequestList { get; } = new List<NotificationChannelGroupRequest>();
+                
         /// <inheritdoc/>
         public IAndroidLocalNotificationBuilder AddChannel(NotificationChannelRequest channelRequest)
         {

@@ -40,14 +40,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Platform specific INotificationService.
         /// </summary>
-        public static INotificationService Current
-        {
-            get
-            {
-                var ret = implementation.Value;
-                return ret ?? throw new NotImplementedException(Properties.Resources.PluginNotFound);
-            }
-        }
+        public static INotificationService Current => implementation.Value;
 
         /// <summary>
         /// Return Notification Key.
@@ -82,11 +75,11 @@ namespace Plugin.LocalNotification
             Logger?.LogTrace($"Serialized Request [{serializedRequest}]");
             if (string.IsNullOrWhiteSpace(serializedRequest))
             {
-                return null;
+                return new NotificationRequest();
             }
 
             var request = Serializer.Deserialize<NotificationRequest>(serializedRequest);
-            return request;
+            return request ?? new NotificationRequest();
         }
 
         internal static List<NotificationRequest> GetRequestList(string serializedRequestList)
@@ -97,7 +90,7 @@ namespace Plugin.LocalNotification
             }
 
             var requestList = Serializer.Deserialize<List<NotificationRequest>>(serializedRequestList);
-            return requestList;
+            return requestList ?? new List<NotificationRequest>();
         }
 
         internal static string GetRequestListSerialize(List<NotificationRequest> requestList)

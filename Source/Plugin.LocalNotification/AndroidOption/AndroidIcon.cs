@@ -40,7 +40,7 @@
         /// <summary>
         /// The name of the desired resource
         /// </summary>
-        public string ResourceName { get; set; }
+        public string ResourceName { get; set; } = string.Empty;
 
         /// <summary>
         /// Optional default resource type to find, if "type/" is

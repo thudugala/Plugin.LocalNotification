@@ -14,10 +14,12 @@ using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.Platforms;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Plugin.LocalNotification
 {
@@ -75,8 +77,8 @@ namespace Plugin.LocalNotification
         {
             try
             {
-                var actionId = intent.GetIntExtra(ReturnRequestActionId, -1000);
-                if (actionId == -1000)
+                var actionId = intent?.GetIntExtra(ReturnRequestActionId, -1000);
+                if (actionId is null || actionId == -1000)
                 {
                     return;
                 }
@@ -86,7 +88,7 @@ namespace Plugin.LocalNotification
 
                 var actionArgs = new NotificationActionEventArgs
                 {
-                    ActionId = actionId,
+                    ActionId = actionId.GetValueOrDefault(),
                     Request = request
                 };
                 Current.OnNotificationActionTapped(actionArgs);
@@ -104,114 +106,108 @@ namespace Plugin.LocalNotification
         /// so you can create a notification channel group for each account.
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
-        /// <param name="groupChannelRequest"></param>
-        public static bool CreateNotificationChannelGroup(NotificationChannelGroupRequest groupChannelRequest)
+        /// <param name="groupChannelRequests"></param>
+        public static void CreateNotificationChannelGroups(IList<NotificationChannelGroupRequest> groupChannelRequests)
         {
 #if MONOANDROID
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                return false;
+                return;
             }
 #elif ANDROID
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
-                return false;
+                return;
             }
 #endif
+            if (!groupChannelRequests.Any())
+            {
+                return;
+            }
 
             if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager
             notificationManager))
             {
-                return false;
+                return;
             }
 
-            if (string.IsNullOrWhiteSpace(groupChannelRequest.Group))
-            {
-                groupChannelRequest.Group = AndroidOptions.DefaultGroupId;
-            }
-
-            if (string.IsNullOrWhiteSpace(groupChannelRequest.Name))
-            {
-                groupChannelRequest.Name = AndroidOptions.DefaultGroupName;
-            }
-
-            using var channelGroup = new NotificationChannelGroup(groupChannelRequest.Group, groupChannelRequest.Name);
-            notificationManager.CreateNotificationChannelGroup(channelGroup);
-            return true;
+#pragma warning disable CA1416 // Validate platform compatibility
+            var channelGroups = groupChannelRequests.Select(gcr => new NotificationChannelGroup(gcr.Group, gcr.Name)).ToList();
+#pragma warning restore CA1416 // Validate platform compatibility
+            notificationManager.CreateNotificationChannelGroups(channelGroups);
         }
 
         /// <summary>
         /// Create Notification Channel when API >= 26.
         /// </summary>
-        /// <param name="channelRequest"></param>
-        public static bool CreateNotificationChannel(NotificationChannelRequest channelRequest = null)
+        /// <param name="channelRequests"></param>
+        public static void CreateNotificationChannels(IList<NotificationChannelRequest> channelRequests)
         {
 #if MONOANDROID
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
-                return false;
+                return;
             }
 #elif ANDROID
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
-                return false;
+                return;
             }
 #endif
+            if (channelRequests.Any())
+            {
+                channelRequests.Add(new NotificationChannelRequest());
+            }
 
             if (!(Application.Context.GetSystemService(Context.NotificationService) is NotificationManager notificationManager))
             {
-                return false;
-            }
-
-            channelRequest ??= new NotificationChannelRequest();
-
-            if (string.IsNullOrWhiteSpace(channelRequest.Id))
-            {
-                channelRequest.Id = AndroidOptions.DefaultChannelId;
-            }
-
-            if (string.IsNullOrWhiteSpace(channelRequest.Name))
-            {
-                channelRequest.Name = AndroidOptions.DefaultChannelName;
+                return;
             }
 
             // you can't change the importance or other notification behaviors after this.
             // once you create the channel, you cannot change these settings and
             // the user has final control of whether these behaviors are active.
-            using var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance.ToNative())
-            {
-                Description = channelRequest.Description,
-                Group = channelRequest.Group,
-                LightColor = channelRequest.LightColor.ToNative(),
-                LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
-            };
+            var channels = new List<NotificationChannel>();
 
-            if (channelRequest.EnableSound)
+            foreach (var channelRequest in channelRequests)
             {
-                var soundUri = GetSoundUri(channelRequest.Sound);
-                if (soundUri != null)
+                var channel = new NotificationChannel(channelRequest.Id, channelRequest.Name, channelRequest.Importance.ToNative())
                 {
-                    using var audioAttributesBuilder = new AudioAttributes.Builder();
-                    var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
-                            ?.SetContentType(AudioContentType.Sonification)
-                            ?.Build();
-                    channel.SetSound(soundUri, audioAttributes);
+                    Description = channelRequest.Description,
+                    Group = string.IsNullOrWhiteSpace(channelRequest.Group) ? null : channelRequest.Group,
+                    LightColor = channelRequest.LightColor.ToNative(),
+                    LockscreenVisibility = channelRequest.LockScreenVisibility.ToNative(),
+                };
+
+                if (channelRequest.EnableSound)
+                {
+                    var soundUri = GetSoundUri(channelRequest.Sound);
+                    if (soundUri != null)
+                    {
+                        using var audioAttributesBuilder = new AudioAttributes.Builder();
+                        var audioAttributes = audioAttributesBuilder.SetUsage(AudioUsageKind.Notification)
+                                ?.SetContentType(AudioContentType.Sonification)
+                                ?.Build();
+                        channel.SetSound(soundUri, audioAttributes);
+                    }
                 }
+
+                if (channelRequest.VibrationPattern != null &&
+                    channelRequest.VibrationPattern.Length != 0)
+                {
+                    channel.SetVibrationPattern(channelRequest.VibrationPattern);
+                    channel.ShouldVibrate();
+                }
+
+                channel.SetShowBadge(channelRequest.ShowBadge);
+                channel.EnableLights(channelRequest.EnableLights);
+                channel.EnableVibration(channelRequest.EnableVibration);
+                channel.SetBypassDnd(channelRequest.CanBypassDnd);
+
+                channels.Add(channel);
             }
 
-            if (channelRequest.VibrationPattern != null)
-            {
-                channel.SetVibrationPattern(channelRequest.VibrationPattern);
-                channel.ShouldVibrate();
-            }
-
-            channel.SetShowBadge(channelRequest.ShowBadge);
-            channel.EnableLights(channelRequest.EnableLights);
-            channel.EnableVibration(channelRequest.EnableVibration);
-            channel.SetBypassDnd(channelRequest.CanBypassDnd);
-
-            notificationManager.CreateNotificationChannel(channel);
-            return true;
+            notificationManager.CreateNotificationChannels(channels);
         }
 
         internal static Android.Net.Uri GetSoundUri(string soundFileName)

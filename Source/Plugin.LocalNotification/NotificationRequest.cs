@@ -10,11 +10,6 @@ namespace Plugin.LocalNotification
     public class NotificationRequest
     {
         /// <summary>
-        /// Android specific properties.
-        /// </summary>
-        public AndroidOptions Android { get; set; } = new();
-
-        /// <summary>
         /// Number of the badge displays on the Home Screen.
         /// </summary>
         public int BadgeNumber { get; set; }
@@ -33,12 +28,17 @@ namespace Plugin.LocalNotification
         /// Set this notification to be part of a group of notifications sharing the same key.
         /// Grouped notifications may display in a cluster or stack on devices which support such rendering.
         /// </summary>
-        public string Group { get; set; }
+        public string Group { get; set; } = string.Empty;
 
         /// <summary>
         /// Image for notification.
         /// </summary>
         public NotificationImage Image { get; set; } = new NotificationImage();
+
+        /// <summary>
+        /// Android specific properties.
+        /// </summary>
+        public AndroidOptions Android { get; set; } = new();
 
         /// <summary>
         /// iOS specific properties.

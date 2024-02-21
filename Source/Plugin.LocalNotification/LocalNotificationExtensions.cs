@@ -38,20 +38,10 @@ namespace Plugin.LocalNotification
                 {
                     android.OnCreate((activity, savedInstanceState) =>
                     {
-                        if (localNotificationBuilder.AndroidBuilder.ChannelRequestList.Any())
-                        {
-                            foreach (var channelRequest in localNotificationBuilder.AndroidBuilder.ChannelRequestList)
-                            {
-                                LocalNotificationCenter.CreateNotificationChannel(channelRequest);
-                            }
-                        }
-                        if (localNotificationBuilder.AndroidBuilder.GroupChannelRequestList.Any())
-                        {
-                            foreach (var groupChannelReques in localNotificationBuilder.AndroidBuilder.GroupChannelRequestList)
-                            {
-                                LocalNotificationCenter.CreateNotificationChannelGroup(groupChannelReques);
-                            }
-                        }
+                        LocalNotificationCenter.CreateNotificationChannelGroups(localNotificationBuilder.AndroidBuilder.GroupChannelRequestList);
+
+                        LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);
+
                         LocalNotificationCenter.NotifyNotificationTapped(activity.Intent);
                     })
                     .OnNewIntent((activity, intent) =>
@@ -64,7 +54,7 @@ namespace Plugin.LocalNotification
                 {
                     iOS.FinishedLaunching((application, _) =>
                     {
-                        LocalNotificationCenter.SetUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);                        
+                        LocalNotificationCenter.SetUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);
                         return true;
                     });
                     iOS.WillEnterForeground(application =>

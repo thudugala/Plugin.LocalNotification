@@ -5,6 +5,9 @@
     /// </summary>
     public class NotificationChannelRequest
     {
+        private string id = AndroidOptions.DefaultChannelId;
+        private string name = AndroidOptions.DefaultChannelName;
+
         /// <summary>
         /// Sets or gets, the level of interruption of this notification channel.
         /// </summary>
@@ -14,33 +17,41 @@
         /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
         /// Also, NotificationRequest.Android.ChannelId must be set to the same Id to target this channel.
         /// </summary>
-        public string Id { get; set; } = AndroidOptions.DefaultChannelId;
+        public string Id
+        {
+            get => string.IsNullOrWhiteSpace(id) ? AndroidOptions.DefaultChannelId : id;
+            set => id = string.IsNullOrWhiteSpace(value) ? AndroidOptions.DefaultChannelId : value;
+        }
 
         /// <summary>
         /// Sets or gets, the user visible name of this channel, default is General.
         /// </summary>
-        public string Name { get; set; } = AndroidOptions.DefaultChannelName;
+        public string Name
+        {
+            get => string.IsNullOrWhiteSpace(name) ? AndroidOptions.DefaultChannelName : name;
+            set => name = string.IsNullOrWhiteSpace(value) ? AndroidOptions.DefaultChannelName : value;
+        }
 
         /// <summary>
         /// Sets or gets, the user visible description of this channel.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets or gets, what group this channel belongs to.
         /// </summary>
-        public string Group { get; set; }
+        public string Group { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets or gets, the notification light color for notifications posted to this channel,
         /// if the device supports that feature
         /// </summary>
-        public AndroidColor LightColor { get; set; }
+        public AndroidColor LightColor { get; set; } = new();
 
         /// <summary>
         /// Sound file name for the notification.
         /// </summary>
-        public string Sound { get; set; }
+        public string Sound { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel should play sound.
@@ -75,6 +86,6 @@
         /// <summary>
         /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
         /// </summary>
-        public bool CanBypassDnd { get; set; } = false;            
+        public bool CanBypassDnd { get; set; } = false;
     }
 }

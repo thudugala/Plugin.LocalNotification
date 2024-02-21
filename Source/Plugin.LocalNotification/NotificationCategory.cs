@@ -20,7 +20,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         ///
         /// </summary>
-        public HashSet<NotificationAction> ActionList { get; set; }
+        public HashSet<NotificationAction> ActionList { get; set; } = new();
 
         /// <summary>
         /// A unique identifier for the Category
@@ -37,6 +37,13 @@ namespace Plugin.LocalNotification
             return other != null &&
                    CategoryType == other.CategoryType;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj) => Equals(obj as NotificationCategory);
 
         /// <summary>
         ///

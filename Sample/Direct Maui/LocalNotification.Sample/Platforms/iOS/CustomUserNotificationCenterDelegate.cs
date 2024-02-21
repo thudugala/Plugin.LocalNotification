@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification.Platforms;
+﻿using Plugin.LocalNotification;
+using Plugin.LocalNotification.Platforms;
 using UserNotifications;
 
 namespace LocalNotification.Sample;
@@ -12,7 +13,7 @@ public class CustomUserNotificationCenterDelegate : UserNotificationCenterDelega
         // if the Notification is type Plugin.LocalNotification.NotificationRequest
         // call the base method, else handel it by your self.
 
-        var notificationRequest = TryGetDefaultIOsNotificationService().GetRequest(response.Notification.Request.Content);
+        var notificationRequest = LocalNotificationCenter.GetRequest(response.Notification.Request.Content);
         if (notificationRequest != null)
         {
             base.DidReceiveNotificationResponse(center, response, completionHandler);
@@ -25,7 +26,12 @@ public class CustomUserNotificationCenterDelegate : UserNotificationCenterDelega
         // if the Notification is type Plugin.LocalNotification.NotificationRequest
         // call the base method, else handel it by your self.
 
-        var notificationRequest = TryGetDefaultIOsNotificationService().GetRequest(notification?.Request.Content);
+        if (notification is null)
+        {
+            return;
+        }
+
+        var notificationRequest = LocalNotificationCenter.GetRequest(notification?.Request.Content);
 
         if (notificationRequest != null)
         {

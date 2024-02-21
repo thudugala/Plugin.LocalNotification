@@ -11,6 +11,11 @@ namespace Plugin.LocalNotification
     public interface INotificationService
     {
         /// <summary>
+        /// Gets a value indicating whether local notification is supported on this device.
+        /// </summary>
+        bool IsSupported { get; }
+
+        /// <summary>
         /// fires when notification popup action is tapped.
         /// </summary>
         event NotificationActionTappedEventHandler NotificationActionTapped;
@@ -67,6 +72,11 @@ namespace Plugin.LocalNotification
         void OnNotificationReceived(NotificationEventArgs e);
 
         /// <summary>
+        /// Internal use Only
+        /// </summary>
+        void OnNotificationsDisabled();
+
+        /// <summary>
         /// Get pending notifications
         /// </summary>
         /// <returns></returns>
@@ -96,6 +106,8 @@ namespace Plugin.LocalNotification
 
         /// <summary>
         /// Request Notification Permission
+        /// Ask the user for permission to show notifications on iOS 10.0+ and Android 33+.
+        /// Returns true if Allowed.
         /// </summary>
         /// <returns></returns>
         Task<bool> RequestNotificationPermission(NotificationPermission permission = null);

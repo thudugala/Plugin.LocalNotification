@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Hosting;
 #endif
 using System;
-using System.Linq;
 
 namespace Plugin.LocalNotification
 {
@@ -23,10 +22,9 @@ namespace Plugin.LocalNotification
             LocalNotificationCenter.Logger = services.GetService<ILogger<LocalNotificationCenter>>();
 
             var builder = services.GetService<LocalNotificationBuilder>();
-            LocalNotificationCenter.Serializer = builder.Serializer;
-
-            if (builder.CategorySet != null && builder.CategorySet.Any())
+            if (builder != null)
             {
+                LocalNotificationCenter.Serializer = builder.Serializer;
                 LocalNotificationCenter.Current.RegisterCategoryList(builder.CategorySet);
             }
         }
