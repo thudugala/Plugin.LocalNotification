@@ -475,18 +475,7 @@ namespace Plugin.LocalNotification.Platforms
 
             if (request.Android.VibrationPattern is not null)
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O) //O == API level 26.0
-                {
-                    // play vibration
-                    var vibrator = Platform.AppContext.GetSystemService(Context.VibratorService) as Vibrator;
-                    if (vibrator == null)
-                        LocalNotificationCenter.Log("Unable to get the Vibrator Service");
-                    else
-                        vibrator.Vibrate(VibrationEffect.CreateWaveform(request.Android.VibrationPattern, -1));
-
-                } else {
-                    builder.SetVibrate(request.Android.VibrationPattern);
-                }
+                builder.SetVibrate(request.Android.VibrationPattern);
             }
 
             if (request.Android.ProgressBar is not null)
