@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification
         /// Notify Local Notification Tapped.
         /// </summary>
         /// <param name="intent"></param>
-        internal static void NotifyNotificationTapped(Intent? intent)
+        public static void NotifyNotificationTapped(Intent? intent)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace Plugin.LocalNotification
         /// This way, users can easily identify and control multiple notification channels that have identical names.
         /// </summary>
         /// <param name="groupChannelRequests"></param>
-        internal static void CreateNotificationChannelGroups(IList<NotificationChannelGroupRequest> groupChannelRequests)
+        public static void CreateNotificationChannelGroups(IList<NotificationChannelGroupRequest> groupChannelRequests)
         {
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {
@@ -77,7 +77,7 @@ namespace Plugin.LocalNotification
         /// Create Notification Channel when API >= 26.
         /// </summary>
         /// <param name="channelRequests"></param>
-        internal static void CreateNotificationChannels(IList<NotificationChannelRequest> channelRequests)
+        public static void CreateNotificationChannels(IList<NotificationChannelRequest> channelRequests)
         {
             if (!OperatingSystem.IsAndroidVersionAtLeast(26))
             {

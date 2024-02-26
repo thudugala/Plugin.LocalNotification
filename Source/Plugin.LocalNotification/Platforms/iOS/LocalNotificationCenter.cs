@@ -16,7 +16,7 @@ namespace Plugin.LocalNotification
         /// and set it using this method
         /// </summary>
         /// <param name="notificationDelegate"></param>
-        internal static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null)
+        public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null)
         {
             UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
         }
@@ -51,7 +51,7 @@ namespace Plugin.LocalNotification
         /// Reset Application Icon Badge Number when there are no notifications.
         /// </summary>
         /// <param name="uiApplication"></param>
-        internal static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
+        public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
         {
             try
             {
