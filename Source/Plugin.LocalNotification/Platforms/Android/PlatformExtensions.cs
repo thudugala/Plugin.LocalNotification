@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using AndroidX.Core.App;
 using Plugin.LocalNotification.AndroidOption;
 using Application = Android.App.Application;
@@ -145,6 +146,25 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             return type;
+        }
+
+        internal static bool IsValidResource(this Android.Net.Uri uri, Context context)
+        {
+            var contentResolver = context.ContentResolver;
+            if (contentResolver is null)
+            {
+                return false;
+            }
+
+            try
+            {
+                contentResolver.OpenInputStream(uri)?.Close();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
