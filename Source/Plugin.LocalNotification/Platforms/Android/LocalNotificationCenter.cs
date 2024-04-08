@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Media;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.AndroidOption;
@@ -151,11 +152,18 @@ namespace Plugin.LocalNotification
                 return Android.Net.Uri.Parse(soundFileName);
             }
 
-            soundFileName = Path.GetFileNameWithoutExtension(soundFileName);
-            soundFileName =
-                $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundFileName}";
+            var soundNameWithoutExtension = Path.GetFileNameWithoutExtension(soundFileName);
+            var soundFilePath = $"{ContentResolver.SchemeAndroidResource}://{Application.Context.PackageName}/raw/{soundNameWithoutExtension}";
+            var soundFileUri = Android.Net.Uri.Parse(soundFilePath);
 
-            return Android.Net.Uri.Parse(soundFileName);
+#if DEBUG
+            if (soundFileUri is null || !soundFileUri.IsValidResource(Application.Context))
+            {
+                throw new ArgumentException($"Invalid sound file: {soundFileName}. Your sound has to be AndroidResource stored in Platforms/Android/Resources/raw");
+            }
+#endif
+
+            return soundFileUri;
         }
 
         /// <summary>
