@@ -384,7 +384,7 @@ namespace Plugin.LocalNotification.Platforms
 
                 var nativeAction = UNNotificationAction.FromIdentifier(
                     notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
-                    notificationAction.iOS.Action.ToNative());
+                    notificationAction.IOS.Action.ToNative());
                 nativeActionList.Add(nativeAction);
             }
 

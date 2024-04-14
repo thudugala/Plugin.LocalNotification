@@ -803,7 +803,28 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             var status = await Permissions.RequestAsync<NotificationPerms>();
-            return status == PermissionStatus.Granted;
+            if(status != PermissionStatus.Granted)
+            {
+                return false;
+            }
+
+            if (!permission.Android.RequestPermissionToScheduleExactAlarm)
+            {
+                return true;
+            }
+
+            var canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+
+            if (!canScheduleExactAlarms)
+            {
+                var uri = Android.Net.Uri.Parse($"package:{Application.Context.PackageName}");
+                var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
+                Application.Context.StartActivity(intent);
+
+                canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+            }
+                       
+            return canScheduleExactAlarms;
         }
     }
 }

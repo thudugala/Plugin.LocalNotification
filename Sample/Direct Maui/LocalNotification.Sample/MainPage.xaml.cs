@@ -176,7 +176,13 @@ public partial class MainPage : ContentPage
         {
             if (await _notificationService.AreNotificationsEnabled() == false)
             {
-                await _notificationService.RequestNotificationPermission();
+                await _notificationService.RequestNotificationPermission(new NotificationPermission
+                {
+                    Android =
+                    {
+                        RequestPermissionToScheduleExactAlarm = true
+                    }
+                });
             }
 
             var ff = await _notificationService.Show(request);

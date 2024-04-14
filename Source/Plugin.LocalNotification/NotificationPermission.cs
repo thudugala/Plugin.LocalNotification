@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification.iOSOption;
+﻿using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
 
 namespace Plugin.LocalNotification
 {
@@ -11,6 +12,11 @@ namespace Plugin.LocalNotification
         ///
         /// </summary>
         public bool AskPermission { get; set; } = true;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AndroidNotificationPermission Android { get; set; } = new();
 
         /// <summary>
         ///

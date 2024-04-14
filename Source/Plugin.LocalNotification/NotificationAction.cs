@@ -22,7 +22,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// iOS specific properties.
         /// </summary>
-        public iOSAction iOS { get; set; } = new();
+        public iOSAction IOS { get; set; } = new();
 
         /// <summary>
         /// Android specific properties.
