@@ -154,13 +154,6 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
-        /// <inheritdoc />
-        public async Task<bool> AreNotificationsEnabled()
-        {
-            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
-            return settings.AlertSetting == UNNotificationSetting.Enabled;
-        }
-
         /// <summary>
         ///
         /// </summary>
@@ -415,7 +408,14 @@ namespace Plugin.LocalNotification.Platforms
 
             return delivered.Select(r => LocalNotificationCenter.GetRequest(r.Request.Content) ?? new NotificationRequest()).ToList();
         }
-                
+
+        /// <inheritdoc />
+        public async Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null)
+        {
+            var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+            return settings.AlertSetting == UNNotificationSetting.Enabled;
+        }
+
         /// <inheritdoc />
         public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
         {
@@ -428,7 +428,7 @@ namespace Plugin.LocalNotification.Platforms
                     return false;
                 }
 
-                var allowed = await AreNotificationsEnabled();
+                var allowed = await AreNotificationsEnabled(permission);
                 if (allowed)
                 {
                     return true;

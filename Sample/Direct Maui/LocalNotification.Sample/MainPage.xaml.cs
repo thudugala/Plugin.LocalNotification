@@ -1,4 +1,9 @@
-﻿using Plugin.LocalNotification;
+﻿#if ANDROID
+using Android.App;
+using Android.Content;
+#endif
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using System.Text;
@@ -174,16 +179,39 @@ public partial class MainPage : ContentPage
 
         try
         {
+            //var permissionRequest = new NotificationPermission
+            //{
+            //    Android =
+            //        {
+            //            RequestPermissionToScheduleExactAlarm = true
+            //        }
+            //};
+
+            //if (await _notificationService.AreNotificationsEnabled(permissionRequest) == false)
+            //{
+            //    await _notificationService.RequestNotificationPermission(permissionRequest);
+            //}
+
             if (await _notificationService.AreNotificationsEnabled() == false)
             {
-                await _notificationService.RequestNotificationPermission(new NotificationPermission
-                {
-                    Android =
-                    {
-                        RequestPermissionToScheduleExactAlarm = true
-                    }
-                });
+                await _notificationService.RequestNotificationPermission();
             }
+
+            //#if ANDROID
+
+            //            var myAlarmManager = AlarmManager.FromContext(Android.App.Application.Context);
+            //            var canScheduleExactAlarms = myAlarmManager?.CanScheduleExactAlarms() ?? false;
+
+            //            if (!canScheduleExactAlarms)
+            //            {
+            //                var uri = Android.Net.Uri.Parse($"package:{Android.App.Application.Context.PackageName}");
+            //                var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
+            //                Android.App.Application.Context.StartActivity(intent);
+
+            //                canScheduleExactAlarms = myAlarmManager?.CanScheduleExactAlarms() ?? false;
+            //            }
+
+            //#endif
 
             var ff = await _notificationService.Show(request);
 

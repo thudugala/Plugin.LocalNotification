@@ -24,11 +24,6 @@ namespace Plugin.LocalNotification.Platforms
             _notifier = ToastNotificationManagerCompat.CreateToastNotifier();
         }
 
-        public Task<bool> AreNotificationsEnabled()
-        {
-            return _notifier.Setting == NotificationSetting.Enabled ? Task.FromResult(true) : Task.FromResult(false);
-        }
-
         public bool Cancel(params int[] notificationIdList)
         {
             var scheduledToasts = _notifier.GetScheduledToastNotifications();
@@ -152,6 +147,11 @@ namespace Plugin.LocalNotification.Platforms
             {
                 _categoryList.Add(category);
             }
+        }
+
+        public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null)
+        {
+            return _notifier.Setting == NotificationSetting.Enabled ? Task.FromResult(true) : Task.FromResult(false);
         }
 
         public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)

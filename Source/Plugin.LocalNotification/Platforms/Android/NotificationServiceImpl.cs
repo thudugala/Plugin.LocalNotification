@@ -605,17 +605,7 @@ namespace Plugin.LocalNotification.Platforms
 
             return true;
         }
-
-        /// <inheritdoc />
-        public Task<bool> AreNotificationsEnabled()
-        {
-            return MyNotificationManager is null
-                ? Task.FromResult(false)
-                : !OperatingSystem.IsAndroidVersionAtLeast(24)
-                ? Task.FromResult(true)
-                : Task.FromResult(MyNotificationManager.AreNotificationsEnabled());
-        }
-
+                
         /// <summary>
         ///
         /// </summary>
@@ -787,41 +777,87 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
+        private NotificationPermission _notificationPermission = new();
+
         /// <inheritdoc />
-        public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
+        public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null)
         {
-            permission ??= new NotificationPermission();
+            _notificationPermission = permission is not null ? permission : new NotificationPermission();
+
+            if (MyNotificationManager is null)
+            {
+                return Task.FromResult(false);
+            }
+
+            if(!OperatingSystem.IsAndroidVersionAtLeast(24))
+            {
+                return Task.FromResult(true);
+            }
+
+            if(!MyNotificationManager.AreNotificationsEnabled())
+            {
+                return Task.FromResult(false);
+            }
 
             if (!OperatingSystem.IsAndroidVersionAtLeast(33))
             {
-                return false;
+                return Task.FromResult(true);
             }
 
-            if (!permission.AskPermission)
+            if (_notificationPermission.Android.RequestPermissionToScheduleExactAlarm)
             {
-                return false;
+                var canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+
+                return Task.FromResult(canScheduleExactAlarms);
             }
 
-            var status = await Permissions.RequestAsync<NotificationPerms>();
-            if(status != PermissionStatus.Granted)
-            {
-                return false;
-            }
+            return Task.FromResult(true);
+        }
 
-            if (!permission.Android.RequestPermissionToScheduleExactAlarm)
+        /// <inheritdoc />
+        public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
+        {
+            _notificationPermission = permission is not null ? permission : new NotificationPermission();
+
+            var allowed = await AreNotificationsEnabled(_notificationPermission);
+            if (allowed)
             {
                 return true;
             }
 
+            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
+            {
+                return true;
+            }
+
+            if (!_notificationPermission.AskPermission)
+            {
+                return false;
+            }
+                        
+            var status = await Permissions.RequestAsync<NotificationPerms>();
+            if (status != PermissionStatus.Granted)
+            {
+                return false;
+            }
+
+            LocalNotificationCenter.Log($"Request Permission To Schedule Exact Alarm: {_notificationPermission.Android.RequestPermissionToScheduleExactAlarm}");
+
+            if (!_notificationPermission.Android.RequestPermissionToScheduleExactAlarm)
+            {
+                return true;
+            }
+                       
             var canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+
+            LocalNotificationCenter.Log($"Can Schedule Exact Alarms: {canScheduleExactAlarms}");
 
             if (!canScheduleExactAlarms)
             {
                 var uri = Android.Net.Uri.Parse($"package:{Application.Context.PackageName}");
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
+                intent.AddFlags(ActivityFlags.NewTask);
                 Application.Context.StartActivity(intent);
-
-                canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
             }
                        
             return canScheduleExactAlarms;

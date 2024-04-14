@@ -99,7 +99,7 @@ namespace Plugin.LocalNotification
         /// Returns whether user as allowed Notifications
         /// </summary>
         /// <returns></returns>
-        Task<bool> AreNotificationsEnabled();
+        Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null);
 
         /// <summary>
         /// Request Notification Permission
