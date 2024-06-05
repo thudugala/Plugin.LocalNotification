@@ -375,13 +375,36 @@ namespace Plugin.LocalNotification.Platforms
                     continue;
                 }
 
-                var nativeAction = UNNotificationAction.FromIdentifier(
-                    notificationAction.ActionId.ToString(CultureInfo.InvariantCulture), notificationAction.Title,
-                    notificationAction.IOS.Action.ToNative());
-                nativeActionList.Add(nativeAction);
+                if (OperatingSystem.IsIOSVersionAtLeast(15))
+                {
+                    var icon = notificationAction.IOS.Icon.Type switch
+                    {
+                        iOSActionIconType.None => null,
+                        iOSActionIconType.System => UNNotificationActionIcon.CreateFromSystem(notificationAction.IOS.Icon.Name),
+                        iOSActionIconType.Template => UNNotificationActionIcon.CreateFromTemplate(notificationAction.IOS.Icon.Name),
+                        _ => null,
+                    };
+
+                    var nativeAction = UNNotificationAction.FromIdentifier(
+                    notificationAction.ActionId.ToString(CultureInfo.InvariantCulture),
+                    notificationAction.Title,
+                    notificationAction.IOS.Action.ToNative(),
+                    icon);
+
+                    nativeActionList.Add(nativeAction);
+                }
+                else
+                {
+                    var nativeAction = UNNotificationAction.FromIdentifier(
+                        notificationAction.ActionId.ToString(CultureInfo.InvariantCulture),
+                        notificationAction.Title,
+                        notificationAction.IOS.Action.ToNative());
+
+                    nativeActionList.Add(nativeAction);
+                }
             }
 
-            if (nativeActionList.Any() == false)
+            if (nativeActionList.Count > 0)
             {
                 return null;
             }

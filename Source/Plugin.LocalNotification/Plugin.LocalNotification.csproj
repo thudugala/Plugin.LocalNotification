@@ -20,7 +20,7 @@
     <Description>The local notification plugin provides a way to show local notifications from MAUI apps.</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-    <Version>11.1.2</Version>
+    <Version>11.1.3</Version>
     <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
     <IsPackable>True</IsPackable>
 
