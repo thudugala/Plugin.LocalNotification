@@ -35,5 +35,5 @@
           path: Source/Plugin.LocalNotification/bin/Release/
 
       - name: Push generated package to GitHub registry
-        run: dotnet nuget push "**/*.nupkg" --source "GitHub" --skip-duplicate
+        run: dotnet nuget push "**/*.nupkg" --api-key ${{ secrets.Elvin_Package_Registry }} --source "GitHub" --skip-duplicate
 

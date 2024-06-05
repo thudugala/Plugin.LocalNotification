@@ -1,5 +1,8 @@
 ﻿namespace Plugin.LocalNotification.iOSOption
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum iOSActionIconType
     {
         /// <summary>
