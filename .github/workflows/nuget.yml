@@ -1,4 +1,4 @@
-  name: Nuget Build 
+  name: Nuget Build
 
   on: [push]
 
@@ -9,18 +9,10 @@
       steps:
       - uses: actions/checkout@v3
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.2.0
-
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.x
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'microsoft'
-          java-version: '17'
 
       - name: Install MAUI Workloads
         run: |
@@ -28,23 +20,20 @@
           dotnet workload install ios --ignore-failed-sources
           dotnet workload install maui --ignore-failed-sources
 
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v1.1
-                  
       - name: Add private GitHub registry to NuGet
-        run: nuget sources add -name "GitHub" -source "https://nuget.pkg.github.com/thudugala/index.json" -userName thudugala -password ${{ secrets.Elvin_Package_Registry }}
+        run: dotnet nuget add source "https://nuget.pkg.github.com/thudugala/index.json" --name "GitHub" --userName thudugala --password ${{ secrets.Elvin_Package_Registry }}
 
       - name : restore Plugin.LocalNotification.sln
-        run: nuget restore Source/Plugin.LocalNotification.sln
+        run: dotnet restore Source/Plugin.LocalNotification.sln
 
       - name: build Plugin.LocalNotification.csproj
-        run: msbuild Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+        run: dotnet build Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj -c Release
 
       - uses: actions/upload-artifact@v3.1.0
         with:
           name: Plugin.LocalNotification
-          path: Source/Plugin.LocalNotification/bin/Debug/
+          path: Source/Plugin.LocalNotification/bin/Release/
 
       - name: Push generated package to GitHub registry
-        run: nuget push **/*.nupkg -Source "GitHub" -SkipDuplicate
+        run: dotnet nuget push "**/*.nupkg" --source "GitHub" --skip-duplicate
 
