@@ -21,7 +21,7 @@
           dotnet workload install maui --ignore-failed-sources
 
       - name: Add private GitHub registry to NuGet
-        run: dotnet nuget add source "https://nuget.pkg.github.com/thudugala/index.json" --name "GitHub" --username thudugala --password ${{ secrets.Elvin_Package_Registry }}
+        run: dotnet nuget add source "https://nuget.pkg.github.com/thudugala/index.json" --name "GitHub" --username thudugala --password ${{ secrets.GITHUB_TOKEN }}
 
       - name : restore Plugin.LocalNotification.sln
         run: dotnet restore Source/Plugin.LocalNotification.sln
