@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.iOSOption;
 
 namespace LocalNotification.Sample;
 
@@ -21,8 +22,8 @@ public static class MauiProgram
             {
                 config.AddCategory(new NotificationCategory(NotificationCategoryType.Status)
                 {
-                    ActionList = new HashSet<NotificationAction>(new List<NotificationAction>()
-                        {
+                    ActionList = 
+                        [
                             new(100)
                             {
                                 Title = "Hello",
@@ -36,7 +37,7 @@ public static class MauiProgram
                                 },
                                 IOS =
                                 {
-                                    Action = Plugin.LocalNotification.iOSOption.iOSActionType.Foreground
+                                    Action = iOSActionType.Foreground
                                 },
                                 Windows =
                                 {
@@ -56,14 +57,14 @@ public static class MauiProgram
                                 },
                                 IOS =
                                 {
-                                    Action = Plugin.LocalNotification.iOSOption.iOSActionType.Destructive
+                                    Action = iOSActionType.Destructive
                                 },
                                 Windows =
                                 {
                                     LaunchAppWhenTapped = false
                                 }
                             }
-                        })
+                        ]
                 })
                 .AddAndroid(android =>
                 {
