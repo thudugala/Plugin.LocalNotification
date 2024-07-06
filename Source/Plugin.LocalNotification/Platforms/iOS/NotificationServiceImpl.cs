@@ -27,22 +27,13 @@ namespace Plugin.LocalNotification.Platforms
         public event NotificationDisabledEventHandler? NotificationsDisabled;
 
         /// <inheritdoc />
-        public void OnNotificationReceived(NotificationEventArgs e)
-        {
-            NotificationReceived?.Invoke(e);
-        }
+        public void OnNotificationReceived(NotificationEventArgs e) => NotificationReceived?.Invoke(e);
 
         /// <inheritdoc />
-        public void OnNotificationActionTapped(NotificationActionEventArgs e)
-        {
-            NotificationActionTapped?.Invoke(e);
-        }
+        public void OnNotificationActionTapped(NotificationActionEventArgs e) => NotificationActionTapped?.Invoke(e);
 
         /// <inheritdoc />
-        public void OnNotificationsDisabled()
-        {
-            NotificationsDisabled?.Invoke();
-        }
+        public void OnNotificationsDisabled() => NotificationsDisabled?.Invoke();
 
         /// <inheritdoc />
         public bool Cancel(params int[] notificationIdList)
@@ -90,6 +81,11 @@ namespace Plugin.LocalNotification.Platforms
             UNNotificationTrigger? trigger = null;
             try
             {
+                if (!OperatingSystem.IsOSPlatform("IOS"))
+                {
+                    return false;
+                }
+
                 if (request is null)
                 {
                     return false;
@@ -111,16 +107,16 @@ namespace Plugin.LocalNotification.Platforms
                 if (request.Geofence.IsGeofence)
                 {
                     var center = new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude);
-
+                                        
                     var regin = new CLCircularRegion(center,
-                                     request.Geofence.RadiusInMeters,
-                                     notificationId)
+                                    request.Geofence.RadiusInMeters,
+                                    notificationId)
                     {
                         NotifyOnEntry = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
                         NotifyOnExit = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit,
                     };
 
-                    trigger = UNLocationNotificationTrigger.CreateTrigger(regin, request.Geofence.iOS.Repeats);
+                    trigger = UNLocationNotificationTrigger.CreateTrigger(regin, request.Geofence.IOS.Repeats);                    
                 }
                 else
                 {
@@ -161,6 +157,11 @@ namespace Plugin.LocalNotification.Platforms
         /// <returns></returns>
         public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
         {
+            if (!OperatingSystem.IsOSPlatform("IOS"))
+            {
+                return new UNMutableNotificationContent();
+            }
+
             var userInfoDictionary = new NSMutableDictionary();
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
             userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(LocalNotificationCenter.ReturnRequest));
@@ -186,7 +187,7 @@ namespace Plugin.LocalNotification.Platforms
                 var nativeImage = await GetNativeImage(request.Image);
                 if (nativeImage != null)
                 {
-                    content.Attachments = new[] { nativeImage };
+                    content.Attachments = [nativeImage];
                 }
             }
 
@@ -201,15 +202,14 @@ namespace Plugin.LocalNotification.Platforms
             }
 
             if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
-            {
-                if (!OperatingSystem.IsIOSVersionAtLeast(15))
+            {                
+                if (OperatingSystem.IsOSPlatform("IOS") &&
+                    OperatingSystem.IsIOSVersionAtLeast(12) &&
+                    !OperatingSystem.IsIOSVersionAtLeast(15))
                 {
-                    if (OperatingSystem.IsIOSVersionAtLeast(12))
-                    {
-                        content.SummaryArgument = request.iOS.SummaryArgument;
-                        content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
-                    }
-                }
+                    content.SummaryArgument = request.iOS.SummaryArgument;
+                    content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+                }                
             }
 
             content.Sound = request.Silent ?
@@ -467,7 +467,7 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 if (alertsAllowed)
-                {                    
+                {
                     if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
                     {
                         return false;

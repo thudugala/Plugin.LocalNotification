@@ -12,7 +12,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// Register notification categories and their corresponding actions
         /// </summary>
-        internal HashSet<NotificationCategory> CategorySet { get; } = new ();
+        internal HashSet<NotificationCategory> CategorySet { get; } = [];
 
         /// <summary>
         ///

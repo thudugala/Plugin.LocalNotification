@@ -50,9 +50,7 @@ namespace Plugin.LocalNotification.Platforms
         /// <param name="type"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static NotificationImportance ToNative(this AndroidImportance type)
-        {
-            return !OperatingSystem.IsAndroidVersionAtLeast(26)
+        public static NotificationImportance ToNative(this AndroidImportance type) => !OperatingSystem.IsAndroidVersionAtLeast(26)
                 ? default
                 : type switch
                 {
@@ -65,72 +63,59 @@ namespace Plugin.LocalNotification.Platforms
                     AndroidImportance.Max => NotificationImportance.Max,
                     _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
                 };
-        }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static NotificationVisibility ToNative(this AndroidVisibilityType type)
+        public static NotificationVisibility ToNative(this AndroidVisibilityType type) => type switch
         {
-            return type switch
-            {
-                AndroidVisibilityType.Private => NotificationVisibility.Private,
-                AndroidVisibilityType.Public => NotificationVisibility.Public,
-                AndroidVisibilityType.Secret => NotificationVisibility.Secret,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
-        }
+            AndroidVisibilityType.Private => NotificationVisibility.Private,
+            AndroidVisibilityType.Public => NotificationVisibility.Public,
+            AndroidVisibilityType.Secret => NotificationVisibility.Secret,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string ToNative(this NotificationCategoryType type)
+        public static string ToNative(this NotificationCategoryType type) => type switch
         {
-            return type switch
-            {
-                NotificationCategoryType.Alarm => NotificationCompat.CategoryAlarm,
-                NotificationCategoryType.Status => NotificationCompat.CategoryStatus,
-                NotificationCategoryType.Reminder => NotificationCompat.CategoryReminder,
-                NotificationCategoryType.Event => NotificationCompat.CategoryEvent,
-                NotificationCategoryType.Error => NotificationCompat.CategoryError,
-                NotificationCategoryType.Progress => NotificationCompat.CategoryProgress,
-                NotificationCategoryType.Promo => NotificationCompat.CategoryPromo,
-                NotificationCategoryType.Recommendation => NotificationCompat.CategoryRecommendation,
-                NotificationCategoryType.Service => NotificationCompat.CategoryService,
-                _ => NotificationCompat.CategoryStatus
-            };
-        }
+            NotificationCategoryType.Alarm => NotificationCompat.CategoryAlarm,
+            NotificationCategoryType.Status => NotificationCompat.CategoryStatus,
+            NotificationCategoryType.Reminder => NotificationCompat.CategoryReminder,
+            NotificationCategoryType.Event => NotificationCompat.CategoryEvent,
+            NotificationCategoryType.Error => NotificationCompat.CategoryError,
+            NotificationCategoryType.Progress => NotificationCompat.CategoryProgress,
+            NotificationCategoryType.Promo => NotificationCompat.CategoryPromo,
+            NotificationCategoryType.Recommendation => NotificationCompat.CategoryRecommendation,
+            NotificationCategoryType.Service => NotificationCompat.CategoryService,
+            _ => NotificationCompat.CategoryStatus
+        };
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static AlarmType ToNative(this AndroidAlarmType type)
+        public static AlarmType ToNative(this AndroidAlarmType type) => type switch
         {
-            return type switch
-            {
-                AndroidAlarmType.Rtc => AlarmType.Rtc,
-                AndroidAlarmType.RtcWakeup => AlarmType.RtcWakeup,
-                AndroidAlarmType.ElapsedRealtime => AlarmType.ElapsedRealtime,
-                AndroidAlarmType.ElapsedRealtimeWakeup => AlarmType.ElapsedRealtimeWakeup,
-                _ => AlarmType.Rtc
-            };
-        }
+            AndroidAlarmType.Rtc => AlarmType.Rtc,
+            AndroidAlarmType.RtcWakeup => AlarmType.RtcWakeup,
+            AndroidAlarmType.ElapsedRealtime => AlarmType.ElapsedRealtime,
+            AndroidAlarmType.ElapsedRealtimeWakeup => AlarmType.ElapsedRealtimeWakeup,
+            _ => AlarmType.Rtc
+        };
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static PendingIntentFlags ToNative(this AndroidPendingIntentFlags type)
-        {
-            return ((PendingIntentFlags)type).SetImmutableIfNeeded();
-        }
+        public static PendingIntentFlags ToNative(this AndroidPendingIntentFlags type) => ((PendingIntentFlags)type).SetImmutableIfNeeded();
 
         /// <summary>
         ///

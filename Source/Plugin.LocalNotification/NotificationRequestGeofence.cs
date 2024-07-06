@@ -21,7 +21,7 @@ namespace Plugin.LocalNotification
         /// <summary>
         /// iOS specific properties.
         /// </summary>
-        public iOSGeofenceOptions iOS { get; set; } = new();
+        public iOSGeofenceOptions IOS { get; set; } = new();
 
         /// <summary>
         /// The center of the geofence

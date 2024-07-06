@@ -45,7 +45,7 @@ namespace Plugin.LocalNotification.Platforms
         internal void RemoveByPendingIdList(params int[] notificationIdList)
         {
             var itemList = GetPendingList();
-            itemList.RemoveAll(r => notificationIdList.Contains(r.NotificationId));
+            _ = itemList.RemoveAll(r => notificationIdList.Contains(r.NotificationId));
             SetPendingList(itemList);
         }
 
@@ -56,8 +56,8 @@ namespace Plugin.LocalNotification.Platforms
         internal void AddPendingRequest(NotificationRequest request)
         {
             var itemList = GetPendingList();
-            itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
-            itemList.RemoveAll(r =>
+            _ = itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
+            _ = itemList.RemoveAll(r =>
                 r.Schedule.NotifyTime.HasValue &&
                 r.Schedule.Android.IsValidNotifyTime(DateTime.Now, r.Schedule.NotifyTime) == false);
             itemList.Add(request);
@@ -71,7 +71,7 @@ namespace Plugin.LocalNotification.Platforms
         internal void AddDeliveredRequest(NotificationRequest request)
         {
             var itemList = GetDeliveredList();
-            itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
+            _ = itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
             itemList.Add(request);
             SetDeliveredList(itemList);
         }
@@ -79,18 +79,12 @@ namespace Plugin.LocalNotification.Platforms
         /// <summary>
         ///
         /// </summary>
-        internal void RemoveDeliveredList()
-        {
-            SetDeliveredList(null);
-        }
+        internal void RemoveDeliveredList() => SetDeliveredList(null);
 
         /// <summary>
         ///
         /// </summary>
-        internal void RemovePendingList()
-        {
-            SetPendingList(null);
-        }
+        internal void RemovePendingList() => SetPendingList(null);
 
         /// <summary>
         ///
@@ -99,7 +93,7 @@ namespace Plugin.LocalNotification.Platforms
         internal void RemoveByDeliveredIdList(params int[] notificationIdList)
         {
             var itemList = GetDeliveredList();
-            itemList.RemoveAll(r => notificationIdList.Contains(r.NotificationId));
+            _ = itemList.RemoveAll(r => notificationIdList.Contains(r.NotificationId));
             SetDeliveredList(itemList);
         }
 
@@ -113,10 +107,7 @@ namespace Plugin.LocalNotification.Platforms
             return itemList;
         }
 
-        private static void SetPendingList(List<NotificationRequest>? list)
-        {
-            SetList(PendingListKey, list);
-        }
+        private static void SetPendingList(List<NotificationRequest>? list) => SetList(PendingListKey, list);
 
         /// <summary>
         ///
@@ -128,10 +119,7 @@ namespace Plugin.LocalNotification.Platforms
             return itemList;
         }
 
-        private static void SetDeliveredList(List<NotificationRequest>? list)
-        {
-            SetList(DeliveredListKey, list);
-        }
+        private static void SetDeliveredList(List<NotificationRequest>? list) => SetList(DeliveredListKey, list);
 
         private static List<NotificationRequest> GetList(string key)
         {
@@ -156,7 +144,7 @@ namespace Plugin.LocalNotification.Platforms
                 {
                     jsonText = LocalNotificationCenter.GetRequestListSerialize(list);
                 }
-                editor?.PutString(key, jsonText);
+                _ = (editor?.PutString(key, jsonText));
                 editor?.Apply();
             }
         }

@@ -123,7 +123,7 @@ namespace Plugin.LocalNotification.Platforms
                 if (notificationRequest.Schedule.NotifyAutoCancelTime.HasValue &&
                     notificationRequest.Schedule.NotifyAutoCancelTime <= DateTime.Now)
                 {
-                    notificationService.Cancel(notificationRequest.NotificationId);
+                    _ = notificationService.Cancel(notificationRequest.NotificationId);
 
                     completionHandler?.Invoke(presentationOptions);
 
@@ -197,11 +197,8 @@ namespace Plugin.LocalNotification.Platforms
         ///
         /// </summary>
         /// <returns></returns>
-        internal static NotificationServiceImpl TryGetDefaultIOsNotificationService()
-        {
-            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
+        internal static NotificationServiceImpl TryGetDefaultIOsNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
-        }
     }
 }

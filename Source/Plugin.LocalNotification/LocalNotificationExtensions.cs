@@ -32,7 +32,7 @@ namespace Plugin.LocalNotification
                     {
                         LocalNotificationCenter.CreateNotificationChannelGroups(localNotificationBuilder.AndroidBuilder.GroupChannelRequestList);
 
-                        LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);                        
+                        LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);
 
                         LocalNotificationCenter.NotifyNotificationTapped(activity.Intent);
                     })

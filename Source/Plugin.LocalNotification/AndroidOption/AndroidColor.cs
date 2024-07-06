@@ -16,19 +16,13 @@
         ///
         /// </summary>
         /// <param name="argb"></param>
-        public AndroidColor(int argb)
-        {
-            Argb = argb;
-        }
+        public AndroidColor(int argb) => Argb = argb;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="resourceName"></param>
-        public AndroidColor(string resourceName)
-        {
-            ResourceName = resourceName;
-        }
+        public AndroidColor(string resourceName) => ResourceName = resourceName;
 
         /// <summary>
         /// if set, will ignore ResourceName

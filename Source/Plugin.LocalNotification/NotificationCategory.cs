@@ -24,11 +24,8 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(NotificationCategory? other)
-        {
-            return other != null &&
+        public bool Equals(NotificationCategory? other) => other != null &&
                    CategoryType == other.CategoryType;
-        }
 
         /// <summary>
         /// 
@@ -41,9 +38,6 @@ namespace Plugin.LocalNotification
         ///
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return CategoryType.GetHashCode();
-        }
+        public override int GetHashCode() => CategoryType.GetHashCode();
     }
 }

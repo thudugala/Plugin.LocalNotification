@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Content.Res;
 using Android.Media;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.AndroidOption;
@@ -12,7 +11,7 @@ using Application = Android.App.Application;
 namespace Plugin.LocalNotification
 {
     public partial class LocalNotificationCenter
-    {        
+    {
         /// <summary>
         /// Notify Local Notification Tapped.
         /// </summary>
@@ -22,7 +21,7 @@ namespace Plugin.LocalNotification
             try
             {
                 var actionId = intent?.GetIntExtra(ReturnRequestActionId, -1000);
-                if (actionId is null || actionId == -1000)
+                if (actionId is null or (-1000))
                 {
                     return;
                 }
@@ -71,7 +70,7 @@ namespace Plugin.LocalNotification
 #pragma warning disable CA1416 // Validate platform compatibility
             var channelGroups = groupChannelRequests.Select(gcr => new NotificationChannelGroup(gcr.Group, gcr.Name)).ToList();
 #pragma warning restore CA1416 // Validate platform compatibility
-            notificationManager.CreateNotificationChannelGroups(channelGroups);            
+            notificationManager.CreateNotificationChannelGroups(channelGroups);
         }
 
         /// <summary>
@@ -127,7 +126,7 @@ namespace Plugin.LocalNotification
                     channelRequest.VibrationPattern.Length != 0)
                 {
                     channel.SetVibrationPattern(channelRequest.VibrationPattern);
-                    channel.ShouldVibrate();
+                    _ = channel.ShouldVibrate();
                 }
 
                 channel.SetShowBadge(channelRequest.ShowBadge);
@@ -177,15 +176,15 @@ namespace Plugin.LocalNotification
             Logger?.Log(LogLevel, logMessage);
             if (LogLevel == LogLevel.Trace)
             {
-                Android.Util.Log.Debug(Application.Context.PackageName, logMessage);
+                _ = Android.Util.Log.Debug(Application.Context.PackageName, logMessage);
             }
             if (LogLevel == LogLevel.Information)
             {
-                Android.Util.Log.Info(Application.Context.PackageName, logMessage);
+                _ = Android.Util.Log.Info(Application.Context.PackageName, logMessage);
             }
             if (LogLevel == LogLevel.Warning)
             {
-                Android.Util.Log.Warn(Application.Context.PackageName, logMessage);
+                _ = Android.Util.Log.Warn(Application.Context.PackageName, logMessage);
             }
         }
 
@@ -199,7 +198,7 @@ namespace Plugin.LocalNotification
         {
             var logMessage = $"{callerName}: {message}";
             Logger?.LogError(ex, logMessage);
-            Android.Util.Log.Error(Application.Context.PackageName, $"{logMessage}: {ex.Message}");
+            _ = Android.Util.Log.Error(Application.Context.PackageName, $"{logMessage}: {ex.Message}");
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Plugin.LocalNotification.Platforms
                     LocalNotificationCenter.Log($"Notification {request.NotificationId} has no Geofence isformation");
                     return;
                 }
-                await notificationService.ShowNow(request);
+                _ = await notificationService.ShowNow(request);
             }
             catch (Exception ex)
             {
@@ -50,11 +50,8 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
-        private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
-        {
-            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
+        private static NotificationServiceImpl TryGetDefaultDroidNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
-        }
     }
 }

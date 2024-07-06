@@ -39,15 +39,15 @@ namespace Plugin.LocalNotification.Platforms
                     return;
                 }
 
-                if (intent.Action == Intent.ActionBootCompleted ||
-                    intent.Action == Intent.ActionMyPackageReplaced ||
-                    intent.Action == "android.intent.action.QUICKBOOT_POWERON" ||
-                    intent.Action == "com.htc.intent.action.QUICKBOOT_POWERON")
+                if (intent.Action is Intent.ActionBootCompleted or
+                    Intent.ActionMyPackageReplaced or
+                    "android.intent.action.QUICKBOOT_POWERON" or
+                    "com.htc.intent.action.QUICKBOOT_POWERON")
                 {
                     LocalNotificationCenter.Log("ActionBootCompleted");
 
                     var requestList = NotificationRepository.Current.GetPendingList();
-                    if (!requestList.Any())
+                    if (requestList.Count > 0)
                     {
                         LocalNotificationCenter.Log("No Pending Notification Request");
                         return;
@@ -93,7 +93,7 @@ namespace Plugin.LocalNotification.Platforms
 
             if (request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
             {
-                notificationService.Cancel(request.NotificationId);
+                _ = notificationService.Cancel(request.NotificationId);
                 LocalNotificationCenter.Log($"Notification {request.NotificationId} Auto Canceled");
                 return;
             }
@@ -104,7 +104,7 @@ namespace Plugin.LocalNotification.Platforms
             {
                 if (request.Schedule.Android.IsValidShowNowTime(timeNow, request.Schedule.NotifyTime))
                 {
-                    await notificationService.ShowNow(request);
+                    _ = await notificationService.ShowNow(request);
 
                     if (request.Schedule.RepeatType == NotificationRepeat.No)
                     {
@@ -115,7 +115,7 @@ namespace Plugin.LocalNotification.Platforms
                 {
                     // schedule again.
                     wasReScheduled = true;
-                    notificationService.ShowLater(request);
+                    _ = notificationService.ShowLater(request);
                 }
             }
             else
@@ -135,7 +135,7 @@ namespace Plugin.LocalNotification.Platforms
                 if (request.Schedule.NotifyTime.HasValue)
                 {
                     // reschedule again.
-                    notificationService.ShowLater(request);
+                    _ = notificationService.ShowLater(request);
                 }
                 else
                 {
@@ -145,11 +145,8 @@ namespace Plugin.LocalNotification.Platforms
             }
         }
 
-        private static NotificationServiceImpl TryGetDefaultDroidNotificationService()
-        {
-            return LocalNotificationCenter.Current is NotificationServiceImpl notificationService
+        private static NotificationServiceImpl TryGetDefaultDroidNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
                 ? notificationService
                 : new NotificationServiceImpl();
-        }
     }
 }

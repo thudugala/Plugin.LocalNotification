@@ -44,11 +44,8 @@ namespace Plugin.LocalNotification
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(NotificationAction? other)
-        {
-            return other != null &&
+        public bool Equals(NotificationAction? other) => other != null &&
                    ActionId == other.ActionId;
-        }
 
         /// <summary>
         /// 
@@ -61,9 +58,6 @@ namespace Plugin.LocalNotification
         ///
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return ActionId.GetHashCode();
-        }       
+        public override int GetHashCode() => ActionId.GetHashCode();
     }
 }

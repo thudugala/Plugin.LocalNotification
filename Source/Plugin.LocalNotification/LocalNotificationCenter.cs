@@ -1,5 +1,5 @@
-﻿using Plugin.LocalNotification.Json;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification.Json;
 
 #if ANDROID || IOS || WINDOWS
 using Plugin.LocalNotification.Platforms;
@@ -16,14 +16,13 @@ namespace Plugin.LocalNotification
         private static readonly Lazy<INotificationService> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
         private static INotificationSerializer? _serializer;
 
-        private static INotificationService CreateNotificationService()
-        {
+        private static INotificationService? CreateNotificationService() =>
 #if ANDROID || IOS || WINDOWS
-            return new NotificationServiceImpl();
+            new NotificationServiceImpl();
 #else
-            return null;
+            null;
 #endif
-        }
+
 
         /// <summary>
         /// Internal  Logger
