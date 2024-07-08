@@ -13,7 +13,7 @@ namespace Plugin.LocalNotification
 
     public partial class LocalNotificationCenter
     {
-        private static readonly Lazy<INotificationService> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
+        private static readonly Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
         private static INotificationSerializer? _serializer;
 
         private static INotificationService? CreateNotificationService() =>
