@@ -10,23 +10,27 @@ public class CustomUserNotificationCenterDelegate : UserNotificationCenterDelega
         UNNotificationResponse response,
         Action completionHandler)
     {
-        // if the Notification is type Plugin.LocalNotification.NotificationRequest
-        // call the base method, else handel it by your self.
+        // If the notification is typed Plugin.LocalNotification.NotificationRequest
+        // Call the base method else handle it by yourself.
 
         var notificationRequest = LocalNotificationCenter.GetRequest(response.Notification.Request.Content);
-        if (notificationRequest != null)
+        if (notificationRequest is not null)
         {
             base.DidReceiveNotificationResponse(center, response, completionHandler);
+        }
+        else
+        {
+            // Write your code here
         }
     }
 
     public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification,
         Action<UNNotificationPresentationOptions> completionHandler)
     {
-        // if the Notification is type Plugin.LocalNotification.NotificationRequest
-        // call the base method, else handel it by your self.
+        // If the notification is typed Plugin.LocalNotification.NotificationRequest
+        // Call the base method else handle it by yourself.
 
-        if(notification is null)
+        if (notification is null)
         {
             return;
         }
@@ -36,6 +40,10 @@ public class CustomUserNotificationCenterDelegate : UserNotificationCenterDelega
         if (notificationRequest is not null)
         {
             base.WillPresentNotification(center, notification, completionHandler);
+        }
+        else
+        {
+            // Write your code here
         }
     }
 }
