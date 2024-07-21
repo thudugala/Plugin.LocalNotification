@@ -19,22 +19,22 @@ The local notification plugin provides a way to show local notifications from Xa
 
 ## Platform Support
 
-| Feature                       | Xamarin.iOS | Xamarin.Android | net7.0-ios | net7.0-android | net8.0-ios (>= 11) | net8.0-android (>= 11) |
-| ----------------------------- | ----------- | --------------- | ---------- | -------------- | ------------------ | ---------------------- |
-| Build SDK                     | >= 10       | >= API 31       | >= 16      | >= API 33      | >= 16              | >= API 34      |
-| Supported OS Version          | >= 10       | >= API 19       | >= 10      | >= API 21      | >= 11              | >= API 21      |
-| Title                         | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Description                   | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Subtitle                      | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/3.-Scheduled-Android-notifications)      | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/4.-Repeat-Notification)                    | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)     | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| Images                        | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/5.-Notification-with-Action) | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| Clear Delivered Notifications | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Get Pending Notifications     | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Get Delivered Notifications   | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)    | ✅  | ✅  | ✅ | ✅ | ✅ | ✅ |
+| Feature                       | Xamarin.iOS | Xamarin.Android | net8.0-ios (>= 11) | net8.0-android (>= 11) |
+| ----------------------------- | ----------- | --------------- | ------------------ | ---------------------- |
+| Build SDK                     | >= 10       | >= API 31       | >= 16              | >= API 34              |
+| Supported OS Version          | >= 10       | >= API 19       | >= 11              | >= API 21              |
+| Title                         | ✅          | ✅             | ✅                | ✅                     |
+| Description                   | ✅          | ✅             | ✅                | ✅                     |
+| Subtitle                      | ✅          | ✅             | ✅                | ✅                     |
+| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/3.-Scheduled-Android-notifications)      | ✅  | ✅ | ✅ | ✅ |
+| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/4.-Repeat-Notification)                    | ✅  | ✅ | ✅ | ✅ |
+| [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)     | ✅  | ✅ | ✅ | ✅ |
+| Images                        | ✅          | ✅             | ✅                | ✅                     |
+| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/5.-Notification-with-Action) | ✅  | ✅ | ✅ | ✅ |
+| Clear Delivered Notifications | ✅          | ✅             | ✅                | ✅                     |
+| Get Pending Notifications     | ✅          | ✅             | ✅                | ✅                     |
+| Get Delivered Notifications   | ✅          | ✅             | ✅                | ✅                     |
+| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)    | ✅  | ✅  | ✅ | ✅ |
 
 # Usage 
 
