@@ -13,7 +13,7 @@ The local notification plugin provides a way to show local notifications from Xa
 - #### .Net MAUI
   - Install Version 10.0.0 above 
   - Install into your project
-- #### Xamarin.Forms
+- #### Xamarin.Forms (Support ended on May 1, 2024)
 - - Install Version 11.0.0 below 
   - Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.0/2.1 projects required for your app.
 
@@ -47,7 +47,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Video
 
-### Xamarin.Forms
+### Xamarin.Forms (Support ended on May 1, 2024)
 [![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
 
 ### .Net MAUI
