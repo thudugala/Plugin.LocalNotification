@@ -38,7 +38,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Usage 
 
-- [Xamarin.Forms](https://github.com/thudugala/Plugin.LocalNotification/wiki/2.-Usage-10.0.0-Xamarin.Forms)
+- [Xamarin.Forms](https://github.com/thudugala/Plugin.LocalNotification/wiki#xamarinforms-support-ended-on-may-1-2024)
 - [.Net MAUI](https://github.com/thudugala/Plugin.LocalNotification/wiki/1.-Usage-10.0.0--.Net-MAUI)
 
 # Screen Record
