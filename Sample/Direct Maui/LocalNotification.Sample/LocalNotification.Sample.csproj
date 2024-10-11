@@ -51,9 +51,15 @@
 	<ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
 	</ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+    <PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.8.4" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.6" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime.Ktx" Version="2.8.6" />
+  </ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
