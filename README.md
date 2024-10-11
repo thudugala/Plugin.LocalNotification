@@ -13,32 +13,32 @@ The local notification plugin provides a way to show local notifications from Xa
 - #### .Net MAUI
   - Install Version 10.0.0 above 
   - Install into your project
-- #### Xamarin.Forms
+- #### Xamarin.Forms (Support ended on May 1, 2024)
 - - Install Version 11.0.0 below 
   - Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.0/2.1 projects required for your app.
 
 ## Platform Support
 
-| Feature                       | Xamarin.iOS | Xamarin.Android | net7.0-ios | net7.0-android | net8.0-ios (>= 11) | net8.0-android (>= 11) |
-| ----------------------------- | ----------- | --------------- | ---------- | -------------- | ------------------ | ---------------------- |
-| Build SDK                     | >= 10       | >= API 31       | >= 16      | >= API 33      | >= 16              | >= API 34      |
-| Supported OS Version          | >= 10       | >= API 19       | >= 10      | >= API 21      | >= 11              | >= API 21      |
-| Title                         | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Description                   | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Subtitle                      | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/3.-Scheduled-Android-notifications)      | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/4.-Repeat-Notification)                    | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)     | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| Images                        | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/5.-Notification-with-Action) | ✅  | ✅ | ✅ | ✅ | ✅ | ✅  |
-| Clear Delivered Notifications | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Get Pending Notifications     | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| Get Delivered Notifications   | ✅          | ✅             | ✅         | ✅            | ✅                | ✅            |
-| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)    | ✅  | ✅  | ✅ | ✅ | ✅ | ✅ |
+| Feature                       | Xamarin.iOS | Xamarin.Android | net8.0-ios (>= 11) | net8.0-android (>= 11) |
+| ----------------------------- | ----------- | --------------- | ------------------ | ---------------------- |
+| Build SDK                     | >= 10       | >= API 31       | >= 16              | >= API 34              |
+| Supported OS Version          | >= 10       | >= API 19       | >= 11              | >= API 21              |
+| Title                         | ✅          | ✅             | ✅                | ✅                     |
+| Description                   | ✅          | ✅             | ✅                | ✅                     |
+| Subtitle                      | ✅          | ✅             | ✅                | ✅                     |
+| [Schedule](https://github.com/thudugala/Plugin.LocalNotification/wiki/3.-Scheduled-Android-notifications)      | ✅  | ✅ | ✅ | ✅ |
+| [Repeat](https://github.com/thudugala/Plugin.LocalNotification/wiki/4.-Repeat-Notification)                    | ✅  | ✅ | ✅ | ✅ |
+| [Custom Sounds](https://github.com/thudugala/Plugin.LocalNotification/wiki/Notification-with-a-Sound-File)     | ✅  | ✅ | ✅ | ✅ |
+| Images                        | ✅          | ✅             | ✅                | ✅                     |
+| [Notification Actions](https://github.com/thudugala/Plugin.LocalNotification/wiki/5.-Notification-with-Action) | ✅  | ✅ | ✅ | ✅ |
+| Clear Delivered Notifications | ✅          | ✅             | ✅                | ✅                     |
+| Get Pending Notifications     | ✅          | ✅             | ✅                | ✅                     |
+| Get Delivered Notifications   | ✅          | ✅             | ✅                | ✅                     |
+| [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)    | ✅  | ✅  | ✅ | ✅ |
 
 # Usage 
 
-- [Xamarin.Forms](https://github.com/thudugala/Plugin.LocalNotification/wiki/2.-Usage-10.0.0-Xamarin.Forms)
+- [Xamarin.Forms](https://github.com/thudugala/Plugin.LocalNotification/wiki#xamarinforms-support-ended-on-may-1-2024)
 - [.Net MAUI](https://github.com/thudugala/Plugin.LocalNotification/wiki/1.-Usage-10.0.0--.Net-MAUI)
 
 # Screen Record
@@ -47,7 +47,7 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Video
 
-### Xamarin.Forms
+### Xamarin.Forms (Support ended on May 1, 2024)
 [![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
 
 ### .Net MAUI
