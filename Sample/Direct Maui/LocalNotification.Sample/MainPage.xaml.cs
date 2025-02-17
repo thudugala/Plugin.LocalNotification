@@ -257,7 +257,7 @@ public partial class MainPage : ContentPage
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        DisplayAlert(e.Request.Title, $"No Request", "OK");
+                        DisplayAlert(e.Request?.Title, $"No Request", "OK");
                     });
                     return;
                 }
@@ -288,11 +288,14 @@ public partial class MainPage : ContentPage
 
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    await ((NavigationPage)App.Current.MainPage).Navigation.PushModalAsync(
-                    new NotificationPage(_notificationService,
-                    int.Parse(id),
-                    message,
-                    int.Parse(tapCount)));
+                    if (App.Current?.Windows[0].Page is NavigationPage mainPage)
+                    {
+                        await mainPage.Navigation.PushModalAsync(
+                            new NotificationPage(_notificationService,
+                            int.Parse(id),
+                            message,
+                            int.Parse(tapCount)));
+                    }
                 });
                 return;
             }

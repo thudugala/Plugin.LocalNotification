@@ -110,7 +110,10 @@ namespace Plugin.LocalNotification.Platforms
                 MyNotificationManager?.Cancel(notificationId);
 
                 var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
-                MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
+                if (geoPendingIntent is not null)
+                {
+                    MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
+                }
             }
 
             NotificationRepository.Current.RemoveByPendingIdList(notificationIdList);
@@ -132,7 +135,10 @@ namespace Plugin.LocalNotification.Platforms
                 }
 
                 var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
-                MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
+                if (geoPendingIntent is not null)
+                {
+                    MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
+                }
             }
 
             MyNotificationManager?.CancelAll();
@@ -236,7 +242,7 @@ namespace Plugin.LocalNotification.Platforms
             var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
             var pendingIntent = CreateGeofenceIntent(request.NotificationId, serializedRequest);
 
-            if (MyGeofencingClient != null)
+            if (MyGeofencingClient is not null && pendingIntent is not null)
             {
                 await MyGeofencingClient
                     .AddGeofencesAsync(
