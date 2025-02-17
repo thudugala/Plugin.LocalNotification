@@ -29,7 +29,7 @@ jobs:
         run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI Android
-        run: dotnet publish 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net8.0-android --no-restore
+        run: dotnet publish 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-android --no-restore
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4.6.0
@@ -64,7 +64,7 @@ jobs:
         run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI iOS
-        run: dotnet build 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net8.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
+        run: dotnet build 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
 
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v4.6.0
