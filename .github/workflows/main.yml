@@ -10,14 +10,14 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
 
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4.3.0
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@4.7.0
         with:
           distribution: 'microsoft'
           java-version: '17'
@@ -29,10 +29,10 @@ jobs:
         run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI Android
-        run: dotnet publish 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net8.0-android --no-restore
+        run: dotnet publish 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-android --no-restore
 
       - name: Upload Android Artifact
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: mauibeach-android-ci-build
           path: 'Sample/Direct Maui/LocalNotification.Sample/bin/Release/net8.0-android/*Signed.a*'
@@ -44,12 +44,12 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
 
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v2
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4.3.0
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
 
       - name: Install MAUI Workload
         run: dotnet workload install maui --ignore-failed-sources
@@ -57,17 +57,17 @@ jobs:
       - name: Set XCode Version
         shell: bash
         run: |
-          sudo xcode-select -s "/Applications/Xcode_15.1.app"
-          echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_15.1.app" >> $GITHUB_ENV
-
+          sudo xcode-select -s "/Applications/Xcode_16.2.app"
+          echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_16.2.app" >> $GITHUB_ENV
+          
       - name: Restore Dependencies
         run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI iOS
-        run: dotnet build 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net8.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
+        run: dotnet build 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
 
       - name: Upload iOS Artifact
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: mauibeach-ios-ci-build
           path: 'Sample/Direct Maui/LocalNotification.Sample/bin/Release/net8.0-ios/iossimulator-x64/**/*.app'
