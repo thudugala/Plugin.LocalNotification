@@ -9,10 +9,10 @@
       steps:
       - uses: actions/checkout@v3
 
-      - name: Setup .NET 8
+      - name: Setup .NET 9
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
 
       - name: Install MAUI Workloads
         run: |
@@ -29,10 +29,12 @@
       - name: build Plugin.LocalNotification.csproj
         run: dotnet build Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj --configuration Release
 
-      - uses: actions/upload-artifact@v3.1.0
+      - uses: actions/upload-artifact@v4.6.0
         with:
           name: Plugin.LocalNotification
           path: Source/Plugin.LocalNotification/bin/Release/
+
+          
 
       - name: Push generated package to GitHub registry
         run: dotnet nuget push "**/*.nupkg" --api-key ${{ secrets.Elvin_Package_Registry }} --source "GitHub" --skip-duplicate
