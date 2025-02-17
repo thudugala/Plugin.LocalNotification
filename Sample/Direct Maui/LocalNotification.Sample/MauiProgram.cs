@@ -85,7 +85,8 @@ public static class MauiProgram
 #if DEBUG
         LocalNotificationCenter.LogLevel = LogLevel.Debug;
         //builder.Logging.AddDebug();
-        builder.Logging.AddConsole();
+        builder.Logging.AddDebug();
+    	builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
         builder.Services.AddTransient<MainPage>();
