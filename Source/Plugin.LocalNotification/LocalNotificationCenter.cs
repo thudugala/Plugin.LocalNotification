@@ -94,7 +94,9 @@ namespace Plugin.LocalNotification
         {
             foreach (var request in requestList)
             {
-                if (request.Image.Binary != null && request.Image.Binary.Length > 90000)
+                if (request.Image != null && 
+                    request.Image.Binary != null && 
+                    request.Image.Binary.Length > 90000)
                 {
                     request.Image.Binary = [];
                 }
