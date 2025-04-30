@@ -47,7 +47,7 @@ namespace Plugin.LocalNotification.Platforms
                     LocalNotificationCenter.Log("ActionBootCompleted");
 
                     var requestList = NotificationRepository.Current.GetPendingList();
-                    if (requestList.Count > 0)
+                    if (requestList.Count <= 0)
                     {
                         LocalNotificationCenter.Log("No Pending Notification Request");
                         return;
