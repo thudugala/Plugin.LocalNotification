@@ -69,7 +69,7 @@ namespace Plugin.LocalNotification
 
         internal static NotificationRequest GetRequest(string? serializedRequest)
         {
-            Logger?.LogTrace($"Serialized Request [{serializedRequest}]");
+            Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
             if (string.IsNullOrWhiteSpace(serializedRequest))
             {
                 return new NotificationRequest();
@@ -107,13 +107,15 @@ namespace Plugin.LocalNotification
 
         internal static string GetRequestSerialize(NotificationRequest request)
         {
-            if (request.Image.Binary != null && request.Image.Binary.Length > 90000)
+            if (request.Image != null &&
+                request.Image.Binary != null &&
+                request.Image.Binary.Length > 90000)
             {
                 request.Image.Binary = [];
             }
             var serializedRequest = Serializer.Serialize(request);
 
-            Logger?.LogTrace($"Serialized Request [{serializedRequest}]");
+            Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
 
             return serializedRequest;
         }
