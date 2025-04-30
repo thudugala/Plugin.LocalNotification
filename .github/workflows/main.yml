@@ -39,7 +39,7 @@ jobs:
 
   # MAUI iOS Build
   build-ios:
-    runs-on: macos-13
+    runs-on: macos-latest
     name: iOS Build
     steps:
 
@@ -59,6 +59,13 @@ jobs:
         run: |
           sudo xcode-select -s "/Applications/Xcode_16.2.app"
           echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_16.2.app" >> $GITHUB_ENV
+
+      - name: Install iOS Simulators
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_16.2.app
+          sudo xcodebuild -runFirstLaunch
+          sudo xcrun simctl list
+          sudo xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimDeviceType.iPhone-16 com.apple.CoreSimulator.SimRuntime.iOS-16-2
           
       - name: Restore Dependencies
         run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
