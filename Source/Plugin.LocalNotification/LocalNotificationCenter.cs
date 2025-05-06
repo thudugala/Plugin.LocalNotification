@@ -92,11 +92,17 @@ namespace Plugin.LocalNotification
 
         internal static string GetRequestListSerialize(List<NotificationRequest> requestList)
         {
+            if (requestList == null || requestList.Count == 0)
+            {
+                // Return an empty JSON array if the list is null or empty
+                return "[]";
+            }
+
             foreach (var request in requestList)
             {
-                if (request.Image != null && 
-                    request.Image.Binary != null && 
-                    request.Image.Binary.Length > 90000)
+                if (request.Image != null &&
+                    request.Image.Binary != null &&
+                    request.Image.Binary?.Length > 90000)
                 {
                     request.Image.Binary = [];
                 }
@@ -109,7 +115,7 @@ namespace Plugin.LocalNotification
         {
             if (request.Image != null &&
                 request.Image.Binary != null &&
-                request.Image.Binary.Length > 90000)
+                request.Image.Binary?.Length > 90000)
             {
                 request.Image.Binary = [];
             }
