@@ -1,7 +1,14 @@
 namespace Plugin.LocalNotification.UnitTests.Tests;
 
+/// <summary>
+/// Unit tests for the <see cref="NotificationImage"/> class.
+/// </summary>
 public class NotificationImageTests
 {
+    /// <summary>
+    /// Tests that <see cref="NotificationImage.HasValue"/> returns false when the <see
+    /// cref="NotificationImage"/> instance is null.
+    /// </summary>
     [Fact]
     public void HasValue_ShouldReturnFalse_WhenNotificationImageIsNull()
     {
@@ -12,19 +19,10 @@ public class NotificationImageTests
         Assert.False(image?.HasValue ?? false);
     }
 
-    [Fact]
-    public void HasValue_ShouldReturnTrue_WhenNotificationImageFilePathIsValid()
-    {
-        // Arrange
-        var image = new NotificationImage { FilePath = "../Resources/dotnet_logo.png" };
-
-        // Act
-        var result = image.HasValue;
-
-        // Assert
-        Assert.True(result);
-    }
-
+    /// <summary>
+    /// Tests that <see cref="NotificationImage.HasValue"/> returns true when the Binary property of
+    /// the <see cref="NotificationImage"/> is valid.
+    /// </summary>
     [Fact]
     public void HasValue_ShouldReturnTrue_WhenNotificationImageBinaryIsValid()
     {
@@ -50,12 +48,32 @@ public class NotificationImageTests
         Assert.True(result);
     }
 
+    /// <summary>
+    /// Tests that <see cref="NotificationImage.HasValue"/> returns true when the FilePath property
+    /// of the <see cref="NotificationImage"/> is valid.
+    /// </summary>
+    [Fact]
+    public void HasValue_ShouldReturnTrue_WhenNotificationImageFilePathIsValid()
+    {
+        // Arrange
+        var image = new NotificationImage { FilePath = "../Resources/dotnet_logo.png" };
 
+        // Act
+        var result = image.HasValue;
+
+        // Assert
+        Assert.True(result);
+    }
+
+    /// <summary>
+    /// Tests that the <see cref="NotificationSerializer.Serialize"/> method handles a null <see
+    /// cref="NotificationImage"/> correctly.
+    /// </summary>
     [Fact]
     public void Serialize_ShouldHandleNullNotificationImage()
     {
         // Arrange
-        var serializer = new NotificationSerializer(); 
+        var serializer = new NotificationSerializer();
         var request = new NotificationRequest
         {
             Image = null
@@ -66,7 +84,6 @@ public class NotificationImageTests
 
         // Assert
         Assert.NotNull(json);
-        Assert.DoesNotContain("NotificationImage", json); 
+        Assert.DoesNotContain("NotificationImage", json);
     }
-
 }

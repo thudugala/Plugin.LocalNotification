@@ -1,23 +1,37 @@
-using System;
-
 namespace Plugin.LocalNotification.UnitTests.Tests;
 
+/// <summary>
+/// Unit tests for the <see cref="LocalNotificationCenter"/> class.
+/// </summary>
 public class LocalNotificationCenterTests : IDisposable
 {
+    /// <summary>
+    /// Disposes resources used by the test class. Resets the <see
+    /// cref="LocalNotificationCenter.Serializer"/> to a default instance before each test.
+    /// </summary>
+    public void Dispose()
+    {
+        LocalNotificationCenter.Serializer = new NotificationSerializer();
+    }
+
+    /// <summary>
+    /// Tests that <see cref="LocalNotificationCenter.GetRequestListSerialize"/> clears the binary
+    /// data of large images when the binary size exceeds the limit.
+    /// </summary>
     [Fact]
     public void GetRequestListSerialize_ShouldClearLargeImageBinary_WhenImageBinaryExceedsLimit()
     {
         // Arrange
         var mockSerializer = new Mock<INotificationSerializer>();
         var requestList = new List<NotificationRequest>
-       {
-           new NotificationRequest
-           {
-               NotificationId = 1,
-               Title = "Test Notification",
-               Image = new NotificationImage { Binary = new byte[100000] }
-           }
-       };
+        {
+            new NotificationRequest
+            {
+                NotificationId = 1,
+                Title = "Test Notification",
+                Image = new NotificationImage { Binary = new byte[100000] }
+            }
+        };
         mockSerializer.Setup(s => s.Serialize(It.IsAny<List<NotificationRequest>>())).Returns("SerializedString");
         LocalNotificationCenter.Serializer = mockSerializer.Object;
 
@@ -30,32 +44,10 @@ public class LocalNotificationCenterTests : IDisposable
         mockSerializer.Verify(s => s.Serialize(It.IsAny<List<NotificationRequest>>()), Times.Once);
     }
 
-    [Fact]
-    public void GetRequestListSerialize_ShouldReturnSerializedString_WhenRequestListIsValid()
-    {
-        // Arrange
-        var mockSerializer = new Mock<INotificationSerializer>();
-        var requestList = new List<NotificationRequest>
-       {
-           new NotificationRequest
-           {
-               NotificationId = 1,
-               Title = "Test Notification",
-               Image = new NotificationImage { Binary = new byte[50000] }
-           }
-       };
-        mockSerializer.Setup(s => s.Serialize(It.IsAny<List<NotificationRequest>>())).Returns("SerializedString");
-        LocalNotificationCenter.Serializer = mockSerializer.Object;
-
-        // Act
-        var result = LocalNotificationCenter.GetRequestListSerialize(requestList);
-
-        // Assert
-        result.Should().Be("SerializedString");
-        mockSerializer.Verify(s => s.Serialize(It.IsAny<List<NotificationRequest>>()), Times.Once);
-    }
-
-
+    /// <summary>
+    /// Tests that <see cref="LocalNotificationCenter.GetRequestListSerialize"/> handles cases where
+    /// the <see cref="NotificationImage"/> or its binary data is null.
+    /// </summary>
     [Fact]
     public void GetRequestListSerialize_ShouldHandleNullNotificationImage()
     {
@@ -83,9 +75,32 @@ public class LocalNotificationCenterTests : IDisposable
         Assert.True(result.Contains("[]") || result.Contains("{}")); // Validate serialized output
     }
 
-    public void Dispose()
+    /// <summary>
+    /// Tests that <see cref="LocalNotificationCenter.GetRequestListSerialize"/> returns a
+    /// serialized string when the request list is valid.
+    /// </summary>
+    [Fact]
+    public void GetRequestListSerialize_ShouldReturnSerializedString_WhenRequestListIsValid()
     {
-        // Reset the Serializer to a default instance before each test
-        LocalNotificationCenter.Serializer = new NotificationSerializer();
+        // Arrange
+        var mockSerializer = new Mock<INotificationSerializer>();
+        var requestList = new List<NotificationRequest>
+        {
+            new NotificationRequest
+            {
+                NotificationId = 1,
+                Title = "Test Notification",
+                Image = new NotificationImage { Binary = new byte[50000] }
+            }
+        };
+        mockSerializer.Setup(s => s.Serialize(It.IsAny<List<NotificationRequest>>())).Returns("SerializedString");
+        LocalNotificationCenter.Serializer = mockSerializer.Object;
+
+        // Act
+        var result = LocalNotificationCenter.GetRequestListSerialize(requestList);
+
+        // Assert
+        result.Should().Be("SerializedString");
+        mockSerializer.Verify(s => s.Serialize(It.IsAny<List<NotificationRequest>>()), Times.Once);
     }
 }
