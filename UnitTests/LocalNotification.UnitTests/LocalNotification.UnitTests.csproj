@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GF</CompilerGeneratedFilesOutputPath>
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Plugin.LocalNotification.UnitTests</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Resources\dotnet_logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\dotnet_logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" Version="8.2.0" />
+		<PackageReference Include="FluentAssertions.Analyzers" Version="0.34.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Moq" Version="4.20.72" />
+		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
+		<PackageReference Include="xunit.v3" Version="2.0.1" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--Fix vulnerabilities-->
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
+		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -8,7 +8,7 @@
         /// <summary>
         /// Must be less than 90Kb
         /// </summary>
-        public byte[] Binary { get; set; } = [];
+        public byte[]? Binary { get; set; } = [];
 
         /// <summary>
         ///
@@ -20,7 +20,7 @@
         /// </summary>
         public bool HasValue => string.IsNullOrWhiteSpace(ResourceName) == false ||
                                 string.IsNullOrWhiteSpace(FilePath) == false ||
-                                (Binary.Length > 0);
+                                (Binary?.Length > 0);
 
         /// <summary>
         ///
