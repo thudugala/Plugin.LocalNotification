@@ -1,23 +1,22 @@
-﻿namespace Plugin.LocalNotification.iOSOption
+﻿namespace Plugin.LocalNotification.iOSOption;
+
+/// <summary>
+///
+/// </summary>
+public enum iOSLocationAuthorization
 {
     /// <summary>
     ///
     /// </summary>
-    public enum iOSLocationAuthorization
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        No,
+    No,
 
-        /// <summary>
-        ///
-        /// </summary>
-        Always,
+    /// <summary>
+    ///
+    /// </summary>
+    Always,
 
-        /// <summary>
-        ///
-        /// </summary>
-        WhenInUse
-    }
+    /// <summary>
+    ///
+    /// </summary>
+    WhenInUse
 }

@@ -1,13 +1,12 @@
-﻿namespace Plugin.LocalNotification.WindowsOption
+﻿namespace Plugin.LocalNotification.WindowsOption;
+
+/// <summary>
+///
+/// </summary>
+public class WindowsOptions
 {
     /// <summary>
-    ///
+    /// Default is true
     /// </summary>
-    public class WindowsOptions
-    {
-        /// <summary>
-        /// Default is true
-        /// </summary>
-        public bool LaunchAppWhenTapped { get; set; } = true;
-    }
+    public bool LaunchAppWhenTapped { get; set; } = true;
 }

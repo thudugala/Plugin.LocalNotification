@@ -3,80 +3,66 @@ using System.Globalization;
 using UIKit;
 using UserNotifications;
 
-namespace Plugin.LocalNotification.Platforms
+namespace Plugin.LocalNotification.Platforms;
+
+/// <inheritdoc />
+public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
 {
     /// <inheritdoc />
-    public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
+    public override void DidReceiveNotificationResponse(UNUserNotificationCenter center,
+        UNNotificationResponse response, Action completionHandler)
     {
-        /// <inheritdoc />
-        public override void DidReceiveNotificationResponse(UNUserNotificationCenter center,
-            UNNotificationResponse response, Action completionHandler)
+        try
         {
-            try
+            if (response is null)
             {
-                if (response is null)
+                return;
+            }
+
+            var notificationService = TryGetDefaultIOsNotificationService();
+            var notificationRequest = LocalNotificationCenter.GetRequest(response.Notification.Request.Content);
+
+            // if notificationRequest is null this maybe not a notification from this plugin.
+            if (notificationRequest is null)
+            {
+                completionHandler?.Invoke();
+
+                LocalNotificationCenter.Log("Notification request not found");
+                return;
+            }
+
+            if (response.Notification.Request.Content.Badge != null)
+            {
+                var badgeNumber = Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
+
+                center.InvokeOnMainThread(() =>
                 {
-                    return;
-                }
-
-                var notificationService = TryGetDefaultIOsNotificationService();
-                var notificationRequest = LocalNotificationCenter.GetRequest(response.Notification.Request.Content);
-
-                // if notificationRequest is null this maybe not a notification from this plugin.
-                if (notificationRequest is null)
-                {
-                    completionHandler?.Invoke();
-
-                    LocalNotificationCenter.Log("Notification request not found");
-                    return;
-                }
-
-                if (response.Notification.Request.Content.Badge != null)
-                {
-                    var badgeNumber = Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);
-
-                    center.InvokeOnMainThread(() =>
+                    if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
                     {
-                        if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
+                        center.SetBadgeCount(badgeNumber, (error) =>
                         {
-                            center.SetBadgeCount(badgeNumber, (error) =>
+                            if (error != null)
                             {
-                                if (error != null)
-                                {
-                                    LocalNotificationCenter.Log(error.LocalizedDescription);
-                                }
-                            });
-                        }
-                        else
-                        {
-                            UIApplication.SharedApplication.ApplicationIconBadgeNumber -= badgeNumber;
-                        }
-                    });
-                }
-
-                // Take action based on identifier
-                if (!response.IsDefaultAction)
-                {
-                    if (string.IsNullOrWhiteSpace(response.ActionIdentifier) == false &&
-                        int.TryParse(response.ActionIdentifier, out var actionId))
-                    {
-                        var actionArgs = new NotificationActionEventArgs
-                        {
-                            ActionId = actionId,
-                            Request = notificationRequest
-                        };
-                        notificationService.OnNotificationActionTapped(actionArgs);
-
-                        completionHandler?.Invoke();
-                        return;
+                                LocalNotificationCenter.Log(error.LocalizedDescription);
+                            }
+                        });
                     }
-                }
+                    else
+                    {
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber -= badgeNumber;
+                    }
+                });
+            }
 
-                if (response.IsDismissAction)
+            // Take action based on identifier
+            if (!response.IsDefaultAction)
+            {
+                if (string.IsNullOrWhiteSpace(response.ActionIdentifier) == false &&
+                    int.TryParse(response.ActionIdentifier, out var actionId))
                 {
                     var actionArgs = new NotificationActionEventArgs
                     {
-                        ActionId = NotificationActionEventArgs.DismissedActionId,
+                        ActionId = actionId,
                         Request = notificationRequest
                     };
                     notificationService.OnNotificationActionTapped(actionArgs);
@@ -84,121 +70,134 @@ namespace Plugin.LocalNotification.Platforms
                     completionHandler?.Invoke();
                     return;
                 }
+            }
 
-                var args = new NotificationActionEventArgs
+            if (response.IsDismissAction)
+            {
+                var actionArgs = new NotificationActionEventArgs
                 {
-                    ActionId = NotificationActionEventArgs.TapActionId,
+                    ActionId = NotificationActionEventArgs.DismissedActionId,
                     Request = notificationRequest
                 };
-                notificationService.OnNotificationActionTapped(args);
+                notificationService.OnNotificationActionTapped(actionArgs);
 
                 completionHandler?.Invoke();
+                return;
             }
-            catch (Exception ex)
+
+            var args = new NotificationActionEventArgs
             {
-                LocalNotificationCenter.Log(ex);
-            }
+                ActionId = NotificationActionEventArgs.TapActionId,
+                Request = notificationRequest
+            };
+            notificationService.OnNotificationActionTapped(args);
+
+            completionHandler?.Invoke();
         }
-
-        /// <inheritdoc />
-        public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification,
-            Action<UNNotificationPresentationOptions> completionHandler)
+        catch (Exception ex)
         {
-            try
+            LocalNotificationCenter.Log(ex);
+        }
+    }
+
+    /// <inheritdoc />
+    public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification,
+        Action<UNNotificationPresentationOptions> completionHandler)
+    {
+        try
+        {
+            var presentationOptions = UNNotificationPresentationOptions.None;
+
+            var notificationService = TryGetDefaultIOsNotificationService();
+            var notificationRequest = LocalNotificationCenter.GetRequest(notification?.Request.Content);
+
+            // if notificationRequest is null this maybe not a notification from this plugin.
+            if (notificationRequest is null)
             {
-                var presentationOptions = UNNotificationPresentationOptions.None;
+                completionHandler?.Invoke(presentationOptions);
 
-                var notificationService = TryGetDefaultIOsNotificationService();
-                var notificationRequest = LocalNotificationCenter.GetRequest(notification?.Request.Content);
+                LocalNotificationCenter.Log("Notification request not found");
+                return;
+            }
 
-                // if notificationRequest is null this maybe not a notification from this plugin.
-                if (notificationRequest is null)
-                {
-                    completionHandler?.Invoke(presentationOptions);
-
-                    LocalNotificationCenter.Log("Notification request not found");
-                    return;
-                }
-
-                if (notificationRequest.Schedule.NotifyAutoCancelTime.HasValue &&
-                    notificationRequest.Schedule.NotifyAutoCancelTime <= DateTime.Now)
-                {
-                    _ = notificationService.Cancel(notificationRequest.NotificationId);
-
-                    completionHandler?.Invoke(presentationOptions);
-
-                    LocalNotificationCenter.Log("Notification Auto Canceled");
-                    return;
-                }
-
-                var requestHandled = false;
-                if (notificationService.NotificationReceiving is not null)
-                {
-                    var requestArg = notificationService.NotificationReceiving(notificationRequest).GetAwaiter().GetResult();
-                    if (requestArg is not null)
-                    {
-                        if (requestArg.Handled)
-                        {
-                            LocalNotificationCenter.Log("Notification Handled");
-                            requestHandled = true;
-                        }
-                    }
-                }
-
-                if (requestHandled == false)
-                {
-                    if (OperatingSystem.IsIOSVersionAtLeast(14))
-                    {
-                        if (notificationRequest.iOS.PresentAsBanner)
-                        {
-                            presentationOptions |= UNNotificationPresentationOptions.Banner;
-                        }
-
-                        if (notificationRequest.iOS.ShowInNotificationCenter)
-                        {
-                            presentationOptions |= UNNotificationPresentationOptions.List;
-                        }
-                    }
-                    else
-                    {
-                        presentationOptions |= UNNotificationPresentationOptions.Alert;
-                    }
-
-                    if (notificationRequest.iOS.ApplyBadgeValue)
-                    {
-                        presentationOptions |= UNNotificationPresentationOptions.Badge;
-                    }
-                    if (notificationRequest.iOS.PlayForegroundSound)
-                    {
-                        presentationOptions |= UNNotificationPresentationOptions.Sound;
-                    }
-
-                    if (notificationRequest.iOS.HideForegroundAlert)
-                    {
-                        presentationOptions = UNNotificationPresentationOptions.None;
-                    }
-                }
-
-                var args = new NotificationEventArgs
-                {
-                    Request = notificationRequest
-                };
-                notificationService.OnNotificationReceived(args);
+            if (notificationRequest.Schedule.NotifyAutoCancelTime.HasValue &&
+                notificationRequest.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+            {
+                _ = notificationService.Cancel(notificationRequest.NotificationId);
 
                 completionHandler?.Invoke(presentationOptions);
-            }
-            catch (Exception ex)
-            {
-                LocalNotificationCenter.Log(ex);
-            }
-        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        internal static NotificationServiceImpl TryGetDefaultIOsNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
-                ? notificationService
-                : new NotificationServiceImpl();
+                LocalNotificationCenter.Log("Notification Auto Canceled");
+                return;
+            }
+
+            var requestHandled = false;
+            if (notificationService.NotificationReceiving is not null)
+            {
+                var requestArg = notificationService.NotificationReceiving(notificationRequest).GetAwaiter().GetResult();
+                if (requestArg is not null)
+                {
+                    if (requestArg.Handled)
+                    {
+                        LocalNotificationCenter.Log("Notification Handled");
+                        requestHandled = true;
+                    }
+                }
+            }
+
+            if (requestHandled == false)
+            {
+                if (OperatingSystem.IsIOSVersionAtLeast(14))
+                {
+                    if (notificationRequest.iOS.PresentAsBanner)
+                    {
+                        presentationOptions |= UNNotificationPresentationOptions.Banner;
+                    }
+
+                    if (notificationRequest.iOS.ShowInNotificationCenter)
+                    {
+                        presentationOptions |= UNNotificationPresentationOptions.List;
+                    }
+                }
+                else
+                {
+                    presentationOptions |= UNNotificationPresentationOptions.Alert;
+                }
+
+                if (notificationRequest.iOS.ApplyBadgeValue)
+                {
+                    presentationOptions |= UNNotificationPresentationOptions.Badge;
+                }
+                if (notificationRequest.iOS.PlayForegroundSound)
+                {
+                    presentationOptions |= UNNotificationPresentationOptions.Sound;
+                }
+
+                if (notificationRequest.iOS.HideForegroundAlert)
+                {
+                    presentationOptions = UNNotificationPresentationOptions.None;
+                }
+            }
+
+            var args = new NotificationEventArgs
+            {
+                Request = notificationRequest
+            };
+            notificationService.OnNotificationReceived(args);
+
+            completionHandler?.Invoke(presentationOptions);
+        }
+        catch (Exception ex)
+        {
+            LocalNotificationCenter.Log(ex);
+        }
     }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    internal static NotificationServiceImpl TryGetDefaultIOsNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
+            ? notificationService
+            : new NotificationServiceImpl();
 }

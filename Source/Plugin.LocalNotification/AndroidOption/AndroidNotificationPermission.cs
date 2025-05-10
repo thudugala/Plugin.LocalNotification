@@ -1,13 +1,12 @@
-﻿namespace Plugin.LocalNotification.AndroidOption
+﻿namespace Plugin.LocalNotification.AndroidOption;
+
+/// <summary>
+/// 
+/// </summary>
+public class AndroidNotificationPermission
 {
     /// <summary>
-    /// 
+    /// Defualt is false
     /// </summary>
-    public class AndroidNotificationPermission
-    {
-        /// <summary>
-        /// Defualt is false
-        /// </summary>
-        public bool RequestPermissionToScheduleExactAlarm { get; set; } = false;
-    }
+    public bool RequestPermissionToScheduleExactAlarm { get; set; } = false;
 }

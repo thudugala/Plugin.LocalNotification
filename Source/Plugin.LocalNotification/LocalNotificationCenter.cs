@@ -5,131 +5,130 @@ using Plugin.LocalNotification.Json;
 using Plugin.LocalNotification.Platforms;
 #endif
 
-namespace Plugin.LocalNotification
+namespace Plugin.LocalNotification;
+
+/// <summary>
+/// Cross platform INotificationService Resolver.
+/// </summary>
+
+public partial class LocalNotificationCenter
 {
-    /// <summary>
-    /// Cross platform INotificationService Resolver.
-    /// </summary>
+    private static readonly Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
+    private static INotificationSerializer? _serializer;
 
-    public partial class LocalNotificationCenter
-    {
-        private static readonly Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
-        private static INotificationSerializer? _serializer;
-
-        private static INotificationService? CreateNotificationService() =>
+    private static INotificationService? CreateNotificationService() =>
 #if ANDROID || IOS || WINDOWS
-            new NotificationServiceImpl();
+        new NotificationServiceImpl();
 #else
-            null;
+        null;
 #endif
 
 
-        /// <summary>
-        /// Internal  Logger
-        /// </summary>
-        internal static ILogger? Logger { get; set; }
+    /// <summary>
+    /// Internal  Logger
+    /// </summary>
+    internal static ILogger? Logger { get; set; }
 
-        /// <summary>
-        /// Internal  Logger LogLevel
-        /// </summary>
-        public static LogLevel LogLevel { get; set; } = LogLevel.Trace;
+    /// <summary>
+    /// Internal  Logger LogLevel
+    /// </summary>
+    public static LogLevel LogLevel { get; set; } = LogLevel.Trace;
 
-        /// <summary>
-        /// Platform specific INotificationService.
-        /// </summary>
-        public static INotificationService Current => implementation.Value;
+    /// <summary>
+    /// Platform specific INotificationService.
+    /// </summary>
+    public static INotificationService Current => implementation.Value;
 
-        /// <summary>
-        /// Return Notification Key.
-        /// </summary>
-        public const string ReturnRequest = "Plugin.LocalNotification.RETURN_REQUEST";
+    /// <summary>
+    /// Return Notification Key.
+    /// </summary>
+    public const string ReturnRequest = "Plugin.LocalNotification.RETURN_REQUEST";
 
-        /// <summary>
-        /// Return Notification Action Id.
-        /// </summary>
-        public const string ReturnRequestActionId = "Plugin.LocalNotification.RETURN_ActionId";
+    /// <summary>
+    /// Return Notification Action Id.
+    /// </summary>
+    public const string ReturnRequestActionId = "Plugin.LocalNotification.RETURN_ActionId";
 
-        /// <summary>
-        /// Return Notification Handled Key
-        /// </summary>
-        public const string ReturnRequestHandled = "Plugin.LocalNotification.RETURN_Handled";
+    /// <summary>
+    /// Return Notification Handled Key
+    /// </summary>
+    public const string ReturnRequestHandled = "Plugin.LocalNotification.RETURN_Handled";
 
-        /// <summary>
-        ///
-        /// </summary>
-        internal static INotificationSerializer Serializer
+    /// <summary>
+    ///
+    /// </summary>
+    internal static INotificationSerializer Serializer
+    {
+        get
         {
-            get
-            {
-                _serializer ??= new NotificationSerializer();
-                return _serializer;
-            }
-            set => _serializer = value;
+            _serializer ??= new NotificationSerializer();
+            return _serializer;
+        }
+        set => _serializer = value;
+    }
+
+    internal static NotificationRequest GetRequest(string? serializedRequest)
+    {
+        Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
+        if (string.IsNullOrWhiteSpace(serializedRequest))
+        {
+            return new NotificationRequest();
         }
 
-        internal static NotificationRequest GetRequest(string? serializedRequest)
-        {
-            Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
-            if (string.IsNullOrWhiteSpace(serializedRequest))
-            {
-                return new NotificationRequest();
-            }
+        var request = Serializer.Deserialize<NotificationRequest>(serializedRequest);
+        return request ?? new NotificationRequest();
+    }
 
-            var request = Serializer.Deserialize<NotificationRequest>(serializedRequest);
-            return request ?? new NotificationRequest();
+    internal static List<NotificationRequest> GetRequestList(string? serializedRequestList)
+    {
+        if (string.IsNullOrWhiteSpace(serializedRequestList))
+        {
+            return [];
         }
 
-        internal static List<NotificationRequest> GetRequestList(string? serializedRequestList)
-        {
-            if (string.IsNullOrWhiteSpace(serializedRequestList))
-            {
-                return [];
-            }
+        var requestList = Serializer.Deserialize<List<NotificationRequest>>(serializedRequestList);
+        return requestList ?? [];
+    }
 
-            var requestList = Serializer.Deserialize<List<NotificationRequest>>(serializedRequestList);
-            return requestList ?? [];
+    internal static string GetRequestListSerialize(List<NotificationRequest> requestList)
+    {
+        if (requestList is null || requestList.Count <= 0)
+        {
+            // Return an empty JSON array if the list is null or empty
+            return "[]";
         }
 
-        internal static string GetRequestListSerialize(List<NotificationRequest> requestList)
+        foreach (var request in requestList)
         {
-            if (requestList is null || requestList.Count <= 0)
-            {
-                // Return an empty JSON array if the list is null or empty
-                return "[]";
-            }
-
-            foreach (var request in requestList)
-            {
-                if (request.Image is not null &&
-                    request.Image.Binary is not null &&
-                    request.Image.Binary?.Length > 90000)
-                {
-                    request.Image.Binary = [];
-                }
-            }
-            var serializedRequestList = Serializer.Serialize(requestList);
-            return serializedRequestList;
-        }
-
-        internal static string GetRequestSerialize(NotificationRequest request)
-        {
-            if (request is null)
-            {
-                // Return an empty JSON array if the list is null or empty
-                return "[]";
-            }
-
             if (request.Image is not null &&
                 request.Image.Binary is not null &&
                 request.Image.Binary?.Length > 90000)
             {
                 request.Image.Binary = [];
             }
-            var serializedRequest = Serializer.Serialize(request);
-
-            Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
-
-            return serializedRequest;
         }
+        var serializedRequestList = Serializer.Serialize(requestList);
+        return serializedRequestList;
+    }
+
+    internal static string GetRequestSerialize(NotificationRequest request)
+    {
+        if (request is null)
+        {
+            // Return an empty JSON array if the list is null or empty
+            return "[]";
+        }
+
+        if (request.Image is not null &&
+            request.Image.Binary is not null &&
+            request.Image.Binary?.Length > 90000)
+        {
+            request.Image.Binary = [];
+        }
+        var serializedRequest = Serializer.Serialize(request);
+
+        Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
+
+        return serializedRequest;
     }
 }

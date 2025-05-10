@@ -1,20 +1,19 @@
 ﻿using Android;
 
-namespace Plugin.LocalNotification.Platforms
+namespace Plugin.LocalNotification.Platforms;
+
+public partial class NotificationPerms : Permissions.BasePlatformPermission
 {
-    public partial class NotificationPerms : Permissions.BasePlatformPermission
+    public override (string androidPermission, bool isRuntime)[] RequiredPermissions
     {
-        public override (string androidPermission, bool isRuntime)[] RequiredPermissions
+        get
         {
-            get
+            var result = new List<(string androidPermission, bool isRuntime)>();
+            if (OperatingSystem.IsAndroidVersionAtLeast(33))
             {
-                var result = new List<(string androidPermission, bool isRuntime)>();
-                if (OperatingSystem.IsAndroidVersionAtLeast(33))
-                {
-                    result.Add((Manifest.Permission.PostNotifications, true));
-                }
-                return result.ToArray();
+                result.Add((Manifest.Permission.PostNotifications, true));
             }
+            return [.. result];
         }
     }
 }

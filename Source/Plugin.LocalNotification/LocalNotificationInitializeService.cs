@@ -1,26 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Plugin.LocalNotification
+namespace Plugin.LocalNotification;
+
+/// <summary>
+///
+/// </summary>
+public class LocalNotificationInitializeService : IMauiInitializeService
 {
     /// <summary>
     ///
     /// </summary>
-    public class LocalNotificationInitializeService : IMauiInitializeService
+    /// <param name="services"></param>
+    public void Initialize(IServiceProvider services)
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="services"></param>
-        public void Initialize(IServiceProvider services)
-        {
-            LocalNotificationCenter.Logger = services.GetService<ILogger<LocalNotificationCenter>>();
+        LocalNotificationCenter.Logger = services.GetService<ILogger<LocalNotificationCenter>>();
 
-            var builder = services.GetService<LocalNotificationBuilder>();
-            if (builder is not null)
-            {
-                LocalNotificationCenter.Serializer = builder.Serializer;
-                LocalNotificationCenter.Current.RegisterCategoryList(builder.CategorySet);
-            }
+        var builder = services.GetService<LocalNotificationBuilder>();
+        if (builder is not null)
+        {
+            LocalNotificationCenter.Serializer = builder.Serializer;
+            LocalNotificationCenter.Current.RegisterCategoryList(builder.CategorySet);
         }
     }
 }

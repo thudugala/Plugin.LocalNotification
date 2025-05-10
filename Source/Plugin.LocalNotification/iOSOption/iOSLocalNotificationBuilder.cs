@@ -2,23 +2,22 @@
 using Plugin.LocalNotification.Platforms;
 #endif
 
-namespace Plugin.LocalNotification.iOSOption
-{
-    /// <inheritdoc/>
-    public class iOSLocalNotificationBuilder : IiOSLocalNotificationBuilder
-    {
-#if IOS
-        /// <summary>
-        ///
-        /// </summary>
-        internal UserNotificationCenterDelegate? CustomUserNotificationCenterDelegate { get; private set; }
+namespace Plugin.LocalNotification.iOSOption;
 
-        /// <inheritdoc/>
-        public IiOSLocalNotificationBuilder SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate customUserNotificationCenterDelegate)
-        {
-            CustomUserNotificationCenterDelegate = customUserNotificationCenterDelegate;
-            return this;
-        }
-#endif
+/// <inheritdoc/>
+public class iOSLocalNotificationBuilder : IiOSLocalNotificationBuilder
+{
+#if IOS
+    /// <summary>
+    ///
+    /// </summary>
+    internal UserNotificationCenterDelegate? CustomUserNotificationCenterDelegate { get; private set; }
+
+    /// <inheritdoc/>
+    public IiOSLocalNotificationBuilder SetCustomUserNotificationCenterDelegate(UserNotificationCenterDelegate customUserNotificationCenterDelegate)
+    {
+        CustomUserNotificationCenterDelegate = customUserNotificationCenterDelegate;
+        return this;
     }
+#endif
 }
