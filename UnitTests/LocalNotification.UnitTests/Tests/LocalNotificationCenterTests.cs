@@ -25,8 +25,7 @@ public class LocalNotificationCenterTests : IDisposable
         var mockSerializer = new Mock<INotificationSerializer>();
         var requestList = new List<NotificationRequest>
         {
-            new NotificationRequest
-            {
+            new() {
                 NotificationId = 1,
                 Title = "Test Notification",
                 Image = new NotificationImage { Binary = new byte[100000] }
@@ -54,12 +53,10 @@ public class LocalNotificationCenterTests : IDisposable
         // Arrange
         var requestList = new List<NotificationRequest>
         {
-            new NotificationRequest
-            {
+            new() {
                 Image = null // Simulate a null NotificationImage
             },
-            new NotificationRequest
-            {
+            new() {
                 Image = new NotificationImage
                 {
                     Binary = null // Simulate a null Binary property
@@ -71,8 +68,8 @@ public class LocalNotificationCenterTests : IDisposable
         var result = LocalNotificationCenter.GetRequestListSerialize(requestList);
 
         // Assert
-        Assert.NotNull(result); // Ensure serialization does not throw
-        Assert.True(result.Contains("[]") || result.Contains("{}")); // Validate serialized output
+        result.Should().NotBeNull(); // Ensure serialization does not throw
+        (result.Contains("[]") || result.Contains("{}")).Should().BeTrue(); // Validate serialized output
     }
 
     /// <summary>
@@ -86,8 +83,7 @@ public class LocalNotificationCenterTests : IDisposable
         var mockSerializer = new Mock<INotificationSerializer>();
         var requestList = new List<NotificationRequest>
         {
-            new NotificationRequest
-            {
+            new() {
                 NotificationId = 1,
                 Title = "Test Notification",
                 Image = new NotificationImage { Binary = new byte[50000] }

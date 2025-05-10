@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalNotification.Sample", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.LocalNotification", "..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj", "{EE7B30C7-5307-4B01-A194-5ED815F2DF85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.UnitTests", "..\..\UnitTests\LocalNotification.UnitTests\LocalNotification.UnitTests.csproj", "{A939D821-32AE-EF0C-8ADB-7C5917E17072}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{EE7B30C7-5307-4B01-A194-5ED815F2DF85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE7B30C7-5307-4B01-A194-5ED815F2DF85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE7B30C7-5307-4B01-A194-5ED815F2DF85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

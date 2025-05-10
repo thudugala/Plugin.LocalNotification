@@ -16,7 +16,7 @@ public class NotificationImageTests
         NotificationImage image = null;
 
         // Act & Assert
-        Assert.False(image?.HasValue ?? false);
+        (image?.HasValue ?? false).Should().BeFalse();
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class NotificationImageTests
         var resourceName = "Plugin.LocalNotification.UnitTests.Resources.dotnet_logo.png"; // Correct resource name
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
-        Assert.NotNull(stream); // Ensure the resource is found
+        stream.Should().NotBeNull(); // Ensure the resource is found
 
         using var memoryStream = new MemoryStream();
         stream.CopyTo(memoryStream);
@@ -45,7 +45,7 @@ public class NotificationImageTests
         var result = image.HasValue;
 
         // Assert
-        Assert.True(result);
+        result.Should().BeTrue();
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class NotificationImageTests
         var result = image.HasValue;
 
         // Assert
-        Assert.True(result);
+        result.Should().BeTrue();
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class NotificationImageTests
         var json = serializer.Serialize(request); // Use the instance to call Serialize
 
         // Assert
-        Assert.NotNull(json);
-        Assert.DoesNotContain("NotificationImage", json);
+        json.Should().NotBeNull();
+        json.Should().NotContain("NotificationImage");
     }
 }

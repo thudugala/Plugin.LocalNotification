@@ -13,7 +13,7 @@
         /// <summary>
         ///
         /// </summary>
-        public string FilePath { get; set; } = string.Empty;
+        public string? FilePath { get; set; } = string.Empty;
 
         /// <summary>
         ///
@@ -25,6 +25,6 @@
         /// <summary>
         ///
         /// </summary>
-        public string ResourceName { get; set; } = string.Empty;
+        public string? ResourceName { get; set; } = string.Empty;
     }
 }
