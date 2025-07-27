@@ -16,7 +16,7 @@
     <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 
     <DefaultLanguage>en</DefaultLanguage>
-
+    
     <!-- Display name -->
 		<ApplicationTitle>LocalNotification.Sample</ApplicationTitle>
 
@@ -32,8 +32,22 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
     
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-		
+
 	</PropertyGroup>
+
+  <!-- Enable AOT only during publish and on the appropriate OS -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' And '$(PublishAotEnabled)' == 'true'">
+    <PublishAot Condition="$(TargetFramework.Contains('-android')) and $([MSBuild]::IsOSPlatform('windows'))">true</PublishAot>
+    <PublishAot Condition="$(TargetFramework.Contains('-ios')) and $([MSBuild]::IsOSPlatform('osx'))">true</PublishAot>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
+    <AndroidUseAapt2>True</AndroidUseAapt2>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+    <AndroidLinkTool>r8</AndroidLinkTool>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
@@ -55,8 +69,8 @@
 
 	<ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.7" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.7" />
 	</ItemGroup>
 
   <!--<ItemGroup Condition="$(TargetFramework.Contains('-android'))">

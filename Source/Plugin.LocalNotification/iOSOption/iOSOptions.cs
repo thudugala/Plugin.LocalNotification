@@ -1,4 +1,6 @@
-﻿namespace Plugin.LocalNotification.iOSOption;
+﻿using System.Text.Json.Serialization;
+
+namespace Plugin.LocalNotification.iOSOption;
 
 /// <summary>
 /// Represents notification request options for iOS, including display, sound, badge, priority, and summary settings.
@@ -38,6 +40,7 @@ public class iOSOptions
     /// <summary>
     /// Gets or sets the relevance score (between 0 and 1) used by the system to sort notifications. The highest score gets featured in the notification summary.
     /// </summary>
+    [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
     public double RelevanceScore { get; set; }
 
     /// <summary>

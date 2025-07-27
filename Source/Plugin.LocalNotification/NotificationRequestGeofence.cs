@@ -1,5 +1,6 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
+using System.Text.Json.Serialization;
 
 namespace Plugin.LocalNotification;
 
@@ -32,6 +33,7 @@ public class NotificationRequestGeofence
     /// The radius of the region.
     /// Default 5m
     /// </summary>
+    [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
     public double RadiusInMeters { get; set; } = 5;
 
     /// <summary>
@@ -47,11 +49,13 @@ public class NotificationRequestGeofence
         /// <summary>
         /// Latitude in degrees, between -90 and +90 inclusive
         /// </summary>
+        [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
         public double Latitude { get; set; } = double.NaN;
 
         /// <summary>
         /// Longitude in degrees, between -180 and +180 inclusive.
         /// </summary>
+        [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
         public double Longitude { get; set; } = double.NaN;
 
         /// <summary>

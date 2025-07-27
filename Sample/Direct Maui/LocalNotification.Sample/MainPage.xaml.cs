@@ -109,7 +109,7 @@ public partial class MainPage : ContentPage
                 _tapCount.ToString()
             };
         // No need to use NotificationSerializer, you can use your own one.
-        var serializeReturningData = JsonSerializer.Serialize(list);
+        var serializeReturningData = JsonSerializer.Serialize(list, AppJsonContext.Default.ListString);
 
         var request = new NotificationRequest
         {
@@ -263,7 +263,7 @@ public partial class MainPage : ContentPage
                 }
 
                 // No need to use NotificationSerializer, you can use your own one.
-                var list = JsonSerializer.Deserialize<List<string>>(e.Request.ReturningData);
+                var list = JsonSerializer.Deserialize(e.Request.ReturningData, AppJsonContext.Default.ListString);
                 if (list is null || list.Count != 4)
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
@@ -338,7 +338,7 @@ public partial class MainPage : ContentPage
                 title,
                 _tapCount.ToString()
             };
-        var serializeReturningData = JsonSerializer.Serialize(list);
+        var serializeReturningData = JsonSerializer.Serialize(list, AppJsonContext.Default.ListString);
 
         var notification = new NotificationRequest
         {
@@ -389,10 +389,7 @@ public partial class MainPage : ContentPage
             {
                 return;
             }
-            var requestJson = JsonSerializer.Serialize(e.Request, new JsonSerializerOptions
-            {
-                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
-            });
+            var requestJson = JsonSerializer.Serialize(e.Request, AppJsonContext.Default.NotificationRequest);
 
             DisplayAlert(e.Request.Title, requestJson, "OK");
         });
