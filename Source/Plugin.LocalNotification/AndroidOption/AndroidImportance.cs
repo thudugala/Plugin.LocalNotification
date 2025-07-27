@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-///
+/// Specifies the importance level for Android notifications, affecting how and where notifications are displayed to the user.
 /// </summary>
 public enum AndroidImportance
 {
@@ -12,7 +12,7 @@ public enum AndroidImportance
     Unspecified = -1000,
 
     /// <summary>
-    /// Does not show in the shade
+    /// Does not show in the notification shade.
     /// </summary>
     None = 0,
 
@@ -25,22 +25,22 @@ public enum AndroidImportance
     Min = 1,
 
     /// <summary>
-    /// Shows in the shade, and potentially in the status bar, but is not audibly intrusive.
+    /// Shows in the notification shade, and potentially in the status bar, but is not audibly intrusive.
     /// </summary>
     Low = 2,
 
     /// <summary>
-    /// Shows everywhere, makes noise, but does not visually intrude
+    /// Shows everywhere, makes noise, but does not visually intrude.
     /// </summary>
     Default = 3,
 
     /// <summary>
-    /// Shows everywhere, makes noise and peeks. May use full screen intents
+    /// Shows everywhere, makes noise and peeks. May use full screen intents.
     /// </summary>
     High = 4,
 
     /// <summary>
-    /// Unused
+    /// Unused importance level.
     /// </summary>
     Max = 5
 }

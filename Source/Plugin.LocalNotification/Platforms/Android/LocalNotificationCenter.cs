@@ -10,12 +10,15 @@ using Application = Android.App.Application;
 
 namespace Plugin.LocalNotification;
 
+/// <summary>
+/// Provides functionality for managing local notifications on Android.
+/// </summary>
 public partial class LocalNotificationCenter
 {
     /// <summary>
-    /// Notify Local Notification Tapped.
+    /// Notifies the notification service that a local notification was tapped by the user.
     /// </summary>
-    /// <param name="intent"></param>
+    /// <param name="intent">The intent containing notification action data.</param>
     public static void NotifyNotificationTapped(Intent? intent)
     {
         try
@@ -49,7 +52,7 @@ public partial class LocalNotificationCenter
     /// so you can create a notification channel group for each account.
     /// This way, users can easily identify and control multiple notification channels that have identical names.
     /// </summary>
-    /// <param name="groupChannelRequests"></param>
+    /// <param name="groupChannelRequests">A list of channel group requests to create.</param>
     public static void CreateNotificationChannelGroups(IList<NotificationChannelGroupRequest> groupChannelRequests)
     {
         if (!OperatingSystem.IsAndroidVersionAtLeast(26))
@@ -74,9 +77,10 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
-    /// Create Notification Channel when API >= 26.
+    /// Creates notification channels for Android API >= 26.
+    /// Channels define notification behaviors such as sound, vibration, and importance.
     /// </summary>
-    /// <param name="channelRequests"></param>
+    /// <param name="channelRequests">A list of channel requests to create.</param>
     public static void CreateNotificationChannels(IList<NotificationChannelRequest> channelRequests)
     {
         if (!OperatingSystem.IsAndroidVersionAtLeast(26))
@@ -140,6 +144,11 @@ public partial class LocalNotificationCenter
         notificationManager.CreateNotificationChannels(channels);
     }
 
+    /// <summary>
+    /// Gets the Android URI for a notification sound file.
+    /// </summary>
+    /// <param name="soundFileName">The name of the sound file.</param>
+    /// <returns>The URI for the sound file, or the default notification sound if not found.</returns>
     internal static Android.Net.Uri? GetSoundUri(string soundFileName)
     {
         if (string.IsNullOrWhiteSpace(soundFileName))
@@ -166,10 +175,10 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
-    ///
+    /// Logs a message to the Android log and the configured logger.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="callerName"></param>
+    /// <param name="message">The message to log.</param>
+    /// <param name="callerName">The name of the calling method (automatically provided).</param>
     internal static void Log(string message, [CallerMemberName] string callerName = "")
     {
         var logMessage = $"{callerName}: {message}";
@@ -189,11 +198,11 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
-    ///
+    /// Logs an exception and optional message to the Android log and the configured logger.
     /// </summary>
-    /// <param name="ex"></param>
-    /// <param name="message"></param>
-    /// <param name="callerName"></param>
+    /// <param name="ex">The exception to log.</param>
+    /// <param name="message">An optional message to include with the log.</param>
+    /// <param name="callerName">The name of the calling method (automatically provided).</param>
     internal static void Log(Exception ex, string? message = null, [CallerMemberName] string callerName = "")
     {
         var logMessage = $"{callerName}: {message}";

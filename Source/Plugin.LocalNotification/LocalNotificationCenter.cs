@@ -8,9 +8,8 @@ using Plugin.LocalNotification.Platforms;
 namespace Plugin.LocalNotification;
 
 /// <summary>
-/// Cross platform INotificationService Resolver.
+/// Provides a cross-platform resolver for <see cref="INotificationService"/> and manages notification serialization and logging.
 /// </summary>
-
 public partial class LocalNotificationCenter
 {
     private static readonly Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
@@ -23,39 +22,38 @@ public partial class LocalNotificationCenter
         null;
 #endif
 
-
     /// <summary>
-    /// Internal  Logger
+    /// Gets or sets the internal logger for notification events.
     /// </summary>
     internal static ILogger? Logger { get; set; }
 
     /// <summary>
-    /// Internal  Logger LogLevel
+    /// Gets or sets the log level for internal logging.
     /// </summary>
     public static LogLevel LogLevel { get; set; } = LogLevel.Trace;
 
     /// <summary>
-    /// Platform specific INotificationService.
+    /// Gets the platform-specific <see cref="INotificationService"/> implementation.
     /// </summary>
     public static INotificationService Current => implementation.Value;
 
     /// <summary>
-    /// Return Notification Key.
+    /// The key used to return a notification request.
     /// </summary>
     public const string ReturnRequest = "Plugin.LocalNotification.RETURN_REQUEST";
 
     /// <summary>
-    /// Return Notification Action Id.
+    /// The key used to return a notification action id.
     /// </summary>
     public const string ReturnRequestActionId = "Plugin.LocalNotification.RETURN_ActionId";
 
     /// <summary>
-    /// Return Notification Handled Key
+    /// The key used to indicate a notification was handled.
     /// </summary>
     public const string ReturnRequestHandled = "Plugin.LocalNotification.RETURN_Handled";
 
     /// <summary>
-    ///
+    /// Gets or sets the serializer used for notification requests.
     /// </summary>
     internal static INotificationSerializer Serializer
     {
@@ -67,6 +65,11 @@ public partial class LocalNotificationCenter
         set => _serializer = value;
     }
 
+    /// <summary>
+    /// Deserializes a notification request from its serialized string representation.
+    /// </summary>
+    /// <param name="serializedRequest">The serialized notification request string.</param>
+    /// <returns>The deserialized <see cref="NotificationRequest"/>.</returns>
     internal static NotificationRequest GetRequest(string? serializedRequest)
     {
         Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
@@ -79,6 +82,11 @@ public partial class LocalNotificationCenter
         return request ?? new NotificationRequest();
     }
 
+    /// <summary>
+    /// Deserializes a list of notification requests from its serialized string representation.
+    /// </summary>
+    /// <param name="serializedRequestList">The serialized list of notification requests.</param>
+    /// <returns>The deserialized list of <see cref="NotificationRequest"/> objects.</returns>
     internal static List<NotificationRequest> GetRequestList(string? serializedRequestList)
     {
         if (string.IsNullOrWhiteSpace(serializedRequestList))
@@ -90,6 +98,11 @@ public partial class LocalNotificationCenter
         return requestList ?? [];
     }
 
+    /// <summary>
+    /// Serializes a list of notification requests to a string.
+    /// </summary>
+    /// <param name="requestList">The list of notification requests to serialize.</param>
+    /// <returns>The serialized string representation of the list.</returns>
     internal static string GetRequestListSerialize(List<NotificationRequest> requestList)
     {
         if (requestList is null || requestList.Count <= 0)
@@ -111,6 +124,11 @@ public partial class LocalNotificationCenter
         return serializedRequestList;
     }
 
+    /// <summary>
+    /// Serializes a notification request to a string.
+    /// </summary>
+    /// <param name="request">The notification request to serialize.</param>
+    /// <returns>The serialized string representation of the request.</returns>
     internal static string GetRequestSerialize(NotificationRequest request)
     {
         if (request is null)

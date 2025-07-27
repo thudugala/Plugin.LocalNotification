@@ -5,9 +5,18 @@ using UserNotifications;
 
 namespace Plugin.LocalNotification.Platforms;
 
+/// <summary>
+/// Handles iOS user notification center delegate callbacks for local notifications
+/// </summary>
 /// <inheritdoc />
 public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
 {
+    /// <summary>
+    /// Called when a notification response is received - when user takes action on a delivered notification
+    /// </summary>
+    /// <param name="center">The notification center that received the response</param>
+    /// <param name="response">The user's response to the notification</param>
+    /// <param name="completionHandler">The completion handler to execute when done processing the response</param>
     /// <inheritdoc />
     public override void DidReceiveNotificationResponse(UNUserNotificationCenter center,
         UNNotificationResponse response, Action completionHandler)
@@ -100,6 +109,12 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
         }
     }
 
+    /// <summary>
+    /// Called when a notification is about to be presented while the app is in the foreground
+    /// </summary>
+    /// <param name="center">The notification center that is about to present the notification</param>
+    /// <param name="notification">The notification to be presented</param>
+    /// <param name="completionHandler">The completion handler to execute with the presentation options</param>
     /// <inheritdoc />
     public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification,
         Action<UNNotificationPresentationOptions> completionHandler)
@@ -194,9 +209,9 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
     }
 
     /// <summary>
-    ///
+    /// Attempts to get the default iOS notification service implementation
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new or existing instance of NotificationServiceImpl</returns>
     internal static NotificationServiceImpl TryGetDefaultIOsNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
             ? notificationService
             : new NotificationServiceImpl();

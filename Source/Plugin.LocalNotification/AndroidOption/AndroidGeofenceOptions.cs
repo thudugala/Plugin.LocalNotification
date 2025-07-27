@@ -1,22 +1,21 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-///
+/// Represents geofence options for Android local notifications, allowing configuration of expiration, loitering delay, and responsiveness.
 /// </summary>
 public class AndroidGeofenceOptions
 {
     /// <summary>
-    /// Sets the expiration duration of geofence.
-    /// This geofence will be removed automatically after this period of time.
-    /// Time for this proximity alert, in milliseconds, or -1 to indicate no expiration.
-    /// When positive, this geofence will be removed automatically after this amount of time.
+    /// Gets or sets the expiration duration of the geofence in milliseconds.
+    /// The geofence will be removed automatically after this period of time.
+    /// Use -1 to indicate no expiration.
     /// </summary>
     public long ExpirationDurationInMilliseconds { get; set; } = -1;
 
     /// <summary>
-    /// If loitering delay is set the geofence service will send a alert roughly after user enters a geofence if the user stays inside the geofence during this period of time.
-    /// If the user exits from the geofence in this amount of time, alert won't be sent.
-    /// The delay for confirming dwelling, in milliseconds
+    /// Gets or sets the loitering delay in milliseconds.
+    /// If set, an alert will be sent after the user enters a geofence and stays inside during this period.
+    /// If the user exits before this time, no alert will be sent.
     /// </summary>
     public int LoiteringDelayMilliseconds { get; set; }
 

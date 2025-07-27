@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-/// Notification Channel Request
+/// Represents a request to create or configure an Android notification channel, including importance, sound, vibration, and other options.
 /// </summary>
 public class NotificationChannelRequest
 {
@@ -9,13 +9,13 @@ public class NotificationChannelRequest
     private string name = AndroidOptions.DefaultChannelName;
 
     /// <summary>
-    /// Sets or gets, the level of interruption of this notification channel.
+    /// Gets or sets the level of interruption (importance) for this notification channel.
     /// </summary>
     public AndroidImportance Importance { get; set; } = AndroidImportance.Default;
 
     /// <summary>
-    /// Sets or gets, The id of the channel. Must be unique per package. The value may be truncated if it is too lon
-    /// Also, NotificationRequest.Android.ChannelId must be set to the same Id to target this channel.
+    /// Gets or sets the id of the channel. Must be unique per package. The value may be truncated if it is too long.
+    /// Also, <c>NotificationRequest.Android.ChannelId</c> must be set to the same Id to target this channel.
     /// </summary>
     public string Id
     {
@@ -24,8 +24,8 @@ public class NotificationChannelRequest
     }
 
     /// <summary>
-    /// Sets or gets, the user visible name of this channel, default is General.
-    /// </summary>       
+    /// Gets or sets the user-visible name of this channel. Default is "General".
+    /// </summary>
     public string Name
     {
         get => string.IsNullOrWhiteSpace(name) ? AndroidOptions.DefaultChannelName : name;
@@ -33,58 +33,57 @@ public class NotificationChannelRequest
     }
 
     /// <summary>
-    /// Sets or gets, the user visible description of this channel.
+    /// Gets or sets the user-visible description of this channel.
     /// </summary>
     public string Description { get; set; } = string.Empty;
 
     /// <summary>
-    /// Sets or gets, what group this channel belongs to.
+    /// Gets or sets the group this channel belongs to.
     /// </summary>
     public string Group { get; set; } = string.Empty;
 
     /// <summary>
-    /// Sets or gets, the notification light color for notifications posted to this channel,
-    /// if the device supports that feature
+    /// Gets or sets the notification light color for notifications posted to this channel, if the device supports that feature.
     /// </summary>
     public AndroidColor LightColor { get; set; } = new();
 
     /// <summary>
-    /// Sound file name for the notification.
+    /// Gets or sets the sound file name for the notification.
     /// </summary>
     public string Sound { get; set; } = string.Empty;
 
     /// <summary>
-    /// Sets or gets, Sets whether notification posted to this channel should play sound.
+    /// Gets or sets a value indicating whether notifications posted to this channel should play sound.
     /// </summary>
     public bool EnableSound { get; set; } = true;
 
     /// <summary>
-    /// Only modifiable before the channel is submitted.
+    /// Gets or sets the vibration pattern for the channel. Only modifiable before the channel is submitted.
     /// </summary>
     public long[] VibrationPattern { get; set; } = [];
 
     /// <summary>
-    /// Sets or gets, whether or not notifications posted to this channel are shown on the lock Screen in full or redacted form.
+    /// Gets or sets whether notifications posted to this channel are shown on the lock screen in full or redacted form.
     /// </summary>
     public AndroidVisibilityType LockScreenVisibility { get; set; } = AndroidVisibilityType.Private;
 
     /// <summary>
-    /// Sets or gets, Sets whether notifications posted to this channel can appear as application icon badges in a Launcher.
+    /// Gets or sets a value indicating whether notifications posted to this channel can appear as application icon badges in a Launcher.
     /// </summary>
     public bool ShowBadge { get; set; } = true;
 
     /// <summary>
-    /// Sets or gets, Sets whether notifications posted to this channel should display notification lights, on devices that support that feature.
+    /// Gets or sets a value indicating whether notifications posted to this channel should display notification lights, on devices that support that feature.
     /// </summary>
     public bool EnableLights { get; set; } = true;
 
     /// <summary>
-    /// Sets or gets, Sets whether notification posted to this channel should vibrate. The vibration pattern can be set with VibrationPattern
+    /// Gets or sets a value indicating whether notifications posted to this channel should vibrate. The vibration pattern can be set with <c>VibrationPattern</c>.
     /// </summary>
     public bool EnableVibration { get; set; } = true;
 
     /// <summary>
-    /// Sets or gets, Sets whether notification posted to this channel can bypass DND (Do Not Disturb) mode.
+    /// Gets or sets a value indicating whether notifications posted to this channel can bypass DND (Do Not Disturb) mode.
     /// </summary>
     public bool CanBypassDnd { get; set; } = false;
 }

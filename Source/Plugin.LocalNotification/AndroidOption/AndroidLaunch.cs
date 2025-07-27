@@ -12,7 +12,7 @@
 public class AndroidLaunch
 {
     /// <summary>
-    /// Passing true will cause this notification to be sent even if other notifications are suppressed. the default is true.
+    /// Gets or sets a value indicating whether the notification should be sent even if other notifications are suppressed. Default is <c>true</c>.
     /// </summary>
     public bool InHighPriority { get; set; } = true;
 }

@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-/// A grouping of related notification channels
+/// Represents a grouping of related notification channels for Android notifications.
 /// </summary>
 public class NotificationChannelGroupRequest
 {
@@ -9,7 +9,7 @@ public class NotificationChannelGroupRequest
     private string name = AndroidOptions.DefaultGroupName;
 
     /// <summary>
-    /// The id of the group. Must be unique per package. the value may be truncated if it is too long
+    /// Gets or sets the id of the group. Must be unique per package. The value may be truncated if it is too long.
     /// </summary>
     public string Group
     {
@@ -17,7 +17,7 @@ public class NotificationChannelGroupRequest
         set => group = string.IsNullOrWhiteSpace(value) ? AndroidOptions.DefaultGroupId : value;
     }
     /// <summary>
-    /// The user visible name of the group, The recommended maximum length is 40 characters; the value may be truncated if it is too long.
+    /// Gets or sets the user-visible name of the group. The recommended maximum length is 40 characters; the value may be truncated if it is too long.
     /// </summary>
     public string Name
     {
@@ -26,10 +26,10 @@ public class NotificationChannelGroupRequest
     }
 
     /// <summary>
-    /// Constructor to pass values directly
+    /// Initializes a new instance of the <see cref="NotificationChannelGroupRequest"/> class with the specified group id and name.
     /// </summary>
-    /// <param name="group"></param>
-    /// <param name="name"></param>
+    /// <param name="group">The id of the group.</param>
+    /// <param name="name">The user-visible name of the group.</param>
     public NotificationChannelGroupRequest(string group, string name)
     {
         Group = group;
@@ -37,7 +37,7 @@ public class NotificationChannelGroupRequest
     }
 
     /// <summary>
-    /// Default Constructor
+    /// Initializes a new instance of the <see cref="NotificationChannelGroupRequest"/> class with default values.
     /// </summary>
     public NotificationChannelGroupRequest()
     {

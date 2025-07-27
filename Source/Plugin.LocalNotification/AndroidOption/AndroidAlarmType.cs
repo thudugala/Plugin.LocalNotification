@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-///
+/// Specifies the type of alarm used for scheduling Android notifications.
 /// </summary>
 public enum AndroidAlarmType
 {

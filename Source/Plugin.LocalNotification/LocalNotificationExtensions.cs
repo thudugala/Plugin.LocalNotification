@@ -4,16 +4,17 @@ using Microsoft.Maui.LifecycleEvents;
 namespace Plugin.LocalNotification;
 
 /// <summary>
-///
+/// Provides extension methods for integrating local notification functionality into a .NET MAUI application.
 /// </summary>
 public static class LocalNotificationExtensions
 {
     /// <summary>
-    ///
+    /// Configures and enables local notification support for a .NET MAUI application.
+    /// Registers required services and sets up platform-specific lifecycle events.
     /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="configureDelegate"></param>
-    /// <returns></returns>
+    /// <param name="builder">The <see cref="MauiAppBuilder"/> to configure.</param>
+    /// <param name="configureDelegate">An optional delegate to further configure local notification options.</param>
+    /// <returns>The configured <see cref="MauiAppBuilder"/>.</returns>
     public static MauiAppBuilder UseLocalNotification(this MauiAppBuilder builder, Action<ILocalNotificationBuilder>? configureDelegate = null)
     {
         var localNotificationBuilder = new LocalNotificationBuilder();

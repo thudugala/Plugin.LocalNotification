@@ -1,22 +1,22 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-/// Set the progress this notification represents. The platform template will represent this using a ProgressBar.
+/// Represents a progress bar for Android notifications, allowing configuration of indeterminate mode, maximum value, and current progress.
 /// </summary>
 public class AndroidProgressBar
 {
     /// <summary>
-    /// Set whether this progress bar is in indeterminate mode
+    /// Gets or sets a value indicating whether this progress bar is in indeterminate mode.
     /// </summary>
     public bool IsIndeterminate { get; set; }
 
     /// <summary>
-    /// Set Upper limit of this progress bar's range
+    /// Gets or sets the upper limit of this progress bar's range.
     /// </summary>
     public int Max { get; set; }
 
     /// <summary>
-    /// Set progress bar's current level of progress
+    /// Gets or sets the current level of progress for this progress bar.
     /// </summary>
     public int Progress { get; set; }
 }

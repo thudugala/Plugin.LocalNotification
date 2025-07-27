@@ -1,16 +1,15 @@
 ﻿namespace Plugin.LocalNotification.AndroidOption;
 
 /// <summary>
-///
+/// Defines methods for building Android local notification options, including channels and channel groups.
 /// </summary>
 public interface IAndroidLocalNotificationBuilder
 {
     /// <summary>
-    /// A representation of settings that apply to a collection of similarly themed notifications.
-    /// Create Notification Channel when API >= 26.
+    /// Adds a notification channel with the specified settings. Creates the channel when API >= 26.
     /// </summary>
-    /// <param name="channelRequest"></param>
-    /// <returns></returns>
+    /// <param name="channelRequest">The channel request containing channel settings.</param>
+    /// <returns>The builder instance for chaining.</returns>
     IAndroidLocalNotificationBuilder AddChannel(NotificationChannelRequest channelRequest);
 
     /// <summary>
@@ -21,7 +20,7 @@ public interface IAndroidLocalNotificationBuilder
     /// so you can create a notification channel group for each account.
     /// This way, users can easily identify and control multiple notification channels that have identical names.
     /// </summary>
-    /// <param name="groupChannelRequest"></param>
-    /// <returns></returns>
+    /// <param name="groupChannelRequest">The channel group request containing group settings.</param>
+    /// <returns>The builder instance for chaining.</returns>
     IAndroidLocalNotificationBuilder AddChannelGroup(NotificationChannelGroupRequest groupChannelRequest);
 }

@@ -5,30 +5,30 @@ using Plugin.LocalNotification.Json;
 namespace Plugin.LocalNotification;
 
 /// <summary>
-///
+/// Provides a builder for configuring local notifications, including platform-specific options and notification categories.
 /// </summary>
 public class LocalNotificationBuilder : ILocalNotificationBuilder
 {
     /// <summary>
-    /// Register notification categories and their corresponding actions
+    /// Gets the set of registered notification categories and their corresponding actions.
     /// </summary>
     internal HashSet<NotificationCategory> CategorySet { get; } = [];
 
     /// <summary>
-    ///
+    /// Gets or sets the serializer used for notification requests.
     /// </summary>
     internal INotificationSerializer Serializer { get; private set; } = new NotificationSerializer();
 
     /// <summary>
-    /// Android specific Builder.
+    /// Gets the Android-specific notification builder.
     /// </summary>
     internal AndroidLocalNotificationBuilder AndroidBuilder { get; } = new();
 
     /// <summary>
-    /// Android specific Builder.
+    /// Gets the iOS-specific notification builder.
     /// </summary>
     internal iOSLocalNotificationBuilder IOSBuilder { get; } = new();
-            
+
     /// <inheritdoc/>
     public ILocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android)
     {
