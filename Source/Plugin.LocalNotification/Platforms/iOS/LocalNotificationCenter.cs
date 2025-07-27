@@ -10,19 +10,16 @@ namespace Plugin.LocalNotification;
 public partial class LocalNotificationCenter
 {
     /// <summary>
-    /// This allow developer to change UNUserNotificationCenterDelegate,
-    /// extend Plugin.LocalNotification.Platform.iOS.UserNotificationCenterDelegate
-    /// Create custom IUNUserNotificationCenterDelegate
-    /// and set it using this method
+    /// Sets the <see cref="UNUserNotificationCenterDelegate"/> for iOS notifications. Allows developers to provide a custom delegate for handling notification events.
     /// </summary>
-    /// <param name="notificationDelegate"></param>
+    /// <param name="notificationDelegate">The custom notification center delegate to use. If null, uses the default <see cref="UserNotificationCenterDelegate"/>.</param>
     public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null) => UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();
 
     /// <summary>
-    ///
+    /// Gets the <see cref="NotificationRequest"/> from the provided <see cref="UNNotificationContent"/>.
     /// </summary>
-    /// <param name="notificationContent"></param>
-    /// <returns></returns>
+    /// <param name="notificationContent">The notification content to extract the request from.</param>
+    /// <returns>The deserialized <see cref="NotificationRequest"/>, or null if not found.</returns>
     public static NotificationRequest? GetRequest(UNNotificationContent? notificationContent)
     {
         if (notificationContent is null)
@@ -45,9 +42,9 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
-    /// Reset Application Icon Badge Number when there are no notifications.
+    /// Resets the application icon badge number when there are no notifications.
     /// </summary>
-    /// <param name="uiApplication"></param>
+    /// <param name="uiApplication">The current <see cref="UIApplication"/> instance.</param>
     public static void ResetApplicationIconBadgeNumber(UIApplication uiApplication)
     {
         try
@@ -93,9 +90,9 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
-    /// Reset Application Icon Badge Number when there are no notifications.
+    /// Asynchronously resets the application icon badge number when there are no notifications.
     /// </summary>
-    /// <param name="uiApplication"></param>
+    /// <param name="uiApplication">The current <see cref="UIApplication"/> instance.</param>
     public static async Task ResetApplicationIconBadgeNumberAsync(UIApplication uiApplication)
     {
         try
@@ -130,21 +127,21 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
-    ///
+    /// Logs a message to the internal logger with the caller name.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="callerName"></param>
+    /// <param name="message">The message to log.</param>
+    /// <param name="callerName">The name of the calling method (automatically provided).</param>
     internal static void Log(string? message, [CallerMemberName] string callerName = "")
     {
         Logger?.Log(LogLevel, "{callerName}: {message}", callerName, message);
     }
 
     /// <summary>
-    ///
+    /// Logs an exception and optional message to the internal logger with the caller name.
     /// </summary>
-    /// <param name="ex"></param>
-    /// <param name="message"></param>
-    /// <param name="callerName"></param>
+    /// <param name="ex">The exception to log.</param>
+    /// <param name="message">An optional message to include with the log.</param>
+    /// <param name="callerName">The name of the calling method (automatically provided).</param>
     internal static void Log(Exception? ex, string? message = null, [CallerMemberName] string callerName = "")
     {
         Logger?.LogError(ex, "{callerName}: {message}", callerName, message);

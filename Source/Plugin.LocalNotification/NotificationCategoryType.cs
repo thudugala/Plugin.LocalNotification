@@ -1,57 +1,57 @@
 namespace Plugin.LocalNotification;
 
 /// <summary>
-///
+/// Specifies the type of notification category, used to classify notifications for different purposes.
 /// </summary>
 public enum NotificationCategoryType
 {
     /// <summary>
-    ///
+    /// No category specified.
     /// </summary>
     None,
 
     /// <summary>
-    /// Ongoing information about device or contextual status
+    /// Ongoing information about device or contextual status.
     /// </summary>
     Status,
 
     /// <summary>
-    /// Alarm or timer
+    /// Alarm or timer.
     /// </summary>
     Alarm,
 
     /// <summary>
-    /// User-scheduled reminder
+    /// User-scheduled reminder.
     /// </summary>
     Reminder,
 
     /// <summary>
-    /// Calendar event
+    /// Calendar event.
     /// </summary>
     Event,
 
     /// <summary>
-    /// Error in background operation or authentication status
+    /// Error in background operation or authentication status.
     /// </summary>
     Error,
 
     /// <summary>
-    /// Progress of a long-running background operation
+    /// Progress of a long-running background operation.
     /// </summary>
     Progress,
 
     /// <summary>
-    /// Promotion or advertisement
+    /// Promotion or advertisement.
     /// </summary>
     Promo,
 
     /// <summary>
-    /// A specific, timely recommendation for a single thing. For example, a news app might want to recommend a news story it believes the user will want to read next
+    /// A specific, timely recommendation for a single thing. For example, a news app might want to recommend a news story it believes the user will want to read next.
     /// </summary>
     Recommendation,
 
     /// <summary>
-    /// Indication of running background service
+    /// Indication of running background service.
     /// </summary>
     Service,
 }
