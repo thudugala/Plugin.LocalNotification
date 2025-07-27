@@ -1,58 +1,52 @@
 ﻿namespace Plugin.LocalNotification.iOSOption;
 
 /// <summary>
-/// NotificationRequest for iOS
+/// Represents notification request options for iOS, including display, sound, badge, priority, and summary settings.
 /// </summary>
 public class iOSOptions
 {
     /// <summary>
-    /// Setting this flag will prevent iOS from displaying the default banner when a Notification is received in foreground
-    /// Default is false
+    /// Gets or sets a value indicating whether to prevent iOS from displaying the default banner when a notification is received in the foreground. Default is <c>false</c>.
     /// </summary>
     public bool HideForegroundAlert { get; set; }
 
     /// <summary>
-    /// Setting this flag will enable iOS to play the default notification sound even if the app is in foreground
-    /// Default is true
+    /// Gets or sets a value indicating whether to enable iOS to play the default notification sound even if the app is in the foreground. Default is <c>true</c>.
     /// </summary>
     public bool PlayForegroundSound { get; set; } = true;
 
     /// <summary>
-    /// Setting this flag will enable iOS to Present the notification as a banner
-    /// Default is true
+    /// Gets or sets a value indicating whether to present the notification as a banner. Default is <c>true</c>.
     /// </summary>
     public bool PresentAsBanner { get; set; } = true;
 
     /// <summary>
-    /// Setting this flag will enable iOS to Show the notification in Notification Center
-    /// Default is true
+    /// Gets or sets a value indicating whether to show the notification in Notification Center. Default is <c>true</c>.
     /// </summary>
     public bool ShowInNotificationCenter { get; set; } = true;
 
     /// <summary>
-    /// Setting this flag will enable iOS to Apply the notification's badge value to the app’s icon
-    /// Default is true
+    /// Gets or sets a value indicating whether to apply the notification's badge value to the app’s icon. Default is <c>true</c>.
     /// </summary>
     public bool ApplyBadgeValue { get; set; } = true;
 
     /// <summary>
-    /// The Priority determines the degree of Priority associated with the notification.
-    /// Default is active
+    /// Gets or sets the priority associated with the notification. Default is <see cref="iOSPriority.Active"/>.
     /// </summary>
     public iOSPriority Priority { get; set; } = iOSPriority.Active;
 
     /// <summary>
-    /// The system uses the relevanceScore, a value between 0 and 1, to sort the notifications from your app. The highest score gets featured in the notification summary.
+    /// Gets or sets the relevance score (between 0 and 1) used by the system to sort notifications. The highest score gets featured in the notification summary.
     /// </summary>
     public double RelevanceScore { get; set; }
 
     /// <summary>
-    /// The string the notification adds to the category’s summary format string.
+    /// Gets or sets the string the notification adds to the category’s summary format string.
     /// </summary>
     public string SummaryArgument { get; set; } = string.Empty;
 
     /// <summary>
-    /// The number of items the notification adds to the category’s summary format string.
+    /// Gets or sets the number of items the notification adds to the category’s summary format string.
     /// </summary>
     public int SummaryArgumentCount { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Plugin.LocalNotification.iOSOption;
 
 /// <summary>
-///
+/// Specifies the priority levels for iOS notifications, affecting how notifications are presented to the user.
 /// </summary>
 public enum iOSPriority
 {

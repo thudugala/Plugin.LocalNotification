@@ -4,12 +4,15 @@ using Plugin.LocalNotification.Platforms;
 
 namespace Plugin.LocalNotification.iOSOption;
 
+/// <summary>
+/// Provides a builder for configuring iOS-specific local notification options, including custom notification center delegate.
+/// </summary>
 /// <inheritdoc/>
 public class iOSLocalNotificationBuilder : IiOSLocalNotificationBuilder
 {
 #if IOS
     /// <summary>
-    ///
+    /// Gets the custom <see cref="UserNotificationCenterDelegate"/> used for handling iOS notification events.
     /// </summary>
     internal UserNotificationCenterDelegate? CustomUserNotificationCenterDelegate { get; private set; }
 
