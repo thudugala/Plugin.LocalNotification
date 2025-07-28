@@ -54,6 +54,9 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui --ignore-failed-sources
 
+      - name: Show current version of Xcode
+        run: xcodebuild -version
+
       - name: Set XCode Version
         shell: bash
         run: |
