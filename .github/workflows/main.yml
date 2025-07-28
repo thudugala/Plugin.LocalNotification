@@ -71,7 +71,7 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode_16.2.app
           sudo xcodebuild -runFirstLaunch
           sudo xcrun simctl list
-          sudo xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimDeviceType.iPhone-16 com.apple.CoreSimulator.SimRuntime.iOS-16-4
+          sudo xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimDeviceType.iPhone-16 com.apple.CoreSimulator.SimRuntime.iOS-17-0
           
       - name: Restore Dependencies
         run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
