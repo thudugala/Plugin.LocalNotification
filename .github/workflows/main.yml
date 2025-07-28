@@ -39,7 +39,7 @@ jobs:
 
   # MAUI iOS Build
   build-ios:
-    runs-on: macos-14
+    runs-on: macos-15
     name: iOS Build
     steps:
 
