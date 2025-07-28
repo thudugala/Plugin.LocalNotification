@@ -1,49 +1,27 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Windows.AppNotifications;
 using Plugin.LocalNotification.EventArgs;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Windows.UI.Notifications;
 
 namespace Plugin.LocalNotification;
 
 public partial class LocalNotificationCenter
-{
+{    
     /// <summary>
-    ///
-    /// </summary>
-    /// <param name="permission"></param>
-    /// <returns></returns>
-    public static async Task<bool> RequestNotificationPermissionAsync(NotificationPermission? permission = null)
-    {
-        return await Task.FromResult(true);
-    }
-
-    /// <summary>
-    /// Need to add this because otherwise setting background activation does nothing.
+    /// Setup Windows background activation for notifications
     /// </summary>
     public static void SetupBackgroundActivation()
     {
-        ToastNotificationManagerCompat.OnActivated += (notificationArgs) =>
+        AppNotificationManager.Default.NotificationInvoked += (sender, args) =>
         {
-            // this will run everytime ToastNotification.Activated is called,
-            // regardless of what toast is clicked and what element is clicked on.
-            // Works for all types of ToastActivationType so long as the Windows app manifest
-            // has been updated to support ToastNotifications.
-
-            // you can check your args here, however I'll be doing mine below to keep it cleaner.
-            // With so many ToastNotifications it would be messy to check all of them here.
-
-            Debug.WriteLine($"A ToastNotification was just activated! Arguments: {notificationArgs.Argument}");
-
-            NotifyNotificationTapped(notificationArgs.Argument);
+            var arguments = string.Join(";", args.Arguments.Select(kv => $"{kv.Key}={kv.Value}"));
+            NotifyNotificationTapped(arguments);
         };
     }
 
     /// <summary>
     /// Notify Local Notification Tapped.
     /// </summary>
-    /// <param name="arguments"></param>
     internal static void NotifyNotificationTapped(string arguments)
     {
         try
@@ -63,46 +41,63 @@ public partial class LocalNotificationCenter
         catch (Exception ex)
         {
             Log(ex);
+            throw;
         }
     }
 
     internal static (int, NotificationRequest?) GetRequestFromArguments(string arguments)
     {
-        var args = ToastArguments.Parse(arguments);
+        try
+        {
+            var dict = arguments.Split(';')
+                .Select(part => part.Split('='))
+                .Where(parts => parts.Length == 2)
+                .ToDictionary(parts => parts[0], parts => parts[1]);
 
-        var actionId = args.GetInt(ReturnRequestActionId);
-        var notifiactionId = args.Get(ReturnRequest);
+            if (dict.TryGetValue(ReturnRequestActionId, out var actionIdStr) &&
+                dict.TryGetValue(ReturnRequest, out var requestIdStr))
+            {
+                if (int.TryParse(actionIdStr, out var actionId) &&
+                    int.TryParse(requestIdStr, out var requestId))
+                {
+                    // Create a basic NotificationRequest with the ID
+                    // In a real app, you might want to store more information about the notification
+                    var request = new NotificationRequest
+                    {
+                        NotificationId = requestId
+                    };
 
-        var toastNotification = ToastNotificationManager.History.GetHistory().FirstOrDefault(t => t.Tag == notifiactionId);
+                    return (actionId, request);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log(ex);
+            throw;
+        }
 
-        var element = toastNotification?.Content.ChildNodes.FirstOrDefault(e => e.NodeName == "toast");
-        var attribute = element?.Attributes.FirstOrDefault(a => a.NodeName == "launch");
-
-        // TODO: get the request
-        var request = GetRequest("");
-        return (actionId, request);
+        return (-1000, null);
     }
 
     /// <summary>
-    ///
+    /// Logs a message to the internal logger with the caller name.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="callerName"></param>
+    /// <param name="message">The message to log.</param>
+    /// <param name="callerName">The name of the calling method (automatically provided).</param>
     internal static void Log(string? message, [CallerMemberName] string callerName = "")
     {
-        var logMessage = $"{callerName}: {message}";
-        Logger?.Log(LogLevel, logMessage);
+        Logger?.Log(LogLevel, "{callerName}: {message}", callerName, message);
     }
 
     /// <summary>
-    ///
+    /// Logs an exception and optional message to the internal logger with the caller name.
     /// </summary>
-    /// <param name="ex"></param>
-    /// <param name="message"></param>
-    /// <param name="callerName"></param>
+    /// <param name="ex">The exception to log.</param>
+    /// <param name="message">An optional message to include with the log.</param>
+    /// <param name="callerName">The name of the calling method (automatically provided).</param>
     internal static void Log(Exception? ex, string? message = null, [CallerMemberName] string callerName = "")
     {
-        var logMessage = $"{callerName}: {message}";
-        Logger?.LogError(ex, logMessage);
-    }
+        Logger?.LogError(ex, "{callerName}: {message}", callerName, message);
+    }    
 }
