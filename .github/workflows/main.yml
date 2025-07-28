@@ -57,6 +57,9 @@ jobs:
       - name: Show current version of Xcode
         run: xcodebuild -version
 
+      - name: Show available Xcode versions
+        run: ls /Applications | grep Xcode
+
       - name: Set XCode Version
         shell: bash
         run: |
