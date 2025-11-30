@@ -26,16 +26,16 @@ jobs:
         run: dotnet workload install maui --ignore-failed-sources
 
       - name: Restore Dependencies
-        run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
+        run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI Android
-        run: dotnet publish 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-android --no-restore
+        run: dotnet publish 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-android --no-restore
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4.6.0
         with:
           name: mauibeach-android-ci-build
-          path: 'Sample/Direct Maui/LocalNotification.Sample/bin/Release/net8.0-android/*Signed.a*'
+          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net8.0-android/*Signed.a*'
 
   # MAUI iOS Build
   build-ios:
@@ -74,13 +74,13 @@ jobs:
           sudo xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimDeviceType.iPhone-15 com.apple.CoreSimulator.SimRuntime.iOS-18-2
           
       - name: Restore Dependencies
-        run: dotnet restore 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj'
+        run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI iOS
-        run: dotnet build 'Sample/Direct Maui/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
+        run: dotnet build 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
 
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v5
         with:
           name: mauibeach-ios-ci-build
-          path: 'Sample/Direct Maui/LocalNotification.Sample/bin/Release/net8.0-ios/iossimulator-x64/**/*.app'
+          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net8.0-ios/iossimulator-x64/**/*.app'

@@ -167,7 +167,7 @@ public partial class LocalNotificationCenter
 #if DEBUG
         if (soundFileUri is null || !soundFileUri.IsValidResource(Application.Context))
         {
-            throw new ArgumentException($"Invalid sound file: {soundFileName}. Your sound has to be AndroidResource stored in Platforms/Android/Resources/raw");
+            throw new ArgumentException($"Invalid sound file: {soundFileUri}. Your sound has to be AndroidResource stored in Platforms/Android/Resources/raw");
         }
 #endif
 
