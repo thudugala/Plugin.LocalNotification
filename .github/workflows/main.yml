@@ -91,4 +91,4 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: mauibeach-ios-ci-build
-          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-ios/iossimulator-x64/**/*.app'
+          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-ios/iossimulator-arm64/**/*.app'
