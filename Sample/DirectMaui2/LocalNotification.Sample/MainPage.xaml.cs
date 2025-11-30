@@ -157,7 +157,7 @@ public partial class MainPage : ContentPage
         // if not specified, notification will show immediately.
         if (UseNotifyTimeSwitch.IsToggled)
         {
-            var notifyDateTime = NotifyDatePicker.Date.Add(NotifyTimePicker.Time);
+            var notifyDateTime = NotifyDatePicker.Date?.Add(NotifyTimePicker.Time ?? TimeSpan.Zero);
             if (notifyDateTime <= DateTime.Now)
             {
                 notifyDateTime = DateTime.Now.AddSeconds(10);
@@ -237,9 +237,9 @@ public partial class MainPage : ContentPage
             if (e.IsDismissed)
             {
                 log.AppendLine($"{Environment.NewLine}Dismissed {DateTime.Now}");
-                MainThread.BeginInvokeOnMainThread(() =>
+                MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    DisplayAlert(e.Request.Title, "User Dismissed Notification", "OK");
+                    await DisplayAlertAsync(e.Request.Title, "User Dismissed Notification", "OK");
                 });
                 return;
             }
@@ -249,9 +249,9 @@ public partial class MainPage : ContentPage
                 log.AppendLine($"{Environment.NewLine}Tapped {DateTime.Now}");
                 if (e.Request is null)
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
                     {
-                        DisplayAlert(e.Request?.Title, $"No Request", "OK");
+                        await DisplayAlertAsync(e.Request?.Title, $"No Request", "OK");
                     });
                     return;
                 }
@@ -260,18 +260,18 @@ public partial class MainPage : ContentPage
                 var list = JsonSerializer.Deserialize(e.Request.ReturningData, AppJsonContext.Default.ListString);
                 if (list is null || list.Count != 4)
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
                     {
-                        DisplayAlert(e.Request.Title, $"No ReturningData {e.Request.ReturningData}", "OK");
+                        await DisplayAlertAsync(e.Request.Title, $"No ReturningData {e.Request.ReturningData}", "OK");
                     });
                     return;
                 }
 
                 if (list[0] != typeof(NotificationPage).FullName)
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
                     {
-                        DisplayAlert(e.Request.Title, $"Not NotificationPage", "OK");
+                        await DisplayAlertAsync(e.Request.Title, $"Not NotificationPage", "OK");
                     });
                     return;
                 }
@@ -299,9 +299,9 @@ public partial class MainPage : ContentPage
                 case 100:
                     log.AppendLine($"{Environment.NewLine}Hello {DateTime.Now}");
 
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
                     {
-                        DisplayAlert(e.Request.Title, "Hello Button was Tapped", "OK");
+                        await DisplayAlertAsync(e.Request.Title, "Hello Button was Tapped", "OK");
                     });
 
                     _notificationService.Cancel(e.Request.NotificationId);
@@ -377,7 +377,7 @@ public partial class MainPage : ContentPage
 
         System.Diagnostics.Debug.WriteLine(e);
 
-        MainThread.BeginInvokeOnMainThread(() =>
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
             if (!CustomAlert.IsToggled)
             {
@@ -385,7 +385,7 @@ public partial class MainPage : ContentPage
             }
             var requestJson = JsonSerializer.Serialize(e.Request, AppJsonContext.Default.NotificationRequest);
 
-            DisplayAlert(e.Request.Title, requestJson, "OK");
+            await DisplayAlertAsync(e.Request.Title, requestJson, "OK");
         });
     }
 }

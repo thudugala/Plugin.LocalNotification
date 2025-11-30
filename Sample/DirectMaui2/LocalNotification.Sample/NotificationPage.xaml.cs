@@ -22,7 +22,7 @@ public partial class NotificationPage : ContentPage
 
         if (deliveredNotificationList != null)
         {
-            await DisplayAlert("Delivered Notification Count", deliveredNotificationList.Count.ToString(), "OK");
+            await DisplayAlertAsync("Delivered Notification Count", deliveredNotificationList.Count.ToString(), "OK");
         }
 
         await Navigation.PopModalAsync();

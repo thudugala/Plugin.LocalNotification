@@ -13,6 +13,8 @@ namespace Plugin.LocalNotification.Json;
 [JsonSerializable(typeof(NotificationRequest))]
 [JsonSerializable(typeof(List<NotificationRequest>))]
 [JsonSerializable(typeof(NotificationImage))]
+[JsonSerializable(typeof(NotificationRequestGeofence))]
+[JsonSerializable(typeof(NotificationRequestGeofence.Position))]
 internal partial class NotificationJsonContext : JsonSerializerContext
 {
 }
