@@ -29,13 +29,13 @@ jobs:
         run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI Android
-        run: dotnet publish 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-android --no-restore
+        run: dotnet publish 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net10.0-android --no-restore
 
       - name: Upload Android Artifact
-        uses: actions/upload-artifact@v4.6.0
+        uses: actions/upload-artifact@v5
         with:
           name: mauibeach-android-ci-build
-          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net8.0-android/*Signed.a*'
+          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-android/*Signed.a*'
 
   # MAUI iOS Build
   build-ios:
@@ -63,24 +63,24 @@ jobs:
       - name: Set XCode Version
         shell: bash
         run: |
-          sudo xcode-select -s "/Applications/Xcode_16.4.app"
-          echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_16.4.app" >> $GITHUB_ENV
+          sudo xcode-select -s "/Applications/Xcode_26.1.app"
+          echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_26.1.app" >> $GITHUB_ENV
 
       - name: Install iOS Simulators
         run: |
-          sudo xcode-select --switch /Applications/Xcode_16.4.app
+          sudo xcode-select --switch /Applications/Xcode_26.1.app
           sudo xcodebuild -runFirstLaunch
           sudo xcrun simctl list
-          sudo xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimDeviceType.iPhone-15 com.apple.CoreSimulator.SimRuntime.iOS-18-2
+          sudo xcrun simctl create "iPhone 26" com.apple.CoreSimulator.SimDeviceType.iPhone-16 com.apple.CoreSimulator.SimRuntime.iOS-18-5
           
       - name: Restore Dependencies
         run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
       - name: Build MAUI iOS
-        run: dotnet build 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net9.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
+        run: dotnet build 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net10.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
 
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v5
         with:
           name: mauibeach-ios-ci-build
-          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net8.0-ios/iossimulator-x64/**/*.app'
+          path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-ios/iossimulator-x64/**/*.app'
