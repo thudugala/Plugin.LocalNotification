@@ -71,7 +71,7 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode_26.1.app
           sudo xcodebuild -runFirstLaunch
           sudo xcrun simctl list
-          sudo xcrun simctl create "iPhone 26" com.apple.CoreSimulator.SimDeviceType.iPhone-16 com.apple.CoreSimulator.SimRuntime.iOS-18-5
+          sudo xcrun simctl create "iPhone 26" com.apple.CoreSimulator.SimDeviceType.iPhone-17 com.apple.CoreSimulator.SimRuntime.iOS-26-1
           
       - name: Restore Dependencies
         run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
