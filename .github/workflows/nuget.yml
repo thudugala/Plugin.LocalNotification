@@ -7,10 +7,10 @@
       runs-on: windows-latest
 
       steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4.3.0
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.x
 
@@ -29,7 +29,7 @@
       - name: build Plugin.LocalNotification.csproj
         run: dotnet build Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj --configuration Release
 
-      - uses: actions/upload-artifact@v4.6.0
+      - uses: actions/upload-artifact@v5
         with:
           name: Plugin.LocalNotification
           path: Source/Plugin.LocalNotification/bin/Release/
