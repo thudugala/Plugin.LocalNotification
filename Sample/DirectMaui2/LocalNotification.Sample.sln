@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11217.181 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample", "LocalNotification.Sample\LocalNotification.Sample.csproj", "{B4D99ED8-F5CF-4CFA-89CE-5327EF7B8416}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.LocalNotification", "..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj", "{86B6401F-58DD-3121-2ABC-5E4A24B16A3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.UnitTests", "..\..\UnitTests\LocalNotification.UnitTests\LocalNotification.UnitTests.csproj", "{A939D821-32AE-EF0C-8ADB-7C5917E17072}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83CE0C1F-FD25-4281-86CA-7A88EE3D0D76}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\main.yml = ..\..\.github\workflows\main.yml
+		..\..\.github\workflows\nuget.yml = ..\..\.github\workflows\nuget.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

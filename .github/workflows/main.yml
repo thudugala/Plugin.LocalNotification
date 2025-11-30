@@ -12,10 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
-      - name: Setup .NET 9
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4.3.0
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
 
       - uses: actions/setup-java@4.7.0
         with:
@@ -46,10 +46,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
-      - name: Setup .NET 9
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4.3.0
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
 
       - name: Install MAUI Workload
         run: dotnet workload install maui --ignore-failed-sources
