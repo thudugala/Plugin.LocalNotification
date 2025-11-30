@@ -20,7 +20,7 @@ The local notification plugin provides a way to show local notifications from Xa
 ## Platform Support
 
 | Feature                       | net9.0-ios  | net9.0-android  |
-| ----------------------------- | ----------- | --------------- | ------------------ | ---------------------- |
+| ----------------------------- | ----------- | --------------- |
 | Build SDK                     | >= 26              | >= API 36              |
 | Supported OS Version          | >= 15              | >= API 21              |
 | Title                         | ✅                | ✅                     |
