@@ -71,8 +71,8 @@ jobs:
       #     sudo xcode-select -s "/Applications/Xcode_26.2.app"
       #     echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_26.2.app" >> $GITHUB_ENV
 
-      - name: Show available Xcode_26.2 versions
-        run: ls /Applications/Xcode_26.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+      # - name: Show available Xcode_26.2 versions
+      #   run: ls /Applications/Xcode_26.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
 
       # - name: Install iOS Simulators
       #   run: |
