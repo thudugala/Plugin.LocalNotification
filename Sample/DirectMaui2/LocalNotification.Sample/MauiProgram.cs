@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Plugin.LocalNotification;
+﻿using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
 
@@ -38,11 +37,7 @@ public static class MauiProgram
                             IOS =
                             {
                                 Action = iOSActionType.Foreground
-                            },
-                            Windows =
-                            {
-                                LaunchAppWhenTapped = true
-                            }
+                            }                            
                         },
                         new(101)
                         {
@@ -58,10 +53,6 @@ public static class MauiProgram
                             IOS =
                             {
                                 Action = iOSActionType.Destructive
-                            },
-                            Windows =
-                            {
-                                LaunchAppWhenTapped = false
                             }
                         }
                     ]

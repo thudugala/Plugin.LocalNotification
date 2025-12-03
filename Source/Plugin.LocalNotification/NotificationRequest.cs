@@ -1,6 +1,5 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
-using Plugin.LocalNotification.WindowsOption;
 
 namespace Plugin.LocalNotification;
 
@@ -44,12 +43,7 @@ public class NotificationRequest
     /// iOS specific properties.
     /// </summary>
     public iOSOptions iOS { get; set; } = new();
-
-    /// <summary>
-    /// Windows specific properties.
-    /// </summary>
-    public WindowsOptions Windows { get; set; } = new();
-
+        
     /// <summary>
     /// A unique identifier for the request
     /// (if identifier is not unique, a new notification request object is not created).

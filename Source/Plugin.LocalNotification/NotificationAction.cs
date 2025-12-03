@@ -1,6 +1,5 @@
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.iOSOption;
-using Plugin.LocalNotification.WindowsOption;
 
 namespace Plugin.LocalNotification;
 
@@ -27,12 +26,7 @@ public class NotificationAction(int actionId) : IEquatable<NotificationAction>
     /// Gets or sets Android-specific properties for the action.
     /// </summary>
     public AndroidAction Android { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets Windows-specific properties for the action.
-    /// </summary>
-    public WindowsAction Windows { get; set; } = new();
-
+        
     /// <summary>
     /// Gets or sets the display title for the action.
     /// </summary>

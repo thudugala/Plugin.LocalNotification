@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.Json;
 
-#if ANDROID || IOS || WINDOWS
+#if ANDROID || IOS
 using Plugin.LocalNotification.Platforms;
 #endif
 
@@ -16,7 +16,7 @@ public partial class LocalNotificationCenter
     private static INotificationSerializer? _serializer;
 
     private static INotificationService? CreateNotificationService() =>
-#if ANDROID || IOS || WINDOWS
+#if ANDROID || IOS
         new NotificationServiceImpl();
 #else
         null;

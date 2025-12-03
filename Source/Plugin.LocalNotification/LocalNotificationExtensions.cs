@@ -55,14 +55,6 @@ public static class LocalNotificationExtensions
                     LocalNotificationCenter.ResetApplicationIconBadgeNumber(application);
                 });
             });
-#elif WINDOWS
-            life.AddWindows(windows =>
-            {
-                windows.OnActivated((window, args) =>
-                {
-                    LocalNotificationCenter.SetupBackgroundActivation();
-                });
-            });
 #endif
         });
 
