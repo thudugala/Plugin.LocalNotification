@@ -12,7 +12,7 @@ namespace Plugin.LocalNotification;
 /// </summary>
 public partial class LocalNotificationCenter
 {
-    private static readonly Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
+    private static Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
     private static INotificationSerializer? _serializer;
 
     private static INotificationService? CreateNotificationService() =>
@@ -21,6 +21,15 @@ public partial class LocalNotificationCenter
 #else
         null;
 #endif
+
+    /// <summary>
+    /// Allows setting a custom notification service implementation. Use this to enable optional features like geofence.
+    /// </summary>
+    /// <param name="service">The service implementation to use.</param>
+    public static void SetNotificationService(INotificationService service)
+    {
+        implementation = new Lazy<INotificationService?>(() => service, LazyThreadSafetyMode.PublicationOnly);
+    }
 
     /// <summary>
     /// Gets or sets the internal logger for notification events.

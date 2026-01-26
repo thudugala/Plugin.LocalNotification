@@ -1,0 +1,84 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net9.0;net10.0;net9.0-android;net10.0-android;net9.0-ios;net10.0-ios</TargetFrameworks>
+
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>    
+    
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    
+    <Title>$(AssemblyName)</Title>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Elvin (Tharindu) Thudugala</Authors>
+    <PackageTags>dotnet;android;ios;local;notification;local.notification;maui;geofence</PackageTags>
+    <PackageProjectUrl>https://github.com/thudugala/Plugin.LocalNotification</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thudugala/Plugin.LocalNotification</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Geofence support for Plugin.LocalNotification. References Google Play Services Location on Android only when used.</Description>
+    <PackageIcon>icon.png</PackageIcon>
+    <Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
+    <Version>1.0.0</Version>
+    <PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
+    <IsPackable>True</IsPackable>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    
+    
+    <IsAotCompatible>true</IsAotCompatible>
+
+	</PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />   
+  </ItemGroup>
+  
+  <!-- .NET (generic) -->
+  <ItemGroup Condition="($(TargetFramework.StartsWith('net')) AND $(TargetFramework.EndsWith('.0')) AND $(TargetFramework.Contains('-')) != true)">
+    <Compile Include="**/Platforms/Generic/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+    <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="121.3.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Platforms\Generic\" />
+	  <Folder Include="Platforms\iOS\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
+	</ItemGroup>
+
+</Project>

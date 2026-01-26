@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.LocalNotification", "Plugin.LocalNotification\Plugin.LocalNotification.csproj", "{89474925-B4A7-4CD0-B3AD-EF6C24C035FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.UnitTests", "..\UnitTests\LocalNotification.UnitTests\LocalNotification.UnitTests.csproj", "{F769723E-2E0B-4CF4-87F1-9F3AD85B74FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.LocalNotification.Geofence", "Plugin.LocalNotification.Geofence\Plugin.LocalNotification.Geofence.csproj", "{4D05B6DD-0F38-4066-8F1A-86EE1F24F16D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F769723E-2E0B-4CF4-87F1-9F3AD85B74FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F769723E-2E0B-4CF4-87F1-9F3AD85B74FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F769723E-2E0B-4CF4-87F1-9F3AD85B74FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D05B6DD-0F38-4066-8F1A-86EE1F24F16D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D05B6DD-0F38-4066-8F1A-86EE1F24F16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D05B6DD-0F38-4066-8F1A-86EE1F24F16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D05B6DD-0F38-4066-8F1A-86EE1F24F16D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

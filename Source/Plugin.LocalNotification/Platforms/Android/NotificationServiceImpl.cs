@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Gms.Location;
 using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
@@ -32,10 +31,7 @@ internal class NotificationServiceImpl : INotificationService
     /// </summary>
     protected readonly AlarmManager? MyAlarmManager;
 
-    /// <summary>
-    ///
-    /// </summary>
-    protected readonly IGeofencingClient? MyGeofencingClient;
+    private bool _constructed;
 
     /// <inheritdoc />
     public event NotificationReceivedEventHandler? NotificationReceived;
@@ -87,7 +83,8 @@ internal class NotificationServiceImpl : INotificationService
         {
             MyNotificationManager = NotificationManager.FromContext(Application.Context);
             MyAlarmManager = AlarmManager.FromContext(Application.Context);
-            MyGeofencingClient = LocationServices.GetGeofencingClient(Application.Context);
+            // Avoid calling overridable methods in constructor (CA2214)
+            _constructed = false;
         }
         catch (Exception ex)
         {
@@ -95,9 +92,34 @@ internal class NotificationServiceImpl : INotificationService
         }
     }
 
+    /// <summary>
+    /// Hook for derived classes to run additional initialization.
+    /// </summary>
+    protected virtual void OnConstructed() { }
+
+    /// <summary>
+    /// Ensures optional initialization is performed outside of the constructor.
+    /// </summary>
+    protected void EnsureConstructed()
+    {
+        if (_constructed)
+        {
+            return;
+        }
+        try
+        {
+            OnConstructed();
+        }
+        finally
+        {
+            _constructed = true;
+        }
+    }
+
     /// <inheritdoc />
     public bool Cancel(params int[] notificationIdList)
     {
+        EnsureConstructed();
         foreach (var notificationId in notificationIdList)
         {
             var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
@@ -110,10 +132,7 @@ internal class NotificationServiceImpl : INotificationService
             MyNotificationManager?.Cancel(notificationId);
 
             var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
-            if (geoPendingIntent is not null)
-            {
-                MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
-            }
+            RemoveGeofences(geoPendingIntent);
         }
 
         NotificationRepository.RemoveByPendingIdList(notificationIdList);
@@ -124,6 +143,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public bool CancelAll()
     {
+        EnsureConstructed();
         var notificationIdList = NotificationRepository.GetPendingList().Select(r => r.NotificationId).ToList();
         foreach (var notificationId in notificationIdList)
         {
@@ -135,16 +155,22 @@ internal class NotificationServiceImpl : INotificationService
             }
 
             var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
-            if (geoPendingIntent is not null)
-            {
-                MyGeofencingClient?.RemoveGeofences(geoPendingIntent);
-            }
+            RemoveGeofences(geoPendingIntent);
         }
 
         MyNotificationManager?.CancelAll();
         NotificationRepository.RemovePendingList();
         NotificationRepository.RemoveDeliveredList();
         return true;
+    }
+
+    /// <summary>
+    /// No-op in core; overridden in geofence package to remove registered geofences.
+    /// </summary>
+    /// <param name="pendingIntent"></param>
+    protected virtual void RemoveGeofences(PendingIntent? pendingIntent)
+    {
+        // intentionally empty in core package
     }
 
     /// <inheritdoc />
@@ -170,6 +196,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public async Task<bool> Show(NotificationRequest request)
     {
+        EnsureConstructed();
         var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
         if (allowed == false)
         {
@@ -199,60 +226,14 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <summary>
-    ///
+    /// Geofence not available in core package; overridden in geofence package.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    internal virtual async Task<bool> ShowGeofence(NotificationRequest request)
+    internal virtual Task<bool> ShowGeofence(NotificationRequest request)
     {
-        var geofenceBuilder = new GeofenceBuilder()
-        .SetRequestId(request.NotificationId.ToString())
-        .SetExpirationDuration(request.Geofence.Android.ExpirationDurationInMilliseconds)
-        .SetNotificationResponsiveness(request.Geofence.Android.ResponsivenessMilliseconds)
-        .SetCircularRegion(
-            request.Geofence.Center.Latitude,
-            request.Geofence.Center.Longitude,
-            Convert.ToSingle(request.Geofence.RadiusInMeters)
-        );
-
-        var transitionType = 0;
-        if ((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry)
-        {
-            transitionType |= Geofence.GeofenceTransitionEnter;
-        }
-        if ((request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit)
-        {
-            transitionType |= Geofence.GeofenceTransitionEnter;
-        }
-
-        if (request.Geofence.Android.LoiteringDelayMilliseconds > 0)
-        {
-            transitionType = Geofence.GeofenceTransitionDwell;
-            geofenceBuilder.SetLoiteringDelay(request.Geofence.Android.LoiteringDelayMilliseconds);
-        }
-        geofenceBuilder.SetTransitionTypes(transitionType);
-
-        var geofence = geofenceBuilder.Build();
-
-        var geoRequest = new GeofencingRequest.Builder()
-            .SetInitialTrigger(0)
-            .AddGeofence(geofence)
-            .Build();
-
-        var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-        var pendingIntent = CreateGeofenceIntent(request.NotificationId, serializedRequest);
-
-        if (MyGeofencingClient is not null && pendingIntent is not null)
-        {
-            await MyGeofencingClient
-                .AddGeofencesAsync(
-                    geoRequest,
-                    pendingIntent
-                )
-                .ConfigureAwait(false);
-        }
-
-        return true;
+        LocalNotificationCenter.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+        return Task.FromResult(false);
     }
 
     /// <summary>
@@ -263,15 +244,8 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     protected virtual PendingIntent? CreateGeofenceIntent(int notificationId, string? serializedRequest)
     {
-        var pendingIntent = CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
-        {
-            Android =
-            {
-                LaunchAppWhenTapped = false,
-                PendingIntentFlags = AndroidPendingIntentFlags.UpdateCurrent
-            }
-        }, typeof(GeofenceTransitionsIntentReceiver));
-        return pendingIntent;
+        // not available in core; geofence package overrides to provide receiver intent
+        return null;
     }
 
     /// <summary>
@@ -570,18 +544,18 @@ internal class NotificationServiceImpl : INotificationService
         }
 
         var notification = builder.Build();
-        if (!OperatingSystem.IsAndroidVersionAtLeast(26) &&
-            request.Android.LedColor.HasValue)
+        if (notification is not null && !OperatingSystem.IsAndroidVersionAtLeast(26))
         {
-            notification.LedARGB = request.Android.LedColor.Value;
+            if (request.Android.LedColor.HasValue)
+            {
+                notification.LedARGB = request.Android.LedColor.Value;
+            }
+            if (string.IsNullOrWhiteSpace(request.Sound))
+            {
+                notification.Defaults = NotificationDefaults.All;
+            }
         }
-
-        if (!OperatingSystem.IsAndroidVersionAtLeast(26) &&
-            string.IsNullOrWhiteSpace(request.Sound))
-        {
-            notification.Defaults = NotificationDefaults.All;
-        }
-        if (requestHandled == false)
+        if (!requestHandled)
         {
             MyNotificationManager?.Notify(request.NotificationId, notification);
         }
