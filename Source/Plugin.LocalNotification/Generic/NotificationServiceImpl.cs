@@ -2,6 +2,7 @@
 
 namespace Plugin.LocalNotification.Platforms;
 
+
 internal class NotificationServiceImpl : INotificationService
 {
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -9,9 +10,11 @@ internal class NotificationServiceImpl : INotificationService
     // Generic .NET target (non-Android/iOS): not supported at runtime
     public bool IsSupported => false;
 
+#pragma warning disable CS0067 // Event is never used
     public event NotificationActionTappedEventHandler? NotificationActionTapped;
     public event NotificationReceivedEventHandler? NotificationReceived;
     public event NotificationDisabledEventHandler? NotificationsDisabled;
+#pragma warning restore CS0067
 
     public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null) => throw new NotImplementedException();
     public bool Cancel(params int[] notificationIdList) => throw new NotImplementedException();
@@ -27,4 +30,5 @@ internal class NotificationServiceImpl : INotificationService
     public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null) => throw new NotImplementedException();
     public Task<bool> Show(NotificationRequest request) => throw new NotImplementedException();
 }
+
 
