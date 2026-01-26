@@ -1,6 +1,7 @@
 ![icon64](https://user-images.githubusercontent.com/4112014/139563161-b7f3cdba-e161-4f6c-80ae-45f0253c4340.png)
 
-![CI](https://github.com/thudugala/Plugin.LocalNotification/workflows/CI/badge.svg?branch=master)
+[![CI](https://github.com/thudugala/Plugin.LocalNotification/actions/workflows/main.yml/badge.svg)](https://github.com/thudugala/Plugin.LocalNotification/actions/workflows/main.yml)
+[![Nuget Build](https://github.com/thudugala/Plugin.LocalNotification/actions/workflows/nuget.yml/badge.svg)](https://github.com/thudugala/Plugin.LocalNotification/actions/workflows/nuget.yml)
 
 # Plugin.LocalNotification
 The local notification plugin provides a way to show local notifications from Xamarin.Forms / .Net MAUI apps.
