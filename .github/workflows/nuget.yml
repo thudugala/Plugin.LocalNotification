@@ -1,41 +1,47 @@
-  name: Nuget Build
+name: Nuget Build
 
-  on: [push]
+on: [push]
 
-  jobs:
-    nuget:
-      runs-on: windows-latest
+jobs:
+  nuget:
+    runs-on: windows-latest
 
-      steps:
-      - uses: actions/checkout@v6
+    steps:
+    - uses: actions/checkout@v6
 
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.x
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.x
 
-      - name: Install MAUI Workloads
-        run: |
-          dotnet workload install android --ignore-failed-sources
-          dotnet workload install ios --ignore-failed-sources
-          dotnet workload install maui --ignore-failed-sources
+    - name: Install MAUI Workloads
+      run: |
+        dotnet workload install android --ignore-failed-sources
+        dotnet workload install ios --ignore-failed-sources
+        dotnet workload install maui --ignore-failed-sources
 
-      - name: Add private GitHub registry to NuGet
-        run: dotnet nuget add source "https://nuget.pkg.github.com/thudugala/index.json" --name "GitHub" --username thudugala --password ${{ secrets.GITHUB_TOKEN }}
+    - name: Add private GitHub registry to NuGet
+      run: dotnet nuget add source "https://nuget.pkg.github.com/thudugala/index.json" --name "GitHub" --username thudugala --password ${{ secrets.GITHUB_TOKEN }}
 
-      - name : restore Plugin.LocalNotification.sln
-        run: dotnet restore Source/Plugin.LocalNotification.sln
+    - name : restore Plugin.LocalNotification.sln
+      run: dotnet restore Source/Plugin.LocalNotification.sln
 
-      - name: build Plugin.LocalNotification.csproj
-        run: dotnet build Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj --configuration Release
+    - name: build Plugin.LocalNotification.csproj
+      run: dotnet build Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj --configuration Release
 
-      - uses: actions/upload-artifact@v5
-        with:
-          name: Plugin.LocalNotification
-          path: Source/Plugin.LocalNotification/bin/Release/
+    - name: build Plugin.LocalNotification.Geofence.csproj
+      run: dotnet build Source/Plugin.LocalNotification.Geofence/Plugin.LocalNotification.Geofence.csproj --configuration Release
 
-          
+    - uses: actions/upload-artifact@v5
+      with:
+        name: Plugin.LocalNotification
+        path: Source/Plugin.LocalNotification/bin/Release/
 
-      - name: Push generated package to GitHub registry
-        run: dotnet nuget push "**/*.nupkg" --api-key ${{ secrets.Elvin_Package_Registry }} --source "GitHub" --skip-duplicate
+    - uses: actions/upload-artifact@v5
+      with:
+        name: Plugin.LocalNotification.Geofence
+        path: Source/Plugin.LocalNotification.Geofence/bin/Release/
+
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget push "**/*.nupkg" --api-key ${{ secrets.Elvin_Package_Registry }} --source "GitHub" --skip-duplicate
 
