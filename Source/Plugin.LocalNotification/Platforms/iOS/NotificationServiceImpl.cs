@@ -104,19 +104,13 @@ internal class NotificationServiceImpl : INotificationService
             var notificationId =
                 request.NotificationId.ToString(CultureInfo.CurrentCulture);
 
-            if (request.Geofence.IsGeofence)
+            if (request.Geofence.IsGeofence == true)
             {
-                var center = new CLLocationCoordinate2D(request.Geofence.Center.Latitude, request.Geofence.Center.Longitude);
-                                    
-                var regin = new CLCircularRegion(center,
-                                request.Geofence.RadiusInMeters,
-                                notificationId)
+                trigger = GetGeofenceTrigger(request);
+                if (trigger is null)
                 {
-                    NotifyOnEntry = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnEntry) == NotificationRequestGeofence.GeofenceNotifyOn.OnEntry,
-                    NotifyOnExit = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit,
-                };
-
-                trigger = UNLocationNotificationTrigger.CreateTrigger(regin, request.Geofence.IOS.Repeats);                    
+                    return false;
+                }
             }
             else
             {
@@ -148,6 +142,13 @@ internal class NotificationServiceImpl : INotificationService
         {
             trigger?.Dispose();
         }
+    }
+
+    
+    protected virtual UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
+    {
+        LocalNotificationCenter.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+        return null;
     }
 
     /// <summary>
