@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0;net10.0;net9.0-android;net10.0-android;net9.0-ios;net10.0-ios</TargetFrameworks>
+		<TargetFrameworks>net9.0;net10.0;net9.0-android;net10.0-android;net9.0-ios;net10.0-ios;net9.0-maccatalyst;net10.0-maccatalyst</TargetFrameworks>
 
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
@@ -37,6 +37,7 @@
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
     
     
     <IsAotCompatible>true</IsAotCompatible>
@@ -75,6 +76,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Platforms\MacCatalyst\" />
   </ItemGroup>
 
 </Project>

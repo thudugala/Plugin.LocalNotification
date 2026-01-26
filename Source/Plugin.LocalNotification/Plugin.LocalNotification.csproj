@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net10.0;net9.0-android;net10.0-android;net9.0-ios;net10.0-ios</TargetFrameworks>
+    <TargetFrameworks>net9.0;net10.0;net9.0-android;net10.0-android;net9.0-ios;net10.0-ios;net9.0-maccatalyst;net10.0-maccatalyst</TargetFrameworks>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
@@ -49,6 +49,7 @@
 
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-ios'))">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-maccatalyst'))">13.1</SupportedOSPlatformVersion>
 
     <IsAotCompatible>true</IsAotCompatible>
     <!--<PublishAot Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</PublishAot>-->
@@ -73,7 +74,7 @@
     <Compile Remove="**/Generic/**/*.cs" />
     <None Include="**/Generic/**/*.cs" />
   </ItemGroup>
-
+  
   <!-- .NET (generic) -->
   <ItemGroup Condition="($(TargetFramework.StartsWith('net')) AND $(TargetFramework.EndsWith('.0')) AND $(TargetFramework.Contains('-')) != true)">
     <Compile Include="**/Generic/**/*.cs" />
