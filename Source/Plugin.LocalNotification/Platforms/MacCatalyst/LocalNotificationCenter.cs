@@ -65,7 +65,7 @@ public partial class LocalNotificationCenter
 
             uiApplication.InvokeOnMainThread(() =>
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
+                if (OperatingSystem.IsMacCatalystVersionAtLeast(16))
                 {
                     UNUserNotificationCenter.Current.SetBadgeCount(0, (error) =>
                     {
@@ -108,7 +108,7 @@ public partial class LocalNotificationCenter
 
             uiApplication.InvokeOnMainThread(async () =>
             {
-                if (UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
+                if (OperatingSystem.IsMacCatalystVersionAtLeast(16))
                 {
                     await UNUserNotificationCenter.Current.SetBadgeCountAsync(0);
                 }

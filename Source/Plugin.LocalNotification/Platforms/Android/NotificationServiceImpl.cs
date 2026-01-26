@@ -19,7 +19,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
-    public bool IsSupported => true;
+    public bool IsSupported => OperatingSystem.IsAndroid();
 
     /// <summary>
     ///

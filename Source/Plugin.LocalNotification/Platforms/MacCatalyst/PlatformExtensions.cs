@@ -15,7 +15,7 @@ public static class PlatformExtensions
     /// <returns>The corresponding <see cref="UNNotificationInterruptionLevel"/> value.</returns>
     public static UNNotificationInterruptionLevel ToNative(this iOSPriority priority)
     {
-        return !OperatingSystem.IsIOSVersionAtLeast(15)
+        return !OperatingSystem.IsMacCatalystVersionAtLeast(15)
             ? default
             : priority switch
         {

@@ -15,7 +15,7 @@ internal class NotificationServiceImpl : INotificationService
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
     /// <inheritdoc />
-    public bool IsSupported => true;
+    public bool IsSupported => OperatingSystem.IsIOS();
 
     /// <inheritdoc />
     public event NotificationReceivedEventHandler? NotificationReceived;
@@ -81,7 +81,7 @@ internal class NotificationServiceImpl : INotificationService
         UNNotificationTrigger? trigger = null;
         try
         {
-            if (!OperatingSystem.IsOSPlatform("IOS"))
+            if (!OperatingSystem.IsIOS())
             {
                 return false;
             }
@@ -158,7 +158,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
     {
-        if (!OperatingSystem.IsOSPlatform("IOS"))
+        if (!OperatingSystem.IsIOS())
         {
             return new UNMutableNotificationContent();
         }
@@ -204,7 +204,7 @@ internal class NotificationServiceImpl : INotificationService
 
         if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
         {                
-            if (OperatingSystem.IsOSPlatform("IOS") &&
+            if (OperatingSystem.IsIOS() &&
                 OperatingSystem.IsIOSVersionAtLeast(12) &&
                 !OperatingSystem.IsIOSVersionAtLeast(15))
             {

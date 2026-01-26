@@ -15,7 +15,7 @@ internal class NotificationServiceImpl : INotificationService
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
     /// <inheritdoc />
-    public bool IsSupported => true;
+    public bool IsSupported => OperatingSystem.IsMacCatalyst();
 
     /// <inheritdoc />
     public event NotificationReceivedEventHandler? NotificationReceived;
@@ -38,7 +38,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public bool Cancel(params int[] notificationIdList)
     {
-        if (!OperatingSystem.IsIOSVersionAtLeast(11))
+        if (!OperatingSystem.IsMacCatalystVersionAtLeast(11))
         {
             return false;
         }
@@ -81,7 +81,7 @@ internal class NotificationServiceImpl : INotificationService
         UNNotificationTrigger? trigger = null;
         try
         {
-            if (!OperatingSystem.IsOSPlatform("IOS"))
+            if (!OperatingSystem.IsMacCatalyst())
             {
                 return false;
             }
@@ -158,7 +158,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
     {
-        if (!OperatingSystem.IsOSPlatform("IOS"))
+        if (!OperatingSystem.IsMacCatalyst())
         {
             return new UNMutableNotificationContent();
         }
@@ -176,7 +176,7 @@ internal class NotificationServiceImpl : INotificationService
             UserInfo = userInfoDictionary
         };
 
-        if (OperatingSystem.IsIOSVersionAtLeast(15))
+        if (OperatingSystem.IsMacCatalystVersionAtLeast(15))
         {
             content.InterruptionLevel = request.iOS.Priority.ToNative();
             content.RelevanceScore = request.iOS.RelevanceScore;
@@ -204,9 +204,9 @@ internal class NotificationServiceImpl : INotificationService
 
         if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
         {                
-            if (OperatingSystem.IsOSPlatform("IOS") &&
-                OperatingSystem.IsIOSVersionAtLeast(12) &&
-                !OperatingSystem.IsIOSVersionAtLeast(15))
+            if (OperatingSystem.IsMacCatalyst() &&
+                OperatingSystem.IsMacCatalystVersionAtLeast(12) &&
+                !OperatingSystem.IsMacCatalystVersionAtLeast(15))
             {
                 content.SummaryArgument = request.iOS.SummaryArgument;
                 content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
@@ -376,7 +376,7 @@ internal class NotificationServiceImpl : INotificationService
                 continue;
             }
 
-            if (OperatingSystem.IsIOSVersionAtLeast(15))
+            if (OperatingSystem.IsMacCatalystVersionAtLeast(15))
             {
                 var icon = notificationAction.IOS.Icon.Type switch
                 {

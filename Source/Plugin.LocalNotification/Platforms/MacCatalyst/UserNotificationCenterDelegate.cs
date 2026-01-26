@@ -162,7 +162,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
 
             if (requestHandled == false)
             {
-                if (OperatingSystem.IsIOSVersionAtLeast(14))
+                if (OperatingSystem.IsMacCatalystVersionAtLeast(14))
                 {
                     if (notificationRequest.iOS.PresentAsBanner)
                     {
