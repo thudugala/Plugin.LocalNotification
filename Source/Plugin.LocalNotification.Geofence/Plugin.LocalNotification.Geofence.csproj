@@ -56,12 +56,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />   
   </ItemGroup>
-  
-  <!-- .NET (generic) -->
-  <ItemGroup Condition="($(TargetFramework.StartsWith('net')) AND $(TargetFramework.EndsWith('.0')) AND $(TargetFramework.Contains('-')) != true)">
-    <Compile Include="**/Platforms/Generic/**/*.cs" />
-  </ItemGroup>
-
+   
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
     <PackageReference Include="Xamarin.GooglePlayServices.Location" Version="121.3.0.7" />
   </ItemGroup>
@@ -80,10 +75,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Platforms\Generic\" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />

@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification.Json;
-
-#if ANDROID || IOS
 using Plugin.LocalNotification.Platforms;
-#endif
 
 namespace Plugin.LocalNotification;
 
@@ -12,40 +9,13 @@ namespace Plugin.LocalNotification;
 /// </summary>
 public partial class LocalNotificationCenter
 {
-    private static Lazy<INotificationService?> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
+    private static Lazy<INotificationService> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
     private static INotificationSerializer? _serializer;
 
-    private static INotificationService? CreateNotificationService() =>
-#if ANDROID || IOS
-        TryCreateGeofenceService() ?? new NotificationServiceImpl();
-#else
-        null;
-#endif
-
-#if ANDROID || IOS
-    private static INotificationService? TryCreateGeofenceService()
+    private static INotificationService CreateNotificationService()
     {
-        try
-        {
-            var typeName = "Plugin.LocalNotification.Platforms.NotificationServiceImplGeofence";
-            var geofenceType = Type.GetType(typeName, throwOnError: false);
-            if (geofenceType is null)
-            {
-                return null;
-            }
-            if (!typeof(INotificationService).IsAssignableFrom(geofenceType))
-            {
-                return null;
-            }
-            var instance = Activator.CreateInstance(geofenceType) as INotificationService;
-            return instance;
-        }
-        catch
-        {
-            return null;
-        }
+        return new NotificationServiceImpl();
     }
-#endif
 
     /// <summary>
     /// Allows setting a custom notification service implementation. Use this to enable optional features like geofence.
@@ -53,7 +23,7 @@ public partial class LocalNotificationCenter
     /// <param name="service">The service implementation to use.</param>
     public static void SetNotificationService(INotificationService service)
     {
-        implementation = new Lazy<INotificationService?>(() => service, LazyThreadSafetyMode.PublicationOnly);
+        implementation = new Lazy<INotificationService>(() => service, LazyThreadSafetyMode.PublicationOnly);
     }
 
     /// <summary>
@@ -69,7 +39,7 @@ public partial class LocalNotificationCenter
     /// <summary>
     /// Gets the platform-specific <see cref="INotificationService"/> implementation.
     /// </summary>
-    public static INotificationService Current => implementation.Value;
+    public static INotificationService Current => implementation.Value!;
 
     /// <summary>
     /// The key used to return a notification request.

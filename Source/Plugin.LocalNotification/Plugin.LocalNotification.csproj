@@ -70,13 +70,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="**/Platforms/Generic/**/*.cs" />
-    <None Include="**/Platforms/Generic/**/*.cs" />
+    <Compile Remove="**/Generic/**/*.cs" />
+    <None Include="**/Generic/**/*.cs" />
   </ItemGroup>
 
   <!-- .NET (generic) -->
   <ItemGroup Condition="($(TargetFramework.StartsWith('net')) AND $(TargetFramework.EndsWith('.0')) AND $(TargetFramework.Contains('-')) != true)">
-    <Compile Include="**/Platforms/Generic/**/*.cs" />
+    <Compile Include="**/Generic/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>
