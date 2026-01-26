@@ -54,7 +54,7 @@ public class GeofenceTransitionsIntentReceiver : BroadcastReceiver
     /// Attempts to get the default Android notification service implementation.
     /// </summary>
     /// <returns>A new or existing instance of <see cref="NotificationServiceImpl"/>.</returns>
-    private static NotificationServiceImpl TryGetDefaultDroidNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService
+    private static NotificationServiceImplGeofence TryGetDefaultDroidNotificationService() => LocalNotificationCenter.Current is NotificationServiceImplGeofence notificationService
             ? notificationService
-            : new NotificationServiceImpl();
+            : new NotificationServiceImplGeofence();
 }

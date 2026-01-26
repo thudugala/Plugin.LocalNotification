@@ -15,9 +15,9 @@ public static class LocalNotificationGeofenceExtensions
     public static MauiAppBuilder UseLocalNotificationGeofence(this MauiAppBuilder builder)
     {
 #if ANDROID
-        LocalNotificationCenter.SetNotificationService(new Plugin.LocalNotification.Platforms.NotificationServiceImplGeofence());
+        LocalNotificationCenter.SetNotificationService(new Platforms.NotificationServiceImplGeofence());
 #elif IOS
-        LocalNotificationCenter.SetNotificationService(new Plugin.LocalNotification.Platforms.NotificationServiceImplGeofence());
+        LocalNotificationCenter.SetNotificationService(new Platforms.NotificationServiceImplGeofence());
 #endif
         return builder;
     }

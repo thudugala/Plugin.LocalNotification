@@ -17,9 +17,34 @@ public partial class LocalNotificationCenter
 
     private static INotificationService? CreateNotificationService() =>
 #if ANDROID || IOS
-        new NotificationServiceImpl();
+        TryCreateGeofenceService() ?? new NotificationServiceImpl();
 #else
         null;
+#endif
+
+#if ANDROID || IOS
+    private static INotificationService? TryCreateGeofenceService()
+    {
+        try
+        {
+            var typeName = "Plugin.LocalNotification.Platforms.NotificationServiceImplGeofence";
+            var geofenceType = Type.GetType(typeName, throwOnError: false);
+            if (geofenceType is null)
+            {
+                return null;
+            }
+            if (!typeof(INotificationService).IsAssignableFrom(geofenceType))
+            {
+                return null;
+            }
+            var instance = Activator.CreateInstance(geofenceType) as INotificationService;
+            return instance;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 #endif
 
     /// <summary>
