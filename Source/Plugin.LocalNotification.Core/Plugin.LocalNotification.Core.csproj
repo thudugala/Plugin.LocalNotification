@@ -15,7 +15,7 @@
 		<Authors>Elvin (Tharindu) Thudugala</Authors>
 		<Description>Core types and interfaces for Plugin.LocalNotification.</Description>
 		<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-		<Version>14.0.0-preview01</Version>
+		<Version>1.0.0-preview01</Version>
 		<IsPackable>True</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
