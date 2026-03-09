@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11217.181 d18.0
+VisualStudioVersion = 18.0.11217.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalNotification.Sample", "LocalNotification.Sample\LocalNotification.Sample.csproj", "{B4D99ED8-F5CF-4CFA-89CE-5327EF7B8416}"
 EndProject
@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\..\.github\workflows\main.yml = ..\..\.github\workflows\main.yml
 		..\..\.github\workflows\nuget.yml = ..\..\.github\workflows\nuget.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.LocalNotification.Core", "..\..\Source\Plugin.LocalNotification.Core\Plugin.LocalNotification.Core.csproj", "{8B075EBD-CED9-8F9E-D0B2-72410651938B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.LocalNotification.Geofence", "..\..\Source\Plugin.LocalNotification.Geofence\Plugin.LocalNotification.Geofence.csproj", "{9BC5019D-D031-A78A-6AF9-79C820127D0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +38,14 @@ Global
 		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A939D821-32AE-EF0C-8ADB-7C5917E17072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B075EBD-CED9-8F9E-D0B2-72410651938B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B075EBD-CED9-8F9E-D0B2-72410651938B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B075EBD-CED9-8F9E-D0B2-72410651938B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B075EBD-CED9-8F9E-D0B2-72410651938B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BC5019D-D031-A78A-6AF9-79C820127D0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BC5019D-D031-A78A-6AF9-79C820127D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BC5019D-D031-A78A-6AF9-79C820127D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BC5019D-D031-A78A-6AF9-79C820127D0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,10 @@
-﻿using Plugin.LocalNotification;
-using Plugin.LocalNotification.AndroidOption;
-using Plugin.LocalNotification.iOSOption;
+﻿using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AndroidOption;
+using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Geofence;
 
 namespace LocalNotification.Sample;
 
@@ -70,10 +74,11 @@ public static class MauiProgram
                 //iOS.SetCustomUserNotificationCenterDelegate(new CustomUserNotificationCenterDelegate());
 #endif
             });
-        });
+        })
+        .UseLocalNotificationGeofence();
 
 #if DEBUG
-        LocalNotificationCenter.LogLevel = LogLevel.Debug;
+        LocalNotificationLogger.LogLevel = LogLevel.Debug;
         //builder.Logging.AddDebug();
         builder.Logging.AddDebug();
         builder.Services.AddLogging(configure => configure.AddDebug());

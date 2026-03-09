@@ -1,5 +1,7 @@
 ﻿using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
 using System.Text;
 using System.Text.Json;
