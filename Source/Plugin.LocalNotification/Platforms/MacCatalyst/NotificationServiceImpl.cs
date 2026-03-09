@@ -107,9 +107,17 @@ internal class NotificationServiceImpl : INotificationService
             var notificationId =
                 request.NotificationId.ToString(CultureInfo.CurrentCulture);
 
-            if (request.Geofence.IsGeofence == true)
+            if (request.Geofence.IsGeofence)
             {
-                trigger = GetGeofenceTrigger(request);
+                if (GeofenceHandlerRegistry.Handler is null)
+                {
+                    LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");                    
+                }
+                else
+                {
+                    trigger = GeofenceHandlerRegistry.Handler.GetGeofenceTrigger(request);
+                }
+
                 if (trigger is null)
                 {
                     return false;
@@ -147,12 +155,6 @@ internal class NotificationServiceImpl : INotificationService
         }
     }
 
-
-    protected virtual UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
-    {
-        LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
-        return null;
-    }
 
     /// <summary>
     ///

@@ -29,34 +29,25 @@ public class GeofenceTransitionsIntentReceiver : BroadcastReceiver
     {
         try
         {
-            var notificationService = TryGetDefaultDroidNotificationService();
-
             var requestSerialize = intent?.GetStringExtra(RequestConstants.ReturnRequest);
             if (string.IsNullOrWhiteSpace(requestSerialize))
             {
                 LocalNotificationLogger.Log("Request Json Not Found");
                 return;
             }
-            var request = LocalNotificationCenter.GetRequest(requestSerialize);
 
-            if (!request.Geofence.IsGeofence)
+            var showFunc = GeofenceHandlerRegistry.ShowNotificationFromSerializedRequest;
+            if (showFunc is null)
             {
-                LocalNotificationLogger.Log($"Notification {request.NotificationId} has no Geofence isformation");
+                LocalNotificationLogger.Log("Plugin.LocalNotification is not available to show notification");
                 return;
             }
-            _ = await notificationService.ShowNow(request);
+
+            _ = await showFunc(requestSerialize);
         }
         catch (Exception ex)
         {
             LocalNotificationLogger.Log(ex);
         }
     }
-
-    /// <summary>
-    /// Attempts to get the default Android notification service implementation.
-    /// </summary>
-    /// <returns>A new or existing instance of <see cref="NotificationServiceImpl"/>.</returns>
-    private static NotificationServiceImplGeofence TryGetDefaultDroidNotificationService() => LocalNotificationCenter.Current is NotificationServiceImplGeofence notificationService
-            ? notificationService
-            : new NotificationServiceImplGeofence();
 }

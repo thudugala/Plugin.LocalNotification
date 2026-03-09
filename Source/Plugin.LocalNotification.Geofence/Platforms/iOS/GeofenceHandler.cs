@@ -1,13 +1,14 @@
 using CoreLocation;
 using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Platforms.iOS;
 using System.Globalization;
 using UserNotifications;
 
 namespace Plugin.LocalNotification.Platforms;
 
-internal class NotificationServiceImplGeofence : NotificationServiceImpl
+internal class GeofenceHandler : IiOSGeofenceHandler
 {
-    protected override UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
+    public UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
     {
         var notificationId = request.NotificationId.ToString(CultureInfo.CurrentCulture);
 

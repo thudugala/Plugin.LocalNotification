@@ -11,6 +11,7 @@ using Plugin.LocalNotification.Core.Platforms.Android;
 using Plugin.LocalNotification.EventArgs;
 using Application = Android.App.Application;
 using Exception = System.Exception;
+using IAndroidGeofenceHandler = Plugin.LocalNotification.Core.Platforms.Android.IAndroidGeofenceHandler;
 
 namespace Plugin.LocalNotification.Platforms;
 
@@ -33,8 +34,6 @@ internal class NotificationServiceImpl : INotificationService
     ///
     /// </summary>
     protected readonly AlarmManager? MyAlarmManager;
-
-    private bool _constructed;
 
     /// <inheritdoc />
     public event NotificationReceivedEventHandler? NotificationReceived;
@@ -86,8 +85,12 @@ internal class NotificationServiceImpl : INotificationService
         {
             MyNotificationManager = NotificationManager.FromContext(Application.Context);
             MyAlarmManager = AlarmManager.FromContext(Application.Context);
-            // Avoid calling overridable methods in constructor (CA2214)
-            _constructed = false;
+
+            GeofenceHandlerRegistry.ShowNotificationFromSerializedRequest = async (serializedRequest) =>
+            {
+                var request = LocalNotificationCenter.GetRequest(serializedRequest);
+                return request is not null && LocalNotificationCenter.Current is NotificationServiceImpl androidService && await androidService.ShowNow(request);
+            };
         }
         catch (Exception ex)
         {
@@ -95,34 +98,9 @@ internal class NotificationServiceImpl : INotificationService
         }
     }
 
-    /// <summary>
-    /// Hook for derived classes to run additional initialization.
-    /// </summary>
-    protected virtual void OnConstructed() { }
-
-    /// <summary>
-    /// Ensures optional initialization is performed outside of the constructor.
-    /// </summary>
-    protected void EnsureConstructed()
-    {
-        if (_constructed)
-        {
-            return;
-        }
-        try
-        {
-            OnConstructed();
-        }
-        finally
-        {
-            _constructed = true;
-        }
-    }
-
     /// <inheritdoc />
     public bool Cancel(params int[] notificationIdList)
     {
-        EnsureConstructed();
         foreach (var notificationId in notificationIdList)
         {
             var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
@@ -134,8 +112,11 @@ internal class NotificationServiceImpl : INotificationService
 
             MyNotificationManager?.Cancel(notificationId);
 
-            var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
-            RemoveGeofences(geoPendingIntent);
+            if (GeofenceHandlerRegistry.Handler is not null)
+            {
+                var geoPendingIntent = GeofenceHandlerRegistry.Handler.CreateGeofenceIntent(notificationId, null);
+                GeofenceHandlerRegistry.Handler.RemoveGeofences(geoPendingIntent);
+            }
         }
 
         NotificationRepository.RemoveByPendingIdList(notificationIdList);
@@ -146,7 +127,6 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public bool CancelAll()
     {
-        EnsureConstructed();
         var notificationIdList = NotificationRepository.GetPendingList().Select(r => r.NotificationId).ToList();
         foreach (var notificationId in notificationIdList)
         {
@@ -157,23 +137,17 @@ internal class NotificationServiceImpl : INotificationService
                 alarmPendingIntent.Cancel();
             }
 
-            var geoPendingIntent = CreateGeofenceIntent(notificationId, null);
-            RemoveGeofences(geoPendingIntent);
+            if (GeofenceHandlerRegistry.Handler is not null)
+            {
+                var geoPendingIntent = GeofenceHandlerRegistry.Handler.CreateGeofenceIntent(notificationId, null);
+                GeofenceHandlerRegistry.Handler.RemoveGeofences(geoPendingIntent);
+            }            
         }
 
         MyNotificationManager?.CancelAll();
         NotificationRepository.RemovePendingList();
         NotificationRepository.RemoveDeliveredList();
         return true;
-    }
-
-    /// <summary>
-    /// No-op in core; overridden in geofence package to remove registered geofences.
-    /// </summary>
-    /// <param name="pendingIntent"></param>
-    protected virtual void RemoveGeofences(PendingIntent? pendingIntent)
-    {
-        // intentionally empty in core package
     }
 
     /// <inheritdoc />
@@ -199,7 +173,6 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public async Task<bool> Show(NotificationRequest request)
     {
-        EnsureConstructed();
         var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
         if (allowed == false)
         {
@@ -215,8 +188,14 @@ internal class NotificationServiceImpl : INotificationService
 
         if (request.Geofence.IsGeofence)
         {
-            var geoResult = await ShowGeofence(request);
-            return geoResult;
+            if (GeofenceHandlerRegistry.Handler is null)
+            {
+                LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+                return false;
+            }
+
+            var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
+            return await GeofenceHandlerRegistry.Handler.ShowGeofence(request, serializedRequest);            
         }
 
         if (request.Schedule.NotifyTime.HasValue)
@@ -226,29 +205,6 @@ internal class NotificationServiceImpl : INotificationService
 
         var result = await ShowNow(request);
         return result;
-    }
-
-    /// <summary>
-    /// Geofence not available in core package; overridden in geofence package.
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    internal virtual Task<bool> ShowGeofence(NotificationRequest request)
-    {
-        LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
-        return Task.FromResult(false);
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="notificationId"></param>
-    /// <param name="serializedRequest"></param>
-    /// <returns></returns>
-    protected virtual PendingIntent? CreateGeofenceIntent(int notificationId, string? serializedRequest)
-    {
-        // not available in core; geofence package overrides to provide receiver intent
-        return null;
     }
 
     /// <summary>

@@ -59,10 +59,8 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 	</ItemGroup>
 
-	<!-- Reference Plugin.LocalNotification as a project reference for development -->
 	<ItemGroup>
 		<ProjectReference Include="..\Plugin.LocalNotification.Core\Plugin.LocalNotification.Core.csproj" />
-		<ProjectReference Include="..\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
@@ -82,10 +80,6 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Platforms\MacCatalyst\" />
 	</ItemGroup>
 
 </Project>

@@ -8,15 +8,15 @@ using ApplicationAlias = Android.App.Application;
 
 namespace Plugin.LocalNotification.Platforms;
 
-internal class NotificationServiceImplGeofence : NotificationServiceImpl
+internal class GeofenceHandler : IAndroidGeofenceHandler
 {
-    protected IGeofencingClient? MyGeofencingClient;
+    private readonly IGeofencingClient? _geofencingClient;
 
-    protected override void OnConstructed()
+    public GeofenceHandler()
     {
         try
         {
-            MyGeofencingClient = LocationServices.GetGeofencingClient(ApplicationAlias.Context);
+            _geofencingClient = LocationServices.GetGeofencingClient(ApplicationAlias.Context);
         }
         catch (Exception ex)
         {
@@ -24,15 +24,7 @@ internal class NotificationServiceImplGeofence : NotificationServiceImpl
         }
     }
 
-    protected override void RemoveGeofences(PendingIntent? pendingIntent)
-    {
-        if (pendingIntent is not null)
-        {
-            MyGeofencingClient?.RemoveGeofences(pendingIntent);
-        }
-    }
-
-    internal override async Task<bool> ShowGeofence(NotificationRequest request)
+    public async Task<bool> ShowGeofence(NotificationRequest request, string serializedRequest)
     {
         var geofenceBuilder = new GeofenceBuilder()
         .SetRequestId(request.NotificationId.ToString())
@@ -68,12 +60,11 @@ internal class NotificationServiceImplGeofence : NotificationServiceImpl
             .AddGeofence(geofence)
             .Build();
 
-        var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
         var pendingIntent = CreateGeofenceIntent(request.NotificationId, serializedRequest);
 
-        if (MyGeofencingClient is not null && pendingIntent is not null)
+        if (_geofencingClient is not null && pendingIntent is not null)
         {
-            await MyGeofencingClient
+            await _geofencingClient
                 .AddGeofencesAsync(
                     geoRequest,
                     pendingIntent
@@ -84,7 +75,7 @@ internal class NotificationServiceImplGeofence : NotificationServiceImpl
         return true;
     }
 
-    protected override PendingIntent? CreateGeofenceIntent(int notificationId, string? serializedRequest)
+    public PendingIntent? CreateGeofenceIntent(int notificationId, string? serializedRequest)
     {
         var pendingIntent = AndroidUtils.CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
         {
@@ -95,5 +86,13 @@ internal class NotificationServiceImplGeofence : NotificationServiceImpl
             }
         }, typeof(GeofenceTransitionsIntentReceiver));
         return pendingIntent;
+    }
+
+    public void RemoveGeofences(PendingIntent? pendingIntent)
+    {
+        if (pendingIntent is not null)
+        {
+            _geofencingClient?.RemoveGeofences(pendingIntent);
+        }
     }
 }
