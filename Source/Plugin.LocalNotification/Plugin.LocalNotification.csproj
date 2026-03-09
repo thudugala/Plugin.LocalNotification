@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net10.0;net9.0-android;net10.0-android;net9.0-ios;net10.0-ios;net9.0-maccatalyst;net10.0-maccatalyst;net9.0-windows10.0.19041.0;net10.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
@@ -63,9 +66,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />   
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250909003" Condition="$(TargetFramework.Contains('-windows'))" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +83,14 @@
   <!-- .NET (generic) -->
   <ItemGroup Condition="($(TargetFramework.StartsWith('net')) AND $(TargetFramework.EndsWith('.0')) AND $(TargetFramework.Contains('-')) != true)">
     <Compile Include="**/Generic/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plugin.LocalNotification.Core\Plugin.LocalNotification.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
