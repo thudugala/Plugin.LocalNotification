@@ -1,3 +1,5 @@
+using Plugin.LocalNotification.Core.Models;
+
 namespace Plugin.LocalNotification.UnitTests.Tests;
 
 /// <summary>

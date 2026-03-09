@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Plugin.LocalNotification.Core.Models;
+using System.Text.Json.Serialization;
 
 namespace Plugin.LocalNotification.Json;
 

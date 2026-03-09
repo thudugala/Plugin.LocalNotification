@@ -1,6 +1,9 @@
 using Android.App;
 using Android.Gms.Location;
-using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AndroidOption;
+using Plugin.LocalNotification.Core.Platforms.Android;
 using ApplicationAlias = Android.App.Application;
 
 namespace Plugin.LocalNotification.Platforms;
@@ -17,7 +20,7 @@ internal class NotificationServiceImplGeofence : NotificationServiceImpl
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 
@@ -83,7 +86,7 @@ internal class NotificationServiceImplGeofence : NotificationServiceImpl
 
     protected override PendingIntent? CreateGeofenceIntent(int notificationId, string? serializedRequest)
     {
-        var pendingIntent = base.CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
+        var pendingIntent = AndroidUtils.CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
         {
             Android =
             {

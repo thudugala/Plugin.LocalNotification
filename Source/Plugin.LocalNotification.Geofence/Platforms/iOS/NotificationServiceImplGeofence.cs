@@ -1,4 +1,5 @@
 using CoreLocation;
+using Plugin.LocalNotification.Core.Models;
 using System.Globalization;
 using UserNotifications;
 

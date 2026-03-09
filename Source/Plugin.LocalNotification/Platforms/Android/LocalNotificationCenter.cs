@@ -1,11 +1,11 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Media;
-using Microsoft.Extensions.Logging;
-using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AndroidOption;
+using Plugin.LocalNotification.Core.Platforms.Android;
 using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.Platforms;
-using System.Runtime.CompilerServices;
 using Application = Android.App.Application;
 
 namespace Plugin.LocalNotification;
@@ -23,13 +23,13 @@ public partial class LocalNotificationCenter
     {
         try
         {
-            var actionId = intent?.GetIntExtra(ReturnRequestActionId, -1000);
-            if (actionId is null or (-1000))
+            var actionId = intent?.GetIntExtra(RequestConstants.ReturnRequestActionId, -1000);
+            if (actionId is null or -1000)
             {
                 return;
             }
 
-            var requestSerialize = intent?.GetStringExtra(ReturnRequest);
+            var requestSerialize = intent?.GetStringExtra(RequestConstants.ReturnRequest);
             var request = GetRequest(requestSerialize);
 
             var actionArgs = new NotificationActionEventArgs
@@ -41,7 +41,7 @@ public partial class LocalNotificationCenter
         }
         catch (Exception ex)
         {
-            Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 
@@ -165,7 +165,7 @@ public partial class LocalNotificationCenter
         var soundFileUri = Android.Net.Uri.Parse(soundFilePath);
 
 #if DEBUG
-        if (soundFileUri is null || !soundFileUri.IsValidResource(Application.Context))
+        if (soundFileUri is null || !IsValidResource(soundFileUri, Application.Context))
         {
             throw new ArgumentException($"Invalid sound file: {soundFileUri}. Your sound has to be AndroidResource stored in Platforms/Android/Resources/raw");
         }
@@ -174,39 +174,22 @@ public partial class LocalNotificationCenter
         return soundFileUri;
     }
 
-    /// <summary>
-    /// Logs a message to the Android log and the configured logger.
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="callerName">The name of the calling method (automatically provided).</param>
-    internal static void Log(string message, [CallerMemberName] string callerName = "")
+    private static bool IsValidResource(Android.Net.Uri uri, Context context)
     {
-        var logMessage = $"{callerName}: {message}";
-        Logger?.Log(LogLevel, logMessage);
-        if (LogLevel == LogLevel.Trace)
+        var contentResolver = context.ContentResolver;
+        if (contentResolver is null)
         {
-            _ = Android.Util.Log.Debug(Application.Context.PackageName, logMessage);
+            return false;
         }
-        if (LogLevel == LogLevel.Information)
-        {
-            _ = Android.Util.Log.Info(Application.Context.PackageName, logMessage);
-        }
-        if (LogLevel == LogLevel.Warning)
-        {
-            _ = Android.Util.Log.Warn(Application.Context.PackageName, logMessage);
-        }
-    }
 
-    /// <summary>
-    /// Logs an exception and optional message to the Android log and the configured logger.
-    /// </summary>
-    /// <param name="ex">The exception to log.</param>
-    /// <param name="message">An optional message to include with the log.</param>
-    /// <param name="callerName">The name of the calling method (automatically provided).</param>
-    internal static void Log(Exception ex, string? message = null, [CallerMemberName] string callerName = "")
-    {
-        var logMessage = $"{callerName}: {message}";
-        Logger?.LogError(ex, logMessage);
-        _ = Android.Util.Log.Error(Application.Context.PackageName, $"{logMessage}: {ex.Message}");
+        try
+        {
+            contentResolver.OpenInputStream(uri)?.Close();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

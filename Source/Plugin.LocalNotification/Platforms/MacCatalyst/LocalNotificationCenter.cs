@@ -1,7 +1,7 @@
 ﻿using Foundation;
-using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Platforms;
-using System.Runtime.CompilerServices;
 using UIKit;
 using UserNotifications;
 
@@ -29,12 +29,12 @@ public partial class LocalNotificationCenter
 
         var dictionary = notificationContent.UserInfo;
 
-        if (!dictionary.ContainsKey(new NSString(ReturnRequest)))
+        if (!dictionary.ContainsKey(new NSString(RequestConstants.ReturnRequest)))
         {
             return null;
         }
 
-        var requestSerialize = dictionary[ReturnRequest].ToString();
+        var requestSerialize = dictionary[RequestConstants.ReturnRequest].ToString();
 
         var request = GetRequest(requestSerialize);
 
@@ -71,7 +71,7 @@ public partial class LocalNotificationCenter
                     {
                         if (error != null)
                         {
-                            Log(error.LocalizedDescription);
+                            LocalNotificationLogger.Log(error.LocalizedDescription);
                         }
                     });
                 }
@@ -84,7 +84,7 @@ public partial class LocalNotificationCenter
         }
         catch (Exception ex)
         {
-            Log(ex);
+            LocalNotificationLogger.Log(ex);
             throw;
         }
     }
@@ -121,29 +121,8 @@ public partial class LocalNotificationCenter
         }
         catch (Exception ex)
         {
-            Log(ex);
+            LocalNotificationLogger.Log(ex);
             throw;
         }
-    }
-
-    /// <summary>
-    /// Logs a message to the internal logger with the caller name.
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="callerName">The name of the calling method (automatically provided).</param>
-    internal static void Log(string? message, [CallerMemberName] string callerName = "")
-    {
-        Logger?.Log(LogLevel, "{callerName}: {message}", callerName, message);
-    }
-
-    /// <summary>
-    /// Logs an exception and optional message to the internal logger with the caller name.
-    /// </summary>
-    /// <param name="ex">The exception to log.</param>
-    /// <param name="message">An optional message to include with the log.</param>
-    /// <param name="callerName">The name of the calling method (automatically provided).</param>
-    internal static void Log(Exception? ex, string? message = null, [CallerMemberName] string callerName = "")
-    {
-        Logger?.LogError(ex, "{callerName}: {message}", callerName, message);
-    }
+    }    
 }

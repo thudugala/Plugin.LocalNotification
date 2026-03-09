@@ -1,4 +1,6 @@
 using Android.Content;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
 
 namespace Plugin.LocalNotification.Platforms;
 
@@ -29,24 +31,24 @@ public class GeofenceTransitionsIntentReceiver : BroadcastReceiver
         {
             var notificationService = TryGetDefaultDroidNotificationService();
 
-            var requestSerialize = intent?.GetStringExtra(LocalNotificationCenter.ReturnRequest);
+            var requestSerialize = intent?.GetStringExtra(RequestConstants.ReturnRequest);
             if (string.IsNullOrWhiteSpace(requestSerialize))
             {
-                LocalNotificationCenter.Log("Request Json Not Found");
+                LocalNotificationLogger.Log("Request Json Not Found");
                 return;
             }
             var request = LocalNotificationCenter.GetRequest(requestSerialize);
 
             if (!request.Geofence.IsGeofence)
             {
-                LocalNotificationCenter.Log($"Notification {request.NotificationId} has no Geofence isformation");
+                LocalNotificationLogger.Log($"Notification {request.NotificationId} has no Geofence isformation");
                 return;
             }
             _ = await notificationService.ShowNow(request);
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 

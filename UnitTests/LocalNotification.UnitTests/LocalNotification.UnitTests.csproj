@@ -36,6 +36,7 @@
   </ItemGroup>
 	
 	<ItemGroup>
+		<ProjectReference Include="..\..\Source\Plugin.LocalNotification.Core\Plugin.LocalNotification.Core.csproj" />
 		<ProjectReference Include="..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
 	</ItemGroup>
 

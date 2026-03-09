@@ -1,4 +1,6 @@
-﻿namespace Plugin.LocalNotification.EventArgs;
+﻿using Plugin.LocalNotification.Core.Models;
+
+namespace Plugin.LocalNotification.EventArgs;
 
 /// <summary>
 /// Represents the method that will handle the event when a notification is received.

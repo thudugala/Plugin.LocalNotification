@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification.EventArgs;
+﻿using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
 using UIKit;
 using UserNotifications;
@@ -36,7 +37,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
             {
                 completionHandler?.Invoke();
 
-                LocalNotificationCenter.Log("Notification request not found");
+                LocalNotificationLogger.Log("Notification request not found");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
                         {
                             if (error != null)
                             {
-                                LocalNotificationCenter.Log(error.LocalizedDescription);
+                                LocalNotificationLogger.Log(error.LocalizedDescription);
                             }
                         });
                     }
@@ -105,7 +106,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 
@@ -131,7 +132,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
             {
                 completionHandler?.Invoke(presentationOptions);
 
-                LocalNotificationCenter.Log("Notification request not found");
+                LocalNotificationLogger.Log("Notification request not found");
                 return;
             }
 
@@ -142,7 +143,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
 
                 completionHandler?.Invoke(presentationOptions);
 
-                LocalNotificationCenter.Log("Notification Auto Canceled");
+                LocalNotificationLogger.Log("Notification Auto Canceled");
                 return;
             }
 
@@ -154,7 +155,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
                 {
                     if (requestArg.Handled)
                     {
-                        LocalNotificationCenter.Log("Notification Handled");
+                        LocalNotificationLogger.Log("Notification Handled");
                         requestHandled = true;
                     }
                 }
@@ -204,7 +205,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 

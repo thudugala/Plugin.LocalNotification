@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification.EventArgs;
+﻿using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.EventArgs;
 
 namespace Plugin.LocalNotification.Platforms;
 

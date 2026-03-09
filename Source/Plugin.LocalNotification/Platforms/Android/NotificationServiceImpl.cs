@@ -4,7 +4,10 @@ using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
 using Java.Lang;
-using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AndroidOption;
+using Plugin.LocalNotification.Core.Platforms.Android;
 using Plugin.LocalNotification.EventArgs;
 using Application = Android.App.Application;
 using Exception = System.Exception;
@@ -88,7 +91,7 @@ internal class NotificationServiceImpl : INotificationService
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 
@@ -201,7 +204,7 @@ internal class NotificationServiceImpl : INotificationService
         if (allowed == false)
         {
             OnNotificationsDisabled();
-            LocalNotificationCenter.Log("Notifications are disabled");
+            LocalNotificationLogger.Log("Notifications are disabled");
             return false;
         }
 
@@ -232,7 +235,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     internal virtual Task<bool> ShowGeofence(NotificationRequest request)
     {
-        LocalNotificationCenter.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+        LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
         return Task.FromResult(false);
     }
 
@@ -256,7 +259,7 @@ internal class NotificationServiceImpl : INotificationService
     {
         if (request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false)
         {
-            LocalNotificationCenter.Log(
+            LocalNotificationLogger.Log(
                 "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
             return false;
         }
@@ -265,7 +268,7 @@ internal class NotificationServiceImpl : INotificationService
         var alarmIntent = CreateAlarmIntent(request.NotificationId, serializedRequest);
         if (alarmIntent is null)
         {
-            LocalNotificationCenter.Log("Alarm Intent Not generated");
+            LocalNotificationLogger.Log("Alarm Intent Not generated");
             return false;
         }
 
@@ -319,7 +322,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     protected virtual PendingIntent? CreateAlarmIntent(int notificationId, string? serializedRequest)
     {
-        var pendingIntent = CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
+        var pendingIntent = AndroidUtils.CreateActionIntent(notificationId, serializedRequest, new NotificationAction(0)
         {
             Android =
             {
@@ -492,7 +495,7 @@ internal class NotificationServiceImpl : INotificationService
 
         var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
 
-        var contentIntent = CreateActionIntent(request.NotificationId, serializedRequest, new NotificationAction(NotificationActionEventArgs.TapActionId)
+        var contentIntent = AndroidUtils.CreateActionIntent(request.NotificationId, serializedRequest, new NotificationAction(NotificationActionEventArgs.TapActionId)
         {
             Android =
             {
@@ -501,7 +504,7 @@ internal class NotificationServiceImpl : INotificationService
             }
         }, typeof(NotificationActionReceiver));
 
-        var deleteIntent = CreateActionIntent(request.NotificationId, serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
+        var deleteIntent = AndroidUtils.CreateActionIntent(request.NotificationId, serializedRequest, new NotificationAction(NotificationActionEventArgs.DismissedActionId)
         {
             Android =
             {
@@ -561,7 +564,7 @@ internal class NotificationServiceImpl : INotificationService
         }
         else
         {
-            LocalNotificationCenter.Log("NotificationServiceImpl.ShowNow: notification is Handled");
+            LocalNotificationLogger.Log("NotificationServiceImpl.ShowNow: notification is Handled");
         }
 
         var args = new NotificationEventArgs
@@ -621,7 +624,7 @@ internal class NotificationServiceImpl : INotificationService
     protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest,
         NotificationAction action)
     {
-        var pendingIntent = CreateActionIntent(request.NotificationId, serializedRequest, action, typeof(NotificationActionReceiver));
+        var pendingIntent = AndroidUtils.CreateActionIntent(request.NotificationId, serializedRequest, action, typeof(NotificationActionReceiver));
         if (string.IsNullOrWhiteSpace(action.Android.IconName.ResourceName))
         {
             action.Android.IconName = request.Android.IconSmallName;
@@ -632,70 +635,7 @@ internal class NotificationServiceImpl : INotificationService
 
         return nativeAction;
     }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="notificationId"></param>
-    /// <param name="serializedRequest"></param>
-    /// <param name="action"></param>
-    /// <param name="broadcastReceiverType"></param>
-    /// <returns></returns>
-    protected virtual PendingIntent? CreateActionIntent(int notificationId, string? serializedRequest, NotificationAction action, Type broadcastReceiverType)
-    {
-        var notificationIntent = action.Android.LaunchAppWhenTapped
-            ? (Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName ??
-                                                                          string.Empty))
-            : new Intent(Application.Context, broadcastReceiverType);
-
-        notificationIntent?.AddFlags(ActivityFlags.SingleTop)
-            .AddFlags(ActivityFlags.IncludeStoppedPackages)
-            .PutExtra(LocalNotificationCenter.ReturnRequestActionId, action.ActionId)
-            .PutExtra(LocalNotificationCenter.ReturnRequest, serializedRequest);
-
-        //var requestCode = _random.Next();
-        // Cannot be random, then you cannot cancel it.
-        var requestCode = notificationId + action.ActionId;
-
-        PendingIntent? pendingIntent = null;
-        if (action.Android.LaunchAppWhenTapped)
-        {
-            pendingIntent = PendingIntent.GetActivity(
-                Application.Context,
-                requestCode,
-                notificationIntent,
-                action.Android.PendingIntentFlags.ToNative());
-        }
-        else if (notificationIntent is not null)
-        {
-            pendingIntent = PendingIntent.GetBroadcast(
-                Application.Context,
-                requestCode,
-                notificationIntent,
-                action.Android.PendingIntentFlags.ToNative()
-            );
-        }
-
-        return pendingIntent;
-    }
-
-    //private NotificationCompat.Action CreateTextReply(NotificationRequest request, string serializedRequest, NotificationAction action)
-    //{
-    //    var pendingIntent = CreateActionIntent(request, serializedRequest, action);
-
-    //    var input = new AndroidX.Core.App.RemoteInput.Builder(AndroidNotificationProcessor.RemoteInputResultKey)
-    //        .SetLabel(action.Title)
-    //        .Build();
-
-    //    var iconId = GetIcon(request.Android.IconSmallName);
-    //    var nativeAction = new NotificationCompat.Action.Builder(iconId, action.Title, pendingIntent)
-    //        .SetAllowGeneratedReplies(true)
-    //        .AddRemoteInput(input)
-    //        .Build();
-
-    //    return nativeAction;
-    //}
-
+        
     /// <summary>
     ///
     /// </summary>
@@ -809,7 +749,7 @@ internal class NotificationServiceImpl : INotificationService
             return false;
         }
 
-        LocalNotificationCenter.Log($"Request Permission To Schedule Exact Alarm: {_notificationPermission.Android.RequestPermissionToScheduleExactAlarm}");
+        LocalNotificationLogger.Log($"Request Permission To Schedule Exact Alarm: {_notificationPermission.Android.RequestPermissionToScheduleExactAlarm}");
 
         if (!_notificationPermission.Android.RequestPermissionToScheduleExactAlarm)
         {
@@ -818,7 +758,7 @@ internal class NotificationServiceImpl : INotificationService
                    
         var canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
 
-        LocalNotificationCenter.Log($"Can Schedule Exact Alarms: {canScheduleExactAlarms}");
+        LocalNotificationLogger.Log($"Can Schedule Exact Alarms: {canScheduleExactAlarms}");
 
         if (!canScheduleExactAlarms)
         {

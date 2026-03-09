@@ -1,7 +1,10 @@
 ﻿using CoreLocation;
 using Foundation;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Platforms.iOS;
 using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.iOSOption;
 using System.Globalization;
 using UIKit;
 using UserNotifications;
@@ -94,7 +97,7 @@ internal class NotificationServiceImpl : INotificationService
             var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
             if (allowed == false)
             {
-                LocalNotificationCenter.Log("User denied permission");
+                LocalNotificationLogger.Log("User denied permission");
                 OnNotificationsDisabled();
                 return false;
             }
@@ -147,7 +150,7 @@ internal class NotificationServiceImpl : INotificationService
     
     protected virtual UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
     {
-        LocalNotificationCenter.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+        LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
         return null;
     }
 
@@ -165,7 +168,7 @@ internal class NotificationServiceImpl : INotificationService
 
         var userInfoDictionary = new NSMutableDictionary();
         var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-        userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(LocalNotificationCenter.ReturnRequest));
+        userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(RequestConstants.ReturnRequest));
 
         var content = new UNMutableNotificationContent
         {
@@ -464,7 +467,7 @@ internal class NotificationServiceImpl : INotificationService
 
             if (error != null)
             {
-                LocalNotificationCenter.Log(error.LocalizedDescription);
+                LocalNotificationLogger.Log(error.LocalizedDescription);
             }
 
             if (alertsAllowed)
@@ -490,7 +493,7 @@ internal class NotificationServiceImpl : INotificationService
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
             return false;
         }
     }

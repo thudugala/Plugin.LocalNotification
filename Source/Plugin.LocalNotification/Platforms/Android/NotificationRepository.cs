@@ -1,4 +1,6 @@
 ﻿using Android.Content;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Platforms.Android;
 using Application = Android.App.Application;
 
 namespace Plugin.LocalNotification.Platforms;

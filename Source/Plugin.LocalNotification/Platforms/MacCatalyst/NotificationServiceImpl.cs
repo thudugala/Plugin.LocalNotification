@@ -1,7 +1,10 @@
 ﻿using CoreLocation;
 using Foundation;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Platforms.MacCatalyst;
 using Plugin.LocalNotification.EventArgs;
-using Plugin.LocalNotification.iOSOption;
 using System.Globalization;
 using UIKit;
 using UserNotifications;
@@ -15,7 +18,7 @@ internal class NotificationServiceImpl : INotificationService
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
     /// <inheritdoc />
-    public bool IsSupported => OperatingSystem.IsMacCatalyst();
+    public bool IsSupported => OperatingSystem.IsIOS();
 
     /// <inheritdoc />
     public event NotificationReceivedEventHandler? NotificationReceived;
@@ -38,7 +41,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public bool Cancel(params int[] notificationIdList)
     {
-        if (!OperatingSystem.IsMacCatalystVersionAtLeast(11))
+        if (!OperatingSystem.IsIOSVersionAtLeast(11))
         {
             return false;
         }
@@ -81,7 +84,7 @@ internal class NotificationServiceImpl : INotificationService
         UNNotificationTrigger? trigger = null;
         try
         {
-            if (!OperatingSystem.IsMacCatalyst())
+            if (!OperatingSystem.IsIOS())
             {
                 return false;
             }
@@ -94,7 +97,7 @@ internal class NotificationServiceImpl : INotificationService
             var allowed = await AreNotificationsEnabled().ConfigureAwait(false);
             if (allowed == false)
             {
-                LocalNotificationCenter.Log("User denied permission");
+                LocalNotificationLogger.Log("User denied permission");
                 OnNotificationsDisabled();
                 return false;
             }
@@ -144,10 +147,10 @@ internal class NotificationServiceImpl : INotificationService
         }
     }
 
-    
+
     protected virtual UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
     {
-        LocalNotificationCenter.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+        LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
         return null;
     }
 
@@ -158,14 +161,14 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
     {
-        if (!OperatingSystem.IsMacCatalyst())
+        if (!OperatingSystem.IsIOS())
         {
             return new UNMutableNotificationContent();
         }
 
         var userInfoDictionary = new NSMutableDictionary();
         var serializedRequest = LocalNotificationCenter.GetRequestSerialize(request);
-        userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(LocalNotificationCenter.ReturnRequest));
+        userInfoDictionary.SetValueForKey(new NSString(serializedRequest), new NSString(RequestConstants.ReturnRequest));
 
         var content = new UNMutableNotificationContent
         {
@@ -176,7 +179,7 @@ internal class NotificationServiceImpl : INotificationService
             UserInfo = userInfoDictionary
         };
 
-        if (OperatingSystem.IsMacCatalystVersionAtLeast(15))
+        if (OperatingSystem.IsIOSVersionAtLeast(15))
         {
             content.InterruptionLevel = request.iOS.Priority.ToNative();
             content.RelevanceScore = request.iOS.RelevanceScore;
@@ -203,14 +206,14 @@ internal class NotificationServiceImpl : INotificationService
         }
 
         if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
-        {                
-            if (OperatingSystem.IsMacCatalyst() &&
-                OperatingSystem.IsMacCatalystVersionAtLeast(12) &&
-                !OperatingSystem.IsMacCatalystVersionAtLeast(15))
+        {
+            if (OperatingSystem.IsIOS() &&
+                OperatingSystem.IsIOSVersionAtLeast(12) &&
+                !OperatingSystem.IsIOSVersionAtLeast(15))
             {
                 content.SummaryArgument = request.iOS.SummaryArgument;
                 content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
-            }                
+            }
         }
 
         content.Sound = request.Silent ?
@@ -376,7 +379,7 @@ internal class NotificationServiceImpl : INotificationService
                 continue;
             }
 
-            if (OperatingSystem.IsMacCatalystVersionAtLeast(15))
+            if (OperatingSystem.IsIOSVersionAtLeast(15))
             {
                 var icon = notificationAction.IOS.Icon.Type switch
                 {
@@ -464,7 +467,7 @@ internal class NotificationServiceImpl : INotificationService
 
             if (error != null)
             {
-                LocalNotificationCenter.Log(error.LocalizedDescription);
+                LocalNotificationLogger.Log(error.LocalizedDescription);
             }
 
             if (alertsAllowed)
@@ -490,7 +493,7 @@ internal class NotificationServiceImpl : INotificationService
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
             return false;
         }
     }

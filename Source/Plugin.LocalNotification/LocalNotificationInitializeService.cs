@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification.Core;
 
 namespace Plugin.LocalNotification;
 
@@ -13,7 +14,7 @@ public class LocalNotificationInitializeService : IMauiInitializeService
     /// <param name="services">The application's service provider.</param>
     public void Initialize(IServiceProvider services)
     {
-        LocalNotificationCenter.Logger = services.GetService<ILogger<LocalNotificationCenter>>();
+        LocalNotificationLogger.Logger = services.GetService<ILogger<LocalNotificationCenter>>();
 
         var builder = services.GetService<LocalNotificationBuilder>();
         if (builder is not null)

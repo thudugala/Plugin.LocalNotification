@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Plugin.LocalNotification.Core;
 
 namespace Plugin.LocalNotification.Platforms;
 
@@ -31,7 +32,7 @@ internal class NotificationActionReceiver : BroadcastReceiver
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 }

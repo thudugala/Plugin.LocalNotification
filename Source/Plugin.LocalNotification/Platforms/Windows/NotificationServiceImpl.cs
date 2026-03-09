@@ -1,5 +1,6 @@
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
 

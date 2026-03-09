@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Json;
 using Plugin.LocalNotification.Platforms;
 
@@ -10,7 +11,6 @@ namespace Plugin.LocalNotification;
 public partial class LocalNotificationCenter
 {
     private static Lazy<INotificationService> implementation = new(CreateNotificationService, LazyThreadSafetyMode.PublicationOnly);
-    private static INotificationSerializer? _serializer;
 
     private static INotificationService CreateNotificationService()
     {
@@ -25,37 +25,12 @@ public partial class LocalNotificationCenter
     {
         implementation = new Lazy<INotificationService>(() => service, LazyThreadSafetyMode.PublicationOnly);
     }
-
-    /// <summary>
-    /// Gets or sets the internal logger for notification events.
-    /// </summary>
-    internal static ILogger? Logger { get; set; }
-
-    /// <summary>
-    /// Gets or sets the log level for internal logging.
-    /// </summary>
-    public static LogLevel LogLevel { get; set; } = LogLevel.Trace;
-
+        
     /// <summary>
     /// Gets the platform-specific <see cref="INotificationService"/> implementation.
     /// </summary>
     public static INotificationService Current => implementation.Value!;
-
-    /// <summary>
-    /// The key used to return a notification request.
-    /// </summary>
-    public const string ReturnRequest = "Plugin.LocalNotification.RETURN_REQUEST";
-
-    /// <summary>
-    /// The key used to return a notification action id.
-    /// </summary>
-    public const string ReturnRequestActionId = "Plugin.LocalNotification.RETURN_ActionId";
-
-    /// <summary>
-    /// The key used to indicate a notification was handled.
-    /// </summary>
-    public const string ReturnRequestHandled = "Plugin.LocalNotification.RETURN_Handled";
-
+        
     /// <summary>
     /// Gets or sets the serializer used for notification requests.
     /// </summary>
@@ -63,10 +38,10 @@ public partial class LocalNotificationCenter
     {
         get
         {
-            _serializer ??= new NotificationSerializer();
-            return _serializer;
+            field ??= new NotificationSerializer();
+            return field;
         }
-        set => _serializer = value;
+        set;
     }
 
     /// <summary>
@@ -76,7 +51,7 @@ public partial class LocalNotificationCenter
     /// <returns>The deserialized <see cref="NotificationRequest"/>.</returns>
     internal static NotificationRequest GetRequest(string? serializedRequest)
     {
-        Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
+        LocalNotificationLogger.Log($"Serialized Request [{serializedRequest}]");
         if (string.IsNullOrWhiteSpace(serializedRequest))
         {
             return new NotificationRequest();
@@ -149,7 +124,7 @@ public partial class LocalNotificationCenter
         }
         var serializedRequest = Serializer.Serialize(request);
 
-        Logger?.LogTrace("Serialized Request [{serializedRequest}]", serializedRequest);
+        LocalNotificationLogger.Log($"Serialized Request [{serializedRequest}]");
 
         return serializedRequest;
     }

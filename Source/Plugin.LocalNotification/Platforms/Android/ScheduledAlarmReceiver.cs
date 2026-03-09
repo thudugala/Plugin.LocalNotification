@@ -1,5 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
+using Plugin.LocalNotification.Core;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Platforms.Android;
 
 namespace Plugin.LocalNotification.Platforms;
 
@@ -34,7 +37,7 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
 
             if (intent is null)
             {
-                LocalNotificationCenter.Log("No intent");
+                LocalNotificationLogger.Log("No intent");
                 return;
             }
 
@@ -43,12 +46,12 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
                 "android.intent.action.QUICKBOOT_POWERON" or
                 "com.htc.intent.action.QUICKBOOT_POWERON")
             {
-                LocalNotificationCenter.Log("ActionBootCompleted");
+                LocalNotificationLogger.Log("ActionBootCompleted");
 
                 var requestList = NotificationRepository.GetPendingList();
                 if (requestList.Count <= 0)
                 {
-                    LocalNotificationCenter.Log("No Pending Notification Request");
+                    LocalNotificationLogger.Log("No Pending Notification Request");
                     return;
                 }
 
@@ -59,10 +62,10 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
             }
             else
             {
-                var requestSerialize = intent.GetStringExtra(LocalNotificationCenter.ReturnRequest);
+                var requestSerialize = intent.GetStringExtra(RequestConstants.ReturnRequest);
                 if (string.IsNullOrWhiteSpace(requestSerialize))
                 {
-                    LocalNotificationCenter.Log("Request Json Not Found");
+                    LocalNotificationLogger.Log("Request Json Not Found");
                     return;
                 }
                 var request = LocalNotificationCenter.GetRequest(requestSerialize);
@@ -72,7 +75,7 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
         }
         catch (Exception ex)
         {
-            LocalNotificationCenter.Log(ex);
+            LocalNotificationLogger.Log(ex);
         }
     }
 
@@ -80,20 +83,20 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
     {
         if (request is null)
         {
-            LocalNotificationCenter.Log("Request Not Found");
+            LocalNotificationLogger.Log("Request Not Found");
             return;
         }
 
         if (request.Schedule.NotifyTime is null)
         {
-            LocalNotificationCenter.Log($"Notification {request.NotificationId} has no NotifyTime");
+            LocalNotificationLogger.Log($"Notification {request.NotificationId} has no NotifyTime");
             return;
         }
 
         if (request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
         {
             _ = notificationService.Cancel(request.NotificationId);
-            LocalNotificationCenter.Log($"Notification {request.NotificationId} Auto Canceled");
+            LocalNotificationLogger.Log($"Notification {request.NotificationId} Auto Canceled");
             return;
         }
 
@@ -119,7 +122,7 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
         }
         else
         {
-            LocalNotificationCenter.Log(
+            LocalNotificationLogger.Log(
                 "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
         }
 
@@ -138,7 +141,7 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
             }
             else
             {
-                LocalNotificationCenter.Log(
+                LocalNotificationLogger.Log(
                     $"Notification {request.NotificationId} New NotifyTime is null, no reschedule");
             }
         }
