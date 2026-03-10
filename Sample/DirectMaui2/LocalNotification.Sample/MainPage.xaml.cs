@@ -172,6 +172,17 @@ public partial class MainPage : ContentPage
             //request.Schedule.NotifyRepeatInterval = TimeSpan.FromMinutes(2);
         }
 
+        //request.Geofence = new NotificationRequestGeofence
+        //{
+        //    Center =
+        //    {
+        //        Latitude = -36.8508827,
+        //        Longitude = 174.7644881
+        //    },
+        //    RadiusInMeters = 100,
+        //    NotifyOn = NotificationRequestGeofence.GeofenceNotifyOn.OnEntry | NotificationRequestGeofence.GeofenceNotifyOn.OnExit,
+        //};
+
         try
         {
             //var permissionRequest = new NotificationPermission
@@ -192,6 +203,14 @@ public partial class MainPage : ContentPage
                 await _notificationService.RequestNotificationPermission();
             }
 
+            //var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            //if (status == PermissionStatus.Granted)
+            //{
+            //    var ff = await _notificationService.Show(request);
+            //}
+
+            var ff = await _notificationService.Show(request);
+
             //#if ANDROID
 
             //            var myAlarmManager = AlarmManager.FromContext(Android.App.Application.Context);
@@ -208,7 +227,7 @@ public partial class MainPage : ContentPage
 
             //#endif
 
-            var ff = await _notificationService.Show(request);
+
 
             //var sn = ToastNotificationManagerCompat.CreateToastNotifier().GetScheduledToastNotifications();
             //foreach (var notification in sn)
