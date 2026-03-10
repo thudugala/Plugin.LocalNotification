@@ -11,6 +11,7 @@ The local notification plugin provides a way to show local notifications from Xa
 - `Plugin.LocalNotification` Available on
   - NuGet: https://www.nuget.org/packages/Plugin.LocalNotification [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.svg)](https://www.nuget.org/packages/Plugin.LocalNotification/) [![NuGet](https://img.shields.io/nuget/dt/Plugin.LocalNotification.svg)](https://www.nuget.org/packages/Plugin.LocalNotification/)
   - NuGet: https://www.nuget.org/packages/Plugin.LocalNotification.Geofence [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.Geofence.svg)](https://www.nuget.org/packages/Plugin.LocalNotification.Geofence/) [![NuGet](https://img.shields.io/nuget/dt/Plugin.LocalNotification.Geofence.svg)](https://www.nuget.org/packages/Plugin.LocalNotification.Geofence/)
+  - NuGet: https://www.nuget.org/packages/Plugin.LocalNotification.Core [![NuGet](https://img.shields.io/nuget/v/Plugin.LocalNotification.Core.svg)](https://www.nuget.org/packages/Plugin.LocalNotification.Core/) [![NuGet](https://img.shields.io/nuget/dt/Plugin.LocalNotification.Core.svg)](https://www.nuget.org/packages/Plugin.LocalNotification.Core/)
 - #### .Net MAUI
   - Install Version 10.0.0 above 
   - Install into your project
