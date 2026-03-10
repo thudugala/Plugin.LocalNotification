@@ -16,7 +16,7 @@ public partial class NotificationPage : ContentPage
         TapCountLabel.Text = $"Tap Count {tabCount}";
     }
 
-    private async void Button_Clicked(object sender, EventArgs e)
+    private async void Button_Clicked(object? sender, EventArgs e)
     {       
         var deliveredNotificationList = await _notificationService.GetDeliveredNotificationList();
 

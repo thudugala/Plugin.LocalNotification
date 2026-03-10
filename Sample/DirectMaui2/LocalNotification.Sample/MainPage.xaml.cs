@@ -1,5 +1,4 @@
 ﻿using Plugin.LocalNotification;
-using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
 using Plugin.LocalNotification.EventArgs;
@@ -41,12 +40,12 @@ public partial class MainPage : ContentPage
         await LoadText();
     }
 
-    private async void ButtonLoadText_Clicked(object sender, EventArgs e)
+    private async void ButtonLoadText_Clicked(object? sender, EventArgs e)
     {
         await LoadText();
     }
 
-    private async void ButtonClearText_Clicked(object sender, EventArgs e)
+    private async void ButtonClearText_Clicked(object? sender, EventArgs e)
     {
         await File.WriteAllTextAsync(_cacheFilePath, $"Clear Text {DateTime.Now}");
         var fileText = await File.ReadAllTextAsync(_cacheFilePath);
@@ -78,12 +77,12 @@ public partial class MainPage : ContentPage
     //    });
     //}
 
-    private void ButtonCancel_Clicked(object sender, EventArgs e)
+    private void ButtonCancel_Clicked(object? sender, EventArgs e)
     {
         _notificationService.CancelAll();
     }
 
-    private async void Button_Clicked(object sender, EventArgs e)
+    private async void Button_Clicked(object? sender, EventArgs e)
     {
         var imageStream = await FileSystem.OpenAppPackageFileAsync("appicon1.png");
         byte[] imageBytes = [];

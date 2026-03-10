@@ -50,13 +50,13 @@
             VerticalOptions="Center" />
 
             <!--  Place new controls here  -->
-            <StackLayout VerticalOptions="CenterAndExpand">
+            <Grid VerticalOptions="Center">
                 <Button
                 Clicked="Button_Clicked"
                 HorizontalOptions="Center"
                 Text="Send Local Notification"
                 VerticalOptions="Center" />
-            </StackLayout>
+            </Grid>
 
         </VerticalStackLayout>
     </ScrollView>

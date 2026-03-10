@@ -3,28 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LocalNotification.Sample.NotificationPage"
              Title="Tapped">
-    <StackLayout>
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*"
+          VerticalOptions="Center">
         <Label
-                HorizontalOptions="CenterAndExpand"
-                Text="Notification Tapped Successfully"
-                VerticalOptions="CenterAndExpand" />
+                Grid.Row="0"
+                HorizontalOptions="Center"
+                Text="Notification Tapped Successfully" />
 
         <Label
+                Grid.Row="1"
                 x:Name="IdLabel"
-                HorizontalOptions="CenterAndExpand"/>
+                HorizontalOptions="Center"/>
 
         <Label
+                Grid.Row="2"
                 x:Name="MessageLabel"
-                HorizontalOptions="CenterAndExpand"/>
+                HorizontalOptions="Center"/>
 
         <Label
+                Grid.Row="3"
                 x:Name="TapCountLabel"
-                HorizontalOptions="CenterAndExpand"/>
+                HorizontalOptions="Center"/>
 
         <Button
+                Grid.Row="4"
                 Clicked="Button_Clicked"
                 HorizontalOptions="Center"
-                Text="Go Back"
-                VerticalOptions="CenterAndExpand" />
-    </StackLayout>
+                Text="Go Back" />
+    </Grid>
 </ContentPage>
