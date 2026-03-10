@@ -17,6 +17,7 @@ public static class LocalNotificationExtensions
     /// <returns>The configured <see cref="MauiAppBuilder"/>.</returns>
     public static MauiAppBuilder UseLocalNotification(this MauiAppBuilder builder, Action<ILocalNotificationBuilder>? configureDelegate = null)
     {
+#if ANDROID || IOS || MACCATALYST || WINDOWS
         var localNotificationBuilder = new LocalNotificationBuilder();
         configureDelegate?.Invoke(localNotificationBuilder);
 
@@ -57,6 +58,7 @@ public static class LocalNotificationExtensions
             });
 #endif
         });
+#endif
 
         return builder;
     }

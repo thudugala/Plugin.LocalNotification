@@ -11,11 +11,28 @@
 		<Nullable>enable</Nullable>
 		<SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
 
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+
 		<Title>$(AssemblyName)</Title>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<Authors>Elvin (Tharindu) Thudugala</Authors>
+		<PackageTags>dotnet;android;ios;local;notification;local.notification;maui;core</PackageTags>
+		<PackageProjectUrl>https://github.com/thudugala/Plugin.LocalNotification</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/thudugala/Plugin.LocalNotification</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>Core types and interfaces for Plugin.LocalNotification.</Description>
+		<PackageIcon>icon.png</PackageIcon>
 		<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-		<Version>1.0.0-preview01</Version>
+		<Version>1.0.0-preview02</Version>
+		<PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 		<IsPackable>True</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
@@ -28,7 +45,17 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
 	</PropertyGroup> 
 
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
 	<ItemGroup>
+		<None Include="..\..\Screenshots\icon.png" Pack="True" PackagePath="\" Link="Properties\icon.png" />
+		<None Include="..\..\README.md" Pack="True" PackagePath="\" Link="Properties\README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 	</ItemGroup> 
 
