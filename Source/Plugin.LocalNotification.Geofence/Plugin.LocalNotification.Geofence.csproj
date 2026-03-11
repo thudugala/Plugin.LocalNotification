@@ -81,4 +81,8 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+		<BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+	</ItemGroup>
+
 </Project>
