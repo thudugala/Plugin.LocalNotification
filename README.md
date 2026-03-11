@@ -4,7 +4,7 @@
 [![Nuget Build](https://github.com/thudugala/Plugin.LocalNotification/actions/workflows/nuget.yml/badge.svg)](https://github.com/thudugala/Plugin.LocalNotification/actions/workflows/nuget.yml)
 
 # Plugin.LocalNotification
-The local notification plugin provides a way to show local notifications from Xamarin.Forms / .Net MAUI apps.
+The local notification plugin provides a way to display local notifications in .NET MAUI apps.
 
 # Setup
 
@@ -16,7 +16,7 @@ The local notification plugin provides a way to show local notifications from Xa
   - Install Version 10.0.0 above 
   - Install into your project
 - #### Xamarin.Forms (Support ended on May 1, 2024)
-- - Install Version 11.0.0 below 
+  - Install Version 11.0.0 below 
   - Install into your platform-specific projects (iOS/Android), and any .NET Standard 2.0/2.1 projects required for your app.
 
 ## Platform Support
@@ -40,7 +40,6 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Usage 
 
-- [Xamarin.Forms](https://github.com/thudugala/Plugin.LocalNotification/wiki#xamarinforms-support-ended-on-may-1-2024)
 - [.Net MAUI](https://github.com/thudugala/Plugin.LocalNotification/wiki/1.-Usage-10.0.0--.Net-MAUI)
 
 # Screen Record
@@ -49,16 +48,16 @@ The local notification plugin provides a way to show local notifications from Xa
 
 # Video
 
-### Xamarin.Forms (Support ended on May 1, 2024)
-[![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
-
 ### .Net MAUI
 [![Local Push Notifications in .Net MAUI](https://img.youtube.com/vi/dWdXXGa1_hI/0.jpg)](https://www.youtube.com/watch?v=dWdXXGa1_hI)
+
+### Xamarin.Forms (Support ended on May 1, 2024)
+[![Local Push Notifications in Xamarin.Forms](https://img.youtube.com/vi/-Nj_TRPlx-8/0.jpg)](https://www.youtube.com/watch?v=-Nj_TRPlx-8)
 
 # SourceLink Support
 
 In Visual Studio, confirm that SourceLink is enabled. 
-Also, Turn off "Just My Code" since, well, this isn't your code.
+Also, turn off "Just My Code" since, well, this isn't your code.
 
 https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink
 
