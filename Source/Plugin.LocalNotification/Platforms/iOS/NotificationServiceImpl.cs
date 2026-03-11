@@ -1,5 +1,4 @@
-﻿using CoreLocation;
-using Foundation;
+﻿using Foundation;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.iOSOption;
@@ -111,7 +110,7 @@ internal class NotificationServiceImpl : INotificationService
             {
                 if (GeofenceHandlerRegistry.Handler is null)
                 {
-                    LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");                   
+                    LocalNotificationLogger.Log(Properties.Resources.GeofencePackageMissing);                   
                 }
                 else
                 {
@@ -467,7 +466,7 @@ internal class NotificationServiceImpl : INotificationService
             var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
             var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
 
-            if (error != null)
+            if (error is not null)
             {
                 LocalNotificationLogger.Log(error.LocalizedDescription);
             }
@@ -476,18 +475,16 @@ internal class NotificationServiceImpl : INotificationService
             {
                 if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
                 {
-                    return false;
+                    return alertsAllowed;
                 }
 
-                var locationManager = new CLLocationManager();
-
-                if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.Always)
+                if (GeofenceHandlerRegistry.Handler is null)
                 {
-                    locationManager.RequestAlwaysAuthorization();
+                    LocalNotificationLogger.Log(Properties.Resources.GeofencePackageMissing);
                 }
-                else if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.WhenInUse)
+                else
                 {
-                    locationManager.RequestWhenInUseAuthorization();
+                    GeofenceHandlerRegistry.Handler.RequestLocationNotificationPermission(permission);
                 }
             }
 

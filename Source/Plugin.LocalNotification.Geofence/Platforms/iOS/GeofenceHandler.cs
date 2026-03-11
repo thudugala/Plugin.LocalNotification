@@ -1,5 +1,6 @@
 using CoreLocation;
 using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.iOSOption;
 using Plugin.LocalNotification.Core.Platforms.iOS;
 using System.Globalization;
 using UserNotifications;
@@ -21,5 +22,31 @@ internal class GeofenceHandler : IiOSGeofenceHandler
 
         var trigger = UNLocationNotificationTrigger.CreateTrigger(region, request.Geofence.IOS.Repeats);
         return trigger;
+    }
+
+    public bool RequestLocationNotificationPermission(NotificationPermission permission)
+    {        
+        if (!permission.AskPermission)
+        {
+            return false;
+        }
+
+        if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
+        {
+            return false;
+        }
+
+        var locationManager = new CLLocationManager();
+
+        if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.Always)
+        {
+            locationManager.RequestAlwaysAuthorization();
+        }
+        else if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.WhenInUse)
+        {
+            locationManager.RequestWhenInUseAuthorization();
+        }
+
+        return true;
     }
 }

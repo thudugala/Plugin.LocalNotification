@@ -11,7 +11,6 @@ using Plugin.LocalNotification.Core.Platforms.Android;
 using Plugin.LocalNotification.EventArgs;
 using Application = Android.App.Application;
 using Exception = System.Exception;
-using IAndroidGeofenceHandler = Plugin.LocalNotification.Core.Platforms.Android.IAndroidGeofenceHandler;
 
 namespace Plugin.LocalNotification.Platforms;
 
@@ -190,7 +189,7 @@ internal class NotificationServiceImpl : INotificationService
         {
             if (GeofenceHandlerRegistry.Handler is null)
             {
-                LocalNotificationLogger.Log("Geofence feature requires Plugin.LocalNotification.Geofence package.");
+                LocalNotificationLogger.Log(Properties.Resources.GeofencePackageMissing);
                 return false;
             }
 

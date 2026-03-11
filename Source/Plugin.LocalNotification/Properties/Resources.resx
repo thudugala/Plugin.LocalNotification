@@ -123,6 +123,9 @@
   <data name="AndroidNotificationServiceNotFound" xml:space="preserve">
     <value>Notification service not found</value>
   </data>
+  <data name="GeofencePackageMissing" xml:space="preserve">
+    <value>Geofence feature requires Plugin.LocalNotification.Geofence package.</value>
+  </data>
   <data name="PluginNotFound" xml:space="preserve">
     <value>[Plugin.LocalNotification] No platform plugin found.  Did you install the nuget package in your app project as well?</value>
   </data>
