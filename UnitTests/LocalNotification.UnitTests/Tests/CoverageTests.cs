@@ -294,33 +294,38 @@ public class CoverageTests : IDisposable
         var service = new NotificationServiceImpl();
         service.IsSupported.Should().BeFalse();
 
-        Action getNotificationReceiving = () => _ = service.NotificationReceiving;
-        Action setNotificationReceiving = () => service.NotificationReceiving = _ => Task.FromResult(new NotificationEventReceivingArgs());
-        getNotificationReceiving.Should().Throw<NotImplementedException>();
-        setNotificationReceiving.Should().Throw<NotImplementedException>();
+        service.NotificationReceiving.Should().BeNull();
+        var receivingHandler = new Func<NotificationRequest, Task<NotificationEventReceivingArgs>>(_ => Task.FromResult(new NotificationEventReceivingArgs()));
+        service.NotificationReceiving = receivingHandler;
+        service.NotificationReceiving.Should().BeSameAs(receivingHandler);
 
-        await Assert.ThrowsAsync<NotImplementedException>(() => service.AreNotificationsEnabled());
-        await Assert.ThrowsAsync<NotImplementedException>(() => service.RequestNotificationPermission());
-        await Assert.ThrowsAsync<NotImplementedException>(() => service.Show(new NotificationRequest()));
-        await Assert.ThrowsAsync<NotImplementedException>(() => service.GetDeliveredNotificationList());
-        await Assert.ThrowsAsync<NotImplementedException>(() => service.GetPendingNotificationList());
+        (await service.AreNotificationsEnabled()).Should().BeFalse();
+        (await service.RequestNotificationPermission()).Should().BeFalse();
+        (await service.Show(new NotificationRequest())).Should().BeFalse();
+        (await service.GetDeliveredNotificationList()).Should().BeEmpty();
+        (await service.GetPendingNotificationList()).Should().BeEmpty();
 
-        Action[] syncThrows =
-        [
-            () => service.Cancel(1),
-            () => service.CancelAll(),
-            () => service.Clear(1),
-            () => service.ClearAll(),
-            () => service.OnNotificationActionTapped(new NotificationActionEventArgs()),
-            () => service.OnNotificationReceived(new NotificationEventArgs()),
-            () => service.OnNotificationsDisabled(),
-            () => service.RegisterCategoryList(new HashSet<NotificationCategory>())
-        ];
+        service.Cancel(1).Should().BeFalse();
+        service.CancelAll().Should().BeFalse();
+        service.Clear(1).Should().BeFalse();
+        service.ClearAll().Should().BeFalse();
 
-        foreach (var action in syncThrows)
-        {
-            action.Should().Throw<NotImplementedException>();
-        }
+        var actionTappedRaised = false;
+        var receivedRaised = false;
+        var disabledRaised = false;
+
+        service.NotificationActionTapped += _ => actionTappedRaised = true;
+        service.NotificationReceived += _ => receivedRaised = true;
+        service.NotificationsDisabled += () => disabledRaised = true;
+
+        service.OnNotificationActionTapped(new NotificationActionEventArgs());
+        service.OnNotificationReceived(new NotificationEventArgs());
+        service.OnNotificationsDisabled();
+        service.RegisterCategoryList(new HashSet<NotificationCategory>());
+
+        actionTappedRaised.Should().BeTrue();
+        receivedRaised.Should().BeTrue();
+        disabledRaised.Should().BeTrue();
 
         var customService = new Mock<INotificationService>();
         LocalNotificationCenter.SetNotificationService(customService.Object);

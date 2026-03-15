@@ -6,7 +6,7 @@ namespace Plugin.LocalNotification.Platforms;
 
 internal class NotificationServiceImpl : INotificationService
 {
-    public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
     // Generic .NET target (non-Android/iOS): not supported at runtime
     public bool IsSupported => false;
@@ -17,19 +17,19 @@ internal class NotificationServiceImpl : INotificationService
     public event NotificationDisabledEventHandler? NotificationsDisabled;
 #pragma warning restore CS0067
 
-    public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null) => throw new NotImplementedException();
-    public bool Cancel(params int[] notificationIdList) => throw new NotImplementedException();
-    public bool CancelAll() => throw new NotImplementedException();
-    public bool Clear(params int[] notificationIdList) => throw new NotImplementedException();
-    public bool ClearAll() => throw new NotImplementedException();
-    public Task<IList<NotificationRequest>> GetDeliveredNotificationList() => throw new NotImplementedException();
-    public Task<IList<NotificationRequest>> GetPendingNotificationList() => throw new NotImplementedException();
-    public void OnNotificationActionTapped(NotificationActionEventArgs e) => throw new NotImplementedException();
-    public void OnNotificationReceived(NotificationEventArgs e) => throw new NotImplementedException();
-    public void OnNotificationsDisabled() => throw new NotImplementedException();
-    public void RegisterCategoryList(HashSet<NotificationCategory> categoryList) => throw new NotImplementedException();
-    public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null) => throw new NotImplementedException();
-    public Task<bool> Show(NotificationRequest request) => throw new NotImplementedException();
+    public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null) => Task.FromResult(false);
+    public bool Cancel(params int[] notificationIdList) => false;
+    public bool CancelAll() => false;
+    public bool Clear(params int[] notificationIdList) => false;
+    public bool ClearAll() => false;
+    public Task<IList<NotificationRequest>> GetDeliveredNotificationList() => Task.FromResult<IList<NotificationRequest>>([]);
+    public Task<IList<NotificationRequest>> GetPendingNotificationList() => Task.FromResult<IList<NotificationRequest>>([]);
+    public void OnNotificationActionTapped(NotificationActionEventArgs e) => NotificationActionTapped?.Invoke(e);
+    public void OnNotificationReceived(NotificationEventArgs e) => NotificationReceived?.Invoke(e);
+    public void OnNotificationsDisabled() => NotificationsDisabled?.Invoke();
+    public void RegisterCategoryList(HashSet<NotificationCategory> categoryList) { }
+    public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null) => Task.FromResult(false);
+    public Task<bool> Show(NotificationRequest request) => Task.FromResult(false);
 }
 
 
