@@ -35,17 +35,20 @@ jobs:
     - name: build Plugin.LocalNotification.Geofence.csproj
       run: dotnet build Source/Plugin.LocalNotification.Geofence/Plugin.LocalNotification.Geofence.csproj --configuration Release
 
-    - uses: actions/upload-artifact@v5
+    - name: upload Plugin.LocalNotification.Core
+      uses: actions/upload-artifact@v5
       with:
-        name: Plugin.LocalNotification
+        name: Plugin.LocalNotification.Core
         path: Source/Plugin.LocalNotification.Core/bin/Release/
 
-    - uses: actions/upload-artifact@v5
+    - name: upload Plugin.LocalNotification
+      uses: actions/upload-artifact@v5
       with:
-        name: Plugin.LocalNotification.Geofence
+        name: Plugin.LocalNotification
         path: Source/Plugin.LocalNotification/bin/Release/
 
-    - uses: actions/upload-artifact@v5
+    - name: upload Plugin.LocalNotification.Geofence
+      uses: actions/upload-artifact@v5
       with:
         name: Plugin.LocalNotification.Geofence
         path: Source/Plugin.LocalNotification.Geofence/bin/Release/
