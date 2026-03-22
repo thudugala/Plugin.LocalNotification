@@ -53,7 +53,7 @@ public partial class LocalNotificationCenter
     /// This way, users can easily identify and control multiple notification channels that have identical names.
     /// </summary>
     /// <param name="groupChannelRequests">A list of channel group requests to create.</param>
-    public static void CreateNotificationChannelGroups(IList<NotificationChannelGroupRequest> groupChannelRequests)
+    public static void CreateNotificationChannelGroups(IList<AndroidNotificationChannelGroupRequest> groupChannelRequests)
     {
         if (!OperatingSystem.IsAndroidVersionAtLeast(26))
         {
@@ -81,7 +81,7 @@ public partial class LocalNotificationCenter
     /// Channels define notification behaviors such as sound, vibration, and importance.
     /// </summary>
     /// <param name="channelRequests">A list of channel requests to create.</param>
-    public static void CreateNotificationChannels(IList<NotificationChannelRequest> channelRequests)
+    public static void CreateNotificationChannels(IList<AndroidNotificationChannelRequest> channelRequests)
     {
         if (!OperatingSystem.IsAndroidVersionAtLeast(26))
         {
@@ -90,7 +90,7 @@ public partial class LocalNotificationCenter
 
         if (channelRequests.Any())
         {
-            channelRequests.Add(new NotificationChannelRequest());
+            channelRequests.Add(new AndroidNotificationChannelRequest());
         }
 
         if (Application.Context.GetSystemService(Context.NotificationService) is not NotificationManager notificationManager)

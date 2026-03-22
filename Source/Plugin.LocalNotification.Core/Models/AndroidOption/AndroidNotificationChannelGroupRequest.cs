@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a grouping of related notification channels for Android notifications.
 /// </summary>
-public class NotificationChannelGroupRequest
+public class AndroidNotificationChannelGroupRequest
 {
 
     /// <summary>
@@ -24,20 +24,20 @@ public class NotificationChannelGroupRequest
     } = AndroidOptions.DefaultGroupName;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NotificationChannelGroupRequest"/> class with the specified group id and name.
+    /// Initializes a new instance of the <see cref="AndroidNotificationChannelGroupRequest"/> class with the specified group id and name.
     /// </summary>
     /// <param name="group">The id of the group.</param>
     /// <param name="name">The user-visible name of the group.</param>
-    public NotificationChannelGroupRequest(string group, string name)
+    public AndroidNotificationChannelGroupRequest(string group, string name)
     {
         Group = group;
         Name = name;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NotificationChannelGroupRequest"/> class with default values.
+    /// Initializes a new instance of the <see cref="AndroidNotificationChannelGroupRequest"/> class with default values.
     /// </summary>
-    public NotificationChannelGroupRequest()
+    public AndroidNotificationChannelGroupRequest()
     {
     }
 }

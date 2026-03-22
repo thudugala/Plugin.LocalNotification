@@ -3,7 +3,7 @@ using Plugin.LocalNotification;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.LocalNotification.Geofence;
 
 namespace LocalNotification.Sample;
@@ -38,9 +38,9 @@ public static class MauiProgram
                                     ResourceName = "i2"
                                 }
                             },
-                            IOS =
+                            Apple =
                             {
-                                Action = iOSActionType.Foreground
+                                Action = AppleActionType.Foreground
                             }                            
                         },
                         new(101)
@@ -54,16 +54,16 @@ public static class MauiProgram
                                     ResourceName = "i3"
                                 }
                             },
-                            IOS =
+                            Apple =
                             {
-                                Action = iOSActionType.Destructive
+                                Action = AppleActionType.Destructive
                             }
                         }
                     ]
             })
             .AddAndroid(android =>
             {
-                android.AddChannel(new NotificationChannelRequest
+                android.AddChannel(new AndroidNotificationChannelRequest
                 {
                     Sound = "good_things_happen"
                 });

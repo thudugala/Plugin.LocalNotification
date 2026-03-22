@@ -86,7 +86,7 @@ public class CoverageTests : IDisposable
         progress.Max.Should().Be(100);
         progress.Progress.Should().Be(25);
 
-        var channelGroup = new NotificationChannelGroupRequest("", "");
+        var channelGroup = new AndroidNotificationChannelGroupRequest("", "");
         channelGroup.Group.Should().Be(AndroidOptions.DefaultGroupId);
         channelGroup.Name.Should().Be(AndroidOptions.DefaultGroupName);
         channelGroup.Group = "grp";
@@ -94,7 +94,7 @@ public class CoverageTests : IDisposable
         channelGroup.Group.Should().Be("grp");
         channelGroup.Name.Should().Be("name");
 
-        var channelRequest = new NotificationChannelRequest
+        var channelRequest = new AndroidNotificationChannelRequest
         {
             Id = "",
             Name = ""
@@ -260,15 +260,15 @@ public class CoverageTests : IDisposable
 
         localBuilder.AddAndroid(android =>
         {
-            android.AddChannel(new NotificationChannelRequest());
-            android.AddChannelGroup(new NotificationChannelGroupRequest());
+            android.AddChannel(new AndroidNotificationChannelRequest());
+            android.AddChannelGroup(new AndroidNotificationChannelGroupRequest());
         }).Should().BeSameAs(localBuilder);
 
         localBuilder.AddiOS(_ => { }).Should().BeSameAs(localBuilder);
 
         var androidBuilder = new AndroidLocalNotificationBuilder();
-        androidBuilder.AddChannel(new NotificationChannelRequest()).Should().BeSameAs(androidBuilder);
-        androidBuilder.AddChannelGroup(new NotificationChannelGroupRequest()).Should().BeSameAs(androidBuilder);
+        androidBuilder.AddChannel(new AndroidNotificationChannelRequest()).Should().BeSameAs(androidBuilder);
+        androidBuilder.AddChannelGroup(new AndroidNotificationChannelGroupRequest()).Should().BeSameAs(androidBuilder);
         androidBuilder.ChannelRequestList.Should().HaveCount(1);
         androidBuilder.GroupChannelRequestList.Should().HaveCount(1);
 

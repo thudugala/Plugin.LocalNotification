@@ -12,7 +12,7 @@ public interface IAndroidLocalNotificationBuilder
     /// </summary>
     /// <param name="channelRequest">The channel request containing channel settings.</param>
     /// <returns>The builder instance for chaining.</returns>
-    IAndroidLocalNotificationBuilder AddChannel(NotificationChannelRequest channelRequest);
+    IAndroidLocalNotificationBuilder AddChannel(AndroidNotificationChannelRequest channelRequest);
 
     /// <summary>
     /// A grouping of related notification channels. e.g., channels that all belong to a single account.
@@ -24,7 +24,7 @@ public interface IAndroidLocalNotificationBuilder
     /// </summary>
     /// <param name="groupChannelRequest">The channel group request containing group settings.</param>
     /// <returns>The builder instance for chaining.</returns>
-    IAndroidLocalNotificationBuilder AddChannelGroup(NotificationChannelGroupRequest groupChannelRequest);
+    IAndroidLocalNotificationBuilder AddChannelGroup(AndroidNotificationChannelGroupRequest groupChannelRequest);
 }
 
 /// <summary>
@@ -32,19 +32,19 @@ public interface IAndroidLocalNotificationBuilder
 /// </summary>
 public class AndroidLocalNotificationBuilder : IAndroidLocalNotificationBuilder
 {        
-    internal IList<NotificationChannelRequest> ChannelRequestList { get; } = new List<NotificationChannelRequest>();
+    internal IList<AndroidNotificationChannelRequest> ChannelRequestList { get; } = new List<AndroidNotificationChannelRequest>();
            
-    internal IList<NotificationChannelGroupRequest> GroupChannelRequestList { get; } = new List<NotificationChannelGroupRequest>();
+    internal IList<AndroidNotificationChannelGroupRequest> GroupChannelRequestList { get; } = new List<AndroidNotificationChannelGroupRequest>();
            
     /// <inheritdoc/>
-    public IAndroidLocalNotificationBuilder AddChannel(NotificationChannelRequest channelRequest)
+    public IAndroidLocalNotificationBuilder AddChannel(AndroidNotificationChannelRequest channelRequest)
     {
         ChannelRequestList.Add(channelRequest);
         return this;
     }
 
     /// <inheritdoc/>
-    public IAndroidLocalNotificationBuilder AddChannelGroup(NotificationChannelGroupRequest groupChannelRequest)
+    public IAndroidLocalNotificationBuilder AddChannelGroup(AndroidNotificationChannelGroupRequest groupChannelRequest)
     {
         GroupChannelRequestList.Add(groupChannelRequest);
         return this;

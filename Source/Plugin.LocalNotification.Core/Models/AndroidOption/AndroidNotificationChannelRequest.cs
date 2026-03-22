@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a request to create or configure an Android notification channel, including importance, sound, vibration, and other options.
 /// </summary>
-public class NotificationChannelRequest
+public class AndroidNotificationChannelRequest
 {
 
     /// <summary>
