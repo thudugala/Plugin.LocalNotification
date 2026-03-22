@@ -4,7 +4,7 @@ using UserNotifications;
 namespace Plugin.LocalNotification.Core.Platforms.MacCatalyst;
 
 /// <summary>
-/// Interface for iOS/MacCatalyst geofence handling, implemented by Plugin.LocalNotification.Geofence.
+/// Interface for IOS/MacCatalyst geofence handling, implemented by Plugin.LocalNotification.Geofence.
 /// </summary>
 public interface IMacCatalystGeofenceHandler : IGeofenceHandler
 {

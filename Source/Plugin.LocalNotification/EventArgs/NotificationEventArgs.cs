@@ -4,7 +4,7 @@ namespace Plugin.LocalNotification.EventArgs;
 
 /// <summary>
 /// Represents the method that will handle the event when a notification is received.
-/// On iOS, this event is fired only when the app is in the foreground.
+/// On IOS, this event is fired only when the app is in the foreground.
 /// </summary>
 /// <param name="e">The event arguments containing details about the received notification.</param>
 public delegate void NotificationReceivedEventHandler(NotificationEventArgs e);

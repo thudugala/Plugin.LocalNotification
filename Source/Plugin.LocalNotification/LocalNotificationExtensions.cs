@@ -43,12 +43,12 @@ public static class LocalNotificationExtensions
                     LocalNotificationCenter.NotifyNotificationTapped(intent);
                 });
             });
-#elif IOS
+#elif IOS || MACCATALYST
             life.AddiOS(iOS =>
             {
                 iOS.FinishedLaunching((application, _) =>
                 {
-                    LocalNotificationCenter.SetUserNotificationCenterDelegate(localNotificationBuilder.IOSBuilder.CustomUserNotificationCenterDelegate);
+                    LocalNotificationCenter.SetUserNotificationCenterDelegate(localNotificationBuilder.AppleBuilder.CustomUserNotificationCenterDelegate);
                     return true;
                 });
                 iOS.WillEnterForeground(application =>

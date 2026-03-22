@@ -20,7 +20,7 @@ public static class GeofenceHandlerRegistry
 #if ANDROID
     public static IAndroidGeofenceHandler? Handler { get; set; }
 #elif IOS
-    public static IiOSGeofenceHandler? Handler { get; set; }
+    public static IIOSGeofenceHandler? Handler { get; set; }
 #elif MACCATALYST
     public static IMacCatalystGeofenceHandler? Handler { get; set; }
 #else

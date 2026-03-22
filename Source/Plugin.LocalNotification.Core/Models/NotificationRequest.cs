@@ -1,5 +1,5 @@
 ﻿using Plugin.LocalNotification.Core.Models.AndroidOption;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 
 namespace Plugin.LocalNotification.Core.Models;
 
@@ -40,9 +40,9 @@ public class NotificationRequest
     public AndroidOptions Android { get; set; } = new();
 
     /// <summary>
-    /// iOS specific properties.
+    /// IOS specific properties.
     /// </summary>
-    public iOSOptions iOS { get; set; } = new();
+    public AppleOptions Apple { get; set; } = new();
         
     /// <summary>
     /// A unique identifier for the request

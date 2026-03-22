@@ -1,10 +1,10 @@
-﻿namespace Plugin.LocalNotification.Core.Models.iOSOption;
+﻿namespace Plugin.LocalNotification.Core.Models.AppleOption;
 
 /// <summary>
-/// Specifies the authorization options for iOS notifications, such as badge, sound, alert, and more.
+/// Specifies the authorization options for IOS notifications, such as badge, sound, alert, and more.
 /// </summary>
 [Flags]
-public enum iOSAuthorizationOptions : ulong
+public enum AppleAuthorizationOptions : ulong
 {
     /// <summary>
     /// No authorization options are set.

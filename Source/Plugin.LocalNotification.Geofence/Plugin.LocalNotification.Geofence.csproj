@@ -32,7 +32,7 @@
 		<Description>Geofence support for Plugin.LocalNotification. References Google Play Services Location on Android only when used. Requires Plugin.LocalNotification to function.</Description>
 		<PackageIcon>icon.png</PackageIcon>
 		<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-		<Version>1.0.0-preview04</Version>
+		<Version>1.0.0-preview05</Version>
 		<PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 		<IsPackable>True</IsPackable>
 

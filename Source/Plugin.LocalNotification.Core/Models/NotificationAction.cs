@@ -1,5 +1,5 @@
 using Plugin.LocalNotification.Core.Models.AndroidOption;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 
 namespace Plugin.LocalNotification.Core.Models;
 
@@ -18,9 +18,9 @@ public class NotificationAction(int actionId) : IEquatable<NotificationAction>
     public int ActionId { get; } = actionId;
 
     /// <summary>
-    /// Gets or sets iOS-specific properties for the action.
+    /// Gets or sets Apple-specific properties for the action.
     /// </summary>
-    public iOSAction IOS { get; set; } = new();
+    public AppleAction Apple { get; set; } = new();
 
     /// <summary>
     /// Gets or sets Android-specific properties for the action.

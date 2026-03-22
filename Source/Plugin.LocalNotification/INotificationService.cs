@@ -20,7 +20,7 @@ public interface INotificationService
 
     /// <summary>
     /// fires when notification is received.
-    /// On iOS this event is fired only when the app is in foreground
+    /// On IOS this event is fired only when the app is in foreground
     /// </summary>
     event NotificationReceivedEventHandler? NotificationReceived;
 
@@ -104,7 +104,7 @@ public interface INotificationService
 
     /// <summary>
     /// Request Notification Permission
-    /// Ask the user for permission to show notifications on iOS 10.0+ and Android 33+.
+    /// Ask the user for permission to show notifications on IOS 10.0+ and Android 33+.
     /// Returns true if Allowed.
     /// </summary>
     /// <returns></returns>

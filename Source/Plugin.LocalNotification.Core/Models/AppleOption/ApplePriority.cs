@@ -1,9 +1,9 @@
-﻿namespace Plugin.LocalNotification.Core.Models.iOSOption;
+﻿namespace Plugin.LocalNotification.Core.Models.AppleOption;
 
 /// <summary>
-/// Specifies the priority levels for iOS notifications, affecting how notifications are presented to the user.
+/// Specifies the priority levels for IOS notifications, affecting how notifications are presented to the user.
 /// </summary>
-public enum iOSPriority
+public enum ApplePriority
 {
     /// <summary>
     /// The system adds the notification to the notification list without lighting up the screen or playing a sound.

@@ -1,9 +1,9 @@
-﻿namespace Plugin.LocalNotification.Core.Models.iOSOption;
+﻿namespace Plugin.LocalNotification.Core.Models.AppleOption;
 
 /// <summary>
-/// Specifies the type of icon for an iOS notification action.
+/// Specifies the type of icon for an IOS notification action.
 /// </summary>
-public enum iOSActionIconType
+public enum AppleActionIconType
 {
     /// <summary>
     /// No image is set for the icon.

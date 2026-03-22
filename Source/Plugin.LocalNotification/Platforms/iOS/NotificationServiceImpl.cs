@@ -1,7 +1,7 @@
 ﻿using Foundation;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.LocalNotification.Core.Platforms.iOS;
 using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
@@ -182,8 +182,8 @@ internal class NotificationServiceImpl : INotificationService
 
         if (OperatingSystem.IsIOSVersionAtLeast(15))
         {
-            content.InterruptionLevel = request.iOS.Priority.ToNative();
-            content.RelevanceScore = request.iOS.RelevanceScore;
+            content.InterruptionLevel = request.Apple.Priority.ToNative();
+            content.RelevanceScore = request.Apple.RelevanceScore;
         }
 
         // Image Attachment
@@ -206,14 +206,14 @@ internal class NotificationServiceImpl : INotificationService
             content.ThreadIdentifier = request.Group;
         }
 
-        if (string.IsNullOrWhiteSpace(request.iOS.SummaryArgument) == false)
+        if (string.IsNullOrWhiteSpace(request.Apple.SummaryArgument) == false)
         {                
             if (OperatingSystem.IsIOS() &&
                 OperatingSystem.IsIOSVersionAtLeast(12) &&
                 !OperatingSystem.IsIOSVersionAtLeast(15))
             {
-                content.SummaryArgument = request.iOS.SummaryArgument;
-                content.SummaryArgumentCount = (nuint)request.iOS.SummaryArgumentCount;
+                content.SummaryArgument = request.Apple.SummaryArgument;
+                content.SummaryArgumentCount = (nuint)request.Apple.SummaryArgumentCount;
             }                
         }
 
@@ -300,7 +300,7 @@ internal class NotificationServiceImpl : INotificationService
             },
             NotificationRepeat.Weekly => new NSDateComponents
             {
-                // iOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
+                // IOS: Weekday units are the numbers 1 through n, where n is the number of days in the week.
                 // For example, in the Gregorian calendar, n is 7 and Sunday is represented by 1.
                 // .Net: The returned value is an integer between 0 and 6,
                 // where 0 indicates Sunday, 1 indicates Monday, 2 indicates Tuesday, 3 indicates Wednesday, 4 indicates Thursday, 5 indicates Friday, and 6 indicates Saturday.
@@ -382,18 +382,18 @@ internal class NotificationServiceImpl : INotificationService
 
             if (OperatingSystem.IsIOSVersionAtLeast(15))
             {
-                var icon = notificationAction.IOS.Icon.Type switch
+                var icon = notificationAction.Apple.Icon.Type switch
                 {
-                    iOSActionIconType.None => null,
-                    iOSActionIconType.System => UNNotificationActionIcon.CreateFromSystem(notificationAction.IOS.Icon.Name),
-                    iOSActionIconType.Template => UNNotificationActionIcon.CreateFromTemplate(notificationAction.IOS.Icon.Name),
+                    AppleActionIconType.None => null,
+                    AppleActionIconType.System => UNNotificationActionIcon.CreateFromSystem(notificationAction.Apple.Icon.Name),
+                    AppleActionIconType.Template => UNNotificationActionIcon.CreateFromTemplate(notificationAction.Apple.Icon.Name),
                     _ => null,
                 };
 
                 var nativeAction = UNNotificationAction.FromIdentifier(
                 notificationAction.ActionId.ToString(CultureInfo.InvariantCulture),
                 notificationAction.Title,
-                notificationAction.IOS.Action.ToNative(),
+                notificationAction.Apple.Action.ToNative(),
                 icon);
 
                 nativeActionList.Add(nativeAction);
@@ -403,7 +403,7 @@ internal class NotificationServiceImpl : INotificationService
                 var nativeAction = UNNotificationAction.FromIdentifier(
                     notificationAction.ActionId.ToString(CultureInfo.InvariantCulture),
                     notificationAction.Title,
-                    notificationAction.IOS.Action.ToNative());
+                    notificationAction.Apple.Action.ToNative());
 
                 nativeActionList.Add(nativeAction);
             }
@@ -462,8 +462,8 @@ internal class NotificationServiceImpl : INotificationService
                 return true;
             }
 
-            // Ask the user for permission to show notifications on iOS 10.0+
-            var authorizationOptions = permission.IOS.NotificationAuthorization.ToNative();
+            // Ask the user for permission to show notifications on IOS 10.0+
+            var authorizationOptions = permission.Apple.NotificationAuthorization.ToNative();
             var (alertsAllowed, error) = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(authorizationOptions).ConfigureAwait(false);
 
             if (error is not null)
@@ -473,7 +473,7 @@ internal class NotificationServiceImpl : INotificationService
 
             if (alertsAllowed)
             {
-                if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
+                if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.No)
                 {
                     return alertsAllowed;
                 }

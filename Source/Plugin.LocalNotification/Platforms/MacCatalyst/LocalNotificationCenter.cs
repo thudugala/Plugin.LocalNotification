@@ -10,7 +10,7 @@ namespace Plugin.LocalNotification;
 public partial class LocalNotificationCenter
 {
     /// <summary>
-    /// Sets the <see cref="UNUserNotificationCenterDelegate"/> for iOS notifications. Allows developers to provide a custom delegate for handling notification events.
+    /// Sets the <see cref="UNUserNotificationCenterDelegate"/> for IOS notifications. Allows developers to provide a custom delegate for handling notification events.
     /// </summary>
     /// <param name="notificationDelegate">The custom notification center delegate to use. If null, uses the default <see cref="UserNotificationCenterDelegate"/>.</param>
     public static void SetUserNotificationCenterDelegate(UserNotificationCenterDelegate? notificationDelegate = null) => UNUserNotificationCenter.Current.Delegate = notificationDelegate ?? new UserNotificationCenterDelegate();

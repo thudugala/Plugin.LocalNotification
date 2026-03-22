@@ -10,7 +10,7 @@ namespace Plugin.LocalNotification.Core.Platforms.Android;
 /// <summary>
 ///
 /// </summary>
-public static class PlatformExtensions
+public static class AndroidPlatformExtensions
 {
     /// <summary>
     ///

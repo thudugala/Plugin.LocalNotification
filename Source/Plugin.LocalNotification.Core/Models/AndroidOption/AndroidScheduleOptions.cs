@@ -57,12 +57,12 @@ public class AndroidScheduleOptions
         switch (repeatType)
         {
             case NotificationRepeat.Daily:
-                // To be consistent with iOS, Schedule notification next day same time.
+                // To be consistent with IOS, Schedule notification next day same time.
                 repeatInterval = TimeSpan.FromDays(1);
                 break;
 
             case NotificationRepeat.Weekly:
-                // To be consistent with iOS, Schedule notification next week same day same time.
+                // To be consistent with IOS, Schedule notification next week same day same time.
                 repeatInterval = TimeSpan.FromDays(7);
                 break;
 
@@ -83,7 +83,7 @@ public class AndroidScheduleOptions
     }
 
     /// <summary>
-    /// Determines if the notification time is valid for showing, consistent with iOS behavior.
+    /// Determines if the notification time is valid for showing, consistent with IOS behavior.
     /// </summary>
     /// <param name="timeNow">The current time.</param>
     /// <param name="notifyTime">The notification time to validate.</param>

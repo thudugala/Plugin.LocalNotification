@@ -1,19 +1,19 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Plugin.LocalNotification.Core.Models.iOSOption;
+namespace Plugin.LocalNotification.Core.Models.AppleOption;
 
 /// <summary>
-/// Represents notification request options for iOS, including display, sound, badge, priority, and summary settings.
+/// Represents notification request options for IOS, including display, sound, badge, priority, and summary settings.
 /// </summary>
-public class iOSOptions
+public class AppleOptions
 {
     /// <summary>
-    /// Gets or sets a value indicating whether to prevent iOS from displaying the default banner when a notification is received in the foreground. Default is <c>false</c>.
+    /// Gets or sets a value indicating whether to prevent IOS from displaying the default banner when a notification is received in the foreground. Default is <c>false</c>.
     /// </summary>
     public bool HideForegroundAlert { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether to enable iOS to play the default notification sound even if the app is in the foreground. Default is <c>true</c>.
+    /// Gets or sets a value indicating whether to enable IOS to play the default notification sound even if the app is in the foreground. Default is <c>true</c>.
     /// </summary>
     public bool PlayForegroundSound { get; set; } = true;
 
@@ -33,9 +33,9 @@ public class iOSOptions
     public bool ApplyBadgeValue { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the priority associated with the notification. Default is <see cref="iOSPriority.Active"/>.
+    /// Gets or sets the priority associated with the notification. Default is <see cref="ApplePriority.Active"/>.
     /// </summary>
-    public iOSPriority Priority { get; set; } = iOSPriority.Active;
+    public ApplePriority Priority { get; set; } = ApplePriority.Active;
 
     /// <summary>
     /// Gets or sets the relevance score (between 0 and 1) used by the system to sort notifications. The highest score gets featured in the notification summary.

@@ -7,7 +7,7 @@ using UserNotifications;
 namespace Plugin.LocalNotification.Platforms;
 
 /// <summary>
-/// Handles iOS user notification center delegate callbacks for local notifications
+/// Handles IOS user notification center delegate callbacks for local notifications
 /// </summary>
 /// <inheritdoc />
 public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
@@ -165,12 +165,12 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
             {
                 if (OperatingSystem.IsIOSVersionAtLeast(14))
                 {
-                    if (notificationRequest.iOS.PresentAsBanner)
+                    if (notificationRequest.Apple.PresentAsBanner)
                     {
                         presentationOptions |= UNNotificationPresentationOptions.Banner;
                     }
 
-                    if (notificationRequest.iOS.ShowInNotificationCenter)
+                    if (notificationRequest.Apple.ShowInNotificationCenter)
                     {
                         presentationOptions |= UNNotificationPresentationOptions.List;
                     }
@@ -180,16 +180,16 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
                     presentationOptions |= UNNotificationPresentationOptions.Alert;
                 }
 
-                if (notificationRequest.iOS.ApplyBadgeValue)
+                if (notificationRequest.Apple.ApplyBadgeValue)
                 {
                     presentationOptions |= UNNotificationPresentationOptions.Badge;
                 }
-                if (notificationRequest.iOS.PlayForegroundSound)
+                if (notificationRequest.Apple.PlayForegroundSound)
                 {
                     presentationOptions |= UNNotificationPresentationOptions.Sound;
                 }
 
-                if (notificationRequest.iOS.HideForegroundAlert)
+                if (notificationRequest.Apple.HideForegroundAlert)
                 {
                     presentationOptions = UNNotificationPresentationOptions.None;
                 }
@@ -210,7 +210,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
     }
 
     /// <summary>
-    /// Attempts to get the default iOS notification service implementation
+    /// Attempts to get the default IOS notification service implementation
     /// </summary>
     /// <returns>A new or existing instance of NotificationServiceImpl</returns>
     internal static NotificationServiceImpl TryGetDefaultIOsNotificationService() => LocalNotificationCenter.Current is NotificationServiceImpl notificationService

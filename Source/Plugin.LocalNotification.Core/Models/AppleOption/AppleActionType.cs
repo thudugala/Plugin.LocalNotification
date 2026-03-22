@@ -1,9 +1,9 @@
-namespace Plugin.LocalNotification.Core.Models.iOSOption;
+namespace Plugin.LocalNotification.Core.Models.AppleOption;
 
 /// <summary>
-/// Specifies the behaviors that can be applied to an iOS notification action.
+/// Specifies the behaviors that can be applied to an IOS notification action.
 /// </summary>
-public enum iOSActionType
+public enum AppleActionType
 {
     /// <summary>
     /// No behavior is set for the action.

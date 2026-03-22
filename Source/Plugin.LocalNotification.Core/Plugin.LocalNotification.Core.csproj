@@ -31,7 +31,7 @@
 		<Description>Core types and interfaces for Plugin.LocalNotification.</Description>
 		<PackageIcon>icon.png</PackageIcon>
 		<Copyright>Copyright © Elvin (Tharindu) Thudugala</Copyright>
-		<Version>1.0.0-preview04</Version>
+		<Version>1.0.0-preview05</Version>
 		<PackageReleaseNotes>Check: https://github.com/thudugala/Plugin.LocalNotification/releases </PackageReleaseNotes>
 		<IsPackable>True</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -59,7 +59,7 @@
 	</ItemGroup> 
 
 	<ItemGroup>
-	  <Compile Update="Platforms\Android\PlatformExtensions.cs">
+	  <Compile Update="Platforms\Android\AndroidPlatformExtensions.cs">
 	    <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
 	  </Compile>
 	</ItemGroup>

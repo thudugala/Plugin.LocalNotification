@@ -1,9 +1,9 @@
-﻿namespace Plugin.LocalNotification.Core.Models.iOSOption;
+﻿namespace Plugin.LocalNotification.Core.Models.AppleOption;
 
 /// <summary>
-/// Specifies the location authorization options for iOS notifications.
+/// Specifies the location authorization options for IOS notifications.
 /// </summary>
-public enum iOSLocationAuthorization
+public enum AppleLocationAuthorization
 {
     /// <summary>
     /// No location authorization is granted.

@@ -3,7 +3,7 @@ using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.LocalNotification.EventArgs;
 using Plugin.LocalNotification.Platforms;
 using System.Reflection;
@@ -28,7 +28,7 @@ public class CoverageTests : IDisposable
     {
         var notificationAction = new NotificationAction(10) { Title = "Open" };
         notificationAction.ActionId.Should().Be(10);
-        notificationAction.IOS.Should().NotBeNull();
+        notificationAction.Apple.Should().NotBeNull();
         notificationAction.Android.Should().NotBeNull();
         notificationAction.Equals(new NotificationAction(10)).Should().BeTrue();
         notificationAction.Equals(new NotificationAction(11)).Should().BeFalse();
@@ -46,7 +46,7 @@ public class CoverageTests : IDisposable
         var permission = new NotificationPermission();
         permission.AskPermission.Should().BeTrue();
         permission.Android.Should().NotBeNull();
-        permission.IOS.Should().NotBeNull();
+        permission.Apple.Should().NotBeNull();
 
         var geofence = new NotificationRequestGeofence();
         geofence.IsGeofence.Should().BeFalse();
@@ -106,13 +106,13 @@ public class CoverageTests : IDisposable
         channelRequest.Id.Should().Be("id-1");
         channelRequest.Name.Should().Be("alerts");
 
-        var iosAction = new iOSAction { Action = iOSActionType.Foreground, Icon = new iOSActionIcon { Type = iOSActionIconType.System, Name = "paperplane" } };
-        iosAction.Action.Should().Be(iOSActionType.Foreground);
+        var iosAction = new AppleAction { Action = AppleActionType.Foreground, Icon = new AppleActionIcon { Type = AppleActionIconType.System, Name = "paperplane" } };
+        iosAction.Action.Should().Be(AppleActionType.Foreground);
         iosAction.Icon.Name.Should().Be("paperplane");
 
-        var iosPermission = new iOSNotificationPermission();
-        iosPermission.NotificationAuthorization.HasFlag(iOSAuthorizationOptions.Alert).Should().BeTrue();
-        iosPermission.LocationAuthorization.Should().Be(iOSLocationAuthorization.No);
+        var iosPermission = new AppleNotificationPermission();
+        iosPermission.NotificationAuthorization.HasFlag(AppleAuthorizationOptions.Alert).Should().BeTrue();
+        iosPermission.LocationAuthorization.Should().Be(AppleLocationAuthorization.No);
     }
 
     [Fact]

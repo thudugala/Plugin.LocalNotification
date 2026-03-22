@@ -1,5 +1,5 @@
 ﻿using Plugin.LocalNotification.Core.Models.AndroidOption;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using System.Text.Json.Serialization;
 
 namespace Plugin.LocalNotification.Core.Models;
@@ -20,9 +20,9 @@ public class NotificationRequestGeofence
     public AndroidGeofenceOptions Android { get; set; } = new();
 
     /// <summary>
-    /// iOS specific properties.
+    /// IOS specific properties.
     /// </summary>
-    public iOSGeofenceOptions IOS { get; set; } = new();
+    public AppleGeofenceOptions Apple { get; set; } = new();
 
     /// <summary>
     /// The center of the geofence

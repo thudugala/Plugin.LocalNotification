@@ -1,6 +1,6 @@
 ﻿using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Core.Models;
-using Plugin.LocalNotification.iOSOption;
+using Plugin.LocalNotification.AppleOption;
 using Plugin.LocalNotification.Json;
 
 namespace Plugin.LocalNotification;
@@ -32,11 +32,11 @@ public interface ILocalNotificationBuilder
     ILocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android);
 
     /// <summary>
-    /// Configures iOS-specific notification options using the provided delegate.
+    /// Configures IOS-specific notification options using the provided delegate.
     /// </summary>
-    /// <param name="iOS">A delegate to configure iOS notification options.</param>
+    /// <param name="iOS">A delegate to configure IOS notification options.</param>
     /// <returns>The builder instance for chaining.</returns>
-    ILocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS);
+    ILocalNotificationBuilder AddiOS(Action<IAppleLocalNotificationBuilder> iOS);
 }
 
 
@@ -61,9 +61,9 @@ public class LocalNotificationBuilder : ILocalNotificationBuilder
     internal AndroidLocalNotificationBuilder AndroidBuilder { get; } = new();
 
     /// <summary>
-    /// Gets the iOS-specific notification builder.
+    /// Gets the IOS-specific notification builder.
     /// </summary>
-    internal iOSLocalNotificationBuilder IOSBuilder { get; } = new();
+    internal AppleLocalNotificationBuilder AppleBuilder { get; } = new();
 
     /// <inheritdoc/>
     public ILocalNotificationBuilder AddAndroid(Action<IAndroidLocalNotificationBuilder> android)
@@ -73,9 +73,9 @@ public class LocalNotificationBuilder : ILocalNotificationBuilder
     }
 
     /// <inheritdoc/>
-    public ILocalNotificationBuilder AddiOS(Action<IiOSLocalNotificationBuilder> iOS)
+    public ILocalNotificationBuilder AddiOS(Action<IAppleLocalNotificationBuilder> iOS)
     {
-        iOS?.Invoke(IOSBuilder);
+        iOS?.Invoke(AppleBuilder);
         return this;
     }
 

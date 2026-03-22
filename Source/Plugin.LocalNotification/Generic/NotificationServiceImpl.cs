@@ -8,7 +8,7 @@ internal class NotificationServiceImpl : INotificationService
 {
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
-    // Generic .NET target (non-Android/iOS): not supported at runtime
+    // Generic .NET target (non-Android/IOS): not supported at runtime
     public bool IsSupported => false;
 
 #pragma warning disable CS0067 // Event is never used

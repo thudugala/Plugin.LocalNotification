@@ -1,13 +1,13 @@
 using CoreLocation;
 using Plugin.LocalNotification.Core.Models;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.LocalNotification.Core.Platforms.iOS;
 using System.Globalization;
 using UserNotifications;
 
 namespace Plugin.LocalNotification.Platforms;
 
-internal class GeofenceHandler : IiOSGeofenceHandler
+internal class GeofenceHandler : IIOSGeofenceHandler
 {
     public UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request)
     {
@@ -20,7 +20,7 @@ internal class GeofenceHandler : IiOSGeofenceHandler
             NotifyOnExit = (request.Geofence.NotifyOn & NotificationRequestGeofence.GeofenceNotifyOn.OnExit) == NotificationRequestGeofence.GeofenceNotifyOn.OnExit,
         };
 
-        var trigger = UNLocationNotificationTrigger.CreateTrigger(region, request.Geofence.IOS.Repeats);
+        var trigger = UNLocationNotificationTrigger.CreateTrigger(region, request.Geofence.Apple.Repeats);
         return trigger;
     }
 
@@ -31,18 +31,18 @@ internal class GeofenceHandler : IiOSGeofenceHandler
             return false;
         }
 
-        if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
+        if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.No)
         {
             return false;
         }
 
         var locationManager = new CLLocationManager();
 
-        if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.Always)
+        if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.Always)
         {
             locationManager.RequestAlwaysAuthorization();
         }
-        else if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.WhenInUse)
+        else if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.WhenInUse)
         {
             locationManager.RequestWhenInUseAuthorization();
         }

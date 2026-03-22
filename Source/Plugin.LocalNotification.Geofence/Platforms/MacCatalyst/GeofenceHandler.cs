@@ -1,6 +1,6 @@
 using CoreLocation;
 using Plugin.LocalNotification.Core.Models;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.LocalNotification.Core.Platforms.MacCatalyst;
 using UserNotifications;
 
@@ -21,18 +21,18 @@ internal class GeofenceHandler : IMacCatalystGeofenceHandler
             return false;
         }
 
-        if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.No)
+        if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.No)
         {
             return false;
         }
 
         var locationManager = new CLLocationManager();
 
-        if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.Always)
+        if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.Always)
         {
             locationManager.RequestAlwaysAuthorization();
         }
-        else if (permission.IOS.LocationAuthorization == iOSLocationAuthorization.WhenInUse)
+        else if (permission.Apple.LocationAuthorization == AppleLocationAuthorization.WhenInUse)
         {
             locationManager.RequestWhenInUseAuthorization();
         }

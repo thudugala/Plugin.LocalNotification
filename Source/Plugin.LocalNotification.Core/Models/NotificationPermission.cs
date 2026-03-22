@@ -1,10 +1,10 @@
 ﻿using Plugin.LocalNotification.Core.Models.AndroidOption;
-using Plugin.LocalNotification.Core.Models.iOSOption;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 
 namespace Plugin.LocalNotification.Core.Models;
 
 /// <summary>
-/// Represents notification permission options for different platforms, including Android and iOS.
+/// Represents notification permission options for different platforms, including Android and IOS.
 /// </summary>
 public class NotificationPermission
 {
@@ -19,7 +19,7 @@ public class NotificationPermission
     public AndroidNotificationPermission Android { get; set; } = new();
 
     /// <summary>
-    /// Gets or sets iOS-specific notification permission options.
+    /// Gets or sets IOS-specific notification permission options.
     /// </summary>
-    public iOSNotificationPermission IOS { get; set; } = new();
+    public AppleNotificationPermission Apple { get; set; } = new();
 }
