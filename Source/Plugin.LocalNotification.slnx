@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../.github/workflows/nuget.yml" />
+  </Folder>
+  <Project Path="../UnitTests/LocalNotification.UnitTests/LocalNotification.UnitTests.csproj" />
+  <Project Path="Plugin.LocalNotification.Core/Plugin.LocalNotification.Core.csproj" />
+  <Project Path="Plugin.LocalNotification.Geofence/Plugin.LocalNotification.Geofence.csproj" />
+  <Project Path="Plugin.LocalNotification/Plugin.LocalNotification.csproj" />
+</Solution>

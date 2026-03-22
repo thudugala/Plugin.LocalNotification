@@ -23,8 +23,8 @@ jobs:
     - name: Add private GitHub registry to NuGet
       run: dotnet nuget add source "https://nuget.pkg.github.com/thudugala/index.json" --name "GitHub" --username thudugala --password ${{ secrets.GITHUB_TOKEN }}
 
-    - name : restore Plugin.LocalNotification.sln
-      run: dotnet restore Source/Plugin.LocalNotification.sln
+    - name : restore Plugin.LocalNotification.slnx
+      run: dotnet restore Source/Plugin.LocalNotification.slnx
 
     - name: build Plugin.LocalNotification.csproj
       run: dotnet build Source/Plugin.LocalNotification.Core/Plugin.LocalNotification.Core.csproj --configuration Release
