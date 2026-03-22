@@ -140,7 +140,7 @@ public partial class MainPage : ContentPage
                     //AutoCancel = false,
                     //Ongoing = true
                 },
-            iOS =
+            Apple =
                 {
                     HideForegroundAlert = CustomAlert.IsToggled,
                     PlayForegroundSound = ForegroundSound.IsToggled
