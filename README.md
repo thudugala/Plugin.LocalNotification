@@ -37,10 +37,27 @@ The local notification plugin provides a way to display local notifications in .
 | Get Pending Notifications     | ✅                | ✅                     |
 | Get Delivered Notifications   | ✅                | ✅                     |
 | [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)    | ✅ | ✅ |
+| [Notification Channels](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android---=-26]-Notification-Channel) | ❌ | ✅ |
+| [Notification Styles](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-Notification-Styles) (Inbox, Messaging, BigText, BigPicture) | ❌ | ✅ |
+| Chronometer / Timer Display   | ❌                | ✅                     |
+| Colorized Notifications       | ❌                | ✅                     |
+| Audio Attribute (sound routing control) | ❌     | ✅                     |
+| LED Lighting (colour + blink timing) | ❌        | ✅                     |
+| [Foreground Service](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-Foreground-Service) (persistent background-work notification) | ❌ | ✅ |
 
-# Usage 
+# Usage
 
 - [.Net MAUI](https://github.com/thudugala/Plugin.LocalNotification/wiki/1.-Usage-10.0.0--.Net-MAUI)
+
+## Android-Specific Features
+
+| Guide | Description |
+|-------|-------------|
+| [Notification Channels](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android---=-26]-Notification-Channel) | Create and manage notification channels (API 26+) |
+| [Notification Styles](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-Notification-Styles) | Inbox, Messaging, Chronometer, Colorized, Audio Attributes, LED |
+| [Notification Groups](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-How-to-group-notifications) | Group related notifications under a summary |
+| [Icon Customisation](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-Icon-customisation) | Custom small and large notification icons |
+| [Foreground Service](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-Foreground-Service) | Persistent notification while background work is running |
 
 # Screen Record
 
