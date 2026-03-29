@@ -156,7 +156,7 @@ public static class AndroidPlatformExtensions
 
     /// <summary>
     /// Converts an <see cref="AndroidAudioAttributeUsage"/> value to its native <see cref="AudioUsageKind"/> equivalent.
-    /// Used when building <see cref="Android.Media.AudioAttributes"/> for notification channels (API 26+).
+    /// Used when building <c>Android.Media.AudioAttributes</c> for notification channels (API 26+).
     /// </summary>
     public static AudioUsageKind ToNative(this AndroidAudioAttributeUsage usage) => usage switch
     {

@@ -2,7 +2,7 @@ namespace Plugin.LocalNotification.Core.Models;
 
 /// <summary>
 /// Represents a detailed breakdown of the notification permissions currently granted to the app.
-/// Returned by <see cref="INotificationService.GetNotificationPermissionStatus"/>.
+/// Returned by <c>INotificationService.GetNotificationPermissionStatus</c>.
 /// </summary>
 public class NotificationPermissionStatus
 {
