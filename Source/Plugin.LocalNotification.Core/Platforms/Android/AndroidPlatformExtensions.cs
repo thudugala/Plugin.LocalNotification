@@ -132,5 +132,24 @@ public static class AndroidPlatformExtensions
         }
 
         return type;
-    }    
+    }
+
+    /// <summary>
+    /// Converts a native <see cref="NotificationImportance"/> value back to an <see cref="AndroidImportance"/>.
+    /// </summary>
+    public static AndroidImportance ToLocalNotificationImportance(this NotificationImportance importance)
+    {
+        return !OperatingSystem.IsAndroidVersionAtLeast(26)
+            ? AndroidImportance.Unspecified
+            : importance switch
+        {
+            NotificationImportance.None => AndroidImportance.None,
+            NotificationImportance.Min => AndroidImportance.Min,
+            NotificationImportance.Low => AndroidImportance.Low,
+            NotificationImportance.Default => AndroidImportance.Default,
+            NotificationImportance.High => AndroidImportance.High,
+            NotificationImportance.Max => AndroidImportance.Max,
+            _ => AndroidImportance.Unspecified
+        };
+    }
 }

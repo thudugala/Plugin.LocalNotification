@@ -30,6 +30,13 @@ public partial class LocalNotificationCenter
     /// Gets the platform-specific <see cref="INotificationService"/> implementation.
     /// </summary>
     public static INotificationService Current => implementation.Value!;
+
+    /// <summary>
+    /// Gets the Android-specific notification service, or <c>null</c> on non-Android platforms.
+    /// Use this to access <see cref="IAndroidNotificationService"/> APIs such as channel management
+    /// and exact-alarm permission requests.
+    /// </summary>
+    public static IAndroidNotificationService? AndroidService => Current as IAndroidNotificationService;
         
     /// <summary>
     /// Gets or sets the serializer used for notification requests.

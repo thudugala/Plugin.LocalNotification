@@ -54,6 +54,9 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public bool Cancel(int notificationId, string? tag) => Cancel(notificationId);
+
+    /// <inheritdoc />
     public bool CancelAll()
     {
         UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
@@ -513,5 +516,5 @@ internal class NotificationServiceImpl : INotificationService
             LocalNotificationLogger.Log(ex);
             return false;
         }
-    }
+    }    
 }

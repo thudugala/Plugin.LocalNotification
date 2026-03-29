@@ -30,6 +30,7 @@ internal class NotificationServiceImpl : INotificationService
     public void RegisterCategoryList(HashSet<NotificationCategory> categoryList) { }
     public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null) => Task.FromResult(false);
     public Task<bool> Show(NotificationRequest request) => Task.FromResult(false);
+    public bool Cancel(int notificationId, string? tag) => false;
 }
 
 

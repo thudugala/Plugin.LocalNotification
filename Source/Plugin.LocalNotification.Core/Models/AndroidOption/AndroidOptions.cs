@@ -162,4 +162,12 @@ public class AndroidOptions
     /// Default is false.
     /// </summary>
     public bool Colorized { get; set; }
+
+    /// <summary>
+    /// An optional tag used when posting the notification.
+    /// When set, pass this tag to <c>INotificationService.Cancel</c> to cancel
+    /// the exact notification when multiple notifications share the same identifier.
+    /// Has no effect on non-Android platforms.
+    /// </summary>
+    public string? Tag { get; set; }
 }

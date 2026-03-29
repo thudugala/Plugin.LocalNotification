@@ -36,6 +36,14 @@ public interface INotificationService
     bool Cancel(params int[] notificationIdList);
 
     /// <summary>
+    /// Cancel a notification that was posted with an Android tag and the given Id.
+    /// On non-Android platforms this is equivalent to <see cref="Cancel(int[])"/>.
+    /// </summary>
+    /// <param name="notificationId">The notification identifier.</param>
+    /// <param name="tag">The Android tag used when the notification was posted, or <c>null</c>.</param>
+    bool Cancel(int notificationId, string? tag);
+
+    /// <summary>
     /// Cancel all notification.
     /// </summary>
     bool CancelAll();

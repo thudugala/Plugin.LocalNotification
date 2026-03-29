@@ -475,4 +475,28 @@ public class CoverageTests : IDisposable
         scheduleOptions.ScheduleMode = AndroidScheduleMode.AlarmClock;
         scheduleOptions.ScheduleMode.Should().Be(AndroidScheduleMode.AlarmClock);
     }
+
+    [Fact]
+    public void Phase5_Permissions_ShouldCoverNewModelsAndInterface()
+    {
+        // AndroidOptions.Tag defaults to null
+        var options = new AndroidOptions();
+        options.Tag.Should().BeNull();
+
+        // Tag round-trip
+        options.Tag = "my-tag";
+        options.Tag.Should().Be("my-tag");
+
+        // Cancel(int, string?) is cross-platform — generic stub returns same as Cancel(int)
+        var svc = new NotificationServiceImpl();
+        var cancelResult = svc.Cancel(1, "tag");
+        cancelResult.Should().Be(svc.Cancel(1));
+
+        // On the generic (non-Android) platform, LocalNotificationCenter.AndroidService is null
+        // because only the Android NotificationServiceImpl implements IAndroidNotificationService
+        LocalNotificationCenter.AndroidService.Should().BeNull();
+
+        // IAndroidNotificationService is a subtype of INotificationService
+        typeof(IAndroidNotificationService).IsAssignableTo(typeof(INotificationService)).Should().BeTrue();
+    }
 }

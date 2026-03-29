@@ -15,7 +15,7 @@ using Exception = System.Exception;
 namespace Plugin.LocalNotification.Platforms;
 
 /// <inheritdoc />
-internal class NotificationServiceImpl : INotificationService
+internal class NotificationServiceImpl : IAndroidNotificationService
 {
     private readonly List<NotificationCategory> _categoryList = [];
 
@@ -120,6 +120,29 @@ internal class NotificationServiceImpl : INotificationService
 
         NotificationRepository.RemoveByPendingIdList(notificationIdList);
         NotificationRepository.RemoveByDeliveredIdList(notificationIdList);
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool Cancel(int notificationId, string? tag)
+    {
+        var alarmPendingIntent = CreateAlarmIntent(notificationId, null);
+        if (alarmPendingIntent != null)
+        {
+            MyAlarmManager?.Cancel(alarmPendingIntent);
+            alarmPendingIntent.Cancel();
+        }
+
+        MyNotificationManager?.Cancel(tag, notificationId);
+
+        if (GeofenceHandlerRegistry.Handler is not null)
+        {
+            var geoPendingIntent = GeofenceHandlerRegistry.Handler.CreateGeofenceIntent(notificationId, null);
+            GeofenceHandlerRegistry.Handler.RemoveGeofences(geoPendingIntent);
+        }
+
+        NotificationRepository.RemoveByPendingIdList([notificationId]);
+        NotificationRepository.RemoveByDeliveredIdList([notificationId]);
         return true;
     }
 
@@ -291,23 +314,38 @@ internal class NotificationServiceImpl : INotificationService
 
             case AndroidScheduleMode.InexactAllowWhileIdle:
                 if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                {
                     MyAlarmManager?.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                }
                 else
+                {
                     MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
+                }
+
                 break;
 
             case AndroidScheduleMode.Exact:
                 if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                {
                     MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                }
                 else
+                {
                     MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
+                }
+
                 break;
 
             case AndroidScheduleMode.ExactAllowWhileIdle:
                 if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                {
                     MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                }
                 else
+                {
                     MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
+                }
+
                 break;
 
             case AndroidScheduleMode.AlarmClock:
@@ -325,16 +363,24 @@ internal class NotificationServiceImpl : INotificationService
                 if (OperatingSystem.IsAndroidVersionAtLeast(23))
                 {
                     if (canScheduleExact)
+                    {
                         MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                    }
                     else
+                    {
                         MyAlarmManager?.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                    }
                 }
                 else
                 {
                     if (canScheduleExact)
+                    {
                         MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
+                    }
                     else
+                    {
                         MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
+                    }
                 }
                 break;
         }
@@ -848,5 +894,114 @@ internal class NotificationServiceImpl : INotificationService
         }
                    
         return canScheduleExactAlarms;
+    }
+        
+    /// <inheritdoc />
+    public Task<bool> CanScheduleExactNotifications()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(31))
+        {
+            return Task.FromResult(true);
+        }
+
+        var canSchedule = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+        return Task.FromResult(canSchedule);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RequestExactAlarmsPermission()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(31))
+        {
+            return true;
+        }
+
+        if (MyAlarmManager?.CanScheduleExactAlarms() ?? false)
+        {
+            return true;
+        }
+
+        var uri = Android.Net.Uri.Parse($"package:{Application.Context.PackageName}");
+        var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
+        intent.AddFlags(ActivityFlags.NewTask);
+        Application.Context.StartActivity(intent);
+
+        // Return current state after surfacing the settings screen; 
+        // the caller is responsible for re-checking after the user returns to the app.
+        await Task.CompletedTask;
+        return MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RequestFullScreenIntentPermission()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(34))
+        {
+            return true;
+        }
+
+        if (MyNotificationManager?.CanUseFullScreenIntent() ?? false)
+        {
+            return true;
+        }
+
+        var intent = new Intent(Android.Provider.Settings.ActionManageAppUseFullScreenIntent);
+        intent.SetData(Android.Net.Uri.Parse($"package:{Application.Context.PackageName}"));
+        intent.AddFlags(ActivityFlags.NewTask);
+        Application.Context.StartActivity(intent);
+
+        await Task.CompletedTask;
+        return MyNotificationManager?.CanUseFullScreenIntent() ?? false;
+    }
+
+    /// <inheritdoc />
+    public Task DeleteNotificationChannel(string channelId)
+    {
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            MyNotificationManager?.DeleteNotificationChannel(channelId);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public Task<IList<AndroidNotificationChannelRequest>> GetNotificationChannels()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            return Task.FromResult<IList<AndroidNotificationChannelRequest>>([]);
+        }
+
+        var native = MyNotificationManager?.NotificationChannels ?? [];
+        IList<AndroidNotificationChannelRequest> result = [.. native
+            .Select(c =>
+            {
+                return !OperatingSystem.IsAndroidVersionAtLeast(26)
+                    ? null
+                    : new AndroidNotificationChannelRequest
+                {
+                    Id = c.Id ?? string.Empty,
+                    Name = c.Name?.ToString() ?? string.Empty,
+                    Description = c.Description ?? string.Empty,
+                    Importance = c.Importance.ToLocalNotificationImportance(),
+                    Group = c.Group ?? string.Empty,
+                };
+            })
+            .Where(c => c is not null)
+            .Select(c => c!)];
+
+        return Task.FromResult(result);
+    }
+
+    /// <inheritdoc />
+    public Task DeleteNotificationChannelGroup(string groupId)
+    {
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            MyNotificationManager?.DeleteNotificationChannelGroup(groupId);
+        }
+
+        return Task.CompletedTask;
     }
 }

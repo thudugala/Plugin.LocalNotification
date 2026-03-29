@@ -155,6 +155,9 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public bool Cancel(int notificationId, string? tag) => Cancel(notificationId);
+
+    /// <inheritdoc />
     public bool CancelAll()
     {
         CancelAllScheduledTimers();
@@ -517,5 +520,5 @@ internal class NotificationServiceImpl : INotificationService
         {
             _categoryList.Add(category);
         }
-    }
+    }    
 }
