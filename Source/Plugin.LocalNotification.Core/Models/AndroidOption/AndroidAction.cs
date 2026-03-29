@@ -19,4 +19,11 @@ public class AndroidAction
     /// Gets or sets the pending intent flags for the action. Default is <see cref="AndroidPendingIntentFlags.CancelCurrent"/>.
     /// </summary>
     public AndroidPendingIntentFlags PendingIntentFlags { get; set; } = AndroidPendingIntentFlags.CancelCurrent;
+
+    /// <summary>
+    /// Optional text-input fields attached to this action, allowing the user to type a reply
+    /// directly from the notification shade without opening the app.
+    /// Each element adds one <c>RemoteInput</c> to the native action.
+    /// </summary>
+    public IList<AndroidActionInput> Inputs { get; set; } = [];
 }

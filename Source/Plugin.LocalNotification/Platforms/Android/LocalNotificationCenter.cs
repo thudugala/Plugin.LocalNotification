@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Media;
+using AndroidX.Core.App;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
@@ -37,6 +38,14 @@ public partial class LocalNotificationCenter
                 ActionId = actionId.GetValueOrDefault(),
                 Request = request
             };
+
+            // Extract inline-reply text from a RemoteInput result (Android direct-reply actions).
+            var remoteInputBundle = RemoteInput.GetResultsFromIntent(intent);
+            if (remoteInputBundle != null)
+            {
+                actionArgs.Input = remoteInputBundle.GetCharSequence(RequestConstants.RemoteInputKey)?.ToString();
+            }
+
             Current.OnNotificationActionTapped(actionArgs);
         }
         catch (Exception ex)

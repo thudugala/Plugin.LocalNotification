@@ -75,6 +75,13 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
                         ActionId = actionId,
                         Request = notificationRequest
                     };
+
+                    // Capture inline-reply text from a UNTextInputNotificationAction response.
+                    if (response is UNTextInputNotificationResponse textResponse)
+                    {
+                        actionArgs.Input = textResponse.UserText;
+                    }
+
                     notificationService.OnNotificationActionTapped(actionArgs);
 
                     completionHandler?.Invoke();

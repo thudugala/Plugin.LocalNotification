@@ -1,3 +1,5 @@
+using Plugin.LocalNotification.Core.Models.AppleOption;
+
 namespace Plugin.LocalNotification.Core.Models;
 
 /// <summary>
@@ -13,6 +15,13 @@ public class NotificationCategory(NotificationCategoryType categoryType) : IEqua
     /// Gets or sets the list of actions associated with this category.
     /// </summary>
     public HashSet<NotificationAction> ActionList { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets iOS/macOS-specific category behaviour options.
+    /// Maps to <c>UNNotificationCategoryOptions</c>.
+    /// Defaults to <see cref="AppleCategoryOptions.None"/>.
+    /// </summary>
+    public AppleCategoryOptions AppleOptions { get; set; } = AppleCategoryOptions.None;
 
     /// <summary>
     /// Gets the unique identifier for the category.

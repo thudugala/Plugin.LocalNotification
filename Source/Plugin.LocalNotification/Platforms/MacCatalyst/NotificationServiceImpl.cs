@@ -380,6 +380,11 @@ internal class NotificationServiceImpl : INotificationService
                 continue;
             }
 
+            var identifier = notificationAction.ActionId.ToString(CultureInfo.InvariantCulture);
+            var title = notificationAction.Title;
+            var options = notificationAction.Apple.Action.ToNative();
+            var hasTextInput = !string.IsNullOrEmpty(notificationAction.Apple.TextInputButtonTitle);
+
             if (OperatingSystem.IsIOSVersionAtLeast(15))
             {
                 var icon = notificationAction.Apple.Icon.Type switch
@@ -390,33 +395,38 @@ internal class NotificationServiceImpl : INotificationService
                     _ => null,
                 };
 
-                var nativeAction = UNNotificationAction.FromIdentifier(
-                notificationAction.ActionId.ToString(CultureInfo.InvariantCulture),
-                notificationAction.Title,
-                notificationAction.Apple.Action.ToNative(),
-                icon);
+                UNNotificationAction nativeAction = hasTextInput
+                    ? UNTextInputNotificationAction.FromIdentifier(
+                        identifier, title, options, icon,
+                        notificationAction.Apple.TextInputButtonTitle!,
+                        notificationAction.Apple.TextInputPlaceholder ?? string.Empty)
+                    : UNNotificationAction.FromIdentifier(identifier, title, options, icon);
 
                 nativeActionList.Add(nativeAction);
             }
             else
             {
-                var nativeAction = UNNotificationAction.FromIdentifier(
-                    notificationAction.ActionId.ToString(CultureInfo.InvariantCulture),
-                    notificationAction.Title,
-                    notificationAction.Apple.Action.ToNative());
+                UNNotificationAction nativeAction = hasTextInput
+                    ? UNTextInputNotificationAction.FromIdentifier(
+                        identifier, title, options,
+                        notificationAction.Apple.TextInputButtonTitle!,
+                        notificationAction.Apple.TextInputPlaceholder ?? string.Empty)
+                    : UNNotificationAction.FromIdentifier(identifier, title, options);
 
                 nativeActionList.Add(nativeAction);
             }
         }
 
-        if (nativeActionList.Count > 0)
+        if (nativeActionList.Count == 0)
         {
             return null;
         }
 
+        var categoryOptions = category.AppleOptions.ToNative();
+
         var notificationCategory = UNNotificationCategory
             .FromIdentifier(category.CategoryType.ToNative(), [.. nativeActionList],
-                [], UNNotificationCategoryOptions.CustomDismissAction);
+                [], categoryOptions);
 
         return notificationCategory;
     }

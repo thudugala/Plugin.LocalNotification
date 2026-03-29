@@ -35,4 +35,12 @@ public class NotificationActionEventArgs : NotificationEventArgs
     /// Gets a value indicating whether the notification was tapped by the user.
     /// </summary>
     public bool IsTapped => ActionId == TapActionId;
+
+    /// <summary>
+    /// The text entered by the user in an inline-reply action.
+    /// Populated on Android when the action has <see cref="Core.Models.AndroidOption.AndroidActionInput"/> entries,
+    /// and on iOS/macOS when the action is a <c>UNTextInputNotificationAction</c>.
+    /// <c>null</c> when the action was a regular button tap.
+    /// </summary>
+    public string? Input { get; set; }
 }

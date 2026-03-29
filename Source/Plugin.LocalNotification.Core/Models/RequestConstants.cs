@@ -19,4 +19,9 @@ public static class RequestConstants
     /// The key used to indicate a notification was handled.
     /// </summary>
     public const string ReturnRequestHandled = "Plugin.LocalNotification.RETURN_Handled";
+
+    /// <summary>
+    /// The <c>RemoteInput</c> result key used for inline-reply actions on Android.
+    /// </summary>
+    public const string RemoteInputKey = "Plugin.LocalNotification.REMOTE_INPUT";
 }

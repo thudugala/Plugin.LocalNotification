@@ -385,4 +385,55 @@ public class CoverageTests : IDisposable
         androidOptions.ChronometerCountDown.Should().BeTrue();
         androidOptions.Colorized.Should().BeTrue();
     }
+
+    [Fact]
+    public void NotificationActions_Phase3_ShouldCoverModelDefaults()
+    {
+        // AndroidActionInput defaults
+        var input = new AndroidActionInput();
+        input.Label.Should().BeEmpty();
+        input.Choices.Should().BeNull();
+        input.AllowFreeFormInput.Should().BeTrue();
+
+        // AndroidActionInput with values
+        input.Label = "Reply";
+        input.AllowFreeFormInput = false;
+        input.Choices = ["Yes", "No"];
+        input.Label.Should().Be("Reply");
+        input.AllowFreeFormInput.Should().BeFalse();
+        input.Choices.Should().HaveCount(2);
+
+        // AndroidAction.Inputs list
+        var androidAction = new AndroidAction();
+        androidAction.Inputs.Should().NotBeNull().And.BeEmpty();
+        androidAction.Inputs.Add(input);
+        androidAction.Inputs.Should().HaveCount(1);
+
+        // AppleCategoryOptions flags
+        var opts = AppleCategoryOptions.CustomDismissAction | AppleCategoryOptions.AllowInCarPlay;
+        opts.HasFlag(AppleCategoryOptions.CustomDismissAction).Should().BeTrue();
+        opts.HasFlag(AppleCategoryOptions.AllowInCarPlay).Should().BeTrue();
+        opts.HasFlag(AppleCategoryOptions.HiddenPreviewShowTitle).Should().BeFalse();
+
+        // AppleAction text input properties
+        var appleAction = new AppleAction();
+        appleAction.TextInputButtonTitle.Should().BeNull();
+        appleAction.TextInputPlaceholder.Should().BeNull();
+        appleAction.TextInputButtonTitle = "Send";
+        appleAction.TextInputPlaceholder = "Type a message…";
+        appleAction.TextInputButtonTitle.Should().Be("Send");
+        appleAction.TextInputPlaceholder.Should().Be("Type a message…");
+
+        // NotificationCategory.AppleOptions
+        var category = new NotificationCategory(NotificationCategoryType.Status);
+        category.AppleOptions.Should().Be(AppleCategoryOptions.None);
+        category.AppleOptions = AppleCategoryOptions.CustomDismissAction;
+        category.AppleOptions.Should().Be(AppleCategoryOptions.CustomDismissAction);
+
+        // NotificationActionEventArgs.Input
+        var eventArgs = new NotificationActionEventArgs { ActionId = 1 };
+        eventArgs.Input.Should().BeNull();
+        eventArgs.Input = "Hello from inline reply";
+        eventArgs.Input.Should().Be("Hello from inline reply");
+    }
 }

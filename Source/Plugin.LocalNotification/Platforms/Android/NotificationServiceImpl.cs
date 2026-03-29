@@ -655,10 +655,27 @@ internal class NotificationServiceImpl : INotificationService
             action.Android.IconName = request.Android.IconSmallName;
         }
 
-        var nativeAction = new NotificationCompat.Action(GetIcon(action.Android.IconName),
-            new Java.Lang.String(action.Title), pendingIntent);
+        var actionBuilder = new NotificationCompat.Action.Builder(
+            GetIcon(action.Android.IconName),
+            new Java.Lang.String(action.Title),
+            pendingIntent);
 
-        return nativeAction;
+        foreach (var input in action.Android.Inputs)
+        {
+            var remoteInputBuilder = new RemoteInput.Builder(RequestConstants.RemoteInputKey)
+                .SetLabel(input.Label)
+                .SetAllowFreeFormInput(input.AllowFreeFormInput);
+
+            if (input.Choices is { Length: > 0 })
+            {
+                remoteInputBuilder.SetChoices(
+                    input.Choices.Select(c => (Java.Lang.ICharSequence)new Java.Lang.String(c)).ToArray());
+            }
+
+            actionBuilder.AddRemoteInput(remoteInputBuilder.Build());
+        }
+
+        return actionBuilder.Build();
     }
         
     /// <summary>

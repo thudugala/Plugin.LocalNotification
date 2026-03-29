@@ -14,4 +14,16 @@ public class AppleAction
     /// Gets or sets the icon associated with the action.
     /// </summary>
     public AppleActionIcon Icon { get; set; } = new ();
+
+    /// <summary>
+    /// When set, a text-input action (<c>UNTextInputNotificationAction</c>) is created instead of
+    /// a plain button. This value becomes the title of the Send/Submit button.
+    /// Leave <c>null</c> or empty for a regular button action.
+    /// </summary>
+    public string? TextInputButtonTitle { get; set; }
+
+    /// <summary>
+    /// Placeholder text shown inside the text field when <see cref="TextInputButtonTitle"/> is set.
+    /// </summary>
+    public string? TextInputPlaceholder { get; set; }
 }
