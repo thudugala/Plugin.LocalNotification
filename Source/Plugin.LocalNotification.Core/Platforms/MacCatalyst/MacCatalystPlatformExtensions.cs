@@ -58,4 +58,40 @@ public static class MacCatalystPlatformExtensions
     /// <param name="type">The category type value to convert.</param>
     /// <returns>The string representation of the category type.</returns>
     public static string ToNative(this NotificationCategoryType type) => type.ToString();
+
+    /// <summary>
+    /// Converts <see cref="AppleCategoryOptions"/> flags to the native <see cref="UNNotificationCategoryOptions"/> equivalent.
+    /// </summary>
+    /// <param name="options">The category options flags to convert.</param>
+    /// <returns>The corresponding <see cref="UNNotificationCategoryOptions"/> value.</returns>
+    public static UNNotificationCategoryOptions ToNative(this AppleCategoryOptions options)
+    {
+        var native = UNNotificationCategoryOptions.None;
+        if (options.HasFlag(AppleCategoryOptions.CustomDismissAction))
+        {
+            native |= UNNotificationCategoryOptions.CustomDismissAction;
+        }
+
+        if (options.HasFlag(AppleCategoryOptions.AllowInCarPlay))
+        {
+            native |= UNNotificationCategoryOptions.AllowInCarPlay;
+        }
+
+        if (options.HasFlag(AppleCategoryOptions.HiddenPreviewsShowTitle))
+        {
+            native |= UNNotificationCategoryOptions.HiddenPreviewsShowTitle;
+        }
+
+        if (options.HasFlag(AppleCategoryOptions.HiddenPreviewsShowSubtitle))
+        {
+            native |= UNNotificationCategoryOptions.HiddenPreviewsShowSubtitle;
+        }
+
+        if (OperatingSystem.IsIOSVersionAtLeast(13) && options.HasFlag(AppleCategoryOptions.AllowAnnouncement))
+        {
+            native |= UNNotificationCategoryOptions.AllowAnnouncement;
+        }
+
+        return native;
+    }
 }

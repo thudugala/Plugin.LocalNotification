@@ -24,15 +24,15 @@ public enum AppleCategoryOptions
 
     /// <summary>
     /// Show the notification title even when notification previews are hidden.
-    /// Requires iOS 11+. Corresponds to <c>UNNotificationCategoryOptions.HiddenPreviewShowTitle</c>.
+    /// Requires iOS 11+. Corresponds to <c>UNNotificationCategoryOptions.HiddenPreviewsShowTitle</c>.
     /// </summary>
-    HiddenPreviewShowTitle = 1 << 2,
+    HiddenPreviewsShowTitle = 1 << 2,
 
     /// <summary>
     /// Show the notification subtitle even when notification previews are hidden.
-    /// Requires iOS 11+. Corresponds to <c>UNNotificationCategoryOptions.HiddenPreviewShowSubtitle</c>.
+    /// Requires iOS 11+. Corresponds to <c>UNNotificationCategoryOptions.HiddenPreviewsShowSubtitle</c>.
     /// </summary>
-    HiddenPreviewShowSubtitle = 1 << 3,
+    HiddenPreviewsShowSubtitle = 1 << 3,
 
     /// <summary>
     /// Allow Siri to automatically read out the notification when the user is wearing AirPods.

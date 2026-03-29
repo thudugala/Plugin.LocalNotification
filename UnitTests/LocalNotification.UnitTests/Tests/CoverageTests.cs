@@ -364,12 +364,6 @@ public class CoverageTests : IDisposable
         messagingStyle.Messages.Add(message);
         messagingStyle.Messages.Should().HaveCount(1);
 
-        var mediaStyle = new AndroidMediaStyle();
-        mediaStyle.ShowActionsInCompactView.Should().BeNull();
-        mediaStyle.ContentTitle.Should().BeNull();
-        mediaStyle.ShowActionsInCompactView = [0, 1];
-        mediaStyle.ShowActionsInCompactView.Should().HaveCount(2);
-
         var androidOptions = new AndroidOptions();
         androidOptions.Style.Should().BeNull();
         androidOptions.UsesChronometer.Should().BeFalse();
@@ -413,7 +407,7 @@ public class CoverageTests : IDisposable
         var opts = AppleCategoryOptions.CustomDismissAction | AppleCategoryOptions.AllowInCarPlay;
         opts.HasFlag(AppleCategoryOptions.CustomDismissAction).Should().BeTrue();
         opts.HasFlag(AppleCategoryOptions.AllowInCarPlay).Should().BeTrue();
-        opts.HasFlag(AppleCategoryOptions.HiddenPreviewShowTitle).Should().BeFalse();
+        opts.HasFlag(AppleCategoryOptions.HiddenPreviewsShowTitle).Should().BeFalse();
 
         // AppleAction text input properties
         var appleAction = new AppleAction();

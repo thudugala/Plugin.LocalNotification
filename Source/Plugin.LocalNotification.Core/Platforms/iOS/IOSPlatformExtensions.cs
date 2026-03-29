@@ -68,15 +68,30 @@ public static class IOSPlatformExtensions
     {
         var native = UNNotificationCategoryOptions.None;
         if (options.HasFlag(AppleCategoryOptions.CustomDismissAction))
+        {
             native |= UNNotificationCategoryOptions.CustomDismissAction;
+        }
+
         if (options.HasFlag(AppleCategoryOptions.AllowInCarPlay))
+        {
             native |= UNNotificationCategoryOptions.AllowInCarPlay;
-        if (options.HasFlag(AppleCategoryOptions.HiddenPreviewShowTitle))
-            native |= UNNotificationCategoryOptions.HiddenPreviewShowTitle;
-        if (options.HasFlag(AppleCategoryOptions.HiddenPreviewShowSubtitle))
-            native |= UNNotificationCategoryOptions.HiddenPreviewShowSubtitle;
+        }
+
+        if (options.HasFlag(AppleCategoryOptions.HiddenPreviewsShowTitle))
+        {
+            native |= UNNotificationCategoryOptions.HiddenPreviewsShowTitle;
+        }
+
+        if (options.HasFlag(AppleCategoryOptions.HiddenPreviewsShowSubtitle))
+        {
+            native |= UNNotificationCategoryOptions.HiddenPreviewsShowSubtitle;
+        }
+
         if (OperatingSystem.IsIOSVersionAtLeast(13) && options.HasFlag(AppleCategoryOptions.AllowAnnouncement))
+        {
             native |= UNNotificationCategoryOptions.AllowAnnouncement;
+        }
+
         return native;
     }
 }

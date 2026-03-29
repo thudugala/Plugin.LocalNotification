@@ -395,7 +395,7 @@ internal class NotificationServiceImpl : INotificationService
                     _ => null,
                 };
 
-                UNNotificationAction nativeAction = hasTextInput
+                var nativeAction = hasTextInput
                     ? UNTextInputNotificationAction.FromIdentifier(
                         identifier, title, options, icon,
                         notificationAction.Apple.TextInputButtonTitle!,
@@ -406,7 +406,7 @@ internal class NotificationServiceImpl : INotificationService
             }
             else
             {
-                UNNotificationAction nativeAction = hasTextInput
+                var nativeAction = hasTextInput
                     ? UNTextInputNotificationAction.FromIdentifier(
                         identifier, title, options,
                         notificationAction.Apple.TextInputButtonTitle!,

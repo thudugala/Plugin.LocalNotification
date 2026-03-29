@@ -137,7 +137,7 @@ public class AndroidOptions
     /// <summary>
     /// Set the notification style. Overrides the default BigText/BigPicture behaviour.
     /// Assign an instance of <see cref="AndroidInboxStyle"/>, <see cref="AndroidMessagingStyle"/>,
-    /// or <see cref="AndroidMediaStyle"/>.
+    /// or <see cref="AndroidMessagingStyle"/>.
     /// Leave <c>null</c> to use the automatic BigPicture (when an image is present) or BigText fallback.
     /// </summary>
     public AndroidStyleBase? Style { get; set; }

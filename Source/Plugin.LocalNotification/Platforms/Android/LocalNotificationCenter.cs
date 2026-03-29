@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Media;
-using AndroidX.Core.App;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
@@ -40,7 +39,7 @@ public partial class LocalNotificationCenter
             };
 
             // Extract inline-reply text from a RemoteInput result (Android direct-reply actions).
-            var remoteInputBundle = RemoteInput.GetResultsFromIntent(intent);
+            var remoteInputBundle = AndroidX.Core.App.RemoteInput.GetResultsFromIntent(intent);
             if (remoteInputBundle != null)
             {
                 actionArgs.Input = remoteInputBundle.GetCharSequence(RequestConstants.RemoteInputKey)?.ToString();

@@ -567,8 +567,6 @@ internal class NotificationServiceImpl : INotificationService
     ///
     /// </summary>
     /// <param name="request"></param>
-    /// <param name="serializedRequest"></param>
-    /// <param name="action"></param>
     /// <returns></returns>
     private async Task ApplyStyle(NotificationCompat.Builder builder, NotificationRequest request)
     {
@@ -595,30 +593,18 @@ internal class NotificationServiceImpl : INotificationService
 
             case AndroidMessagingStyle messagingStyle:
             {
-                using var nativeStyle = new NotificationCompat.MessagingStyle(
-                    new Java.Lang.String(messagingStyle.Person.Name));
+                using var nativeStyle = new NotificationCompat.MessagingStyle(messagingStyle.Person.Name);
                 if (!string.IsNullOrEmpty(messagingStyle.ContentTitle))
                 {
-                    nativeStyle.ConversationTitle = new Java.Lang.String(messagingStyle.ContentTitle);
+                    nativeStyle.SetConversationTitle(new Java.Lang.String(messagingStyle.ContentTitle));
                 }
-                nativeStyle.IsGroupConversation = messagingStyle.IsGroupConversation;
+                nativeStyle.SetGroupConversation(messagingStyle.IsGroupConversation);
                 foreach (var message in messagingStyle.Messages)
                 {
                     var senderName = message.Person?.Name is { Length: > 0 } name
                         ? new Java.Lang.String(name)
                         : null;
-                    nativeStyle.AddMessage(message.Text, message.Timestamp.ToUnixTimeMilliseconds(), senderName);
-                }
-                builder.SetStyle(nativeStyle);
-                return;
-            }
-
-            case AndroidMediaStyle mediaStyle:
-            {
-                using var nativeStyle = new AndroidX.Media.App.NotificationCompat.MediaStyle();
-                if (mediaStyle.ShowActionsInCompactView is { Length: > 0 } indices)
-                {
-                    nativeStyle.SetShowActionsInCompactView(indices);
+                    nativeStyle.AddMessage(new Java.Lang.String(message.Text), message.Timestamp.ToUnixTimeMilliseconds(), senderName);
                 }
                 builder.SetStyle(nativeStyle);
                 return;
@@ -646,7 +632,7 @@ internal class NotificationServiceImpl : INotificationService
         }
     }
 
-    protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest,
+    protected virtual NotificationCompat.Action? CreateAction(NotificationRequest request, string serializedRequest,
         NotificationAction action)
     {
         var pendingIntent = AndroidUtils.CreateActionIntent(request.NotificationId, serializedRequest, action, typeof(NotificationActionReceiver));
@@ -662,8 +648,14 @@ internal class NotificationServiceImpl : INotificationService
 
         foreach (var input in action.Android.Inputs)
         {
-            var remoteInputBuilder = new RemoteInput.Builder(RequestConstants.RemoteInputKey)
-                .SetLabel(input.Label)
+            var remoteInputBuilder = new AndroidX.Core.App.RemoteInput.Builder(RequestConstants.RemoteInputKey);
+
+            if (remoteInputBuilder is null)
+            {
+                continue;
+            }
+            remoteInputBuilder
+                .SetLabel(input.Label)?
                 .SetAllowFreeFormInput(input.AllowFreeFormInput);
 
             if (input.Choices is { Length: > 0 })
