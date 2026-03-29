@@ -601,10 +601,20 @@ internal class NotificationServiceImpl : INotificationService
                 nativeStyle.SetGroupConversation(messagingStyle.IsGroupConversation);
                 foreach (var message in messagingStyle.Messages)
                 {
-                    var senderName = message.Person?.Name is { Length: > 0 } name
-                        ? new Java.Lang.String(name)
-                        : null;
-                    nativeStyle.AddMessage(new Java.Lang.String(message.Text), message.Timestamp.ToUnixTimeMilliseconds(), senderName);
+                    AndroidX.Core.App.Person? sender = null;
+                    if (message.Person?.Name is { Length: > 0 } senderName)
+                    {                            
+                        sender = new AndroidX.Core.App.Person.Builder()?
+                            .SetName(senderName)?
+                            .SetBot(message.Person.IsBot)?
+                            .SetImportant(message.Person.IsImportant)?
+                            .Build();
+                    }
+                    nativeStyle.AddMessage(
+                        new NotificationCompat.MessagingStyle.Message(
+                            new Java.Lang.String(message.Text),
+                            message.Timestamp.ToUnixTimeMilliseconds(),
+                            sender));
                 }
                 builder.SetStyle(nativeStyle);
                 return;
