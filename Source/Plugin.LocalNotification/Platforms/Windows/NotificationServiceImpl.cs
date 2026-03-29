@@ -493,6 +493,29 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public Task<NotificationPermissionStatus> GetNotificationPermissionStatus()
+    {
+        bool isEnabled;
+        try
+        {
+            isEnabled = AppNotificationManager.Default.Setting == AppNotificationSetting.Enabled;
+        }
+        catch
+        {
+            isEnabled = AppNotificationManager.IsSupported();
+        }
+
+        return Task.FromResult(new NotificationPermissionStatus
+        {
+            IsEnabled = isEnabled,
+            IsAlertEnabled = isEnabled,
+            IsSoundEnabled = isEnabled,
+            IsBadgeEnabled = isEnabled,
+            CanScheduleExactAlarms = true
+        });
+    }
+
+    /// <inheritdoc />
     public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
     {
         try

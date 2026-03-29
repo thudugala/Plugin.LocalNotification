@@ -698,4 +698,54 @@ public class CoverageTests : IDisposable
         methods.Should().Contain(m => m.Name == nameof(IAndroidNotificationService.StartForegroundServiceAsync));
         methods.Should().Contain(m => m.Name == nameof(IAndroidNotificationService.StopForegroundServiceAsync));
     }
+
+    [Fact]
+    public async Task Phase9_GranularPermissionStatus_ShouldCoverModelAndGenericImplementation()
+    {
+        // Default instance has all false / true for CanScheduleExactAlarms
+        var defaultStatus = new NotificationPermissionStatus();
+        defaultStatus.IsEnabled.Should().BeFalse();
+        defaultStatus.IsAlertEnabled.Should().BeFalse();
+        defaultStatus.IsSoundEnabled.Should().BeFalse();
+        defaultStatus.IsBadgeEnabled.Should().BeFalse();
+        defaultStatus.IsProvisionalEnabled.Should().BeFalse();
+        defaultStatus.IsCriticalAlertEnabled.Should().BeFalse();
+        defaultStatus.IsCarPlayEnabled.Should().BeFalse();
+        defaultStatus.IsTimeSensitiveEnabled.Should().BeFalse();
+        defaultStatus.CanScheduleExactAlarms.Should().BeFalse();
+
+        // All properties can be set via init
+        var fullStatus = new NotificationPermissionStatus
+        {
+            IsEnabled = true,
+            IsAlertEnabled = true,
+            IsSoundEnabled = true,
+            IsBadgeEnabled = true,
+            IsProvisionalEnabled = true,
+            IsCriticalAlertEnabled = true,
+            IsCarPlayEnabled = true,
+            IsTimeSensitiveEnabled = true,
+            CanScheduleExactAlarms = true
+        };
+        fullStatus.IsEnabled.Should().BeTrue();
+        fullStatus.IsAlertEnabled.Should().BeTrue();
+        fullStatus.IsSoundEnabled.Should().BeTrue();
+        fullStatus.IsBadgeEnabled.Should().BeTrue();
+        fullStatus.IsProvisionalEnabled.Should().BeTrue();
+        fullStatus.IsCriticalAlertEnabled.Should().BeTrue();
+        fullStatus.IsCarPlayEnabled.Should().BeTrue();
+        fullStatus.IsTimeSensitiveEnabled.Should().BeTrue();
+        fullStatus.CanScheduleExactAlarms.Should().BeTrue();
+
+        // Generic (non-platform) service returns a disabled status with CanScheduleExactAlarms = false
+        var genericService = new NotificationServiceImpl();
+        var status = await genericService.GetNotificationPermissionStatus();
+        status.Should().NotBeNull();
+        status.IsEnabled.Should().BeFalse();
+        status.CanScheduleExactAlarms.Should().BeFalse();
+
+        // INotificationService interface declares GetNotificationPermissionStatus
+        var ifaceMethods = typeof(INotificationService).GetMethods();
+        ifaceMethods.Should().Contain(m => m.Name == nameof(INotificationService.GetNotificationPermissionStatus));
+    }
 }

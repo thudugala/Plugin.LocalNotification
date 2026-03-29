@@ -117,4 +117,12 @@ public interface INotificationService
     /// </summary>
     /// <returns></returns>
     Task<bool> RequestNotificationPermission(NotificationPermission? permission = null);
+
+    /// <summary>
+    /// Returns a granular breakdown of the notification permissions currently granted to the app,
+    /// including individual capability states such as sound, badge, alerts, critical alerts, and
+    /// (on Android) whether exact alarms can be scheduled.
+    /// </summary>
+    /// <returns>A <see cref="NotificationPermissionStatus"/> describing each permission capability.</returns>
+    Task<NotificationPermissionStatus> GetNotificationPermissionStatus();
 }

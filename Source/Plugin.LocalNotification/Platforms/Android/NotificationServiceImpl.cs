@@ -853,6 +853,29 @@ internal class NotificationServiceImpl : IAndroidNotificationService
     }
 
     /// <inheritdoc />
+    public Task<NotificationPermissionStatus> GetNotificationPermissionStatus()
+    {
+        var isEnabled = OperatingSystem.IsAndroidVersionAtLeast(24)
+            ? MyNotificationManager?.AreNotificationsEnabled() ?? false
+            : true;
+
+        var canScheduleExactAlarms = true;
+        if (OperatingSystem.IsAndroidVersionAtLeast(31))
+        {
+            canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+        }
+
+        return Task.FromResult(new NotificationPermissionStatus
+        {
+            IsEnabled = isEnabled,
+            IsAlertEnabled = isEnabled,
+            IsSoundEnabled = isEnabled,
+            IsBadgeEnabled = isEnabled,
+            CanScheduleExactAlarms = canScheduleExactAlarms
+        });
+    }
+
+    /// <inheritdoc />
     public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
     {
         _notificationPermission = permission is not null ? permission : new NotificationPermission();

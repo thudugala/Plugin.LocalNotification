@@ -488,6 +488,28 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public async Task<NotificationPermissionStatus> GetNotificationPermissionStatus()
+    {
+        var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
+
+        var isEnabled = settings.AuthorizationStatus is UNAuthorizationStatus.Authorized
+            or UNAuthorizationStatus.Provisional;
+
+        return new NotificationPermissionStatus
+        {
+            IsEnabled = isEnabled,
+            IsAlertEnabled = settings.AlertSetting == UNNotificationSetting.Enabled,
+            IsSoundEnabled = settings.SoundSetting == UNNotificationSetting.Enabled,
+            IsBadgeEnabled = settings.BadgeSetting == UNNotificationSetting.Enabled,
+            IsProvisionalEnabled = settings.AuthorizationStatus == UNAuthorizationStatus.Provisional,
+            IsCriticalAlertEnabled = settings.CriticalAlertSetting == UNNotificationSetting.Enabled,
+            IsCarPlayEnabled = settings.CarPlaySetting == UNNotificationSetting.Enabled,
+            IsTimeSensitiveEnabled = settings.TimeSensitiveSetting == UNNotificationSetting.Enabled,
+            CanScheduleExactAlarms = true
+        };
+    }
+
+    /// <inheritdoc />
     public async Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
     {
         try

@@ -18,6 +18,7 @@ internal class NotificationServiceImpl : INotificationService
 #pragma warning restore CS0067
 
     public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null) => Task.FromResult(false);
+    public Task<NotificationPermissionStatus> GetNotificationPermissionStatus() => Task.FromResult(new NotificationPermissionStatus());
     public bool Cancel(params int[] notificationIdList) => false;
     public bool CancelAll() => false;
     public bool Clear(params int[] notificationIdList) => false;
