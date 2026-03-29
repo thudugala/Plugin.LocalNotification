@@ -768,4 +768,90 @@ public class CoverageTests : IDisposable
         // IAndroidNotificationService is still a subtype of INotificationService
         typeof(INotificationService).IsAssignableFrom(typeof(IAndroidNotificationService)).Should().BeTrue();
     }
+
+    [Fact]
+    public void Phase11_TickerOnlyAlertOnceSubTextShortcutId_ShouldCoverModelDefaults()
+    {
+        var options = new AndroidOptions();
+
+        // Ticker defaults to null
+        options.Ticker.Should().BeNull();
+        options.Ticker = "New message arrived";
+        options.Ticker.Should().Be("New message arrived");
+
+        // OnlyAlertOnce defaults to false
+        options.OnlyAlertOnce.Should().BeFalse();
+        options.OnlyAlertOnce = true;
+        options.OnlyAlertOnce.Should().BeTrue();
+
+        // SubText defaults to null
+        options.SubText.Should().BeNull();
+        options.SubText = "Header line";
+        options.SubText.Should().Be("Header line");
+
+        // ShortcutId defaults to null
+        options.ShortcutId.Should().BeNull();
+        options.ShortcutId = "shortcut.conversation.alice";
+        options.ShortcutId.Should().Be("shortcut.conversation.alice");
+
+        // All four survive a serialization round-trip on NotificationRequest
+        var request = new NotificationRequest
+        {
+            NotificationId = 77,
+            Android = options
+        };
+        var json = LocalNotificationCenter.GetRequestSerialize(request);
+        var deserialized = LocalNotificationCenter.Serializer.Deserialize<NotificationRequest>(json);
+        deserialized.Should().NotBeNull();
+        deserialized!.Android.Ticker.Should().Be("New message arrived");
+        deserialized.Android.OnlyAlertOnce.Should().BeTrue();
+        deserialized.Android.SubText.Should().Be("Header line");
+        deserialized.Android.ShortcutId.Should().Be("shortcut.conversation.alice");
+    }
+
+    [Fact]
+    public async Task Phase12_ActiveNotification_ShouldCoverModelAndGenericImplementation()
+    {
+        // Default instance has all null/zero properties
+        var active = new ActiveNotification();
+        active.NotificationId.Should().Be(0);
+        active.Title.Should().BeNull();
+        active.Body.Should().BeNull();
+        active.ChannelId.Should().BeNull();
+        active.Tag.Should().BeNull();
+        active.GroupKey.Should().BeNull();
+        active.BigText.Should().BeNull();
+        active.Payload.Should().BeNull();
+
+        // All properties can be set via init
+        var full = new ActiveNotification
+        {
+            NotificationId = 42,
+            Title = "Test Title",
+            Body = "Test Body",
+            ChannelId = "my-channel",
+            Tag = "my-tag",
+            GroupKey = "my-group",
+            BigText = "Expanded big text",
+            Payload = "custom-payload"
+        };
+        full.NotificationId.Should().Be(42);
+        full.Title.Should().Be("Test Title");
+        full.Body.Should().Be("Test Body");
+        full.ChannelId.Should().Be("my-channel");
+        full.Tag.Should().Be("my-tag");
+        full.GroupKey.Should().Be("my-group");
+        full.BigText.Should().Be("Expanded big text");
+        full.Payload.Should().Be("custom-payload");
+
+        // Generic (non-platform) service returns an empty list
+        var genericService = new NotificationServiceImpl();
+        var activeList = await genericService.GetActiveNotifications();
+        activeList.Should().NotBeNull();
+        activeList.Should().BeEmpty();
+
+        // INotificationService interface declares GetActiveNotifications
+        var ifaceMethods = typeof(INotificationService).GetMethods();
+        ifaceMethods.Should().Contain(m => m.Name == nameof(INotificationService.GetActiveNotifications));
+    }
 }

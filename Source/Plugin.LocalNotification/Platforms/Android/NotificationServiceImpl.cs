@@ -75,6 +75,42 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         return Task.FromResult(itemList);
     }
 
+    /// <inheritdoc />
+    public Task<IList<ActiveNotification>> GetActiveNotifications()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(23))
+        {
+            return Task.FromResult<IList<ActiveNotification>>([]);
+        }
+
+        var statusBarNotifications = MyNotificationManager?.GetActiveNotifications() ?? [];
+
+        var result = statusBarNotifications.Select(sbn =>
+        {
+            var notification = sbn.Notification;
+            var extras = notification?.Extras;
+
+            string? channelId = null;
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
+            {
+                channelId = notification?.ChannelId;
+            }
+
+            return new ActiveNotification
+            {
+                NotificationId = sbn.Id,
+                Tag = sbn.Tag,
+                ChannelId = channelId,
+                GroupKey = notification?.Group,
+                Title = extras?.GetCharSequence(Android.App.Notification.ExtraTitle)?.ToString(),
+                Body = extras?.GetCharSequence(Android.App.Notification.ExtraText)?.ToString(),
+                BigText = extras?.GetCharSequence(Android.App.Notification.ExtraBigText)?.ToString()
+            };
+        }).ToList();
+
+        return Task.FromResult<IList<ActiveNotification>>(result);
+    }
+
     /// <summary>
     ///
     /// </summary>
@@ -430,8 +466,13 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         using var builder = new NotificationCompat.Builder(Application.Context, request.Android.ChannelId);
 
         builder.SetContentTitle(request.Title);
-        builder.SetSubText(request.Subtitle);
+        builder.SetSubText(request.Android.SubText ?? request.Subtitle);
         builder.SetContentText(request.Description);
+
+        if (!string.IsNullOrWhiteSpace(request.Android.Ticker))
+        {
+            builder.SetTicker(request.Android.Ticker);
+        }
 
         if(request.Android.When is not null)
         {
@@ -458,6 +499,13 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         builder.SetNumber(request.BadgeNumber);
         builder.SetAutoCancel(request.Android.AutoCancel);
         builder.SetOngoing(request.Android.Ongoing);
+        builder.SetOnlyAlertOnce(request.Android.OnlyAlertOnce);
+
+        if (!string.IsNullOrWhiteSpace(request.Android.ShortcutId) &&
+            OperatingSystem.IsAndroidVersionAtLeast(30))
+        {
+            builder.SetShortcutId(request.Android.ShortcutId);
+        }
 
         if (string.IsNullOrWhiteSpace(request.Group) == false)
         {

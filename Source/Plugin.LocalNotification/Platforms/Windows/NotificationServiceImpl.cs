@@ -478,6 +478,13 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public Task<IList<ActiveNotification>> GetActiveNotifications()
+    {
+        // Windows does not expose an API for querying currently displayed notifications.
+        return Task.FromResult<IList<ActiveNotification>>([]);
+    }
+
+    /// <inheritdoc />
     public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null)
     {
         try

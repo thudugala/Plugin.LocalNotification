@@ -24,6 +24,7 @@ internal class NotificationServiceImpl : INotificationService
     public bool Clear(params int[] notificationIdList) => false;
     public bool ClearAll() => false;
     public Task<IList<NotificationRequest>> GetDeliveredNotificationList() => Task.FromResult<IList<NotificationRequest>>([]);
+    public Task<IList<ActiveNotification>> GetActiveNotifications() => Task.FromResult<IList<ActiveNotification>>([]);
     public Task<IList<NotificationRequest>> GetPendingNotificationList() => Task.FromResult<IList<NotificationRequest>>([]);
     public void OnNotificationActionTapped(NotificationActionEventArgs e) => NotificationActionTapped?.Invoke(e);
     public void OnNotificationReceived(NotificationEventArgs e) => NotificationReceived?.Invoke(e);

@@ -481,6 +481,29 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public async Task<IList<ActiveNotification>> GetActiveNotifications()
+    {
+        var delivered = await UNUserNotificationCenter.Current.GetDeliveredNotificationsAsync();
+
+        return [.. delivered.Select(n =>
+        {
+            var content = n.Request.Content;
+            var request = LocalNotificationCenter.GetRequest(content);
+
+            _ = int.TryParse(n.Request.Identifier, out var notificationId);
+
+            return new ActiveNotification
+            {
+                NotificationId = notificationId,
+                Title = content.Title,
+                Body = content.Body,
+                GroupKey = content.ThreadIdentifier,
+                Payload = request?.ReturningData
+            };
+        })];
+    }
+
+    /// <inheritdoc />
     public async Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null)
     {
         var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);

@@ -191,4 +191,34 @@ public class AndroidOptions
     /// or on API 26+ (use <see cref="AndroidNotificationChannelRequest"/> instead).
     /// </summary>
     public int? LedOffMs { get; set; }
+
+    /// <summary>
+    /// Text announced by accessibility services (screen readers) when the notification first
+    /// arrives in the status bar. If <see langword="null"/>, accessibility services fall back
+    /// to reading the notification title and content text.
+    /// </summary>
+    public string? Ticker { get; set; }
+
+    /// <summary>
+    /// When <see langword="true"/>, sound, vibration, and the ticker are only triggered on the
+    /// first delivery of the notification. Subsequent updates to the same notification ID are
+    /// silent. Useful for progress notifications that are updated frequently.
+    /// Default is <see langword="false"/>.
+    /// </summary>
+    public bool OnlyAlertOnce { get; set; }
+
+    /// <summary>
+    /// Additional summary text to display in the header area of the notification on Android 7+,
+    /// or alongside the content on older devices.
+    /// When set, this overrides <see cref="Plugin.LocalNotification.Core.Models.NotificationRequest.Subtitle"/>
+    /// for Android. Leave <see langword="null"/> to use <c>NotificationRequest.Subtitle</c> as usual.
+    /// </summary>
+    public string? SubText { get; set; }
+
+    /// <summary>
+    /// Links this notification to a published sharing shortcut (Android 11+ / API 30+).
+    /// Set this to the shortcut identifier to have the notification appear in the
+    /// Android conversation space. Has no effect on earlier API levels.
+    /// </summary>
+    public string? ShortcutId { get; set; }
 }

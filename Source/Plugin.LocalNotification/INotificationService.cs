@@ -66,6 +66,16 @@ public interface INotificationService
     Task<IList<NotificationRequest>> GetDeliveredNotificationList();
 
     /// <summary>
+    /// Returns the notifications that are currently visible in the device's notification center,
+    /// along with rich metadata such as channel identifier, group key, Android tag, and big-text body.
+    /// On Android this queries the native notification manager (Android 6.0+ / API 23+ required;
+    /// returns an empty list on older versions). On iOS and macOS it returns delivered notifications.
+    /// On Windows and other platforms an empty list is returned.
+    /// </summary>
+    /// <returns>A list of <see cref="ActiveNotification"/> objects for each displayed notification.</returns>
+    Task<IList<ActiveNotification>> GetActiveNotifications();
+
+    /// <summary>
     /// Internal use Only
     /// </summary>
     /// <param name="e"></param>
