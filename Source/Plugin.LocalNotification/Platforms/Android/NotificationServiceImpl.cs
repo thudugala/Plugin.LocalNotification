@@ -985,12 +985,9 @@ internal class NotificationServiceImpl : IAndroidNotificationService
     /// <inheritdoc />
     public Task<bool> HasNotificationPolicyAccess()
     {
-        if (!OperatingSystem.IsAndroidVersionAtLeast(23))
-        {
-            return Task.FromResult(true);
-        }
-
-        return Task.FromResult(MyNotificationManager?.IsNotificationPolicyAccessGranted() ?? false);
+        return !OperatingSystem.IsAndroidVersionAtLeast(23)
+            ? Task.FromResult(true)
+            : Task.FromResult(MyNotificationManager?.IsNotificationPolicyAccessGranted ?? false);
     }
 
     /// <inheritdoc />
@@ -1001,7 +998,7 @@ internal class NotificationServiceImpl : IAndroidNotificationService
             return true;
         }
 
-        if (MyNotificationManager?.IsNotificationPolicyAccessGranted() ?? false)
+        if (MyNotificationManager?.IsNotificationPolicyAccessGranted ?? false)
         {
             return true;
         }
@@ -1011,7 +1008,7 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         Application.Context.StartActivity(intent);
 
         await Task.CompletedTask;
-        return MyNotificationManager?.IsNotificationPolicyAccessGranted() ?? false;
+        return MyNotificationManager?.IsNotificationPolicyAccessGranted ?? false;
     }
 
     /// <inheritdoc />
