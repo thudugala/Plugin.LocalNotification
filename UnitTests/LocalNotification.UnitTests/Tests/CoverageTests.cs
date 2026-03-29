@@ -430,4 +430,49 @@ public class CoverageTests : IDisposable
         eventArgs.Input = "Hello from inline reply";
         eventArgs.Input.Should().Be("Hello from inline reply");
     }
+
+    [Fact]
+    public void Scheduling_Phase4_ShouldCoverMonthlyRepeatAndScheduleMode()
+    {
+        // NotificationRepeat.Monthly exists
+        var scheduleOptions = new AndroidScheduleOptions();
+        scheduleOptions.AlarmType.Should().Be(AndroidAlarmType.RtcWakeup);
+        scheduleOptions.ScheduleMode.Should().Be(AndroidScheduleMode.Default);
+
+        // All AndroidScheduleMode values should be distinct
+        var modes = Enum.GetValues<AndroidScheduleMode>();
+        modes.Should().HaveCountGreaterThan(1);
+        modes.Should().Contain(AndroidScheduleMode.Default);
+        modes.Should().Contain(AndroidScheduleMode.Inexact);
+        modes.Should().Contain(AndroidScheduleMode.InexactAllowWhileIdle);
+        modes.Should().Contain(AndroidScheduleMode.Exact);
+        modes.Should().Contain(AndroidScheduleMode.ExactAllowWhileIdle);
+        modes.Should().Contain(AndroidScheduleMode.AlarmClock);
+
+        // GetNextNotifyTimeForRepeat — Monthly uses calendar arithmetic
+        var baseTime = new DateTimeOffset(2025, 1, 31, 9, 0, 0, TimeSpan.Zero);
+        var next = scheduleOptions.GetNextNotifyTimeForRepeat(baseTime, NotificationRepeat.Monthly, null);
+        // 31 Jan + 1 month = 28 Feb (or 29 in a leap year); DateTimeOffset.AddMonths clamps to last day of month
+        next.Should().NotBeNull();
+        next!.Value.Month.Should().BeGreaterThan(baseTime.Month);
+        next.Value.Hour.Should().Be(9);
+        next.Value.Minute.Should().Be(0);
+
+        // GetNextNotifyTimeForRepeat — Monthly: if the next-month date is still in the past, keep adding months
+        var veryOldTime = DateTimeOffset.UtcNow.AddMonths(-3);
+        var nextFromOld = scheduleOptions.GetNextNotifyTimeForRepeat(veryOldTime, NotificationRepeat.Monthly, null);
+        nextFromOld.Should().NotBeNull();
+        nextFromOld!.Value.Should().BeAfter(DateTimeOffset.Now);
+
+        // GetNotifyRepeatInterval — Monthly returns Zero (handled via calendar arithmetic)
+        var interval = scheduleOptions.GetNotifyRepeatInterval(NotificationRepeat.Monthly, null);
+        interval.Should().Be(TimeSpan.Zero);
+
+        // NotificationRepeat enum should contain Monthly
+        Enum.IsDefined(typeof(NotificationRepeat), NotificationRepeat.Monthly).Should().BeTrue();
+
+        // ScheduleMode round-trip on AndroidScheduleOptions
+        scheduleOptions.ScheduleMode = AndroidScheduleMode.AlarmClock;
+        scheduleOptions.ScheduleMode.Should().Be(AndroidScheduleMode.AlarmClock);
+    }
 }

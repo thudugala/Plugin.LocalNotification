@@ -309,6 +309,14 @@ internal class NotificationServiceImpl : INotificationService
                 Minute = dateTime.Minute,
                 Second = dateTime.Second
             },
+            NotificationRepeat.Monthly => new NSDateComponents
+            {
+                // Repeat on the same day of the month at the same time.
+                Day = dateTime.Day,
+                Hour = dateTime.Hour,
+                Minute = dateTime.Minute,
+                Second = dateTime.Second
+            },
             NotificationRepeat.No => new NSDateComponents
             {
                 Day = dateTime.Day,

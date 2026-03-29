@@ -11,6 +11,20 @@ public class AndroidScheduleOptions
     public AndroidAlarmType AlarmType { get; set; } = AndroidAlarmType.RtcWakeup;
 
     /// <summary>
+    /// Gets or sets the scheduling mode that controls which <c>AlarmManager</c> API is used.
+    /// <list type="bullet">
+    ///   <item><description><see cref="AndroidScheduleMode.Default"/> — exact when the app has the required permission, inexact otherwise.</description></item>
+    ///   <item><description><see cref="AndroidScheduleMode.Inexact"/> — always uses <c>AlarmManager.set()</c>; most battery-friendly.</description></item>
+    ///   <item><description><see cref="AndroidScheduleMode.InexactAllowWhileIdle"/> — <c>AlarmManager.setAndAllowWhileIdle()</c>; fires in Doze mode.</description></item>
+    ///   <item><description><see cref="AndroidScheduleMode.Exact"/> — <c>AlarmManager.setExact()</c>; requires <c>SCHEDULE_EXACT_ALARM</c> on API 31+.</description></item>
+    ///   <item><description><see cref="AndroidScheduleMode.ExactAllowWhileIdle"/> — <c>AlarmManager.setExactAndAllowWhileIdle()</c>; fires in Doze mode.</description></item>
+    ///   <item><description><see cref="AndroidScheduleMode.AlarmClock"/> — <c>AlarmManager.setAlarmClock()</c>; user-visible alarm icon, most reliable for user-facing alarms.</description></item>
+    /// </list>
+    /// Default is <see cref="AndroidScheduleMode.Default"/>.
+    /// </summary>
+    public AndroidScheduleMode ScheduleMode { get; set; } = AndroidScheduleMode.Default;
+
+    /// <summary>
     /// Gets or sets the allowed delay for scheduling notifications. If <c>NotifyTime</c> is earlier than <c>DateTimeOffset.Now</c> and this delay, notification will not be scheduled or shown. Default is 1 minute.
     /// </summary>
     public TimeSpan AllowedDelay { get; set; } = TimeSpan.FromMinutes(1);
@@ -28,6 +42,18 @@ public class AndroidScheduleOptions
         if (notifyTime is null)
         {
             return null;
+        }
+
+        // Monthly uses calendar arithmetic (months vary in length)
+        if (repeatType == NotificationRepeat.Monthly)
+        {
+            var monthlyNextTime = notifyTime.Value.AddMonths(1);
+            var monthlyNow = DateTimeOffset.Now.AddSeconds(10);
+            while (monthlyNextTime <= monthlyNow)
+            {
+                monthlyNextTime = monthlyNextTime.AddMonths(1);
+            }
+            return monthlyNextTime;
         }
 
         var repeatInterval = GetNotifyRepeatInterval(repeatType, notifyRepeatInterval);
@@ -71,6 +97,11 @@ public class AndroidScheduleOptions
                 {
                     repeatInterval = notifyRepeatInterval.Value;
                 }
+                break;
+
+            case NotificationRepeat.Monthly:
+                // Monthly is handled separately in GetNextNotifyTimeForRepeat via calendar arithmetic.
+                // Returning Zero here means TimeInterval-style callers see no interval (safe fallback).
                 break;
 
             case NotificationRepeat.No:

@@ -23,5 +23,11 @@ public enum NotificationRepeat
     /// <summary>
     /// Notification to be delivered after the specified amount of time elapses
     /// </summary>
-    TimeInterval
+    TimeInterval,
+
+    /// <summary>
+    /// Notification should repeat on the same day of the month at the same time.
+    /// For example, if first scheduled for the 15th at 09:00, it will next fire on the 15th of the following month at 09:00.
+    /// </summary>
+    Monthly
 }

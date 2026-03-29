@@ -235,34 +235,7 @@ internal class NotificationServiceImpl : INotificationService
         var alarmType = request.Schedule.Android.AlarmType.ToNative();
         var triggerAtTime = GetBaseCurrentTime(alarmType) + triggerTime;
 
-        var canScheduleExactAlarms = true;
-        if (OperatingSystem.IsAndroidVersionAtLeast(31))
-        {
-            canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
-        }
-
-        if (OperatingSystem.IsAndroidVersionAtLeast(23))
-        {
-            if (canScheduleExactAlarms)
-            {
-                MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
-            }
-            else
-            {
-                MyAlarmManager?.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
-            }
-        }
-        else
-        {
-            if (canScheduleExactAlarms)
-            {
-                MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
-            }
-            else
-            {
-                MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
-            }
-        }
+        ScheduleAlarm(request.Schedule.Android.ScheduleMode, alarmType, triggerAtTime, alarmIntent);
 
         NotificationRepository.AddPendingRequest(request);
 
@@ -303,6 +276,68 @@ internal class NotificationServiceImpl : INotificationService
             AlarmType.ElapsedRealtimeWakeup => SystemClock.ElapsedRealtime(),
             _ => throw new NotImplementedException(),
         };
+    }
+
+    /// <summary>
+    /// Schedules an alarm using the <c>AlarmManager</c> API chosen by <paramref name="scheduleMode"/>.
+    /// </summary>
+    protected virtual void ScheduleAlarm(AndroidScheduleMode scheduleMode, AlarmType alarmType, long triggerAtTime, PendingIntent alarmIntent)
+    {
+        switch (scheduleMode)
+        {
+            case AndroidScheduleMode.Inexact:
+                MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
+                break;
+
+            case AndroidScheduleMode.InexactAllowWhileIdle:
+                if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                    MyAlarmManager?.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                else
+                    MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
+                break;
+
+            case AndroidScheduleMode.Exact:
+                if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                    MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                else
+                    MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
+                break;
+
+            case AndroidScheduleMode.ExactAllowWhileIdle:
+                if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                    MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                else
+                    MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
+                break;
+
+            case AndroidScheduleMode.AlarmClock:
+                var alarmClockInfo = new AlarmManager.AlarmClockInfo(triggerAtTime, alarmIntent);
+                MyAlarmManager?.SetAlarmClock(alarmClockInfo, alarmIntent);
+                break;
+
+            default: // AndroidScheduleMode.Default
+                var canScheduleExact = true;
+                if (OperatingSystem.IsAndroidVersionAtLeast(31))
+                {
+                    canScheduleExact = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+                }
+
+                if (OperatingSystem.IsAndroidVersionAtLeast(23))
+                {
+                    if (canScheduleExact)
+                        MyAlarmManager?.SetExactAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                    else
+                        MyAlarmManager?.SetAndAllowWhileIdle(alarmType, triggerAtTime, alarmIntent);
+                }
+                else
+                {
+                    if (canScheduleExact)
+                        MyAlarmManager?.SetExact(alarmType, triggerAtTime, alarmIntent);
+                    else
+                        MyAlarmManager?.Set(alarmType, triggerAtTime, alarmIntent);
+                }
+                break;
+        }
     }
 
     /// <summary>
