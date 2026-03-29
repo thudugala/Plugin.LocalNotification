@@ -37,7 +37,14 @@ public partial class LocalNotificationCenter
     /// and exact-alarm permission requests.
     /// </summary>
     public static IAndroidNotificationService? AndroidService => Current as IAndroidNotificationService;
-        
+
+    /// <summary>
+    /// Gets details about whether the application was cold-started by a user tapping a notification.
+    /// This is populated during the platform lifecycle events registered by <c>UseLocalNotification()</c>.
+    /// Returns <c>null</c> until initialization has completed.
+    /// </summary>
+    public static NotificationLaunchDetails? LaunchNotificationDetails { get; internal set; }
+
     /// <summary>
     /// Gets or sets the serializer used for notification requests.
     /// </summary>

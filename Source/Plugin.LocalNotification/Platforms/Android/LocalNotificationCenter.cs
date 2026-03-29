@@ -54,6 +54,48 @@ public partial class LocalNotificationCenter
     }
 
     /// <summary>
+    /// Inspects the activity's launch intent and, if it contains notification data from this
+    /// plugin, stores the result in <see cref="LaunchNotificationDetails"/> so that callers
+    /// can determine whether the app was cold-started by a notification tap.
+    /// Call this once from the <c>OnCreate</c> lifecycle handler, before
+    /// <see cref="NotifyNotificationTapped"/>.
+    /// </summary>
+    /// <param name="intent">The activity's launch intent.</param>
+    public static void SetLaunchNotificationFromIntent(Intent? intent)
+    {
+        try
+        {
+            var actionId = intent?.GetIntExtra(RequestConstants.ReturnRequestActionId, -1000);
+            if (actionId is null or -1000)
+            {
+                LaunchNotificationDetails = new NotificationLaunchDetails
+                {
+                    DidNotificationLaunchApp = false
+                };
+                return;
+            }
+
+            var requestSerialize = intent?.GetStringExtra(RequestConstants.ReturnRequest);
+            var request = GetRequest(requestSerialize);
+
+            LaunchNotificationDetails = new NotificationLaunchDetails
+            {
+                DidNotificationLaunchApp = true,
+                Request = request,
+                ActionId = actionId.GetValueOrDefault()
+            };
+        }
+        catch (Exception ex)
+        {
+            LocalNotificationLogger.Log(ex);
+            LaunchNotificationDetails = new NotificationLaunchDetails
+            {
+                DidNotificationLaunchApp = false
+            };
+        }
+    }
+
+    /// <summary>
     /// Create Notification Channel Group when API >= 26.
     /// If you'd like to further organize the appearance of your channels in the settings UI, you can create channel groups.
     /// This is a good idea when your app supports multiple user accounts (such as for work profiles),

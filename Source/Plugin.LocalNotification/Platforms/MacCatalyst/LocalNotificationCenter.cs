@@ -10,6 +10,13 @@ namespace Plugin.LocalNotification;
 public partial class LocalNotificationCenter
 {
     /// <summary>
+    /// Internal flag set to <c>true</c> during <c>FinishedLaunching</c> so that the notification
+    /// delegate can identify the very first <c>DidReceiveNotificationResponse</c> call as the
+    /// response that cold-started the app.
+    /// </summary>
+    internal static bool IsCapturingLaunchNotification { get; set; }
+
+    /// <summary>
     /// Sets the <see cref="UNUserNotificationCenterDelegate"/> for IOS notifications. Allows developers to provide a custom delegate for handling notification events.
     /// </summary>
     /// <param name="notificationDelegate">The custom notification center delegate to use. If null, uses the default <see cref="UserNotificationCenterDelegate"/>.</param>

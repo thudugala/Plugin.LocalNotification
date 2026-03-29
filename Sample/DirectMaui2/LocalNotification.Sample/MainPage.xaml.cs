@@ -23,6 +23,14 @@ public partial class MainPage : ContentPage
         _notificationService.NotificationReceived += ShowCustomAlertFromNotification;
         _notificationService.NotificationActionTapped += Current_NotificationActionTapped;
 
+        // Check if the app was cold-started by tapping a notification.
+        var launchDetails = LocalNotificationCenter.LaunchNotificationDetails;
+        if (launchDetails?.DidNotificationLaunchApp == true)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"App launched from notification: Id={launchDetails.Request?.NotificationId}, ActionId={launchDetails.ActionId}, Data={launchDetails.Request?.ReturningData}");
+        }
+
         NotifyDatePicker.MinimumDate = DateTime.Today;
         NotifyTimePicker.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(10));
 

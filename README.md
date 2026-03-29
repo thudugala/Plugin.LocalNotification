@@ -37,6 +37,7 @@ The local notification plugin provides a way to display local notifications in .
 | Get Pending Notifications     | ✅                | ✅                     |
 | Get Delivered Notifications   | ✅                | ✅                     |
 | [Location Notifications](https://github.com/thudugala/Plugin.LocalNotification/wiki/Location-Notifications)    | ✅ | ✅ |
+| App Launch Detection          | ✅                | ✅                     |
 | [Notification Channels](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android---=-26]-Notification-Channel) | ❌ | ✅ |
 | [Notification Styles](https://github.com/thudugala/Plugin.LocalNotification/wiki/[Android]-Notification-Styles) (Inbox, Messaging, BigText, BigPicture) | ❌ | ✅ |
 | Chronometer / Timer Display   | ❌                | ✅                     |

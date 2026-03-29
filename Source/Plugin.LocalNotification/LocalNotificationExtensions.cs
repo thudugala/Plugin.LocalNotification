@@ -36,6 +36,9 @@ public static class LocalNotificationExtensions
 
                     LocalNotificationCenter.CreateNotificationChannels(localNotificationBuilder.AndroidBuilder.ChannelRequestList);
 
+                    // Capture launch notification details before firing the tapped event.
+                    LocalNotificationCenter.SetLaunchNotificationFromIntent(activity.Intent);
+
                     LocalNotificationCenter.NotifyNotificationTapped(activity.Intent);
                 })
                 .OnNewIntent((_, intent) =>
@@ -48,11 +51,25 @@ public static class LocalNotificationExtensions
             {
                 iOS.FinishedLaunching((application, _) =>
                 {
+                    // Signal that the next DidReceiveNotificationResponse call is the launch notification.
+                    LocalNotificationCenter.IsCapturingLaunchNotification = true;
+
                     LocalNotificationCenter.SetUserNotificationCenterDelegate(localNotificationBuilder.AppleBuilder.CustomUserNotificationCenterDelegate);
                     return true;
                 });
                 iOS.WillEnterForeground(application =>
                 {
+                    // If no notification response arrived during launch, record that the app was
+                    // not started from a notification.
+                    if (LocalNotificationCenter.IsCapturingLaunchNotification)
+                    {
+                        LocalNotificationCenter.IsCapturingLaunchNotification = false;
+                        LocalNotificationCenter.LaunchNotificationDetails ??= new Core.Models.NotificationLaunchDetails
+                        {
+                            DidNotificationLaunchApp = false
+                        };
+                    }
+
                     LocalNotificationCenter.ResetApplicationIconBadgeNumber(application);
                 });
             });

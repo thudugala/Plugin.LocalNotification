@@ -41,6 +41,32 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
                 return;
             }
 
+            // Capture launch notification details if this is the first response after cold start.
+            if (LocalNotificationCenter.IsCapturingLaunchNotification)
+            {
+                LocalNotificationCenter.IsCapturingLaunchNotification = false;
+
+                var launchActionId = NotificationActionEventArgs.TapActionId;
+
+                if (!response.IsDefaultAction &&
+                    !string.IsNullOrWhiteSpace(response.ActionIdentifier) &&
+                    int.TryParse(response.ActionIdentifier, out var parsedLaunchActionId))
+                {
+                    launchActionId = parsedLaunchActionId;
+                }
+                else if (response.IsDismissAction)
+                {
+                    launchActionId = NotificationActionEventArgs.DismissedActionId;
+                }
+
+                LocalNotificationCenter.LaunchNotificationDetails = new Core.Models.NotificationLaunchDetails
+                {
+                    DidNotificationLaunchApp = true,
+                    Request = notificationRequest,
+                    ActionId = launchActionId
+                };
+            }
+
             if (response.Notification.Request.Content.Badge != null)
             {
                 var badgeNumber = Convert.ToInt32(response.Notification.Request.Content.Badge.ToString(), CultureInfo.CurrentCulture);

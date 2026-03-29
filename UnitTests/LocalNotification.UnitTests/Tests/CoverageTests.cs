@@ -285,6 +285,64 @@ public class CoverageTests : IDisposable
     }
 
     [Fact]
+    public void NotificationLaunchDetails_ShouldHaveCorrectDefaults()
+    {
+        var details = new NotificationLaunchDetails
+        {
+            DidNotificationLaunchApp = false
+        };
+        details.DidNotificationLaunchApp.Should().BeFalse();
+        details.Request.Should().BeNull();
+        details.ActionId.Should().BeNull();
+    }
+
+    [Fact]
+    public void NotificationLaunchDetails_ShouldStoreNotificationData()
+    {
+        var request = new NotificationRequest
+        {
+            NotificationId = 42,
+            Title = "Launch Test"
+        };
+
+        var details = new NotificationLaunchDetails
+        {
+            DidNotificationLaunchApp = true,
+            Request = request,
+            ActionId = NotificationActionEventArgs.TapActionId
+        };
+
+        details.DidNotificationLaunchApp.Should().BeTrue();
+        details.Request.Should().BeSameAs(request);
+        details.Request!.NotificationId.Should().Be(42);
+        details.ActionId.Should().Be(NotificationActionEventArgs.TapActionId);
+    }
+
+    [Fact]
+    public void LaunchNotificationDetails_StaticProperty_ShouldBeSettable()
+    {
+        var original = LocalNotificationCenter.LaunchNotificationDetails;
+        try
+        {
+            LocalNotificationCenter.LaunchNotificationDetails = new NotificationLaunchDetails
+            {
+                DidNotificationLaunchApp = true,
+                Request = new NotificationRequest { NotificationId = 99 },
+                ActionId = 100
+            };
+
+            LocalNotificationCenter.LaunchNotificationDetails.Should().NotBeNull();
+            LocalNotificationCenter.LaunchNotificationDetails!.DidNotificationLaunchApp.Should().BeTrue();
+            LocalNotificationCenter.LaunchNotificationDetails.Request!.NotificationId.Should().Be(99);
+            LocalNotificationCenter.LaunchNotificationDetails.ActionId.Should().Be(100);
+        }
+        finally
+        {
+            LocalNotificationCenter.LaunchNotificationDetails = original;
+        }
+    }
+
+    [Fact]
     public async Task ServiceImplementation_ShouldCoverGenericImplementationBranches()
     {
         var factoryMethod = typeof(LocalNotificationCenter).GetMethod("CreateNotificationService", BindingFlags.NonPublic | BindingFlags.Static);
