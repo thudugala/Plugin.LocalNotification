@@ -983,6 +983,38 @@ internal class NotificationServiceImpl : IAndroidNotificationService
     }
 
     /// <inheritdoc />
+    public Task<bool> HasNotificationPolicyAccess()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(23))
+        {
+            return Task.FromResult(true);
+        }
+
+        return Task.FromResult(MyNotificationManager?.IsNotificationPolicyAccessGranted() ?? false);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RequestNotificationPolicyAccess()
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(23))
+        {
+            return true;
+        }
+
+        if (MyNotificationManager?.IsNotificationPolicyAccessGranted() ?? false)
+        {
+            return true;
+        }
+
+        var intent = new Intent(Android.Provider.Settings.ActionNotificationPolicyAccessSettings);
+        intent.AddFlags(ActivityFlags.NewTask);
+        Application.Context.StartActivity(intent);
+
+        await Task.CompletedTask;
+        return MyNotificationManager?.IsNotificationPolicyAccessGranted() ?? false;
+    }
+
+    /// <inheritdoc />
     public Task DeleteNotificationChannel(string channelId)
     {
         if (OperatingSystem.IsAndroidVersionAtLeast(26))

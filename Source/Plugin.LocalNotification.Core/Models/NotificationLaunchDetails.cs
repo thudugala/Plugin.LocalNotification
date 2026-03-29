@@ -19,7 +19,7 @@ public class NotificationLaunchDetails
 
     /// <summary>
     /// Gets the action identifier that was tapped, or <c>null</c> if the app was not launched
-    /// from a notification. A value equal to <see cref="EventArgs.NotificationActionEventArgs.TapActionId"/>
+    /// from a notification. A value equal to <see cref="LocalNotification.EventArgs.NotificationActionEventArgs.TapActionId"/>
     /// indicates the notification body itself was tapped.
     /// </summary>
     public int? ActionId { get; init; }

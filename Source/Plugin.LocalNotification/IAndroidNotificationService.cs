@@ -27,6 +27,22 @@ public interface IAndroidNotificationService : INotificationService
     Task<bool> RequestFullScreenIntentPermission();
 
     /// <summary>
+    /// Returns whether the app has been granted notification policy access, which is required to override
+    /// Do Not Disturb on notification channels that have <c>CanBypassDnd = true</c>.
+    /// Always returns <see langword="true"/> on Android versions below 6.0 (API 23).
+    /// </summary>
+    Task<bool> HasNotificationPolicyAccess();
+
+    /// <summary>
+    /// Opens the system Notification Policy Access settings screen where the user can grant
+    /// Do Not Disturb override permission to this app.
+    /// Required before notifications on channels with <c>CanBypassDnd = true</c> can break through Do Not Disturb.
+    /// Returns the current policy access state after the settings screen is dismissed.
+    /// Always returns <see langword="true"/> on Android versions below 6.0 (API 23).
+    /// </summary>
+    Task<bool> RequestNotificationPolicyAccess();
+
+    /// <summary>
     /// Deletes the notification channel with the given identifier (Android 8+ / API 26+ only).
     /// </summary>
     Task DeleteNotificationChannel(string channelId);

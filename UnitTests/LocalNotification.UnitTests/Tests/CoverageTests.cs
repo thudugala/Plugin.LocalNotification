@@ -748,4 +748,24 @@ public class CoverageTests : IDisposable
         var ifaceMethods = typeof(INotificationService).GetMethods();
         ifaceMethods.Should().Contain(m => m.Name == nameof(INotificationService.GetNotificationPermissionStatus));
     }
+
+    [Fact]
+    public void Phase10_NotificationPolicyAccess_ShouldBeDeclaredOnAndroidInterface()
+    {
+        // IAndroidNotificationService declares both DnD policy methods
+        var methods = typeof(IAndroidNotificationService).GetMethods();
+        methods.Should().Contain(m => m.Name == "HasNotificationPolicyAccess");
+        methods.Should().Contain(m => m.Name == "RequestNotificationPolicyAccess");
+
+        // Both methods return Task<bool>
+        var hasAccess = typeof(IAndroidNotificationService).GetMethod("HasNotificationPolicyAccess");
+        var requestAccess = typeof(IAndroidNotificationService).GetMethod("RequestNotificationPolicyAccess");
+        hasAccess.Should().NotBeNull();
+        requestAccess.Should().NotBeNull();
+        hasAccess!.ReturnType.Should().Be(typeof(Task<bool>));
+        requestAccess!.ReturnType.Should().Be(typeof(Task<bool>));
+
+        // IAndroidNotificationService is still a subtype of INotificationService
+        typeof(INotificationService).IsAssignableFrom(typeof(IAndroidNotificationService)).Should().BeTrue();
+    }
 }
