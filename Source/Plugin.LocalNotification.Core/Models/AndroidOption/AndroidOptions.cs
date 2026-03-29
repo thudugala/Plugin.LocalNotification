@@ -130,7 +130,7 @@ public class AndroidOptions
     public AndroidVisibilityType VisibilityType { get; set; } = AndroidVisibilityType.Private;
 
     /// <summary>
-    /// DateTime set with When is shown in the content view.
+    /// DateTimeOffset set with When is shown in the content view.
     /// </summary>
-    public DateTime? When { get; set; }
+    public DateTimeOffset? When { get; set; }
 }

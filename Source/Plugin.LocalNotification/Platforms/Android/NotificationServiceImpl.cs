@@ -212,10 +212,10 @@ internal class NotificationServiceImpl : INotificationService
     /// <param name="request"></param>
     internal virtual bool ShowLater(NotificationRequest request)
     {
-        if (request.Schedule.Android.IsValidNotifyTime(DateTime.Now, request.Schedule.NotifyTime) == false)
+        if (request.Schedule.Android.IsValidNotifyTime(DateTimeOffset.Now, request.Schedule.NotifyTime) == false)
         {
             LocalNotificationLogger.Log(
-                "NotifyTime is earlier than (DateTime.Now - Allowed Delay), notification ignored");
+                "NotifyTime is earlier than (DateTimeOffset.Now - Allowed Delay), notification ignored");
             return false;
         }
 
@@ -228,7 +228,7 @@ internal class NotificationServiceImpl : INotificationService
         }
 
         var utcAlarmTimeInMillis =
-            (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTime.UtcNow)
+            (request.Schedule.NotifyTime.GetValueOrDefault().ToUniversalTime() - DateTimeOffset.UtcNow)
             .TotalMilliseconds;
         var triggerTime = (long)utcAlarmTimeInMillis;
 

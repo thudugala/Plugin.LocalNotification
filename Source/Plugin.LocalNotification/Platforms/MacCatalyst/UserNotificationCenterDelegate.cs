@@ -137,7 +137,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
             }
 
             if (notificationRequest.Schedule.NotifyAutoCancelTime.HasValue &&
-                notificationRequest.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+                notificationRequest.Schedule.NotifyAutoCancelTime <= DateTimeOffset.Now)
             {
                 _ = notificationService.Cancel(notificationRequest.NotificationId);
 

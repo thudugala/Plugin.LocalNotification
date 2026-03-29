@@ -15,7 +15,7 @@ public class NotificationRequestSchedule
     /// <summary>
     /// Time to cancel the notification automatically.
     /// </summary>
-    public DateTime? NotifyAutoCancelTime { get; set; }
+    public DateTimeOffset? NotifyAutoCancelTime { get; set; }
 
     /// <summary>
     /// if Repeats = TimeInterval, then repeat again after specified amount of time elapses
@@ -25,7 +25,7 @@ public class NotificationRequestSchedule
     /// <summary>
     /// Time to show the notification.
     /// </summary>
-    public DateTime? NotifyTime { get; set; }
+    public DateTimeOffset? NotifyTime { get; set; }
 
     /// <summary>
     /// If true, will repeat again at the time specifies in NotifyTime or NotifyRepeatInterval

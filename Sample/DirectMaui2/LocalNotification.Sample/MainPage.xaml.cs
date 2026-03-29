@@ -165,7 +165,7 @@ public partial class MainPage : ContentPage
             }
             //var notifyDateTime = DateTime.Now.AddSeconds(30);
 
-            request.Schedule.NotifyAutoCancelTime = DateTime.Now.AddMinutes(5);
+            request.Schedule.NotifyAutoCancelTime = DateTimeOffset.Now.AddMinutes(5);
             request.Schedule.NotifyTime = notifyDateTime;
             //request.Schedule.RepeatType = RepeatSwitch.IsToggled ? NotificationRepeat.Daily : NotificationRepeat.No;
             //request.Schedule.RepeatType = NotificationRepeat.TimeInterval;
@@ -363,7 +363,7 @@ public partial class MainPage : ContentPage
             Group = AndroidOptions.DefaultGroupId,
             Schedule =
                 {
-                    NotifyTime = DateTime.Now.AddSeconds(seconds),
+                    NotifyTime = DateTimeOffset.Now.AddSeconds(seconds),
                     RepeatType = NotificationRepeat.TimeInterval,
                     NotifyRepeatInterval = TimeSpan.FromSeconds(10),
                 }

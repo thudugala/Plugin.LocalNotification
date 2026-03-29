@@ -288,7 +288,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     protected static NSDateComponents GetNsDateComponentsFromDateTime(NotificationRequest notificationRequest)
     {
-        var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTime.Now.AddSeconds(1);
+        var dateTime = notificationRequest.Schedule.NotifyTime ?? DateTimeOffset.Now.AddSeconds(1);
 
         return notificationRequest.Schedule.RepeatType switch
         {

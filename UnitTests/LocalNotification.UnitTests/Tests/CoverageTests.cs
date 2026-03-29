@@ -130,11 +130,11 @@ public class CoverageTests : IDisposable
         invalid.Should().Throw<ArgumentOutOfRangeException>();
 
         schedule.GetNextNotifyTimeForRepeat(null, NotificationRepeat.Daily, null).Should().BeNull();
-        schedule.GetNextNotifyTimeForRepeat(DateTime.Now, NotificationRepeat.No, null).Should().BeNull();
-        schedule.GetNextNotifyTimeForRepeat(DateTime.Now.AddMinutes(-20), NotificationRepeat.TimeInterval, TimeSpan.FromMinutes(1))
-            .Should().BeAfter(DateTime.Now);
+        schedule.GetNextNotifyTimeForRepeat(DateTimeOffset.Now, NotificationRepeat.No, null).Should().BeNull();
+        schedule.GetNextNotifyTimeForRepeat(DateTimeOffset.Now.AddMinutes(-20), NotificationRepeat.TimeInterval, TimeSpan.FromMinutes(1))
+            .Should().BeAfter(DateTimeOffset.Now);
 
-        var now = DateTime.Now;
+        var now = DateTimeOffset.Now;
         schedule.IsValidNotifyTime(now, now.AddMinutes(-1)).Should().BeTrue();
         schedule.IsValidNotifyTime(now, now.AddMinutes(-10)).Should().BeFalse();
         schedule.IsValidShowNowTime(now, now).Should().BeTrue();

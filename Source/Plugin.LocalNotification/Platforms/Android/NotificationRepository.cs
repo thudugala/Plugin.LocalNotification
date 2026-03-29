@@ -61,7 +61,7 @@ internal class NotificationRepository
         _ = itemList.RemoveAll(r => request.NotificationId == r.NotificationId);
         _ = itemList.RemoveAll(r =>
             r.Schedule.NotifyTime.HasValue &&
-            r.Schedule.Android.IsValidNotifyTime(DateTime.Now, r.Schedule.NotifyTime) == false);
+            r.Schedule.Android.IsValidNotifyTime(DateTimeOffset.Now, r.Schedule.NotifyTime) == false);
         itemList.Add(request);
         SetPendingList(itemList);
     }

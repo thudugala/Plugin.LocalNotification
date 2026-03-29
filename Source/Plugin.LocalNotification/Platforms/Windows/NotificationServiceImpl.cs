@@ -108,7 +108,7 @@ internal class NotificationServiceImpl : INotificationService
             {
                 if (request.Schedule.NotifyTime.HasValue)
                 {
-                    var delay = request.Schedule.NotifyTime.Value - DateTime.Now;
+                    var delay = request.Schedule.NotifyTime.Value - DateTimeOffset.Now;
                     if (delay > TimeSpan.Zero)
                     {
                         ScheduleTimer(request, delay);
@@ -232,7 +232,7 @@ internal class NotificationServiceImpl : INotificationService
     private bool ShowLater(NotificationRequest request)
     {
         var notifyTime = request.Schedule.NotifyTime!.Value;
-        var delay = notifyTime - DateTime.Now;
+        var delay = notifyTime - DateTimeOffset.Now;
 
         if (delay <= TimeSpan.Zero)
         {
@@ -275,7 +275,7 @@ internal class NotificationServiceImpl : INotificationService
             NotificationRepeat.Daily => request.Schedule.NotifyTime?.AddDays(1),
             NotificationRepeat.Weekly => request.Schedule.NotifyTime?.AddDays(7),
             NotificationRepeat.TimeInterval when request.Schedule.NotifyRepeatInterval.HasValue =>
-                DateTime.Now.Add(request.Schedule.NotifyRepeatInterval.Value),
+                DateTimeOffset.Now.Add(request.Schedule.NotifyRepeatInterval.Value),
             _ => null
         };
 
@@ -288,7 +288,7 @@ internal class NotificationServiceImpl : INotificationService
             }
 
             request.Schedule.NotifyTime = nextNotifyTime;
-            var delay = nextNotifyTime.Value - DateTime.Now;
+            var delay = nextNotifyTime.Value - DateTimeOffset.Now;
             if (delay > TimeSpan.Zero)
             {
                 ScheduleTimer(request, delay);
@@ -409,7 +409,7 @@ internal class NotificationServiceImpl : INotificationService
 
             if (request.Schedule.NotifyAutoCancelTime.HasValue)
             {
-                appNotif.Expiration = new DateTimeOffset(request.Schedule.NotifyAutoCancelTime.Value);
+                appNotif.Expiration = request.Schedule.NotifyAutoCancelTime.Value;
             }
 
             AppNotificationManager.Default.Show(appNotif);

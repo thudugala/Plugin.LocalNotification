@@ -11,7 +11,7 @@ public class AndroidScheduleOptions
     public AndroidAlarmType AlarmType { get; set; } = AndroidAlarmType.RtcWakeup;
 
     /// <summary>
-    /// Gets or sets the allowed delay for scheduling notifications. If <c>NotifyTime</c> is earlier than <c>DateTime.Now</c> and this delay, notification will not be scheduled or shown. Default is 1 minute.
+    /// Gets or sets the allowed delay for scheduling notifications. If <c>NotifyTime</c> is earlier than <c>DateTimeOffset.Now</c> and this delay, notification will not be scheduled or shown. Default is 1 minute.
     /// </summary>
     public TimeSpan AllowedDelay { get; set; } = TimeSpan.FromMinutes(1);
 
@@ -22,7 +22,7 @@ public class AndroidScheduleOptions
     /// <param name="repeatType">The type of repeat interval.</param>
     /// <param name="notifyRepeatInterval">The custom repeat interval, if applicable.</param>
     /// <returns>The next notification time, or <c>null</c> if not applicable.</returns>
-    public DateTime? GetNextNotifyTimeForRepeat(DateTime? notifyTime, NotificationRepeat repeatType, TimeSpan? notifyRepeatInterval)
+    public DateTimeOffset? GetNextNotifyTimeForRepeat(DateTimeOffset? notifyTime, NotificationRepeat repeatType, TimeSpan? notifyRepeatInterval)
     {
         // NotifyTime does not change for Repeat request
         if (notifyTime is null)
@@ -37,7 +37,7 @@ public class AndroidScheduleOptions
         }
 
         var newNotifyTime = notifyTime.Value.Add(repeatInterval);
-        var nowTime = DateTime.Now.AddSeconds(10);
+        var nowTime = DateTimeOffset.Now.AddSeconds(10);
         while (newNotifyTime <= nowTime)
         {
             newNotifyTime = newNotifyTime.Add(repeatInterval);
@@ -88,7 +88,7 @@ public class AndroidScheduleOptions
     /// <param name="timeNow">The current time.</param>
     /// <param name="notifyTime">The notification time to validate.</param>
     /// <returns><c>true</c> if the notification time is valid; otherwise, <c>false</c>.</returns>
-    public bool IsValidNotifyTime(DateTime timeNow, DateTime? notifyTime)
+    public bool IsValidNotifyTime(DateTimeOffset timeNow, DateTimeOffset? notifyTime)
     {
         var (startTime, _) = GetNotifyTimeRange(timeNow);
 
@@ -101,7 +101,7 @@ public class AndroidScheduleOptions
     /// <param name="timeNow">The current time.</param>
     /// <param name="notifyTime">The notification time to validate.</param>
     /// <returns><c>true</c> if the notification time is valid for showing later; otherwise, <c>false</c>.</returns>
-    public bool IsValidShowLaterTime(DateTime timeNow, DateTime? notifyTime)
+    public bool IsValidShowLaterTime(DateTimeOffset timeNow, DateTimeOffset? notifyTime)
     {
         var (_, endTime) = GetNotifyTimeRange(timeNow);
 
@@ -114,7 +114,7 @@ public class AndroidScheduleOptions
     /// <param name="timeNow">The current time.</param>
     /// <param name="notifyTime">The notification time to validate.</param>
     /// <returns><c>true</c> if the notification time is valid for showing now; otherwise, <c>false</c>.</returns>
-    public bool IsValidShowNowTime(DateTime timeNow, DateTime? notifyTime)
+    public bool IsValidShowNowTime(DateTimeOffset timeNow, DateTimeOffset? notifyTime)
     {
         var (startTime, endTime) = GetNotifyTimeRange(timeNow);
 
@@ -126,7 +126,7 @@ public class AndroidScheduleOptions
     /// </summary>
     /// <param name="timeNow">The current time.</param>
     /// <returns>A tuple containing the start and end times for valid notification display.</returns>
-    private (DateTime StartTime, DateTime EndTime) GetNotifyTimeRange(DateTime timeNow)
+    private (DateTimeOffset StartTime, DateTimeOffset EndTime) GetNotifyTimeRange(DateTimeOffset timeNow)
     {
         var startTime = timeNow.Subtract(AllowedDelay);
         var endTime = timeNow.AddMinutes(1);

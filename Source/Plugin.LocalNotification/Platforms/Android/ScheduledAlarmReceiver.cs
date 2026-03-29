@@ -93,14 +93,14 @@ internal class ScheduledAlarmReceiver : BroadcastReceiver
             return;
         }
 
-        if (request.Schedule.NotifyAutoCancelTime <= DateTime.Now)
+        if (request.Schedule.NotifyAutoCancelTime <= DateTimeOffset.Now)
         {
             _ = notificationService.Cancel(request.NotificationId);
             LocalNotificationLogger.Log($"Notification {request.NotificationId} Auto Canceled");
             return;
         }
 
-        var timeNow = DateTime.Now;
+        var timeNow = DateTimeOffset.Now;
         var wasReScheduled = false;
         if (request.Schedule.Android.IsValidNotifyTime(timeNow, request.Schedule.NotifyTime))
         {
