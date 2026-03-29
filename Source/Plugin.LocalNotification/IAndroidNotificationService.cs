@@ -5,7 +5,7 @@ namespace Plugin.LocalNotification;
 /// <summary>
 /// Extends <see cref="INotificationService"/> with Android-specific permission and channel management APIs.
 /// Cast <see cref="LocalNotificationCenter.Current"/> to this interface, or use
-/// <see cref="LocalNotificationCenter.Android"/>, to access these members on Android.
+/// <see cref="LocalNotificationCenter.AndroidService"/>, to access these members on Android.
 /// </summary>
 public interface IAndroidNotificationService : INotificationService
 {

@@ -499,4 +499,52 @@ public class CoverageTests : IDisposable
         // IAndroidNotificationService is a subtype of INotificationService
         typeof(IAndroidNotificationService).IsAssignableTo(typeof(INotificationService)).Should().BeTrue();
     }
+
+    [Fact]
+    public void Phase6_AppleEnhancements_ShouldCoverNewModels()
+    {
+        // AppleOptions.CriticalSoundVolume defaults to null
+        var apple = new AppleOptions();
+        apple.CriticalSoundVolume.Should().BeNull();
+
+        // Round-trip CriticalSoundVolume
+        apple.CriticalSoundVolume = 0.75f;
+        apple.CriticalSoundVolume.Should().Be(0.75f);
+
+        // AppleOptions.HideThumbnail defaults to null
+        apple.HideThumbnail.Should().BeNull();
+        apple.HideThumbnail = true;
+        apple.HideThumbnail.Should().BeTrue();
+
+        // AppleOptions.ThumbnailClippingRect defaults to null
+        apple.ThumbnailClippingRect.Should().BeNull();
+
+        // AppleAttachmentThumbnailClippingRect defaults
+        var rect = new AppleAttachmentThumbnailClippingRect();
+        rect.X.Should().Be(0.0);
+        rect.Y.Should().Be(0.0);
+        rect.Width.Should().Be(1.0);
+        rect.Height.Should().Be(1.0);
+
+        // Round-trip through AppleOptions
+        apple.ThumbnailClippingRect = new AppleAttachmentThumbnailClippingRect { X = 0.1, Y = 0.2, Width = 0.5, Height = 0.6 };
+        apple.ThumbnailClippingRect.X.Should().Be(0.1);
+        apple.ThumbnailClippingRect.Y.Should().Be(0.2);
+        apple.ThumbnailClippingRect.Width.Should().Be(0.5);
+        apple.ThumbnailClippingRect.Height.Should().Be(0.6);
+
+        // Serialization round-trip — new fields survive JSON serialization
+        var request = new NotificationRequest
+        {
+            NotificationId = 42,
+            Apple = apple
+        };
+        var json = LocalNotificationCenter.GetRequestSerialize(request);
+        var deserialized = LocalNotificationCenter.Serializer.Deserialize<NotificationRequest>(json);
+        deserialized.Should().NotBeNull();
+        deserialized!.Apple.CriticalSoundVolume.Should().Be(0.75f);
+        deserialized.Apple.HideThumbnail.Should().BeTrue();
+        deserialized.Apple.ThumbnailClippingRect.Should().NotBeNull();
+        deserialized.Apple.ThumbnailClippingRect!.Width.Should().Be(0.5);
+    }
 }

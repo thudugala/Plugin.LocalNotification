@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿using CoreGraphics;
+using Foundation;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AppleOption;
@@ -192,7 +193,7 @@ internal class NotificationServiceImpl : INotificationService
         // Image Attachment
         if (request.Image != null)
         {
-            var nativeImage = await GetNativeImage(request.Image);
+            var nativeImage = await GetNativeImage(request.Image, request.Apple);
             if (nativeImage != null)
             {
                 content.Attachments = [nativeImage];
@@ -220,11 +221,9 @@ internal class NotificationServiceImpl : INotificationService
             }
         }
 
-        content.Sound = request.Silent ?
-            null :
-            string.IsNullOrWhiteSpace(request.Sound) == false ?
-                UNNotificationSound.GetSound(request.Sound) :
-                UNNotificationSound.Default;
+        content.Sound = request.Silent
+            ? null
+            : BuildNotificationSound(request.Sound, request.Apple.CriticalSoundVolume);
 
         return content;
     }
@@ -233,8 +232,9 @@ internal class NotificationServiceImpl : INotificationService
     ///
     /// </summary>
     /// <param name="notificationImage"></param>
+    /// <param name="appleOptions"></param>
     /// <returns></returns>
-    protected virtual async Task<UNNotificationAttachment?> GetNativeImage(NotificationImage? notificationImage)
+    protected virtual async Task<UNNotificationAttachment?> GetNativeImage(NotificationImage? notificationImage, AppleOptions? appleOptions = null)
     {
         if (notificationImage is null || notificationImage.HasValue == false)
         {
@@ -279,9 +279,31 @@ internal class NotificationServiceImpl : INotificationService
             return null;
         }
 
-        var options = new UNNotificationAttachmentOptions();
+        var attachOptions = new UNNotificationAttachmentOptions();
+        if (appleOptions?.HideThumbnail == true)
+        {
+            attachOptions.ThumbnailHidden = true;
+        }
+        if (appleOptions?.ThumbnailClippingRect is { } clipRect)
+        {
+            attachOptions.ThumbnailClippingRect = new CGRect(clipRect.X, clipRect.Y, clipRect.Width, clipRect.Height);
+        }
 
-        return UNNotificationAttachment.FromIdentifier("image", imageAttachment, options, out _);
+        return UNNotificationAttachment.FromIdentifier("image", imageAttachment, attachOptions, out _);
+    }
+
+    private static UNNotificationSound BuildNotificationSound(string? soundName, float? criticalVolume)
+    {
+        if (criticalVolume is not null && OperatingSystem.IsIOSVersionAtLeast(12))
+        {
+            var volume = (float)Math.Clamp(criticalVolume.Value, 0.0, 1.0);
+            return string.IsNullOrWhiteSpace(soundName)
+                ? UNNotificationSound.GetDefaultCriticalSound(volume)
+                : UNNotificationSound.GetCriticalSound(soundName, volume);
+        }
+        return string.IsNullOrWhiteSpace(soundName)
+            ? UNNotificationSound.Default
+            : UNNotificationSound.GetSound(soundName);
     }
 
     /// <summary>

@@ -52,4 +52,28 @@ public class AppleOptions
     /// Gets or sets the number of items the notification adds to the category’s summary format string.
     /// </summary>
     public int SummaryArgumentCount { get; set; }
-}
+
+    /// <summary>
+    /// When set, plays a critical alert sound at the specified volume even when the device is muted or Do Not Disturb is active.
+    /// The value must be between 0.0 (silent) and 1.0 (full volume) inclusive.
+    /// Requires the <c>NSCriticalAlertUsageDescription</c> key in Info.plist and
+    /// <c>UNAuthorizationOptionCriticalAlert</c> to have been granted.
+    /// Only effective on iOS 12+ and macOS 10.14+. Has no effect on older versions or on other platforms.
+    /// </summary>
+    [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
+    public float? CriticalSoundVolume { get; set; }
+
+    /// <summary>
+    /// When <c>true</c>, prevents the system from displaying a thumbnail preview for the notification's image attachment.
+    /// Has no effect when no image is set on the notification request.
+    /// Maps to <c>UNNotificationAttachmentOptionsThumbnailHiddenKey</c>.
+    /// </summary>
+    public bool? HideThumbnail { get; set; }
+
+    /// <summary>
+    /// Defines the normalized clipping rect used when generating the thumbnail for the notification's image attachment.
+    /// All coordinates must be in the range 0.0 to 1.0 relative to the image dimensions.
+    /// Has no effect when no image is set on the notification request.
+    /// Maps to <c>UNNotificationAttachmentOptionsThumbnailClippingRectKey</c>.
+    /// </summary>
+    public AppleAttachmentThumbnailClippingRect? ThumbnailClippingRect { get; set; }}
