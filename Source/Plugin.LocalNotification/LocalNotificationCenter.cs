@@ -99,12 +99,7 @@ public partial class LocalNotificationCenter
 
         foreach (var request in requestList)
         {
-            if (request.Image is not null &&
-                request.Image.Binary is not null &&
-                request.Image.Binary?.Length > 90000)
-            {
-                request.Image.Binary = [];
-            }
+            TrimImageBinary(request);
         }
         var serializedRequestList = Serializer.Serialize(requestList);
         return serializedRequestList;
@@ -123,16 +118,44 @@ public partial class LocalNotificationCenter
             return "[]";
         }
 
-        if (request.Image is not null &&
-            request.Image.Binary is not null &&
-            request.Image.Binary?.Length > 90000)
-        {
-            request.Image.Binary = [];
-        }
+        TrimImageBinary(request);
         var serializedRequest = Serializer.Serialize(request);
 
         LocalNotificationLogger.Log($"Serialized Request [{serializedRequest}]");
 
         return serializedRequest;
+    }
+
+    /// <summary>
+    /// When <see cref="NotificationImage.Binary"/> exceeds 64 KB the bytes are spilled to a temp file
+    /// and <see cref="NotificationImage.FilePath"/> is set to that path, keeping the serialized intent
+    /// payload within Android's Binder transaction limit.
+    /// If the write fails the binary is cleared rather than causing a <c>TransactionTooLargeException</c>.
+    /// </summary>
+    private static void TrimImageBinary(NotificationRequest request)
+    {
+        if (request.Image?.Binary is not { Length: > 65_536 } binary)
+        {
+            return;
+        }
+
+        try
+        {
+            var dir = Path.Combine(Path.GetTempPath(), "Plugin.LocalNotification", "images");
+            Directory.CreateDirectory(dir);
+            // Stable name per notification ID so repeated serializations don't accumulate files.
+            var path = Path.Combine(dir, $"img_{request.NotificationId}.bin");
+            File.WriteAllBytes(path, binary);
+            request.Image.FilePath = path;
+            LocalNotificationLogger.Log($"Image binary spilled to [{path}]");
+        }
+        catch (Exception ex)
+        {
+            LocalNotificationLogger.Log(ex);
+        }
+        finally
+        {
+            request.Image!.Binary = [];
+        }
     }
 }
