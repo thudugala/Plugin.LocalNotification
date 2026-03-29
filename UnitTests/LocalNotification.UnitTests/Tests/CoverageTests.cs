@@ -591,4 +591,53 @@ public class CoverageTests : IDisposable
         deserialized.Android.LedOnMs.Should().Be(500);
         deserialized.Android.LedOffMs.Should().Be(2000);
     }
+
+    [Fact]
+    public void Phase8_ForegroundService_ShouldCoverModelDefaults()
+    {
+        // AndroidForegroundServiceType is a [Flags] enum with correct bit values
+        ((int)AndroidForegroundServiceType.None).Should().Be(0);
+        ((int)AndroidForegroundServiceType.DataSync).Should().Be(1);
+        ((int)AndroidForegroundServiceType.MediaPlayback).Should().Be(2);
+        ((int)AndroidForegroundServiceType.PhoneCall).Should().Be(4);
+        ((int)AndroidForegroundServiceType.Location).Should().Be(8);
+        ((int)AndroidForegroundServiceType.ConnectedDevice).Should().Be(16);
+        ((int)AndroidForegroundServiceType.MediaProjection).Should().Be(32);
+        ((int)AndroidForegroundServiceType.Camera).Should().Be(64);
+        ((int)AndroidForegroundServiceType.Microphone).Should().Be(128);
+        ((int)AndroidForegroundServiceType.Health).Should().Be(256);
+        ((int)AndroidForegroundServiceType.RemoteMessaging).Should().Be(512);
+        ((int)AndroidForegroundServiceType.ShortService).Should().Be(2048);
+
+        // Bitwise combination works as expected
+        var combined = AndroidForegroundServiceType.DataSync | AndroidForegroundServiceType.Location;
+        ((int)combined).Should().Be(9);
+
+        // AndroidForegroundServiceRequest default values
+        var req = new AndroidForegroundServiceRequest();
+        req.ForegroundServiceType.Should().Be(AndroidForegroundServiceType.ShortService);
+        req.Notification.Should().BeNull();
+
+        // Notification can be set and round-trips serialization
+        req.Notification = new NotificationRequest
+        {
+            NotificationId = 42,
+            Title = "Background work running",
+            Description = "Tap to return to the app.",
+        };
+        req.Notification.NotificationId.Should().Be(42);
+        req.Notification.Title.Should().Be("Background work running");
+
+        // Serialization of the inner NotificationRequest round-trips correctly
+        var json = LocalNotificationCenter.GetRequestSerialize(req.Notification);
+        var deserialized = LocalNotificationCenter.Serializer.Deserialize<NotificationRequest>(json);
+        deserialized.Should().NotBeNull();
+        deserialized!.NotificationId.Should().Be(42);
+        deserialized.Title.Should().Be("Background work running");
+
+        // IAndroidNotificationService declares the two new methods
+        var methods = typeof(IAndroidNotificationService).GetMethods();
+        methods.Should().Contain(m => m.Name == nameof(IAndroidNotificationService.StartForegroundServiceAsync));
+        methods.Should().Contain(m => m.Name == nameof(IAndroidNotificationService.StopForegroundServiceAsync));
+    }
 }

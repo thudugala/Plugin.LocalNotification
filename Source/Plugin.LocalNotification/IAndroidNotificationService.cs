@@ -40,4 +40,25 @@ public interface IAndroidNotificationService : INotificationService
     /// Deletes the notification channel group with the given identifier (Android 8+ / API 26+ only).
     /// </summary>
     Task DeleteNotificationChannelGroup(string groupId);
+
+    /// <summary>
+    /// Starts an Android foreground service that keeps the app alive while background work is running
+    /// and shows a persistent notification to the user.
+    /// <para>
+    /// The app's <c>AndroidManifest.xml</c> must declare:
+    /// <list type="bullet">
+    ///   <item><description><c>&lt;uses-permission android:name="android.permission.FOREGROUND_SERVICE" /&gt;</c></description></item>
+    ///   <item><description>A <c>&lt;service&gt;</c> element for <c>plugin.LocalNotification.NotificationForegroundService</c></description></item>
+    ///   <item><description>Any additional <c>android.permission.FOREGROUND_SERVICE_*</c> permission required by the chosen <see cref="AndroidForegroundServiceType"/>.</description></item>
+    /// </list>
+    /// </para>
+    /// Returns <see langword="true"/> when the service was started successfully.
+    /// </summary>
+    Task<bool> StartForegroundServiceAsync(AndroidForegroundServiceRequest request);
+
+    /// <summary>
+    /// Stops the foreground service previously started with <see cref="StartForegroundServiceAsync"/>.
+    /// The persistent notification is removed and the service process is ended.
+    /// </summary>
+    Task StopForegroundServiceAsync();
 }

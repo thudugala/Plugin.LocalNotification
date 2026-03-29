@@ -1009,4 +1009,56 @@ internal class NotificationServiceImpl : IAndroidNotificationService
 
         return Task.CompletedTask;
     }
+
+    /// <inheritdoc />
+    public Task<bool> StartForegroundServiceAsync(AndroidForegroundServiceRequest request)
+    {
+        try
+        {
+            var intent = new Intent(Application.Context, typeof(NotificationForegroundService));
+            intent.PutExtra(NotificationForegroundService.ExtraForegroundType, (int)request.ForegroundServiceType);
+
+            if (request.Notification is not null)
+            {
+                intent.PutExtra(
+                    NotificationForegroundService.ExtraRequest,
+                    LocalNotificationCenter.GetRequestSerialize(request.Notification));
+                intent.PutExtra(
+                    NotificationForegroundService.ExtraNotificationId,
+                    request.Notification.NotificationId);
+            }
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
+            {
+                Application.Context.StartForegroundService(intent);
+            }
+            else
+            {
+                Application.Context.StartService(intent);
+            }
+
+            return Task.FromResult(true);
+        }
+        catch (Exception ex)
+        {
+            LocalNotificationLogger.Log(ex);
+            return Task.FromResult(false);
+        }
+    }
+
+    /// <inheritdoc />
+    public Task StopForegroundServiceAsync()
+    {
+        try
+        {
+            var intent = new Intent(Application.Context, typeof(NotificationForegroundService));
+            Application.Context.StopService(intent);
+        }
+        catch (Exception ex)
+        {
+            LocalNotificationLogger.Log(ex);
+        }
+
+        return Task.CompletedTask;
+    }
 }
