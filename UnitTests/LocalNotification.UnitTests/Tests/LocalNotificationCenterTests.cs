@@ -56,7 +56,7 @@ public class LocalNotificationCenterTests : IDisposable
         var requestList = new List<NotificationRequest>
         {
             new() {
-                Image = null // Simulate a null NotificationImage
+                Image = null! // Simulate a null NotificationImage
             },
             new() {
                 Image = new NotificationImage

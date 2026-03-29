@@ -33,7 +33,7 @@ public class CoverageTests : IDisposable
         notificationAction.Equals(new NotificationAction(10)).Should().BeTrue();
         notificationAction.Equals(new NotificationAction(11)).Should().BeFalse();
         notificationAction.Equals((NotificationAction?)null).Should().BeFalse();
-        notificationAction.Equals((object?)new NotificationAction(10)).Should().BeTrue();
+        notificationAction.Equals((object)new NotificationAction(10)).Should()!.BeTrue();
         notificationAction.GetHashCode().Should().Be(10.GetHashCode());
 
         var notificationCategory = new NotificationCategory(NotificationCategoryType.Alarm) { ActionList = [notificationAction] };
@@ -41,7 +41,7 @@ public class CoverageTests : IDisposable
         notificationCategory.Equals(new NotificationCategory(NotificationCategoryType.Alarm)).Should().BeTrue();
         notificationCategory.Equals(new NotificationCategory(NotificationCategoryType.Status)).Should().BeFalse();
         notificationCategory.Equals((NotificationCategory?)null).Should().BeFalse();
-        notificationCategory.Equals((object?)new NotificationCategory(NotificationCategoryType.Alarm)).Should().BeTrue();
+        notificationCategory.Equals((object)new NotificationCategory(NotificationCategoryType.Alarm)).Should()!.BeTrue();
 
         var permission = new NotificationPermission();
         permission.AskPermission.Should().BeTrue();

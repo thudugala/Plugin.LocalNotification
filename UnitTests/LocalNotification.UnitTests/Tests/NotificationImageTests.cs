@@ -15,7 +15,7 @@ public class NotificationImageTests
     public void HasValue_ShouldReturnFalse_WhenNotificationImageIsNull()
     {
         // Arrange
-        NotificationImage image = null;
+        NotificationImage? image = null;
 
         // Act & Assert
         (image?.HasValue ?? false).Should().BeFalse();
@@ -78,7 +78,7 @@ public class NotificationImageTests
         var serializer = new NotificationSerializer();
         var request = new NotificationRequest
         {
-            Image = null
+            Image = null!
         };
 
         // Act
