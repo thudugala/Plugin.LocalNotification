@@ -355,30 +355,24 @@ internal class NotificationServiceImpl : INotificationService
         if(request.Android.When is not null)
         {
             builder.SetShowWhen(true);
-            builder.SetWhen(request.Android.When.Value.Ticks);                
+            builder.SetWhen(request.Android.When.Value.ToUnixTimeMilliseconds());
         }
-                   
-        if (request.Image is { HasValue: true })
+
+        if (request.Android.UsesChronometer)
         {
-            var imageBitmap = await GetNativeImage(request.Image).ConfigureAwait(false);
-            if (imageBitmap != null)
+            builder.SetUsesChronometer(true);
+            if (OperatingSystem.IsAndroidVersionAtLeast(24))
             {
-                using var picStyle = new NotificationCompat.BigPictureStyle();
-                picStyle.BigPicture(imageBitmap);
-                picStyle.SetSummaryText(request.Subtitle);
-                builder.SetStyle(picStyle);
+                builder.SetChronometerCountDown(request.Android.ChronometerCountDown);
             }
         }
-        else
+
+        if (request.Android.Colorized)
         {
-            if (string.IsNullOrWhiteSpace(request.Description) == false)
-            {
-                using var bigTextStyle = new NotificationCompat.BigTextStyle();
-                bigTextStyle.BigText(request.Description);
-                bigTextStyle.SetSummaryText(request.Subtitle);                   
-                builder.SetStyle(bigTextStyle);
-            }
+            builder.SetColorized(true);
         }
+
+        await ApplyStyle(builder, request).ConfigureAwait(false);
 
         builder.SetNumber(request.BadgeNumber);
         builder.SetAutoCancel(request.Android.AutoCancel);
@@ -576,6 +570,82 @@ internal class NotificationServiceImpl : INotificationService
     /// <param name="serializedRequest"></param>
     /// <param name="action"></param>
     /// <returns></returns>
+    private async Task ApplyStyle(NotificationCompat.Builder builder, NotificationRequest request)
+    {
+        switch (request.Android.Style)
+        {
+            case AndroidInboxStyle inboxStyle:
+            {
+                using var nativeStyle = new NotificationCompat.InboxStyle();
+                if (!string.IsNullOrEmpty(inboxStyle.ContentTitle))
+                {
+                    nativeStyle.SetBigContentTitle(inboxStyle.ContentTitle);
+                }
+                if (!string.IsNullOrEmpty(inboxStyle.SummaryText))
+                {
+                    nativeStyle.SetSummaryText(inboxStyle.SummaryText);
+                }
+                foreach (var line in inboxStyle.Lines)
+                {
+                    nativeStyle.AddLine(line);
+                }
+                builder.SetStyle(nativeStyle);
+                return;
+            }
+
+            case AndroidMessagingStyle messagingStyle:
+            {
+                using var nativeStyle = new NotificationCompat.MessagingStyle(
+                    new Java.Lang.String(messagingStyle.Person.Name));
+                if (!string.IsNullOrEmpty(messagingStyle.ContentTitle))
+                {
+                    nativeStyle.ConversationTitle = new Java.Lang.String(messagingStyle.ContentTitle);
+                }
+                nativeStyle.IsGroupConversation = messagingStyle.IsGroupConversation;
+                foreach (var message in messagingStyle.Messages)
+                {
+                    var senderName = message.Person?.Name is { Length: > 0 } name
+                        ? new Java.Lang.String(name)
+                        : null;
+                    nativeStyle.AddMessage(message.Text, message.Timestamp.ToUnixTimeMilliseconds(), senderName);
+                }
+                builder.SetStyle(nativeStyle);
+                return;
+            }
+
+            case AndroidMediaStyle mediaStyle:
+            {
+                using var nativeStyle = new AndroidX.Media.App.NotificationCompat.MediaStyle();
+                if (mediaStyle.ShowActionsInCompactView is { Length: > 0 } indices)
+                {
+                    nativeStyle.SetShowActionsInCompactView(indices);
+                }
+                builder.SetStyle(nativeStyle);
+                return;
+            }
+        }
+
+        // Default: BigPicture when an image is present, BigText when description is present.
+        if (request.Image is { HasValue: true })
+        {
+            var imageBitmap = await GetNativeImage(request.Image).ConfigureAwait(false);
+            if (imageBitmap != null)
+            {
+                using var picStyle = new NotificationCompat.BigPictureStyle();
+                picStyle.BigPicture(imageBitmap);
+                picStyle.SetSummaryText(request.Subtitle);
+                builder.SetStyle(picStyle);
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(request.Description))
+        {
+            using var bigTextStyle = new NotificationCompat.BigTextStyle();
+            bigTextStyle.BigText(request.Description);
+            bigTextStyle.SetSummaryText(request.Subtitle);
+            builder.SetStyle(bigTextStyle);
+        }
+    }
+
     protected virtual NotificationCompat.Action CreateAction(NotificationRequest request, string serializedRequest,
         NotificationAction action)
     {

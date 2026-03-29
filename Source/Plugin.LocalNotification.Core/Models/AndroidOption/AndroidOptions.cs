@@ -133,4 +133,33 @@ public class AndroidOptions
     /// DateTimeOffset set with When is shown in the content view.
     /// </summary>
     public DateTimeOffset? When { get; set; }
+
+    /// <summary>
+    /// Set the notification style. Overrides the default BigText/BigPicture behaviour.
+    /// Assign an instance of <see cref="AndroidInboxStyle"/>, <see cref="AndroidMessagingStyle"/>,
+    /// or <see cref="AndroidMediaStyle"/>.
+    /// Leave <c>null</c> to use the automatic BigPicture (when an image is present) or BigText fallback.
+    /// </summary>
+    public AndroidStyleBase? Style { get; set; }
+
+    /// <summary>
+    /// Show the <see cref="When"/> value as a stopwatch that counts up (or down when
+    /// <see cref="ChronometerCountDown"/> is true).
+    /// Default is false.
+    /// </summary>
+    public bool UsesChronometer { get; set; }
+
+    /// <summary>
+    /// When <see cref="UsesChronometer"/> is true, count down towards <see cref="When"/>
+    /// instead of counting up from it. Requires Android API 24 or higher.
+    /// Default is false.
+    /// </summary>
+    public bool ChronometerCountDown { get; set; }
+
+    /// <summary>
+    /// Set the background of the notification to the color specified by <see cref="Color"/>.
+    /// Requires <see cref="Color"/> to be set. Only works on specific notification styles.
+    /// Default is false.
+    /// </summary>
+    public bool Colorized { get; set; }
 }

@@ -331,4 +331,58 @@ public class CoverageTests : IDisposable
         LocalNotificationCenter.SetNotificationService(customService.Object);
         LocalNotificationCenter.Current.Should().BeSameAs(customService.Object);
     }
+
+    [Fact]
+    public void AndroidStyles_ShouldCoverModelDefaults()
+    {
+        var inboxStyle = new AndroidInboxStyle();
+        inboxStyle.Lines.Should().NotBeNull().And.BeEmpty();
+        inboxStyle.ContentTitle.Should().BeNull();
+        inboxStyle.SummaryText.Should().BeNull();
+        inboxStyle.Lines.Add("Line 1");
+        inboxStyle.Lines.Add("Line 2");
+        inboxStyle.Lines.Should().HaveCount(2);
+
+        var person = new AndroidStylePerson { Name = "Alice", Key = "u1", IsBot = false, IsImportant = true };
+        person.Name.Should().Be("Alice");
+        person.Key.Should().Be("u1");
+        person.IsImportant.Should().BeTrue();
+        person.IsBot.Should().BeFalse();
+
+        var message = new AndroidStyleMessage { Text = "Hello", Person = person };
+        message.Text.Should().Be("Hello");
+        message.Person.Should().BeSameAs(person);
+        message.Timestamp.Should().BeCloseTo(DateTimeOffset.Now, TimeSpan.FromSeconds(5));
+
+        var messagingStyle = new AndroidMessagingStyle();
+        messagingStyle.Person.Should().NotBeNull();
+        messagingStyle.Messages.Should().NotBeNull().And.BeEmpty();
+        messagingStyle.IsGroupConversation.Should().BeFalse();
+        messagingStyle.ConversationTitle.Should().BeNull();
+        messagingStyle.ConversationTitle = "Team Chat";
+        messagingStyle.ContentTitle.Should().Be("Team Chat");
+        messagingStyle.Messages.Add(message);
+        messagingStyle.Messages.Should().HaveCount(1);
+
+        var mediaStyle = new AndroidMediaStyle();
+        mediaStyle.ShowActionsInCompactView.Should().BeNull();
+        mediaStyle.ContentTitle.Should().BeNull();
+        mediaStyle.ShowActionsInCompactView = [0, 1];
+        mediaStyle.ShowActionsInCompactView.Should().HaveCount(2);
+
+        var androidOptions = new AndroidOptions();
+        androidOptions.Style.Should().BeNull();
+        androidOptions.UsesChronometer.Should().BeFalse();
+        androidOptions.ChronometerCountDown.Should().BeFalse();
+        androidOptions.Colorized.Should().BeFalse();
+
+        androidOptions.Style = inboxStyle;
+        androidOptions.Style.Should().BeOfType<AndroidInboxStyle>();
+        androidOptions.UsesChronometer = true;
+        androidOptions.ChronometerCountDown = true;
+        androidOptions.Colorized = true;
+        androidOptions.UsesChronometer.Should().BeTrue();
+        androidOptions.ChronometerCountDown.Should().BeTrue();
+        androidOptions.Colorized.Should().BeTrue();
+    }
 }
