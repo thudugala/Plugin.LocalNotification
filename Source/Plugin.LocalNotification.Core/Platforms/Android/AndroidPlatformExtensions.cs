@@ -1,9 +1,10 @@
 ﻿using Android.App;
-using Android.Content;
+using Android.Media;
 using AndroidX.Core.App;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
 using Application = Android.App.Application;
+using MediaStream = Android.Media.Stream;
 
 namespace Plugin.LocalNotification.Core.Platforms.Android;
 
@@ -152,4 +153,31 @@ public static class AndroidPlatformExtensions
             _ => AndroidImportance.Unspecified
         };
     }
+
+    /// <summary>
+    /// Converts an <see cref="AndroidAudioAttributeUsage"/> value to its native <see cref="AudioUsageKind"/> equivalent.
+    /// Used when building <see cref="Android.Media.AudioAttributes"/> for notification channels (API 26+).
+    /// </summary>
+    public static AudioUsageKind ToNative(this AndroidAudioAttributeUsage usage) => usage switch
+    {
+        AndroidAudioAttributeUsage.Alarm => AudioUsageKind.Alarm,
+        AndroidAudioAttributeUsage.NotificationRingtone => AudioUsageKind.NotificationRingtone,
+        AndroidAudioAttributeUsage.Media => AudioUsageKind.Media,
+        AndroidAudioAttributeUsage.VoiceCommunication => AudioUsageKind.VoiceCommunication,
+        AndroidAudioAttributeUsage.Unknown => AudioUsageKind.Unknown,
+        _ => AudioUsageKind.Notification,
+    };
+
+    /// <summary>
+    /// Converts an <see cref="AndroidAudioAttributeUsage"/> value to the legacy audio stream type integer
+    /// used by <c>NotificationCompat.Builder.SetSound(Uri, int)</c> on Android API &lt; 26.
+    /// </summary>
+    public static int ToStreamType(this AndroidAudioAttributeUsage usage) => usage switch
+    {
+        AndroidAudioAttributeUsage.Alarm => (int)MediaStream.Alarm,        
+        AndroidAudioAttributeUsage.NotificationRingtone => (int)MediaStream.Ring,
+        AndroidAudioAttributeUsage.Media => (int)MediaStream.Music,
+        AndroidAudioAttributeUsage.VoiceCommunication => (int)MediaStream.VoiceCall,
+        _ => (int)MediaStream.Notification,
+    };
 }

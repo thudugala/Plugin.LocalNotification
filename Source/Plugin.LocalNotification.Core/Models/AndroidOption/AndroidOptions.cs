@@ -170,4 +170,25 @@ public class AndroidOptions
     /// Has no effect on non-Android platforms.
     /// </summary>
     public string? Tag { get; set; }
+
+    /// <summary>
+    /// Overrides the audio usage attribute for the notification sound on Android API &lt; 26.
+    /// On API 26+ this must be configured on the <see cref="AndroidNotificationChannelRequest"/> instead.
+    /// Default is <see cref="AndroidAudioAttributeUsage.Notification"/>.
+    /// </summary>
+    public AndroidAudioAttributeUsage AudioAttributeUsage { get; set; } = AndroidAudioAttributeUsage.Notification;
+
+    /// <summary>
+    /// For Android API &lt; 26: the number of milliseconds for which the LED should remain on
+    /// while the device is asleep. Has no effect when <see cref="AndroidOptions.LedColor"/> is not set,
+    /// or on API 26+ (use <see cref="AndroidNotificationChannelRequest"/> instead).
+    /// </summary>
+    public int? LedOnMs { get; set; }
+
+    /// <summary>
+    /// For Android API &lt; 26: the number of milliseconds for which the LED should remain off
+    /// between blinks. Has no effect when <see cref="AndroidOptions.LedColor"/> is not set,
+    /// or on API 26+ (use <see cref="AndroidNotificationChannelRequest"/> instead).
+    /// </summary>
+    public int? LedOffMs { get; set; }
 }

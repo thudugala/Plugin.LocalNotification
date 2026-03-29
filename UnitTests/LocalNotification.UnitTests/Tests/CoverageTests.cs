@@ -547,4 +547,48 @@ public class CoverageTests : IDisposable
         deserialized.Apple.ThumbnailClippingRect.Should().NotBeNull();
         deserialized.Apple.ThumbnailClippingRect!.Width.Should().Be(0.5);
     }
+
+    [Fact]
+    public void Phase7_AudioAttributesAndLed_ShouldCoverModelDefaults()
+    {
+        // AndroidAudioAttributeUsage defaults to Notification on AndroidOptions
+        var options = new AndroidOptions();
+        options.AudioAttributeUsage.Should().Be(AndroidAudioAttributeUsage.Notification);
+
+        // Round-trip AudioAttributeUsage
+        options.AudioAttributeUsage = AndroidAudioAttributeUsage.Alarm;
+        options.AudioAttributeUsage.Should().Be(AndroidAudioAttributeUsage.Alarm);
+
+        // All enum values are distinct and well-defined
+        var usages = Enum.GetValues<AndroidAudioAttributeUsage>();
+        usages.Should().Contain(AndroidAudioAttributeUsage.Notification);
+        usages.Should().Contain(AndroidAudioAttributeUsage.Alarm);
+        usages.Should().Contain(AndroidAudioAttributeUsage.NotificationRingtone);
+        usages.Should().Contain(AndroidAudioAttributeUsage.Media);
+        usages.Should().Contain(AndroidAudioAttributeUsage.VoiceCommunication);
+        usages.Should().Contain(AndroidAudioAttributeUsage.Unknown);
+
+        // LedOnMs and LedOffMs default to null
+        options.LedOnMs.Should().BeNull();
+        options.LedOffMs.Should().BeNull();
+
+        // Round-trip LED timing
+        options.LedOnMs = 500;
+        options.LedOffMs = 2000;
+        options.LedOnMs.Should().Be(500);
+        options.LedOffMs.Should().Be(2000);
+
+        // Serialization round-trip — new fields survive JSON
+        var request = new NotificationRequest
+        {
+            NotificationId = 99,
+            Android = options
+        };
+        var json = LocalNotificationCenter.GetRequestSerialize(request);
+        var deserialized = LocalNotificationCenter.Serializer.Deserialize<NotificationRequest>(json);
+        deserialized.Should().NotBeNull();
+        deserialized!.Android.AudioAttributeUsage.Should().Be(AndroidAudioAttributeUsage.Alarm);
+        deserialized.Android.LedOnMs.Should().Be(500);
+        deserialized.Android.LedOffMs.Should().Be(2000);
+    }
 }

@@ -482,7 +482,7 @@ internal class NotificationServiceImpl : IAndroidNotificationService
             var soundUri = LocalNotificationCenter.GetSoundUri(request.Sound);
             if (soundUri is not null)
             {
-                builder.SetSound(soundUri);
+                builder.SetSound(soundUri, request.Android.AudioAttributeUsage.ToStreamType());
             }
         }
 
@@ -579,9 +579,14 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         var notification = builder.Build();
         if (notification is not null && !OperatingSystem.IsAndroidVersionAtLeast(26))
         {
-            if (request.Android.LedColor.HasValue)
+            if (request.Android.LedColor is not null)
             {
+                var ledOn = request.Android.LedOnMs ?? 300;
+                var ledOff = request.Android.LedOffMs ?? 1000;
                 notification.LedARGB = request.Android.LedColor.Value;
+                notification.LedOnMS = ledOn;
+                notification.LedOffMS = ledOff;
+                notification.Flags |= NotificationFlags.ShowLights;
             }
             if (string.IsNullOrWhiteSpace(request.Sound))
             {
