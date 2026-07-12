@@ -56,7 +56,7 @@ internal class GeofenceHandler : IAndroidGeofenceHandler
         var geofence = geofenceBuilder.Build();
 
         var geoRequest = new GeofencingRequest.Builder()
-            .SetInitialTrigger(0)
+            .SetInitialTrigger(GeofencingRequest.InitialTriggerEnter)
             .AddGeofence(geofence)
             .Build();
 
@@ -64,6 +64,10 @@ internal class GeofenceHandler : IAndroidGeofenceHandler
 
         if (_geofencingClient is not null && pendingIntent is not null)
         {
+            await _geofencingClient
+                .RemoveGeofencesAsync(pendingIntent)
+                .ConfigureAwait(false);
+
             await _geofencingClient
                 .AddGeofencesAsync(
                     geoRequest,
