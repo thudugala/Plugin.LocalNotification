@@ -181,13 +181,13 @@ public partial class MainPage : ContentPage
                 !double.TryParse(LongitudeEntry.Text, CultureInfo.InvariantCulture, out var longitude) ||
                 !double.TryParse(RadiusEntry.Text, CultureInfo.InvariantCulture, out var radiusInMeters))
             {
-                await DisplayAlert("Location Notification", "Enter valid latitude, longitude, and radius values.", "OK");
+                await DisplayAlertAsync("Location Notification", "Enter valid latitude, longitude, and radius values.", "OK");
                 return;
             }
 
             if (radiusInMeters < 100)
             {
-                await DisplayAlert("Location Notification", "Use a radius of at least 100 meters for reliable geofence notifications.", "OK");
+                await DisplayAlertAsync("Location Notification", "Use a radius of at least 100 meters for reliable geofence notifications.", "OK");
                 return;
             }
 
@@ -206,7 +206,7 @@ public partial class MainPage : ContentPage
 
             if (!notifyOn.HasValue)
             {
-                await DisplayAlert("Location Notification", "Select entry, exit, or both geofence triggers.", "OK");
+                await DisplayAlertAsync("Location Notification", "Select entry, exit, or both geofence triggers.", "OK");
                 return;
             }
 
@@ -324,7 +324,7 @@ public partial class MainPage : ContentPage
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await DisplayAlert(e.Request.Title, "User dismissed notification.", "OK");
+                await DisplayAlertAsync(e.Request.Title, "User dismissed notification.", "OK");
             });
             return;
         }
@@ -336,7 +336,7 @@ public partial class MainPage : ContentPage
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await DisplayAlert(e.Request.Title, $"Notification tapped. ReturningData: {e.Request.ReturningData}", "OK");
+            await DisplayAlertAsync(e.Request.Title, $"Notification tapped. ReturningData: {e.Request.ReturningData}", "OK");
         });
     }
 
@@ -354,7 +354,7 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            await DisplayAlert(e.Request.Title, e.Request.Description, "OK");
+            await DisplayAlertAsync(e.Request.Title, e.Request.Description, "OK");
         });
     }
 }
