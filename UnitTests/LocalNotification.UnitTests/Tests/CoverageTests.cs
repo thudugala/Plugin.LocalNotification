@@ -1,11 +1,14 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Plugin.LocalNotification.AndroidOption;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AndroidOption;
 using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.LocalNotification.EventArgs;
+using Plugin.LocalNotification.Geofence;
 using Plugin.LocalNotification.Platforms;
+using Plugin.LocalNotification.Properties;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -853,5 +856,94 @@ public class CoverageTests : IDisposable
         // INotificationService interface declares GetActiveNotifications
         var ifaceMethods = typeof(INotificationService).GetMethods();
         ifaceMethods.Should().Contain(m => m.Name == nameof(INotificationService.GetActiveNotifications));
+    }
+
+    [Fact]
+    public void Phase13_ChannelDefaultsAndResources_ShouldCoverRemainingSourceLines()
+    {
+        var channel = new AndroidNotificationChannelRequest();
+        channel.LockScreenVisibility.Should().Be(AndroidVisibilityType.Private);
+        channel.CanBypassDnd.Should().BeFalse();
+
+        _ = new Resources();
+        Resources.ResourceManager.Should().NotBeNull();
+        Resources.Culture = null;
+        Resources.Culture.Should().BeNull();
+        Resources.AndroidAlarmServiceNotFound.Should().NotBeNullOrEmpty();
+        Resources.AndroidNotificationServiceNotFound.Should().NotBeNullOrEmpty();
+        Resources.GeofencePackageMissing.Should().NotBeNullOrEmpty();
+        Resources.PluginNotFound.Should().NotBeNullOrEmpty();
+        Resources.PluginSerializerNotFound.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void Phase14_MauiAndInitializeService_ShouldCoverInitializationAndExtensionReturnPath()
+    {
+        var useMethod = typeof(LocalNotificationExtensions).GetMethod(nameof(LocalNotificationExtensions.UseLocalNotification), BindingFlags.Public | BindingFlags.Static);
+        useMethod.Should().NotBeNull();
+        var returnedBuilder = useMethod!.Invoke(null, [null, null]);
+        returnedBuilder.Should().BeNull();
+
+        var logger = NullLogger<LocalNotificationCenter>.Instance;
+        var notificationService = new Mock<INotificationService>();
+        LocalNotificationCenter.SetNotificationService(notificationService.Object);
+
+        var customSerializer = new Mock<INotificationSerializer>().Object;
+        var localBuilder = new LocalNotificationBuilder();
+        var category = new NotificationCategory(NotificationCategoryType.Status);
+        localBuilder.SetSerializer(customSerializer);
+        localBuilder.AddCategory(category);
+
+        var serviceProvider = new Mock<IServiceProvider>();
+        serviceProvider.Setup(s => s.GetService(typeof(ILogger<LocalNotificationCenter>))).Returns(logger);
+        serviceProvider.Setup(s => s.GetService(typeof(LocalNotificationBuilder))).Returns(localBuilder);
+
+        var initializer = new LocalNotificationInitializeService();
+        initializer.Initialize(serviceProvider.Object);
+
+        LocalNotificationLogger.Logger.Should().NotBeNull();
+        LocalNotificationCenter.Serializer.Should().BeSameAs(customSerializer);
+        notificationService.Verify(s => s.RegisterCategoryList(It.Is<HashSet<NotificationCategory>>(set => set.Contains(category))), Times.Once);
+    }
+
+    [Fact]
+    public void Phase15_TrimImageBinary_ShouldCoverExceptionPath()
+    {
+        const int notificationId = 777;
+        var imageDir = Path.Combine(Path.GetTempPath(), "Plugin.LocalNotification", "images");
+        var imagePath = Path.Combine(imageDir, $"img_{notificationId}.bin");
+        Directory.CreateDirectory(imageDir);
+        File.WriteAllBytes(imagePath, [1, 2, 3]);
+        File.SetAttributes(imagePath, FileAttributes.ReadOnly);
+
+        var request = new NotificationRequest
+        {
+            NotificationId = notificationId,
+            Image = new NotificationImage { Binary = new byte[100_001] }
+        };
+
+        try
+        {
+            var serialized = LocalNotificationCenter.GetRequestSerialize(request);
+            serialized.Should().NotBeNullOrWhiteSpace();
+            request.Image.Binary.Should().BeEmpty();
+        }
+        finally
+        {
+            if (File.Exists(imagePath))
+            {
+                File.SetAttributes(imagePath, FileAttributes.Normal);
+                File.Delete(imagePath);
+            }
+        }
+    }
+
+    [Fact]
+    public void Phase16_GeofenceExtension_ShouldCoverReturnPath()
+    {
+        var useMethod = typeof(GeofenceExtensions).GetMethod(nameof(GeofenceExtensions.UseLocalNotificationGeofence), BindingFlags.Public | BindingFlags.Static);
+        useMethod.Should().NotBeNull();
+        var returnedBuilder = useMethod!.Invoke(null, [null]);
+        returnedBuilder.Should().BeNull();
     }
 }

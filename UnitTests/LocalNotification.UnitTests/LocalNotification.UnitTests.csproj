@@ -21,6 +21,7 @@
 		<PackageReference Include="FluentAssertions" Version="8.8.0" />
 		<PackageReference Include="FluentAssertions.Analyzers" Version="0.34.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
 		<PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="coverlet.collector" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -41,6 +42,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Source\Plugin.LocalNotification.Core\Plugin.LocalNotification.Core.csproj" />
 		<ProjectReference Include="..\..\Source\Plugin.LocalNotification\Plugin.LocalNotification.csproj" />
+		<ProjectReference Include="..\..\Source\Plugin.LocalNotification.Geofence\Plugin.LocalNotification.Geofence.csproj" />
 	</ItemGroup>
 
 </Project>

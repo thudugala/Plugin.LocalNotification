@@ -1,3 +1,5 @@
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
 namespace Plugin.LocalNotification.UnitTests;
 
 /// <summary>
