@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿#if IOS || MACCATALYST
+using Foundation;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Platforms;
@@ -72,7 +73,7 @@ public partial class LocalNotificationCenter
 
             uiApplication.InvokeOnMainThread(() =>
             {
-                if (OperatingSystem.IsIOSVersionAtLeast(16))
+                if (ApplePlatform.IsVersion16OrLater())
                 {
                     UNUserNotificationCenter.Current.SetBadgeCount(0, (error) =>
                     {
@@ -115,7 +116,7 @@ public partial class LocalNotificationCenter
 
             uiApplication.InvokeOnMainThread(async () =>
             {
-                if (OperatingSystem.IsIOSVersionAtLeast(16))
+                if (ApplePlatform.IsVersion16OrLater())
                 {
                     await UNUserNotificationCenter.Current.SetBadgeCountAsync(0);
                 }
@@ -133,3 +134,4 @@ public partial class LocalNotificationCenter
         }
     }    
 }
+#endif

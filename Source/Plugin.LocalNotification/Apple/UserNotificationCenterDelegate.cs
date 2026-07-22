@@ -1,4 +1,5 @@
-﻿using Plugin.LocalNotification.Core;
+﻿#if IOS || MACCATALYST
+using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
 using UIKit;
@@ -196,7 +197,7 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
 
             if (requestHandled == false)
             {
-                if (OperatingSystem.IsIOSVersionAtLeast(14))
+                if (ApplePlatform.IsVersion14OrLater())
                 {
                     if (notificationRequest.Apple.PresentAsBanner)
                     {
@@ -250,3 +251,4 @@ public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
             ? notificationService
             : new NotificationServiceImpl();
 }
+#endif
