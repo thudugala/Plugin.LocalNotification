@@ -1,9 +1,14 @@
-﻿using CoreGraphics;
+﻿#if IOS || MACCATALYST
+using CoreGraphics;
 using Foundation;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AppleOption;
+#if IOS
 using Plugin.LocalNotification.Core.Platforms.iOS;
+#else
+using Plugin.LocalNotification.Core.Platforms.MacCatalyst;
+#endif
 using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
 using UIKit;
@@ -18,7 +23,7 @@ internal class NotificationServiceImpl : INotificationService
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
     /// <inheritdoc />
-    public bool IsSupported => OperatingSystem.IsIOS();
+    public bool IsSupported => ApplePlatform.IsCurrent();
 
     /// <inheritdoc />
     public event NotificationReceivedEventHandler? NotificationReceived;
@@ -41,7 +46,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <inheritdoc />
     public bool Cancel(params int[] notificationIdList)
     {
-        if (!OperatingSystem.IsIOSVersionAtLeast(11))
+        if (!ApplePlatform.IsVersion11OrLater())
         {
             return false;
         }
@@ -87,7 +92,7 @@ internal class NotificationServiceImpl : INotificationService
         UNNotificationTrigger? trigger = null;
         try
         {
-            if (!OperatingSystem.IsIOS())
+            if (!ApplePlatform.IsCurrent())
             {
                 return false;
             }
@@ -166,7 +171,7 @@ internal class NotificationServiceImpl : INotificationService
     /// <returns></returns>
     public async Task<UNMutableNotificationContent> GetNotificationContent(NotificationRequest request)
     {
-        if (!OperatingSystem.IsIOS())
+        if (!ApplePlatform.IsCurrent())
         {
             return new UNMutableNotificationContent();
         }
@@ -184,7 +189,7 @@ internal class NotificationServiceImpl : INotificationService
             UserInfo = userInfoDictionary
         };
 
-        if (OperatingSystem.IsIOSVersionAtLeast(15))
+        if (ApplePlatform.IsVersion15OrLater())
         {
             content.InterruptionLevel = request.Apple.Priority.ToNative();
             content.RelevanceScore = request.Apple.RelevanceScore;
@@ -212,9 +217,9 @@ internal class NotificationServiceImpl : INotificationService
 
         if (string.IsNullOrWhiteSpace(request.Apple.SummaryArgument) == false)
         {                
-            if (OperatingSystem.IsIOS() &&
-                OperatingSystem.IsIOSVersionAtLeast(12) &&
-                !OperatingSystem.IsIOSVersionAtLeast(15))
+            if (ApplePlatform.IsCurrent() &&
+                ApplePlatform.IsVersion12OrLater() &&
+                !ApplePlatform.IsVersion15OrLater())
             {
                 content.SummaryArgument = request.Apple.SummaryArgument;
                 content.SummaryArgumentCount = (nuint)request.Apple.SummaryArgumentCount;
@@ -294,7 +299,7 @@ internal class NotificationServiceImpl : INotificationService
 
     private static UNNotificationSound BuildNotificationSound(string? soundName, float? criticalVolume)
     {
-        if (criticalVolume is not null && OperatingSystem.IsIOSVersionAtLeast(12))
+        if (criticalVolume is not null && ApplePlatform.IsVersion12OrLater())
         {
             var volume = (float)Math.Clamp(criticalVolume.Value, 0.0, 1.0);
             return string.IsNullOrWhiteSpace(soundName)
@@ -418,7 +423,7 @@ internal class NotificationServiceImpl : INotificationService
             var options = notificationAction.Apple.Action.ToNative();
             var hasTextInput = !string.IsNullOrEmpty(notificationAction.Apple.TextInputButtonTitle);
 
-            if (OperatingSystem.IsIOSVersionAtLeast(15))
+            if (ApplePlatform.IsVersion15OrLater())
             {
                 var icon = notificationAction.Apple.Icon.Type switch
                 {
@@ -585,3 +590,4 @@ internal class NotificationServiceImpl : INotificationService
         }
     }    
 }
+#endif
