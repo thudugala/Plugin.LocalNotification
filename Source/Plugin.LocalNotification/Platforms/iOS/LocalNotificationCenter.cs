@@ -61,10 +61,14 @@ public partial class LocalNotificationCenter
             var completionSource = new TaskCompletionSource<bool>();
             UNUserNotificationCenter.Current.GetDeliveredNotifications((notificationArray) =>
             {
-                notificationList.AddRange(notificationArray);
+                if (notificationArray != null)
+                {
+                    notificationList.AddRange(notificationArray);
+                }
                 completionSource.SetResult(true);
             });
             completionSource.Task.Wait();
+                
             if (notificationList.Count != 0)
             {
                 return;
