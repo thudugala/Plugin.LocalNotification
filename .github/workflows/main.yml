@@ -44,10 +44,10 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.x
 
@@ -88,7 +88,7 @@ jobs:
         run: dotnet build 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net10.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
 
       - name: Upload iOS Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: mauibeach-ios-ci-build
           path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-ios/iossimulator-arm64/**/*.app'

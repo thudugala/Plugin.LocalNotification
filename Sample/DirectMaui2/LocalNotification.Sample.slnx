@@ -12,6 +12,7 @@
   <Folder Name="/Solution Items/">
     <File Path="../../.github/workflows/main.yml" />
     <File Path="../../.github/workflows/nuget.yml" />
+    <File Path="../../Source/PlatformServices.targets" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="../../UnitTests/LocalNotification.UnitTests/LocalNotification.UnitTests.csproj" />

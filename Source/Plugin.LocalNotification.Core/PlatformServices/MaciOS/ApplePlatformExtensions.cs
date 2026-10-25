@@ -2,12 +2,20 @@
 using Plugin.LocalNotification.Core.Models.AppleOption;
 using UserNotifications;
 
+#if IOS
+namespace Plugin.LocalNotification.Core.Platforms.iOS;
+#else
 namespace Plugin.LocalNotification.Core.Platforms.MacCatalyst;
+#endif
 
 /// <summary>
 /// Provides extension methods for converting Plugin.LocalNotification IOS option types to native IOS types.
 /// </summary>
+#if IOS
+public static class IOSPlatformExtensions
+#else
 public static class MacCatalystPlatformExtensions
+#endif
 {
     /// <summary>
     /// Converts a <see cref="ApplePriority"/> value to its native <see cref="UNNotificationInterruptionLevel"/> equivalent.
