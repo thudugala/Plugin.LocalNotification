@@ -2,6 +2,8 @@
 using Android.Content;
 using Android.Graphics;
 using Android.OS;
+using AndroidX.Activity.Result;
+using AndroidX.Activity.Result.Contract;
 using AndroidX.Core.App;
 using Java.Lang;
 using Plugin.LocalNotification.Core;
@@ -23,6 +25,9 @@ internal class NotificationServiceImpl : IAndroidNotificationService
     public Func<NotificationRequest, Task<NotificationEventReceivingArgs>>? NotificationReceiving { get; set; }
 
     public bool IsSupported => OperatingSystem.IsAndroid();
+
+    /// <summary>The key the settings pages are started for a result under.</summary>
+    private const string SettingsPageRequestKey = "Plugin.LocalNotification.SettingsPage";
 
     /// <summary>
     ///
@@ -961,14 +966,17 @@ internal class NotificationServiceImpl : IAndroidNotificationService
 
         LocalNotificationLogger.Log($"Can Schedule Exact Alarms: {canScheduleExactAlarms}");
 
-        if (!canScheduleExactAlarms)
+        if (canScheduleExactAlarms)
         {
-            var uri = Android.Net.Uri.Parse($"package:{Application.Context.PackageName}");
-            var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
-            intent.AddFlags(ActivityFlags.NewTask);
-            Application.Context.StartActivity(intent);
+            return true;
         }
-                   
+
+        await OpenSettingsPageAndWaitForReturn(CreateScheduleExactAlarmIntent());
+
+        canScheduleExactAlarms = MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+
+        LocalNotificationLogger.Log($"Can Schedule Exact Alarms after the settings page: {canScheduleExactAlarms}");
+
         return canScheduleExactAlarms;
     }
         
@@ -997,15 +1005,64 @@ internal class NotificationServiceImpl : IAndroidNotificationService
             return true;
         }
 
-        var uri = Android.Net.Uri.Parse($"package:{Application.Context.PackageName}");
-        var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
-        intent.AddFlags(ActivityFlags.NewTask);
-        Application.Context.StartActivity(intent);
+        await OpenSettingsPageAndWaitForReturn(CreateScheduleExactAlarmIntent());
 
-        // Return current state after surfacing the settings screen; 
-        // the caller is responsible for re-checking after the user returns to the app.
-        await Task.CompletedTask;
         return MyAlarmManager?.CanScheduleExactAlarms() ?? false;
+    }
+
+    private static Intent CreateScheduleExactAlarmIntent()
+    {
+        var uri = Android.Net.Uri.Parse($"package:{Application.Context.PackageName}");
+        return new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
+    }
+
+    /// <summary>
+    /// Opens a system settings page for a special app access, such as exact alarms, and waits until the user leaves
+    /// it. Android has no dialog for these accesses, only the page, and a plain <c>StartActivity</c> returns while the
+    /// page is still open, before the user has chosen anything; starting it for a result is how an app learns the
+    /// user is back. Without a current activity to start it from, the page is opened without waiting.
+    /// </summary>
+    private static async Task OpenSettingsPageAndWaitForReturn(Intent intent)
+    {
+        if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is not AndroidX.Activity.ComponentActivity activity)
+        {
+            intent.AddFlags(ActivityFlags.NewTask);
+            Application.Context.StartActivity(intent);
+            return;
+        }
+
+        var returnSource = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        ActivityResultLauncher? launcher = null;
+        try
+        {
+            await Microsoft.Maui.ApplicationModel.MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                launcher = activity.ActivityResultRegistry.Register(
+                    SettingsPageRequestKey,
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new SettingsPageReturnCallback(returnSource));
+                launcher.Launch(intent);
+            });
+
+            await returnSource.Task;
+        }
+        catch (ActivityNotFoundException ex)
+        {
+            LocalNotificationLogger.Log(ex, "The settings page could not be opened");
+        }
+        finally
+        {
+            launcher?.Unregister();
+        }
+    }
+
+    /// <summary>Completes the wait in <see cref="OpenSettingsPageAndWaitForReturn"/> when the user leaves the page.</summary>
+    private sealed class SettingsPageReturnCallback(TaskCompletionSource returnSource) : Java.Lang.Object, IActivityResultCallback
+    {
+        public void OnActivityResult(Java.Lang.Object? result)
+        {
+            returnSource.TrySetResult();
+        }
     }
 
     /// <inheritdoc />
