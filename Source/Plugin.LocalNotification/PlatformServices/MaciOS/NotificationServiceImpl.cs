@@ -3,7 +3,11 @@ using Foundation;
 using Plugin.LocalNotification.Core;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AppleOption;
+#if IOS
 using Plugin.LocalNotification.Core.Platforms.iOS;
+#else
+using Plugin.LocalNotification.Core.Platforms.MacCatalyst;
+#endif
 using Plugin.LocalNotification.EventArgs;
 using System.Globalization;
 using UIKit;

@@ -1,12 +1,20 @@
 using Plugin.LocalNotification.Core.Models;
 using UserNotifications;
 
+#if IOS
+namespace Plugin.LocalNotification.Core.Platforms.iOS;
+#else
 namespace Plugin.LocalNotification.Core.Platforms.MacCatalyst;
+#endif
 
 /// <summary>
 /// Interface for IOS/MacCatalyst geofence handling, implemented by Plugin.LocalNotification.Geofence.
 /// </summary>
+#if IOS
+public interface IIOSGeofenceHandler : IGeofenceHandler
+#else
 public interface IMacCatalystGeofenceHandler : IGeofenceHandler
+#endif
 {
     /// <summary>
     /// Creates a location-based notification trigger for the given geofence request.
@@ -14,6 +22,7 @@ public interface IMacCatalystGeofenceHandler : IGeofenceHandler
     /// <param name="request">The notification request with geofence data.</param>
     /// <returns>A <see cref="UNNotificationTrigger"/> for the geofence, or null if it cannot be created.</returns>
     UNNotificationTrigger? GetGeofenceTrigger(NotificationRequest request);
+
 
     /// <summary>
     /// Requests the specified level of permission from the user to allow the application to receive location-based
