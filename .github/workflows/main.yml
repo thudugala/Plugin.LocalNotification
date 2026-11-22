@@ -38,24 +38,22 @@ jobs:
           path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-android/*Signed.a*'
 
   # MAUI iOS Build
+    # MAUI iOS Build
   build-ios:
     runs-on: macos-26
     name: iOS Build
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.x
 
       - name: Install MAUI Workload
         run: dotnet workload install maui --ignore-failed-sources
-
-      - name: Show current version of Xcode
-        run: xcodebuild -version
 
       # - name: Show available Xcode versions
       #   run: ls /Applications | grep Xcode
@@ -63,7 +61,10 @@ jobs:
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '26.0'
+          xcode-version: '26.0.1'
+
+      - name: Show current version of Xcode
+        run: xcodebuild -version
 
       # - name: Set XCode Version
       #   shell: bash
@@ -74,13 +75,11 @@ jobs:
       # - name: Show available Xcode_26.2 versions
       #   run: ls /Applications/Xcode_26.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
 
-      # - name: Install iOS Simulators
-      #   run: |
-      #     sudo xcode-select --switch /Applications/Xcode_26.1.app
-      #     sudo xcodebuild -runFirstLaunch
-      #     sudo xcrun simctl list
-      #     sudo xcrun simctl create "iPhone 26" com.apple.CoreSimulator.SimDeviceType.iPhone-17 com.apple.CoreSimulator.SimRuntime.iOS-26-1
-          
+      - name: Install iOS 26.0 Simulator Runtime
+        run: |
+          xcodebuild -downloadPlatform iOS -buildVersion 26.0
+          xcrun simctl list runtimes
+
       - name: Restore Dependencies
         run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
@@ -88,7 +87,7 @@ jobs:
         run: dotnet build 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj' -c Release -f net10.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
 
       - name: Upload iOS Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: mauibeach-ios-ci-build
           path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-ios/iossimulator-arm64/**/*.app'
