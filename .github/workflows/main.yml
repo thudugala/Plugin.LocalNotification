@@ -37,7 +37,6 @@ jobs:
           name: mauibeach-android-ci-build
           path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net10.0-android/*Signed.a*'
 
-  # MAUI iOS Build
   build-ios:
     runs-on: macos-15 # Includes the iOS 26.0.1 simulator runtime required by the pinned Xcode.
     name: iOS Build
