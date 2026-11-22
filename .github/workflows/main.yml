@@ -39,7 +39,7 @@ jobs:
 
   # MAUI iOS Build
   build-ios:
-    runs-on: macos-26
+    runs-on: macos-15 # Includes the iOS 26.0.1 simulator runtime required by the pinned Xcode.
     name: iOS Build
     steps:
 
@@ -54,16 +54,16 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui --ignore-failed-sources
 
-      - name: Show current version of Xcode
-        run: xcodebuild -version
-
       # - name: Show available Xcode versions
       #   run: ls /Applications | grep Xcode
 
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '26.6'
+          xcode-version: '26.0.1'
+
+      - name: Show current version of Xcode
+        run: xcodebuild -version
 
       # - name: Set XCode Version
       #   shell: bash
@@ -74,13 +74,9 @@ jobs:
       # - name: Show available Xcode_26.2 versions
       #   run: ls /Applications/Xcode_26.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
 
-      # - name: Install iOS Simulators
-      #   run: |
-      #     sudo xcode-select --switch /Applications/Xcode_26.1.app
-      #     sudo xcodebuild -runFirstLaunch
-      #     sudo xcrun simctl list
-      #     sudo xcrun simctl create "iPhone 26" com.apple.CoreSimulator.SimDeviceType.iPhone-17 com.apple.CoreSimulator.SimRuntime.iOS-26-1
-          
+      - name: Show installed simulator runtimes
+        run: xcrun simctl list runtimes
+
       - name: Restore Dependencies
         run: dotnet restore 'Sample/DirectMaui2/LocalNotification.Sample/LocalNotification.Sample.csproj'
 
