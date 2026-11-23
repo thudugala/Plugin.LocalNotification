@@ -41,7 +41,7 @@ jobs:
           path: 'Sample/DirectMaui2/LocalNotification.Sample/bin/Release/net11.0-android/*Signed.a*'
 
   build-ios:
-    runs-on: macos-26 # .NET 11 iOS workload (Microsoft.iOS.Sdk 27.2) requires Xcode 27.2.
+    runs-on: xcode-27 # .NET 11 iOS workload (Microsoft.iOS.Sdk 27.2) requires Xcode 27.2.
     name: iOS Build
     steps:
 
