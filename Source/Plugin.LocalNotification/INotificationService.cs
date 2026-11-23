@@ -135,4 +135,15 @@ public interface INotificationService
     /// </summary>
     /// <returns>A <see cref="NotificationPermissionStatus"/> describing each permission capability.</returns>
     Task<NotificationPermissionStatus> GetNotificationPermissionStatus();
+
+    /// <summary>
+    /// Opens the app's notification settings in the system settings and waits until the user comes back to the app.
+    /// Use it when notifications are off and the system no longer shows the permission dialog: on Android 13+ after the
+    /// user has denied it, on iOS after the first answer.
+    /// Returns whether notifications are enabled once the user is back.
+    /// Android below 8.0 (API 26) opens the app's details page instead, iOS below 15.4 the app's settings page.
+    /// On Android without a current activity, the page opens without waiting. On Windows nothing opens, and the
+    /// current state is returned.
+    /// </summary>
+    Task<bool> OpenNotificationSettings();
 }

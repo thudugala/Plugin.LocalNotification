@@ -19,6 +19,7 @@ internal class NotificationServiceImpl : INotificationService
 
     public Task<bool> AreNotificationsEnabled(NotificationPermission? permission = null) => Task.FromResult(false);
     public Task<NotificationPermissionStatus> GetNotificationPermissionStatus() => Task.FromResult(new NotificationPermissionStatus());
+    public Task<bool> OpenNotificationSettings() => Task.FromResult(false);
     public bool Cancel(params int[] notificationIdList) => false;
     public bool CancelAll() => false;
     public bool Clear(params int[] notificationIdList) => false;

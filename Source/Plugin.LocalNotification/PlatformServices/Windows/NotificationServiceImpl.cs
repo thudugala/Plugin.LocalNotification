@@ -523,6 +523,12 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public Task<bool> OpenNotificationSettings()
+    {
+        return AreNotificationsEnabled();
+    }
+
+    /// <inheritdoc />
     public Task<bool> RequestNotificationPermission(NotificationPermission? permission = null)
     {
         try

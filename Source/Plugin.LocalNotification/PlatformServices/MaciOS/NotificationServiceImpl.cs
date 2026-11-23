@@ -515,6 +515,39 @@ internal class NotificationServiceImpl : INotificationService
     }
 
     /// <inheritdoc />
+    public async Task<bool> OpenNotificationSettings()
+    {
+        var settingsUrl = OperatingSystem.IsIOSVersionAtLeast(15, 4) || OperatingSystem.IsMacCatalystVersionAtLeast(15, 4)
+            ? UIApplication.OpenNotificationSettingsUrl
+            : UIApplication.OpenSettingsUrlString;
+
+        // The app resigns active while the settings are in front, so becoming active after that means the user is back.
+        var returnSource = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var hasAppLeftForSettings = false;
+        using var willResignActiveObserver = UIApplication.Notifications.ObserveWillResignActive((_, _) => hasAppLeftForSettings = true);
+        using var didBecomeActiveObserver = UIApplication.Notifications.ObserveDidBecomeActive((_, _) =>
+        {
+            if (hasAppLeftForSettings)
+            {
+                returnSource.TrySetResult();
+            }
+        });
+
+        var isOpened = await Microsoft.Maui.ApplicationModel.MainThread.InvokeOnMainThreadAsync(() =>
+            UIApplication.SharedApplication.OpenUrlAsync(new NSUrl(settingsUrl), new UIApplicationOpenUrlOptions()));
+        if (isOpened)
+        {
+            await returnSource.Task;
+        }
+        else
+        {
+            LocalNotificationLogger.Log($"The settings could not be opened: {settingsUrl}");
+        }
+
+        return await AreNotificationsEnabled();
+    }
+
+    /// <inheritdoc />
     public async Task<NotificationPermissionStatus> GetNotificationPermissionStatus()
     {
         var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync().ConfigureAwait(false);
