@@ -1027,8 +1027,7 @@ internal class NotificationServiceImpl : IAndroidNotificationService
 
         await OpenSettingsPageAndWaitForReturn(intent);
 
-        var areNotificationsEnabled = !OperatingSystem.IsAndroidVersionAtLeast(24) ||
-            (MyNotificationManager?.AreNotificationsEnabled() ?? false);
+        var areNotificationsEnabled = NotificationManagerCompat.From(Application.Context)?.AreNotificationsEnabled() ?? false;
 
         LocalNotificationLogger.Log($"Notifications enabled after the settings page: {areNotificationsEnabled}");
 
@@ -1050,7 +1049,14 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is not AndroidX.Activity.ComponentActivity activity)
         {
             intent.AddFlags(ActivityFlags.NewTask);
-            Application.Context.StartActivity(intent);
+            try
+            {
+                Application.Context.StartActivity(intent);
+            }
+            catch (ActivityNotFoundException ex)
+            {
+                LocalNotificationLogger.Log(ex, "The settings page could not be opened");
+            }
             return;
         }
 

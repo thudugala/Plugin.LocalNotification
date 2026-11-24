@@ -544,7 +544,9 @@ internal class NotificationServiceImpl : INotificationService
             LocalNotificationLogger.Log($"The settings could not be opened: {settingsUrl}");
         }
 
-        return await AreNotificationsEnabled();
+        var notificationPermissionStatus = await GetNotificationPermissionStatus();
+
+        return notificationPermissionStatus.IsEnabled;
     }
 
     /// <inheritdoc />
