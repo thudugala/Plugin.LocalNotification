@@ -1016,11 +1016,30 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         return new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm, uri);
     }
 
+    /// <inheritdoc />
+    public async Task<bool> OpenNotificationSettings()
+    {
+        var packageName = Application.Context.PackageName;
+        var intent = OperatingSystem.IsAndroidVersionAtLeast(26)
+            ? new Intent(Android.Provider.Settings.ActionAppNotificationSettings)
+                .PutExtra(Android.Provider.Settings.ExtraAppPackage, packageName)
+            : new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings, Android.Net.Uri.Parse($"package:{packageName}"));
+
+        await OpenSettingsPageAndWaitForReturn(intent);
+
+        var areNotificationsEnabled = NotificationManagerCompat.From(Application.Context)?.AreNotificationsEnabled() ?? false;
+
+        LocalNotificationLogger.Log($"Notifications enabled after the settings page: {areNotificationsEnabled}");
+
+        return areNotificationsEnabled;
+    }
+
     /// <summary>
-    /// Opens a system settings page for a special app access, such as exact alarms, and waits until the user leaves
-    /// it. Android has no dialog for these accesses, only the page, and a plain <c>StartActivity</c> returns while the
-    /// page is still open, before the user has chosen anything; starting it for a result is how an app learns the
-    /// user is back. Without a current activity to start it from, the page is opened without waiting.
+    /// Opens a system settings page, such as the exact-alarm page or the app's notification settings, and waits until
+    /// the user leaves it. A special app access like exact alarms has no dialog, only the page, and notifications
+    /// denied for good can only be turned on there. A plain <c>StartActivity</c> returns while the page is still
+    /// open, before the user has chosen anything; starting it for a result is how an app learns the user is back.
+    /// Without a current activity to start it from, the page is opened without waiting.
     /// The result callback belongs to the activity that started the page, so when that activity is recreated while the
     /// page is open (a configuration change), the callback is gone; the wait therefore also ends when an activity of the
     /// app resumes after the app left for the page.
@@ -1030,7 +1049,14 @@ internal class NotificationServiceImpl : IAndroidNotificationService
         if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is not AndroidX.Activity.ComponentActivity activity)
         {
             intent.AddFlags(ActivityFlags.NewTask);
-            Application.Context.StartActivity(intent);
+            try
+            {
+                Application.Context.StartActivity(intent);
+            }
+            catch (ActivityNotFoundException ex)
+            {
+                LocalNotificationLogger.Log(ex, "The settings page could not be opened");
+            }
             return;
         }
 

@@ -90,6 +90,12 @@ public partial class MainPage : ContentPage
         _notificationService.CancelAll();
     }
 
+    private async void ButtonOpenNotificationSettings_Clicked(object? sender, EventArgs e)
+    {
+        var areNotificationsEnabled = await _notificationService.OpenNotificationSettings();
+        await DisplayAlertAsync("Notification Settings", $"Notifications enabled: {areNotificationsEnabled}", "OK");
+    }
+
     private async void Button_Clicked(object? sender, EventArgs e)
     {
         var imageStream = await FileSystem.OpenAppPackageFileAsync("appicon1.png");

@@ -48,6 +48,11 @@
             HorizontalOptions="Center"
             Text="Cancel Local Notification"
             VerticalOptions="Center" />
+            <Button
+            Clicked="ButtonOpenNotificationSettings_Clicked"
+            HorizontalOptions="Center"
+            Text="Open Notification Settings"
+            VerticalOptions="Center" />
 
             <!--  Place new controls here  -->
             <Grid VerticalOptions="Center">

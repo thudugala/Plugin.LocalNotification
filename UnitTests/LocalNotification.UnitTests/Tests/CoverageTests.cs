@@ -946,4 +946,18 @@ public class CoverageTests : IDisposable
         var returnedBuilder = useMethod!.Invoke(null, [null]);
         returnedBuilder.Should().BeNull();
     }
+
+    [Fact]
+    public async Task Phase17_OpenNotificationSettings_ShouldCoverInterfaceAndGenericImplementation()
+    {
+        // INotificationService declares OpenNotificationSettings, which returns whether notifications are enabled
+        var openSettings = typeof(INotificationService).GetMethod(nameof(INotificationService.OpenNotificationSettings));
+        openSettings.Should().NotBeNull();
+        openSettings!.ReturnType.Should().Be(typeof(Task<bool>));
+
+        // Generic (non-platform) service has no settings to open and reports notifications as disabled
+        var genericService = new NotificationServiceImpl();
+        var areNotificationsEnabled = await genericService.OpenNotificationSettings();
+        areNotificationsEnabled.Should().BeFalse();
+    }
 }
