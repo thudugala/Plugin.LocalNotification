@@ -21,10 +21,10 @@ The local notification plugin provides a way to display local notifications in .
 
 ## Platform Support
 
-| Feature                       | net10.0-ios  | net10.0-android  |
+| Feature                       | net10.0-ios / net11.0-ios | net10.0-android / net11.0-android |
 | ----------------------------- | ----------- | --------------- |
 | Build SDK                     | >= 15              | >= API 36              |
-| Supported OS Version          | >= 15              | >= API 21              |
+| Supported OS Version          | >= 15              | >= API 21 (net10.0) / >= API 24 (net11.0) |
 | Title                         | ✅                | ✅                     |
 | Description                   | ✅                | ✅                     |
 | Subtitle                      | ✅                | ✅                     |

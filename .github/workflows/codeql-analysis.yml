@@ -50,6 +50,11 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
+    - name: Setup .NET 11
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 11.x
+
     - name: Restore workloads
       run: dotnet workload restore Source/Plugin.LocalNotification/Plugin.LocalNotification.csproj
 

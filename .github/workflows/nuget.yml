@@ -9,10 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
-    - name: Setup .NET 10
+    - name: Setup .NET 11
       uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: 10.x
+        dotnet-version: 11.x
 
     - name: Install MAUI Workloads
       run: |
@@ -25,6 +25,9 @@ jobs:
 
     - name : restore Plugin.LocalNotification.slnx
       run: dotnet restore Source/Plugin.LocalNotification.slnx
+
+    - name: Install Android SDK dependencies (API 37 for net11.0-android)
+      run: dotnet build Source/Plugin.LocalNotification.Core/Plugin.LocalNotification.Core.csproj -t:InstallAndroidDependencies -f net11.0-android -p:AndroidSdkDirectory="$env:ANDROID_HOME" -p:JavaSdkDirectory="$env:JAVA_HOME" -p:AcceptAndroidSDKLicenses=True
 
     - name: build Plugin.LocalNotification.csproj
       run: dotnet build Source/Plugin.LocalNotification.Core/Plugin.LocalNotification.Core.csproj --configuration Release
